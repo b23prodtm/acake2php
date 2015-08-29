@@ -331,7 +331,7 @@ if (!isset($ClassePage)) {
                             "css" => array("background-color" => "white")));
                         $this->setInfo($this->getInfoFlash());
                         $this->tbl["body"]->setContenu_Cellule(0, 0, $this->tbl["entete"]->fin());
-                        $this->tbl["body"]->setContenu_Cellule(1, 0, "<table width=\"100%\"><tr><td width=0 align='left'>" . $this->r->lang("vousetesici") . " : <PRE>" . filter_input(INPUT_SERVER, 'SERVER_NAME') . ":/><b>" . $this->menu->getRubriqueOuverte() . "</b></PRE></td><td width=\"100%\"><div class=\"adsense\" style='text-align:right;font-style:italic'>" . $this->adSense($GLOBALS['include__AdSense_banniere']) . "</div></td></tr></table>", array("class" => "rubrique"));
+                        $this->tbl["body"]->setContenu_Cellule(1, 0, "<table width=\"100%\"><tr><td width=0><div class='rubriquebanniere'>" . $this->r->lang("vousetesici") . " : " . $this->menu->getRubriqueOuverte() . "</div></td><td width=\"100%\"><div class=\"adsense\" style='text-align:right;font-style:italic'>" . $this->adSense($GLOBALS['include__AdSense_banniere']) . "</div></td></tr></table>", array("class" => "rubrique"));
                         $this->tbl["body"]->setContenu_Cellule(2, 0, "<TABLE><TR VALIGN='TOP'><TD>" . $this->tbl["menu"]->fin() . "</TD><TD><TABLE BORDER=0 CELLPADDING=2>" . $this->tbl["contenu"]->fin() . "</TABLE></TD></TR></TABLE>");
                         $this->tbl["body"]->setContenu_Cellule(3, 0, $this->piedDePage());
                         $this->tbl["body"]->setContenu_Cellule(4, 0, $this->siteMap());

@@ -30,6 +30,7 @@ if (!isset($ClasseMenu)) {
                 var $actif;
                 var $tbl, $HTML;
                 var $r;
+                var $logo;
 
                 /**
                  * @param string $cleLocale clé appartenant au fichier de langue locale/content-lang.properties (gestion 
@@ -145,26 +146,33 @@ if (!isset($ClasseMenu)) {
                 }
 
                 /**
-                 * methode utilisee pour afficher l'emplacement sur le site (ex: Téléchargements/Wallpapers/) 
+                 * methode utilisee pour afficher l'emplacement sur le site (ex: Telechargements/Wallpapers/) ou un logo de la rubrique
                  * @return Menu rubrique ouverte
                  */
-                function getRubriqueOuverte() {
+                function getRubriqueOuverte($logoRubrique = FALSE) {
                         if ($this->getEtat() == OUVERT) {
                                 $n = $this->countRubriques();
-                                $chemin = $this->nom . "/";
+                                $chemin = HTML_lien($this->url, $this->nom);
                                 if ($n != 0) { // si le menu a des rubriques il faut voir si il y en a une d'ouverte
                                         for ($i = 0; $i < $n; $i++) {
                                                 if ($this->rubriques[$i]->getEtat() == OUVERT) {
-                                                        $rubriqueOuverte = $this->rubriques[$i]->getRubriqueOuverte();
+                                                        $rubriqueOuverte = $this->rubriques[$i]->getRubriqueOuverte($logoRubrique);
                                                         if (is_string($rubriqueOuverte)) {
-                                                                $chemin .= $rubriqueOuverte;
+                                                                // concatenation du chemin si pas de logo
+                                                                return ($logoRubrique ? "" : $chemin . " / ") . $rubriqueOuverte;
                                                         }
                                                 }
                                         }
+                                } else if ($logoRubrique) {
+                                        return HTML_lien($this->url, $this->getLogo());
                                 }
                                 return $chemin;
                         } else
                                 return NULL;
+                }
+
+                function getLogo($icone = TRUE) {
+                        return HTML_image($logo);
                 }
 
                 function writeHTML() {

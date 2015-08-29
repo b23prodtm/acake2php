@@ -1,114 +1,114 @@
 body {
-	font-family: sans; background-color: rgb(70, 190, 40); 
+    font-family: sans; background-color: rgb(70, 190, 40); 
 }
 a:link {
-	text-decoration: none; color: green; 
+    text-decoration: none; color: green; 
 }
 a:hover {
-	text-decoration: underline; color: red; background-color: yellow; 
+    text-decoration: underline; color: red; background-color: yellow; 
 }
 a:visited {
-	text-decoration: underline; color: green; font-style: italic; 
+    text-decoration: underline; color: green; font-style: italic; 
 }
 a {
-	color: red; 
+    color: red; 
 }
 object, embed, canvas, video, audio, picture {
-	max-width: 100%;
-	height: auto;
+    max-width: 100%;
+    height: auto;
 }
 .formulaire {
-	color: rgb(255, 255, 255); background-color: rgb(255, 102, 0); 
+    color: rgb(255, 255, 255); background-color: rgb(255, 102, 0); 
 }
 .liste {
-	background-color: rgb(51, 51, 51); 
+    background-color: rgb(51, 51, 51); 
 }
 .titre {
-	color: white; background-color: rgb(65, 56, 54); 
+    color: white; background-color: rgb(65, 56, 54); 
 }
 .entete {
-	color: white; background-color: rgb(65, 56, 54); 
+    color: white; background-color: rgb(65, 56, 54); 
 }
 .entete_titre {
-	color: black; font-style: italic; text-align: center;
+    color: black; font-style: italic; text-align: center;
 }
 .page_titre {
-        text-height: max-size; font-weight: bold; text-align: right; padding-right: 50px;
+    text-height: max-size; font-weight: bold; text-align: right; padding-right: 50px;
 }
 .image {
-	color: white; font-family: courier; font-size: 1.1em; background-color: black; 
+    color: white; font-family: courier; font-size: 1.1em; background-color: black; 
 }
 .badge {
-        width: 323px; height: 256px; 
+    width: 323px; height: 256px; 
 }
 /* begin SHRINK*/
 * {
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-      -ms-box-sizing: border-box;
-          box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
 }
 .logo {
-  width: 350px;
-  height: 266px;
-  border: 5px solid #fff;  
-  float: left;
-  margin: 10px;
-  overflow: hidden;
-   
-  -webkit-box-shadow: 2.5px 2.5px 2.5px #111;
-     -moz-box-shadow: 2.5px 2.5px 2.5px #111;
-          box-shadow: 2.5px 2.5px 2.5px #111;  
+    width: 350px;
+    height: 266px;
+    border: 5px solid #fff;  
+    float: left;
+    margin: 10px;
+    overflow: hidden;
+
+    -webkit-box-shadow: 2.5px 2.5px 2.5px #111;
+    -moz-box-shadow: 2.5px 2.5px 2.5px #111;
+    box-shadow: 2.5px 2.5px 2.5px #111;  
 }
 
 .logo:hover {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .shrink img {
-  width: 700px;
-  height: 533px;
- 
-  -webkit-transition: all 1s ease;
-     -moz-transition: all 1s ease;
-       -o-transition: all 1s ease;
-      -ms-transition: all 1s ease;
-  transition: all 1s ease;
+    width: 700px;
+    height: 533px;
+
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    -ms-transition: all 1s ease;
+    transition: all 1s ease;
 }
- 
+
 .shrink img:hover {
-  width: 350px;
-  height: 266px;
+    width: 350px;
+    height: 266px;
 }
 
 /* end SHRINK */
 
 .console {
-	color: yellow; font-family: monospace; background-color: green; 
+    color: yellow; font-family: monospace; background-color: green; 
 }
 .info {
-	font-size: 1.2em; 	border-style: solid; 	border-top-width: 20px;
-	/* border-width: 0; */
-	border-color: #EFDD00; 	background-color: rgb(255, 255, 255); 
+    font-size: 1.2em; 	border-style: solid; 	border-top-width: 20px;
+    /* border-width: 0; */
+    border-color: #EFDD00; 	background-color: rgb(255, 255, 255); 
 }
 .info_titre {
-	background-color: #FFFFFF;
-	font-size: 1em;
+    background-color: #FFFFFF;
+    font-size: 1em;
 }
 .a0 {
-	background-color: rgb(255, 70, 0); 
+    background-color: rgb(255, 70, 0); 
 }
 .a1 {
-	background-color: rgb(255, 53, 0); 
+    background-color: rgb(255, 53, 0); 
 }
 form {
-	font-family: monospace; 
+    font-family: monospace; 
 }
 .formulaire_titre {
-	background-color: rgb(204, 102, 0); 
+    background-color: rgb(204, 102, 0); 
 }
 td.formulaire {
-	font-size: 0.8em; background-color: rgb(255, 153, 0); 
+    font-size: 0.8em; background-color: rgb(255, 153, 0); 
 }
 /* RESPONSIVE LAYOUT
 
@@ -118,71 +118,75 @@ td.formulaire {
 
 */
 @media screen and (max-device-width:1000px) {		
-	
-table {
-	border-width: 0; 
-	font-size: 1.15em;
-}
-	.body {
-	border-style: dotted; border-color: rgb(70, 190, 40); background-color: rgb(245, 245, 245); 	font-family: sans-serif;
-	width: 100%; font-size: 1.5em;
-}
-.rubrique {
-	background-color: rgb(239, 221, 0); 
-	position: absolute;
-	bottom: 5em;
-	right: 1em;
-	display: none;
-}
-.adsense {
-	display: none;
-	float: bottom;
-}
-.menu {
-	position:absolute;
-	top:0em;
-	left:0em;
-	visibility: visible;
-}
-.menu_contents {
-	position:absolute;
-	visibility: hidden;
-}
-.boutonMenu {
-	border: 4px outset rgb(250, 245, 245); 
-	vertical-align: top; 
-	background-color: rgb(248, 250, 249); 	
-	position:absolute;
-	left:0em;
-	top:0em;
-	visibility: visible;
-}
-.search {
-	visibility: hidden;
-	position : absolute;
-}
-.rubriques {
-	border: 4px outset rgb(250, 245, 245); 
-	vertical-align: top; 
-	background-color: rgb(248, 250, 249); 	
-	position:absolute;
-	top:1em;
-	left:1em;
-	visibility:hidden;
-}
-.copyright {
-	position: absolute;
-	display:none;
-	bottom: 1em;
-	right: 1em;
-}
-.sitemap {
-	padding: 2px; font-size: 1.1em; font-weight: lighter; background-color: rgb(255, 255, 255); 
-}
 
-.info_flash {
-    visibility:hidden;    
-}
+    table {
+        border-width: 0; 
+        font-size: 1.15em;
+    }
+    .body {
+        border-style: dotted; border-color: rgb(70, 190, 40); background-color: rgb(245, 245, 245); 	font-family: sans-serif;
+        width: 100%; font-size: 1.5em;
+    }
+
+    .rubriquebanniere {
+        font-family: monospace;
+    }
+    .rubrique {
+        background-color: rgb(239, 221, 0); 
+        position: absolute;
+        bottom: 5em;
+        right: 1em;
+        display: none;
+    }
+    .adsense {
+        display: none;
+        float: bottom;
+    }
+    .menu {
+        position:absolute;
+        top:0em;
+        left:0em;
+        visibility: visible;
+    }
+    .menu_contents {
+        position:absolute;
+        visibility: hidden;
+    }
+    .boutonMenu {
+        border: 4px outset rgb(250, 245, 245); 
+        vertical-align: top; 
+        background-color: rgb(248, 250, 249); 	
+        position:absolute;
+        left:0em;
+        top:0em;
+        visibility: visible;
+    }
+    .search {
+        visibility: hidden;
+        position : absolute;
+    }
+    .rubriques {
+        border: 4px outset rgb(250, 245, 245); 
+        vertical-align: top; 
+        background-color: rgb(248, 250, 249); 	
+        position:absolute;
+        top:1em;
+        left:1em;
+        visibility:hidden;
+    }
+    .copyright {
+        position: absolute;
+        display:none;
+        bottom: 1em;
+        right: 1em;
+    }
+    .sitemap {
+        padding: 2px; font-size: 1.1em; font-weight: lighter; background-color: rgb(255, 255, 255); 
+    }
+
+    .info_flash {
+        visibility:hidden;    
+    }
 }/* 
 
 
@@ -193,28 +197,31 @@ table {
  
 */
 @media screen and (min-device-width:1000px) {			
-table {
-	font-size: 1em;
-	border-width: 0; 
-}
-	.body {
-	border-style: dotted; border-color: rgb(70, 190, 40); background-color: rgb(245, 245, 245); 	font-family: sans-serif;font-size: 1.15em;
-}
-.rubrique {
-	background-color: rgb(239, 221, 0);
-}
-.menu {
-	border: 1px outset rgb(250, 245, 245); vertical-align: top; background-color: rgb(243, 243, 243); 
-}
-.boutonMenu {
-	position: absolute;
-	visibility: hidden;
-}
-.sitemap {
-	padding: 2px; font-size: 0.9em; font-weight: lighter; background-color: rgb(255, 255, 255); 
-}
+    table {
+        font-size: 1em;
+        border-width: 0; 
+    }
+    .body {
+        border-style: dotted; border-color: rgb(70, 190, 40); background-color: rgb(245, 245, 245); 	font-family: sans-serif;font-size: 1.15em;
+    }
+    .rubriquebanniere {
+        visibility: hidden;
+    }
+    .rubrique {
+        background-color: rgb(239, 221, 0);
+    }
+    .menu {
+        border: 1px outset rgb(250, 245, 245); vertical-align: top; background-color: rgb(243, 243, 243); 
+    }
+    .boutonMenu {
+        position: absolute;
+        visibility: hidden;
+    }
+    .sitemap {
+        padding: 2px; font-size: 0.9em; font-weight: lighter; background-color: rgb(255, 255, 255); 
+    }
 
-.info_flash {
-    font-style: oblique; visibility: visible; 
-}
+    .info_flash {
+        font-style: oblique; visibility: visible; 
+    }
 }
