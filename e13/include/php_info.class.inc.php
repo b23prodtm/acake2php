@@ -77,25 +77,31 @@ if (!isset($ClasseInfo)) {
 
                 private function formulaire_ajout($pageScript, SQL &$sql) {
                         $form = new Formulaire("ajouter une info", $pageScript);
-                        $info_valider = new ChampValider("Publier l'info");
                         // valeurs deja enregistree mais qui n'ont pas pu etre publiees
                         $i_titre = filter_input(INPUT_POST, 'i_titre');
+                        $this->fm_ctitre($sql, $form, $i_titre);
                         $i_categorie = filter_input(INPUT_POST, 'i_categorie');
+                        $this->fm_ccat($sql, $form, $i_categorie);
                         $i_contenu = array();
                         foreach ($this->contenu as $lang => $text) {
                                 $i_contenu[$lang] = filter_input(INPUT_POST, 'i_contenu' . $lang);
                         }
-                        $i_auteur = array_key_exists("client", $_SESSION) && array_key_exists("id", $_SESSION["client"]) ? $_SESSION["client"]['id'] : "";
-                        return $this->formulaire_fin($sql, $i_titre, $i_categorie, $i_auteur, $i_contenu, NULL, $info_valider, $form);
+                        $i_auteur = array_key_exists("client", $_SESSION) && array_key_exists("id", $_SESSION["client"]) ? $_SESSION["client"]['id'] : "";                      
+                        $this->fm_cinfo($sql, $form, $i_auteur, $i_contenu);
+                        $info_images = filter_input(INPUT_POST, 'i_images');
+                        $this->fm_cimage($sql, $form, $info_images);
+                        return $this->formulaire_fin($sql, $form, "Publier l'info");
                 }
 
                 private function formulaire_modif($pageScript, SQL &$sql) {
                         $form = new Formulaire("modifier une info id:" . $this->id, $pageScript);
-                        $info_valider = new ChampValider("Sauvegarder les modifications");
                         $i_titre = $this->titre;
+                        $this->fm_ctitre($sql, $form, $i_titre);
                         $i_categorie = $this->categorie;
+                        $this->fm_ccat($sql, $form, $i_categorie);
                         $i_contenu = $this->contenu;
                         $i_auteur = $this->auteur;
+                        $this->fm_cinfo($sql, $form, $i_auteur, $i_contenu);
                         /* chaque image existante dans l'info, est affiche dans un groupe de champs checkbox; pour supprimer, decocher. pour ajouter, un champ FILE est ajouté plus bas dans le formulaire */
                         $champs_images = array();
                         foreach ($this->images as $key => $id) {
@@ -106,33 +112,44 @@ if (!isset($ClasseInfo)) {
                         }
 
                         $info_images = new ChampGroupe("Images:", "Pour supprimer une image, enlever le coche.", "i_images[]", $champs_images);
-                        return $this->formulaire_fin($sql, $i_titre, $i_categorie, $i_auteur, $i_contenu, $info_images, $info_valider, $form);
+                        $this->fm_cimage($sql, $form, $info_images);
+                        return $this->formulaire_fin($sql, $form, "Sauvegarder les modifications");
                 }
 
-                private function formulaire_fin(SQL &$sql, $i_titre, $i_categorie, $i_auteur, $i_contenu, $info_images, $info_valider, Formulaire &$form) {
-                        debug("formfin");
+                private function fm_ctitre(SQL &$sql, Formulaire &$form, $i_titre) {
                         $info_titre = new ChampTexte('i_titre', "Titre:", "Le titre de l'information " . Info::GetLanguages(), "50", NULL, $i_titre);
+                        $form->ajouterChamp($info_titre);
+                }
+                private function fm_ccat(SQL &$sql, Formulaire &$form, $i_categorie) {
                         $info_categorie = CAT_getSelect($sql, 'i_categorie', "Categorie:", "Pour en ajouter une nouvelle, voir page " . HTML_lien($GLOBALS['admin__cat'], "gestion catégorie"), $i_categorie);
-
+                        $form->ajouterChamp($info_categorie);
+                }
+                private function fm_cimage(SQL &$sql, Formulaire &$form, $info_images) {
                         $info_image = new ChampFile('i_image', "Ajouter une image JPEG:", "Taille maximale 200ko.", 200000);
                         $info_image_nom = new ChampTexte('i_image_nom', "Titre de l'image:", "Le titre de l'image, qui apparaîtra au-dessous de celle-ci.", "20");
                         $info_image_desc = new ChampAireTexte('i_image_desc', "Description (courte) de l'image:", "facultatif", "20", "3");
-                        $info_auteur = new ChampTexte('i_auteur', "Auteur:", "Nom/surnom de l'auteur de l'info.", "15", "20", $i_auteur);
-                        $info_effacer = new ChampEffacer("Effacer les champs");
-
-                        $form->ajouterChamp($info_titre);
-                        $form->ajouterChamp($info_categorie);
-                        foreach ($this->contenu as $lang => $text) {
-                                $info_contenu[$lang] = new ChampAireTexte('i_contenu' . $lang, "Info (" . $lang . ") : ", "Le contenu de l'information.", "30", "20", $i_contenu[$lang]);
-                                $form->ajouterChamp($info_contenu[$lang]);
-                        }
                         if (isset($info_images)) {
                                 $form->ajouterChamp($info_images);
                         }
                         $form->ajouterChamp($info_image);
                         $form->ajouterChamp($info_image_nom);
                         $form->ajouterChamp($info_image_desc);
+                }
+                private function fm_cinfo(SQL &$sql, Formulaire &$form, $i_auteur, $i_contenu) {
+                        foreach ($i_contenu as $lang => $text)
+                        {
+                        $info_contenu[$lang] = new ChampAireTexte('i_contenu' . $lang, "Info (" . $lang . ") : ", "Le contenu de l'information.", "30", "20", $text);
+                        $form->ajouterChamp($info_contenu[$lang]);
+                        }
+                        $info_auteur = new ChampTexte('i_auteur', "Auteur:", "Nom/surnom de l'auteur de l'info.", "15", "20", $i_auteur);
                         $form->ajouterChamp($info_auteur);
+                }
+                private function formulaire_fin(SQL &$sql, Formulaire &$form, $texteValider) {
+                        debug("formfin");
+                        
+                        $info_effacer = new ChampEffacer("Effacer les champs");
+                        $info_valider = new ChampValider($texteValider);
+                        
                         $form->ajouterChamp($info_effacer);
                         $form->ajouterChamp($info_valider);
                         return $form->fin();
