@@ -112,7 +112,10 @@ if (!isset($ClasseImage)) {
                         $this->size = $size;
                 }
 
-                function strSize() { // retourne un array(sizex[%;px],sizey[%;px])
+                /**
+                  retourne un array(sizex[%;px],sizey[%;px])
+                 *                  */
+                function strSize() {
                         if (!strrpos($this->size, 'x')) // zoom (%)
                                 return array("nX" => $this->size . "%", "nY" => $this->size . "%");
                         else { // redimensionner (resample)
@@ -122,42 +125,45 @@ if (!isset($ClasseImage)) {
                         }
                 }
 
-                function resize() {
+                private function newSize() {
+                        $size = array(0, 0);
                         if (isset($this->img)) {
-                                if (isset($this->size)) {
-                                        $src = $this->img;
-                                        $width = imagesX($this->img);
-                                        $height = imagesY($this->img);
-                                        $size = $this->strSize();
-                                        $new_height = $size["nY"];
-                                        $new_width = $size["nX"];
-                                        if (strrpos($new_width, '%')) {
-                                                $new_width = (int) ($width * (substr($size["nX"], 0, -1) / 100));
-                                                $new_height = (int) ($height * ($new_width / $width));
-                                        } else { // resizing to match square area of $size["nX"];$size["nY"], Aspect ratio preserved
-                                                if ($width > $new_width) {
-                                                        $new_height = (int) ($height * ($new_width / $width));
-                                                }
-                                                if ($new_height > $size["nY"]) {
-                                                        $new_width = (int) ($new_width * ($size["nY"] / $new_height));
-                                                        $new_height = $size["nY"];
-                                                }
-                                                if ($width < $new_width) {
-                                                        if ($height > $new_height)
-                                                                $new_width = (int) ($width * ($new_height / $height));
-                                                }
-                                        }
-                                        $dst = imagecreatetruecolor($new_width, $new_height);
-                                        imagecopyresized($dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-                                        $this->img = $dst;
-                                        $this->setSize($new_width . "x" . $new_height);
-                                        return true;
-                                }
+                                $size[0] = imagesX($this->img);
+                                $size[1] = imagesY($this->img);
                         }
-                        else {
-                                $old = error_reporting(4096);
-                                trigger_error("Image ressource not defined, can't do resize().", E_NOTICE);
-                                error_reporting($old);
+                        if (isset($this->size)) {
+                                $size = $this->strSize();
+                                $new_height = $size["nY"];
+                                $new_width = $size["nX"];
+                                if (strrpos($new_width, '%')) {
+                                        $new_width = (int) ceil($size[0] * (substr($size["nX"], 0, -1) / 100));
+                                        $new_height = (int) ceil($size[1] * ($new_width / $size[0]));
+                                }
+                                return array($new_width, $new_height);
+                        } else {
+                                trigger_error("Image size was not defined.", E_WARNING);
+                                $this->size = $size;
+                                return $size;
+                        }
+                }
+
+                function resize() {
+                        if (isset($this->img) && isset($this->size)) {
+                                $width = imagesX($this->img);
+                                $height = imagesY($this->img);
+                                $size = $this->newSize();
+                                $dst = $this->img;
+                                if ($size[0] != $width) {
+                                        $dst = imagescale($this->img, $size[0]);
+                                }
+                                if (imagesY($dst) > $size[1]) {
+                                        $dst = imagescale($dst, $size[1]);
+                                }
+                                $this->img = $dst;
+                                $this->setSize($size[0] . "x" . $size[1]);
+                                return true;
+                        } else {
+                                trigger_error("Image ressource not defined, can't do resize().", E_WARNING);
                         }
                 }
 
@@ -188,65 +194,69 @@ if (!isset($ClasseImage)) {
                         imagestring($this->img, 1, 5, 5, "Erreur de chargement de l'image", $tc);
                 }
 
-                function afficher($mode = 0) { // mode (0) retourner une balise HTML pointant le fichier de création d'image depuis SQL; mode (1) affichage sur stdout, envoyer directement au navigateur l'image stockée dans $this->file ou $this->img; mode (2) retourner balise HTML avec $this->file comme source de l'image
+                /**
+                  affichage sur stdout, envoyer directement au navigateur l'image stockée dans $this->file ou $this->img
+                 * enclenchement de la bufferisation de sortie --output buffering--, fonction callback qui appelle la fonction de conversion avant l'envoi de la sortie au navigateur. Les entetes http ne sont pas affectés, ils sont envoyés à leur apppel. */
+                function afficher_f() {
+                        // conversion de la sortie pour les images
+                        mb_http_output("pass");
+                        ob_start("mb_output_handler");
+                        header("Content-type: " . $this->mime);
+                        $this->resize();
+                        switch ($this->mime) {
+                                case "image/jpeg": case "image/jpg":
+                                        imagejpeg($this->img);
+                                        break;
+                                case "image/gif":
+                                        imagegif($this->img);
+                                        break;
+                                case "image/png":
+                                        imagepng($this->img);
+                                        break;
+                                default:
+                                        die("Pas de support $this->mime sur cette page.");
+                                        break;
+                        }
+                        ob_end_flush();
+                }
+
+                /**
+                 * retourner balise HTML avec $this->file comme source de l'image
+                 */
+                function afficher_h() {
+                        if (isset($this->file)) {
+                                if (file_exists($this->file)) {
+                                        error_reporting($old);
+                                        $image = $GLOBALS["e13___image"] . "?file=" . urlencode($this->file) . "&size=" . (4 * $this->size);
+                                        return HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $image . "','b23::Open Window ^','width=this.width*4, height=this.height*4, status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
+                                } else {
+                                        trigger_error("display(2):File $this->file not found! display() returned unsuccessfully.", E_WARNING);
+                                }
+                        } else {
+                                trigger_error("display(2):Function call setFile() expected for variable file isn't initialized.", E_WARNING);
+                        }
+                }
+
+                /**
+                 * retourner une balise pour l'affichage d'image depuis la base de données
+                 * fichier temporaire sur le disque, depuis un script _image.php?id=n&size=n 
+                 *  */
+                function afficher_s() {
+                        if ($this->size == "") {
+                                $this->setSize("100");
+                        }
+                        $image = $GLOBALS["include___image"] . "?file=" . urlencode(serialize($this->file)) . "&size=" . (4 * $this->size);
+                        return HTML_image($GLOBALS["include___image"] . "?id=" . $this->id . "&size=" . $this->size, array("javascript" => array('onClick' => "window.open('" . $image . "','b23::Open Window ^','width=this.width*4, height=this.height*4, status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
+                }
+
+                function afficher($mode = 0) {
                         /* --- status:OK!! */
                         if ($mode == 1) {
-                                // conversion de la sortie pour les images
-                                mb_http_output("pass");
-                                /* enclenchement de la bufferisation de sortie --output buffering--, fonction callback qui appelle la fonction de conversion avant l'envoi de la sortie au navigateur. Les entetes http ne sont pas affectés, ils sont envoyés à leur apppel. */
-                                ob_start("mb_output_handler");
-
-                                if (isset($this->file)) {
-                                        // logo zend
-                                        if ($this->file == "zend_logo") {
-                                                /*                                                 * * deprecated $this->img = zend_logo_guid(); */
-                                                $this->mime = "image/jpeg";
-                                        }
-
-                                        if (!isset($this->img))
-                                                $this->loadfromfile();
-                                } else
-                                        $this->load_error();
-
-                                $this->resize();
-                                header("Content-type: " . $this->mime);
-                                switch ($this->mime) {
-                                        case "image/jpeg":
-                                        case "image/jpg":
-                                                imagejpeg($this->img);
-                                                break;
-                                        case "image/gif":
-                                                imagegif($this->img);
-                                                break;
-                                        case "image/png":
-                                                imagepng($this->img);
-                                                break;
-                                        default:
-                                                die("Pas de support $this->mime sur cette page.");
-                                                break;
-                                }
-                                ob_end_flush();
+                                $this->afficher_f();
                         } else if ($mode == 2) {
-                                $old = error_reporting(4096);
-                                if (isset($this->file)) {
-                                        if (file_exists($this->file)) {
-                                                error_reporting($old);
-                                                $image = $GLOBALS["e13___image"] . "?file=" . urlencode($this->file) . "&size=" . (4 * $this->size);
-                                                return HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $image . "','b23::Open Window ^','width=this.width*4, height=this.height*4, status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
-                                        } else
-                                                trigger_error("display(2):File $this->file not found! display() returned unsuccessfully.", E_NOTICE);
-                                } else {
-                                        trigger_error("display(2):Function call setFile() expected for variable file isn't initialized.", E_NOTICE);
-                                }
-                                error_reporting($old);
-                        } else { // mode == 0												
-                                /* pas d'enregistrement sur disque (problèmes de permissions) => affichage par un script _image.php?id=n&size=n 
-                                 */
-                                if ($this->size == "")
-                                        $this->setSize("100");
-                                $size = $this->strSize();
-                                $image = $GLOBALS["include___image"] . "?file=" . urlencode(serialize($this->file)) . "&size=" . (4 * $this->size);
-                                return HTML_image($GLOBALS["include___image"] . "?id=" . $this->id . "&size=" . $this->size, array("javascript" => array('onClick' => "window.open('" . $image . "','b23::Open Window ^','width=this.width*4, height=this.height*4, status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
+                                $this->afficher_h();
+                        } else { // mode == 0	
+                                $this->afficher_s();
                         }
                 }
 
@@ -254,14 +264,17 @@ if (!isset($ClasseImage)) {
                         $tbl = new Tableau(2, 1, str_replace(" ", "_", $this->nom));
                         $tbl->setOptionsArray(array("class" => "image"));
                         $tbl->setContenu_Cellule(0, 0, "<center>" . $this->afficher() . "<center>");
-                        if ($desc)
+                        if ($desc) {
                                 $tbl->setContenu_Cellule(1, 0, $this->nom . " : " . $this->desc);
-                        else
+                        } else {
                                 $tbl->setContenu_Cellule(1, 0, "<center>" . $this->nom . "</center>");
-                        if ($mode == 0)
-                                return $tbl->fin(); // HTML
-                        if ($mode == 1)
-                                $tbl->fin(1); // to stdout
+                        }
+                        if ($mode == 0) {
+                                return $tbl->fin();
+                        } // HTML
+                        if ($mode == 1) {
+                                $tbl->fin(1);
+                        } // to stdout
                         return true;
                 }
 
@@ -379,5 +392,6 @@ if (!isset($ClasseImage)) {
                 }
 
         }
+
 }
 ?>
