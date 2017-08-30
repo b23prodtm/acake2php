@@ -467,7 +467,7 @@ if (!isset($ClasseFormulaire)) {
                 public function __construct($taille) {
                         parent::__construct("captcha", "", "", $taille, NULL, "", TRUE);
                         $this->capt = new Captcha($taille);
-                        $this->libelle = $this->r->lang("recopierlemot","form") . " <i>".$this->capt->captcha()."</i> ";
+                        $this->libelle = $this->r->lang("recopierlemot","form") . " <b><i>".$this->capt->captcha()."</i></b> ";
                         }                                      
         }
         

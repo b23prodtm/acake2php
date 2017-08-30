@@ -540,9 +540,9 @@ if (!isset($ClassePage)) {
                                         /** la safeSession est activée (voir classe formulaire et balise FORM), qui desactive les formulaires si non activee */
                                         $_SESSION["client"]['id'] = $this->user;
                                         $_SESSION["client"]['mdp'] = $mdpmd5;
-                                        $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("vousetesauthentifie", "admin") . " : " . $this->user);
+                                        $this->ajouterContenu("<br><br><center>".$captcha."<b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("vousetesauthentifie", "admin") . " : " . $this->user);
                                 } else {
-                                        $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>$this->user/:>" . $this->r->lang("erreurauth", "admin") . (filter_input(INPUT_POST, 'motdepasse') != filter_input(INPUT_POST, 'motdepasse_confirm') ? $this->r->lang("confirmermdp", "admin") : $this->r->lang("confirmerutilisateur", "admin")) . " ".$captcha);
+                                        $this->ajouterContenu("<br><br><center>".$captcha."<b>" . $this->r->lang("section", "admin") . "</b></center><br>$this->user/:>" . $this->r->lang("erreurauth", "admin") . (filter_input(INPUT_POST, 'motdepasse') != filter_input(INPUT_POST, 'motdepasse_confirm') ? $this->r->lang("confirmermdp", "admin") : $this->r->lang("confirmerutilisateur", "admin")));
                                         $this->form_authentification($this->getURL());
                                         $this->fin();
                                 }
