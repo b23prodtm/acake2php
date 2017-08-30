@@ -27,7 +27,8 @@ if (!isset($ClasseCapt)) {
         class Captcha {
                 var $t;
                 public function __construct($tailleMot) {
-                        $this->$t = tailleMot;
+                        /* @var $tailleMot integer not greater than the dict-lang.txt longest word */
+                        $this->t = $tailleMot;
                 }
                 /** générer une chaîne de caractères alphabétiques aléatoires. */
                 function motHasard($n)
