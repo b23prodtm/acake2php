@@ -192,18 +192,11 @@ if (!isset($ClasseInfo)) {
                                 return $html;
                         } else {
                                 $tbl = new Tableau(mysqli_num_rows($infos) + 2, 6, "infos");
-                                $tbl->setOptionsArray(array("HTML" => array("BORDER" => 0),
-                                    "class" => "liste"));
-                                $tbl->setContenu_Cellule(0, 0, $tbl->id, array("HTML" => array("COLSPAN" => $tbl->nbColonnes),
-                                    "class" => "titre"));
-                                $e = array("class" => "entete");
-                                $tbl->setContenu_Cellule(1, 0, "id", $e);
-                                $tbl->setContenu_Cellule(1, 1, "titre", $e);
-                                $tbl->setContenu_Cellule(1, 2, "date", $e);
-                                $tbl->setContenu_Cellule(1, 3, "langue", $e);
-                                $tbl->setContenu_Cellule(1, 4, "categorie", $e);
-
-                                for ($i = 2, $n = 0; $i - 2 < mysqli_num_rows($infos); $i++) {
+                                $tbl->setOptionsArray(array("HTML" => array("BORDER" => 0), "class" => "liste"));
+                                $tbl->setContenu_Cellule(0, 0, $tbl->id, array("HTML" => array("COLSPAN" => $tbl->nbColonnes), "class" => "titre"));
+                                $tbl->setOptionsArray_Ligne(1, array("class" => "entete"));
+                                $tbl->setContenu_Ligne(1, array("id", "titre", "date", "langue", "categorie"));
+                                for ($row = 2, $n = 0; $row - 2 < mysqli_num_rows($infos); $row++) {
                                         $nfo = new Info($sql, $infos);
                                         // lignes de couleurs alternées
                                         $a = array("class" => "A" . ($n++) % 2);

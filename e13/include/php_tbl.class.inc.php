@@ -142,6 +142,18 @@ if (!isset($ClasseTableau)) {
 
                         $this->setCellule($i, $j, $c);
                 }
+                
+                function setContenu_Ligne($i, $cellules = array(), $o = -1) {
+                        for ($j = 0; $j < count($cellules); $j++) {
+                                $this->setContenu_Cellule($i, $j, $cellules[$j], $o);
+                        }
+                }
+                
+                function setContenu_Colonne($j, $cellules = array(), $o = -1) {
+                        for ($i = 0; $i < count($cellules); $i++) {
+                                $this->setContenu_Cellule($i, $j, $cellules[$i], $o);
+                        }
+                }
 
                 private function getCellule_key($i, $j, $key, $array = FALSE) {
                         $c = $this->getCellule($i, $j);
