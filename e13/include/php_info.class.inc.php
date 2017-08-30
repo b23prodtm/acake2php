@@ -30,12 +30,14 @@ if (!isset($ClasseInfo)) {
                         $this->auteur = $a;
                         $this->images = array();
                         $this->contenu = array(FR => NULL, EN => NULL, DE => NULL);
-                        if (!$infos) {
+                        $this->loadResult($sql, $infos);
+                }
+
+                private function loadResult(SQL &$sql, mysqli_result &$result) {        // reception info de la base SQL
+                        $info = $sql->ligneSuivante_Array($result);
+                        if (!$info) {
                                 return;
                         }
-                        // init var
-                        // reception info de la base SQL
-                        $info = $sql->ligneSuivante_Array($infos);
                         // appel fonction de la classe parente Info
                         $this->titre = $info["titre"];
                         $this->auteur = $info["auteur"];
@@ -199,29 +201,10 @@ if (!isset($ClasseInfo)) {
                                 for ($row = 2, $n = 0; $row - 2 < mysqli_num_rows($infos); $row++) {
                                         $nfo = new Info($sql, $infos);
                                         // lignes de couleurs alternées
-                                        $a = array("class" => "A" . ($n++) % 2);
-                                        $tbl->setOptionsArray_Ligne($i, $a);
-
-                                        $tbl->setContenu_Cellule($i, 0, $nfo->getId());
-                                        $tbl->setContenu_Cellule($i, 1, $nfo->getTitre());
-                                        $tbl->setContenu_Cellule($i, 2, $nfo->getDate());
-                                        $tbl->setContenu_Cellule($i, 3, $nfo->getLangue());
-                                        $tbl->setContenu_Cellule($i, 4, $nfo->getCategorie());
-                                        // mode afficher
-                                        $champCoche = NULL;
-                                        if ($mode == "modifier") {
-                                                // ****** FORMULAIRE SUITE champ radio pour modifier l'info desiree
-                                                $champCoche = new ChampCoche("info_a_modifier", $nfo->getId(), "info id: " . $nfo->getId(), "", FALSE, "RADIO");
-                                        }
-                                        // mode supprimer....
-                                        if ($mode == "supprimer") {
-                                                $champCoche = new ChampCoche("info_a_supprimer[]", $nfo->getId(), "info id: " . $nfo->getId(), "");
-                                        }
-                                        // mode afficher
-                                        if ($mode == "afficher") {
-                                                $champCoche = new ChampCoche("info_a_afficher[]", $nfo->getId(), "info id: " . $nfo->getId(), "");
-                                        }
-                                        $tbl->setContenu_Cellule($i, 5, $champCoche->getHTML(LIBRE, $f->classe), $a);
+                                        $tbl->setOptionsArray_Ligne($row, array("class" => "A" . ($n++) % 2));
+                                        $tbl->setContenu_Ligne($row, array($nfo->getId(), $nfo->getTitre(), $nfo->getDate(), $nfo->getLangue(), $nfo->getCategorie()));
+                                        // mode afficher                                      
+                                        $tbl->setContenu_Cellule($row, 5, Info::ChampCoche($nfo, $mode)->getHTML(LIBRE, $f->classe));
                                 }
                                 mysqli_free_result($infos);
                                 $modifier = new ChampValider($mode, "Si vous avez choisi l'info à $mode, cliquez sur $mode.");
