@@ -110,6 +110,11 @@ form {
 td.formulaire {
     font-size: 0.8em; background-color: rgb(255, 153, 0); 
 }
+.captcha {
+        font-family: sans-serif;
+        font-size: 1em;
+        color: rgb(0,143,255);
+}
 /* RESPONSIVE LAYOUT
 
 

@@ -526,23 +526,23 @@ if (!isset($ClassePage)) {
                         echo $this->r->lang("login", "admin");
                         /** nothing set in session and no captcha */
                                 $captcha = "";
-                        if (!Captcha::verification($this, $captcha) && (!array_key_exists('client', $_SESSION) || !array_key_exists('mdp', $_SESSION['client']))) {
-                                $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("loginsvp", "admin") . " ".$captcha."<br>");
+                        if (!Captcha::verification($this, $captcha) && (!array_key_exists('client', $_SESSION) || !array_key_exists('mdp', $_SESSION['client']))) {                                        
+                                $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("loginsvp", "admin") ."<br>".$captcha);
                                 $this->form_authentification($this->getURL());
                                 $this->fin();
                         } else {
                                 $mdpmd5 = filter_input(INPUT_POST, 'motdepasse') ? md5(filter_input(INPUT_POST, 'motdepasse')) : $_SESSION['client']['mdp'];
                                 $this->user = filter_input(INPUT_POST, 'identifiant') ? filter_input(INPUT_POST, 'identifiant') : $_SESSION['client']['id'];
-                                echo $this->r->lang("enregistrementsession", "admin");
+                                echo $this->r->lang("enregistrementsession", "admin");                                      
                                 /** utilise le salt de PASSWORD_ADMIN pour crypter motdepasse, et donc retourne le meme hashcode si le
                                  * motdepasse est le meme que celui enregistré par PASSWORD_ADMIN  */
                                 if (ADMIN_Page::valide($mdpmd5)) {
                                         /** la safeSession est activée (voir classe formulaire et balise FORM), qui desactive les formulaires si non activee */
                                         $_SESSION["client"]['id'] = $this->user;
                                         $_SESSION["client"]['mdp'] = $mdpmd5;
-                                        $this->ajouterContenu("<br><br><center>".$captcha."<b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("vousetesauthentifie", "admin") . " : " . $this->user);
+                                        $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("vousetesauthentifie", "admin") . " : " . $this->user);
                                 } else {
-                                        $this->ajouterContenu("<br><br><center>".$captcha."<b>" . $this->r->lang("section", "admin") . "</b></center><br>$this->user/:>" . $this->r->lang("erreurauth", "admin") . (filter_input(INPUT_POST, 'motdepasse') != filter_input(INPUT_POST, 'motdepasse_confirm') ? $this->r->lang("confirmermdp", "admin") : $this->r->lang("confirmerutilisateur", "admin")));
+                                        $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>$this->user/:>" . $this->r->lang("erreurauth", "admin") . (filter_input(INPUT_POST, 'motdepasse') != filter_input(INPUT_POST, 'motdepasse_confirm') ? $this->r->lang("confirmermdp", "admin") : $this->r->lang("confirmerutilisateur", "admin")));
                                         $this->form_authentification($this->getURL());
                                         $this->fin();
                                 }
