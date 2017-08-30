@@ -73,7 +73,7 @@ if (!isset($ClasseCapt)) {
                                 $retMsg = $page->r->lang("captchagood", "form");
                                 return TRUE;
                         } else {
-                                $retMsg = $$page->r->lang("captchafail", "form");
+                                $retMsg = $page->r->lang("captchafail", "form");
                                 return FALSE;
                         }
                 }
