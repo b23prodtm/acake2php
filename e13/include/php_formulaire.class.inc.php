@@ -22,6 +22,7 @@ global $ClasseFormulaire;
 
 if (!isset($ClasseFormulaire)) {
         require ($GLOBALS['include__php_tbl.class.inc']);
+        require ($GLOBALS['include__php_captcha.class.inc']);
 
         $ClasseFormulaire = 1;
 
@@ -461,6 +462,15 @@ if (!isset($ClasseFormulaire)) {
 
         }
 
+        class ChampCaptcha extends ChampTexte {
+                var $capt;
+                public function __construct($taille) {
+                        parent::__construct("captcha", "", "", $taille, NULL, "", TRUE);
+                        $this->capt = new Captcha($taille);
+                        $this->libelle = $this->r->lang("recopierlemot","form") . " <i>".$this->capt->captcha()."</i> ";
+                        }                                      
+        }
+        
         class ChampEffacer extends Champ {
 
                 var $img;

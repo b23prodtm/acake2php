@@ -1,10 +1,23 @@
 <?php
 
-/* ! 
-  @copyrights b23|prod:www.b23prodtm.info - 2004 (all rights reserved to author)
-  @author	www.b23prodtm.infoNA
-  @date	Sat Sep 18 15:43:19 CEST 2004 @613 /Internet Time/
-  @filename	php_page.class.inc
+/*
+ * Copyright 2017 wwwb23prodtminfo <b23prodtm at sourceforge.net>.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ /*
+  * @date	Sat Sep 18 15:43:19 CEST 2004 @613 /Internet Time/
+  * @filename	php_page.class.inc
  */
 global $ClassePage;
 if (!isset($ClassePage)) {
@@ -21,6 +34,7 @@ if (!isset($ClassePage)) {
         require ($GLOBALS['include__php_constantes.inc']);
         require ($GLOBALS["include__php_module_DVD.inc"]);
         require ($GLOBALS["include__php_module_locale.inc"]);
+        require ($GLOBALS["include__php_captcha.class.inc"]);
 
         define("BUF_OFF", false);
 
@@ -510,8 +524,10 @@ if (!isset($ClassePage)) {
                         /* mdp de la page ADMIN look include/getHashPassword.php */
                         $this->mdp = PASSWORD_ADMIN;
                         echo $this->r->lang("login", "admin");
-                        if (!filter_input(INPUT_POST, 'motdepasse') && (!array_key_exists('client', $_SESSION) || !array_key_exists('mdp', $_SESSION['client']))) {
-                                $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("loginsvp", "admin") . "<br>");
+                        /** nothing set in session and no captcha */
+                                $captcha = "";
+                        if (!Captcha::verification($this, $captcha) && (!array_key_exists('client', $_SESSION) || !array_key_exists('mdp', $_SESSION['client']))) {
+                                $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("loginsvp", "admin") . " ".$captcha."<br>");
                                 $this->form_authentification($this->getURL());
                                 $this->fin();
                         } else {
@@ -526,7 +542,7 @@ if (!isset($ClassePage)) {
                                         $_SESSION["client"]['mdp'] = $mdpmd5;
                                         $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("vousetesauthentifie", "admin") . " : " . $this->user);
                                 } else {
-                                        $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>$this->user/:>" . $this->r->lang("erreurauth", "admin") . (filter_input(INPUT_POST, 'motdepasse') != filter_input(INPUT_POST, 'motdepasse_confirm') ? $this->r->lang("confirmermdp", "admin") : $this->r->lang("confirmerutilisateur", "admin")));
+                                        $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>$this->user/:>" . $this->r->lang("erreurauth", "admin") . (filter_input(INPUT_POST, 'motdepasse') != filter_input(INPUT_POST, 'motdepasse_confirm') ? $this->r->lang("confirmermdp", "admin") : $this->r->lang("confirmerutilisateur", "admin")) . " ".$captcha);
                                         $this->form_authentification($this->getURL());
                                         $this->fin();
                                 }
@@ -553,6 +569,8 @@ if (!isset($ClassePage)) {
                         $form_auth->ajouterchamp($user);
                         $user_mdp = new ChampPassword("motdepasse", $this->r->lang("mdp", "form"), $this->r->lang("entrermdp", "form"), 10);
                         $form_auth->ajouterchamp($user_mdp);
+                        $captcha = new ChampCaptcha(5);
+                        $form_auth->ajouterChamp($captcha);
                         $valider = new ChampValider("OK");
                         $form_auth->ajouterChamp($valider);
                         $effacer = new ChampEffacer("Effacer");
