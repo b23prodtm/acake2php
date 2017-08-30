@@ -70,11 +70,15 @@ if (!isset($ClasseCapt)) {
                 public static function verification($page, &$retMsg = "")
                 {
                         $captcha = filter_input(INPUT_POST,'captcha');
-                        if ($captcha && $captcha == $_SESSION['captcha']) {
-                                $retMsg = $page->r->lang("captchagood", "form");
-                                return TRUE;
+                        if ($captcha) {
+                                if ($captcha == $_SESSION['captcha']) {
+                                        $retMsg = $page->r->lang("captchagood", "form");
+                                        return TRUE;
+                                } else {
+                                        $retMsg = $captcha ? $page->r->lang("captchafail", "form") : "";
+                                        return FALSE;
+                                }
                         } else {
-                                $retMsg = $page->r->lang("captchafail", "form");
                                 return FALSE;
                         }
                 }
