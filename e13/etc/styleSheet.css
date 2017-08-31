@@ -15,11 +15,11 @@ object, embed, canvas, video, audio, picture {
         height: auto;
 }
 .formulaire {
-        font-size-adjust: 0.6;
+        font-size-adjust: 0.8;
         color: rgb(255, 255, 255); background-color: rgb(255, 102, 0); 
 }
 .liste {        
-        font-size-adjust: 0.65;
+        font-size-adjust: 0.75;
         background-color: rgb(51, 51, 51); 
 }
 .titre {
