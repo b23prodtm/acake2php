@@ -12,7 +12,7 @@ $contenu = $p_infos->r->lang("contents", "infos");
 // info SQL
 $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 $p_infos->ajouterContenu("<H1>".$p_infos->r->lang("info")."</H1>");
-$infos = $sql->query("SELECT * FROM info WHERE langue IN ".  Info::GetLanguagesDeArray()." ORDER BY date DESC LIMIT 10");
+$infos = $sql->query("SELECT * FROM info WHERE langue IN ".  Info::findLangQuery()." ORDER BY date DESC LIMIT 10");
 for ($i = 0; $i < mysqli_num_rows($infos); $i++) {
     $info_SQL = new Info($sql, $infos);    
     $p_infos->ajouterContenu($info_SQL->getTableauMultiLang($sql));

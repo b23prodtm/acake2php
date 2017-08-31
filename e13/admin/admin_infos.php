@@ -137,11 +137,11 @@ if (filter_input(INPUT_GET, 'afficher')) {
                 $infos = $sql->query("SELECT * FROM info WHERE id IN (" . $query . ") ORDER BY date DESC");
                 for ($i = 0; $i < mysqli_num_rows($infos); $i++) {
                         $info = new Info($sql, $infos);
-                        $pAdmin->ajouterContenu("<br>" . $info->getTableauMultiLang($sql, "id: " . $post[$i]) . "<br>");
+                        $pAdmin->ajouterContenu("<br>" . $info->getTableauMultiLang($sql, "id: " . $info->getId() . "<br>"));
                 }
                 mysqli_free_result($infos);
         }
-        $listeInfos = Info::GetListe($sql, "afficher");
+        $listeInfos = Info::GetListe($sql, "afficher", Info::GetGlobalLanguages());
         $pAdmin->ajouterContenu($listeInfos);
 }
 $sql->close();

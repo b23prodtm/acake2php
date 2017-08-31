@@ -122,7 +122,7 @@ if (!isset($ClasseInfo)) {
                 }
 
                 private function fm_ctitre(SQL &$sql, Formulaire &$form, $i_titre) {
-                        $info_titre = new ChampTexte('i_titre', "Titre:", "Le titre de l'information " . Info::GetLanguages(), "50", NULL, $i_titre);
+                        $info_titre = new ChampTexte('i_titre', "Titre:", "Le titre de l'information " . Info::findLangQuery(Info::GetGlobalLanguages()), "50", NULL, $i_titre);
                         $form->ajouterChamp($info_titre);
                 }
 
@@ -183,11 +183,11 @@ if (!isset($ClasseInfo)) {
                         return Info::Formulaire($pageScript, "ajouter", new Info($sql, NULL), $sql);
                 }
 
-                public static function GetLanguages() {
-                        return Info::GetLanguagesDeArray($GLOBALS["LANGS"]);
+                public static function GetGlobalLanguages() {
+                        return $GLOBALS["LANGS"];
                 }
 
-                public static function GetLanguagesDeArray($langs = array()) {
+                public static function findLangQuery($langs = array()) {
                         if (count($langs) == 0) {
                                 $langs = array(getPrimaryLanguage());
                         }
@@ -208,7 +208,7 @@ if (!isset($ClasseInfo)) {
                         $f = new Formulaire($mode . "_info", $GLOBALS['admin__infos'] . "?" . $mode . "=1", LIBRE);
                         $html = $f->getHTML();
                         //debug("form");
-                        $infos = $sql->query("SELECT * FROM info WHERE langue IN " . Info::GetLanguagesDeArray($langs) . " ORDER BY 'date' DESC");
+                        $infos = $sql->query("SELECT * FROM info WHERE langue IN " . Info::findLangQuery($langs) . " ORDER BY 'date' DESC");
                         //debug("sql query");
                         if (!$infos) {
                                 $html .= $sql->listeErreurs();
@@ -389,7 +389,7 @@ if (!isset($ClasseInfo)) {
                                 if ($text == NULL || (!$intl && $lang != $this->langue)) {
                                         continue;
                                 } else {
-                                        $t_bord->setContenu_Cellule($row++, 0, $this->getTableLangage($sql, $caption, $text, $lang));
+                                        $t_bord->setContenu_Cellule($row++, 0, $this->getTableLangage($sql, $lang));
                                 }
                                 if (!$intl) {
                                         break;
