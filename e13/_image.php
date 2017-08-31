@@ -19,6 +19,7 @@
 include("include/php_registre.inc.php");
 new Registre(filter_input(INPUT_SERVER, 'PHP_SELF'));
 require($GLOBALS["include__php_image.class.inc"]);
+require($GLOBALS["include__php_captcha.class.inc"]);
 require($GLOBALS["include__php_SQL.class.inc"]);
 
 $image = new Image();
@@ -27,21 +28,16 @@ $h = filter_input(INPUT_GET, 'h');
 $id = filter_input(INPUT_GET, 'id');
 $f = filter_input(INPUT_GET, 'file');
 $motCaptcha = filter_input(INPUT_GET, 'captcha');
-if (!$id) {
-        if ($f) {
-                $image->setFile(urldecode(unserialize($f)));
-        } else {
-        trigger_error("image : missing valid file=url parameter", E_ERROR);
-                $image->load_error();
-        }
-} elseif ($motCaptcha) {
-        $captcha = new Captcha(strlen($motCaptcha));
-        $image = $captcha->image($motCaptcha);
-} elseif ($id) {
+if ($id) {
         // connexion SQL
         $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
         $image->FromSQL($sql, $id);
         $sql->close();
+} elseif ($f) {
+        $image->setFile(urldecode(unserialize($f)));
+} elseif ($motCaptcha) {
+        $captcha = new Captcha(strlen($motCaptcha));
+        $image = $captcha->image($motCaptcha);
 } else {
         trigger_error("image : missing a valid parameter like w,h id or file or captcha", E_ERROR);
         $image->load_error();
