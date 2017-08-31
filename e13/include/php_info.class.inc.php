@@ -34,7 +34,7 @@ if (!isset($ClasseInfo)) {
                         $this->categorie = $c;
                         $this->auteur = $a;
                         $this->images = array();
-                        $this->contenu = array(FR => NULL, EN => NULL, DE => NULL);                        
+                        $this->contenu = array(FR => NULL, EN => NULL, DE => NULL);
                         $this->loadResult($sql, $infos);
                 }
 
@@ -72,14 +72,6 @@ if (!isset($ClasseInfo)) {
 
                 /* formulaire pour ajouter une info dans la base SQL ou pour modifier avec $mode = "modifier" et $info contenant l'objet info a modifier
                   $pageScript devra gérer les valeurs POSTees et notamment les images qui envoient leurs id (supprimer les anciennes dans la table image, avant.) et le champ FILE avec la nouvelle image. */
-
-                private static function Formulaire($pageScript, $mode, Info &$info, SQL &$sql) {
-                        if ($mode === "ajouter") {
-                                return $info->formulaire_ajout($pageScript, $sql);
-                        } else if ($mode === "modifier") { // assume $mode=="modifier", $info==(Info)    
-                                return $info->formulaire_modif($pageScript, $sql);
-                        }
-                }
 
                 private function formulaire_ajout($pageScript, SQL &$sql) {
                         $form = new Formulaire("ajouter une info", $pageScript);
@@ -120,7 +112,7 @@ if (!isset($ClasseInfo)) {
                 }
 
                 private function fm_ctitre(SQL &$sql, Formulaire &$form, $i_titre) {
-                        $info_titre = new ChampTexte('i_titre', "Titre:", "Le titre de l'information " . Info::findLangQuery(Info::GetGlobalLanguages()), "50", NULL, $i_titre);
+                        $info_titre = new ChampTexte('i_titre', "Titre:", "Le titre du post " . Info::findLangQuery(array($this->langue)), "50", NULL, $i_titre);
                         $form->ajouterChamp($info_titre);
                 }
 
@@ -143,7 +135,7 @@ if (!isset($ClasseInfo)) {
 
                 private function fm_cinfo(SQL &$sql, Formulaire &$form, $i_auteur, $i_contenu) {
                         foreach ($i_contenu as $lang => $text) {
-                                $info_contenu[$lang] = new ChampAireTexte('i_contenu' . $lang, "Info (" . $lang . ") : ", "Le contenu de l'information.", "30", "20", $text);
+                                $info_contenu[$lang] = new ChampAireTexte('i_contenu' . $lang, "Texte ".Info::findLangQuery(array($lang))." : ", "Le contenu du post.", "30", "20", $text);
                                 $form->ajouterChamp($info_contenu[$lang]);
                         }
                         $info_auteur = new ChampTexte('i_auteur', "Auteur:", "Nom/surnom de l'auteur de l'info.", "15", "20", $i_auteur);
@@ -179,7 +171,8 @@ if (!isset($ClasseInfo)) {
                 /* ----- partie publique ----- */
 
                 public static function FormAjouter($pageScript, SQL &$sql) {
-                        return Info::Formulaire($pageScript, "ajouter", new Info($sql, $result), $sql);
+                        $info = new Info($sql, $result);
+                        return $info->formulaire_ajout($pageScript, $sql);
                 }
 
                 public static function GetGlobalLanguages() {
@@ -242,7 +235,7 @@ if (!isset($ClasseInfo)) {
                 // affichage du formulaire nécessaire pour modifier une info stockee dans la base SQL ($this)
                 function formModifier(SQL &$sql, $pageScript) {
                         debug("formModif");
-                        return Info::Formulaire($pageScript, "modifier", $this, $sql);
+                        return $this->formulaire_modif($pageScript, $sql);
                 }
 
                 function supprimer(SQL &$sql) {
