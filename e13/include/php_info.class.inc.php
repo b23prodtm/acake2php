@@ -21,7 +21,7 @@ if (!isset($ClasseInfo)) {
                 var $langue; // langue de préférence
                 var $id; // id dans la base SQL
 
-                public function __construct(SQL &$sql, $infos, $t = NULL, $a = NULL, $c = NULL, $d = NULL) {
+                public function __construct(SQL &$sql, mysqli_result &$infos, $t = NULL, $a = NULL, $c = NULL, $d = NULL) {
                         //init var
                         $this->titre = array(FR => NULL, EN => NULL, DE => NULL);
                         $this->date = $d;
