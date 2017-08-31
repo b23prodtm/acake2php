@@ -177,7 +177,7 @@ if (!isset($ClasseInfo)) {
                 /* ----- partie publique ----- */
 
                 public static function FormAjouter($pageScript, SQL &$sql) {
-                        return Info::Formulaire($pageScript, "ajouter", new Info($sql, NULL), $sql);
+                        return Info::Formulaire($pageScript, "ajouter", new Info($sql, $result), $sql);
                 }
 
                 public static function GetGlobalLanguages() {
