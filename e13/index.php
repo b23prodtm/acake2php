@@ -20,7 +20,7 @@ for ($i = 0; $i < mysqli_num_rows($infos); $i++) {
 mysqli_free_result($infos);
 
 // info normale
-$info = new Info($sql, FALSE, $p_infos->r->lang("message", "infos"), "webmaster", "admin/update", "19/10/2013");
+$info = new Info($sql, NULL, $p_infos->r->lang("message", "infos"), "webmaster", "admin/update", "19/10/2013");
 $info->ajouterImage($GLOBALS['images__wip.png'], "Rebuilding...");
 $info->ajouterContenu($p_infos->r->lang("visitus", "infos")." : ".HTML_lien($GLOBALS["e13__blog"], $p_infos->r->lang("blog")));
 
