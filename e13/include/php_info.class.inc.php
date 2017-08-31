@@ -26,16 +26,18 @@ if (!isset($ClasseInfo)) {
                  * @param mysqli_result $infos l'objet d'un retour base de données (ou initialiser une variable vide pour eviter une erreur fatale)
                  */
 
-                public function __construct(SQL &$sql, mysqli_result &$infos, $t = NULL, $a = NULL, $c = NULL, $d = NULL) {
+                public function __construct(SQL &$sql, mysqli_result &$infos = NULL, $t = NULL, $a = NULL, $c = NULL, $d = NULL) {
                         //init var
                         $this->langue = getPrimaryLanguage();
-                        $this->titre = array(FR => NULL, EN => NULL, DE => NULL);
+                        $this->titre = array($this->langue => $t);
                         $this->date = $d;
                         $this->categorie = $c;
                         $this->auteur = $a;
                         $this->images = array();
-                        $this->contenu = array(FR => NULL, EN => NULL, DE => NULL);
-                        $this->loadResult($sql, $infos);
+                        $this->contenu = array($this->langue => NULL);
+                        if ($infos) {
+                                $this->loadResult($sql, $infos);
+                        }
                 }
 
                 private function loadResult(SQL &$sql, mysqli_result &$result) {        // reception info de la base SQL
@@ -135,7 +137,7 @@ if (!isset($ClasseInfo)) {
 
                 private function fm_cinfo(SQL &$sql, Formulaire &$form, $i_auteur, $i_contenu) {
                         foreach ($i_contenu as $lang => $text) {
-                                $info_contenu[$lang] = new ChampAireTexte('i_contenu' . $lang, "Texte ".Info::findLangQuery(array($lang))." : ", "Le contenu du post.", "30", "20", $text);
+                                $info_contenu[$lang] = new ChampAireTexte('i_contenu' . $lang, "Texte " . Info::findLangQuery(array($lang)) . " : ", "Le contenu du post.", "30", "20", $text);
                                 $form->ajouterChamp($info_contenu[$lang]);
                         }
                         $info_auteur = new ChampTexte('i_auteur', "Auteur:", "Nom/surnom de l'auteur de l'info.", "15", "20", $i_auteur);
