@@ -174,7 +174,7 @@ if (!isset($classeSQL)) {
          * @return string (id,id2,id3,...)
          */
         function postArrayVersQueryID($postKey, $post) {
-                if (array_key_exists($postKey, $post)) {
+                if ($post && array_key_exists($postKey, $post)) {
                         $query = "";
                         $sep = "";
                         foreach ($post[$postKey] as $id) {

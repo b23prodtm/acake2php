@@ -59,7 +59,7 @@ if (filter_input(INPUT_GET, 'supprimer')) {
         if (filter_input(INPUT_GET, 'supprimer') === 'publie') {
                 $post = filter_input_array(INPUT_POST);
                 $key = "cat";
-                if (array_key_exists($key, $post)) {
+                if ($post && array_key_exists($key, $post)) {
                         $catQuery = postArrayVersQueryID($key, $post);
 
                         if ($catQuery != "") {
@@ -76,7 +76,6 @@ if (filter_input(INPUT_GET, 'supprimer')) {
                         if ($res) {
                                 $pCat->ajouterMessage("Les catégories ont été supprimées. (" . $sql->lignesAffectees() . " affected rows)");
                         }
-                        unset($_POST);
                 }
         }
         $f = new Formulaire("Supprimer une/des catégorie/s", $GLOBALS['admin__cat'] . "?supprimer=publie", VERTICAL);
@@ -112,7 +111,6 @@ if (filter_input(INPUT_GET, 'modifier')) {
                 } else {
                         $pCat->ajouterMessage("La catégorie $nom est enregistrée!");
                 }
-                unset($_POST);
         }
         // formulaire
         $f = new Formulaire("Modifier une catégorie", $GLOBALS['admin__cat'] . "?modifier=publie", VERTICAL);

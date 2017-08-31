@@ -18,13 +18,12 @@ if (!isset($ClasseInfo)) {
 
                 var $titre, $date, $contenu, $auteur, $categorie;
                 var $images; // tableau d'urls des images
-                  var $langue;
+                var $langue; // langue de préférence
                 var $id; // id dans la base SQL
-
 
                 public function __construct(SQL &$sql, $infos, $t = NULL, $a = NULL, $c = NULL, $d = NULL) {
                         //init var
-                        $this->titre = $t;
+                        $this->titre = array(FR => NULL, EN => NULL, DE => NULL);
                         $this->date = $d;
                         $this->categorie = $c;
                         $this->auteur = $a;
@@ -39,7 +38,7 @@ if (!isset($ClasseInfo)) {
                                 return;
                         }
                         // appel fonction de la classe parente Info
-                        $this->titre = $info["titre"];
+                        $this->ajouterTitre($info["titre"], $this->langue);
                         $this->auteur = $info["auteur"];
                         $this->categorie = $info["categorie"];
                         $this->date = $info["date"];
@@ -88,7 +87,7 @@ if (!isset($ClasseInfo)) {
                         foreach ($this->contenu as $lang => $text) {
                                 $i_contenu[$lang] = filter_input(INPUT_POST, 'i_contenu' . $lang);
                         }
-                        $i_auteur = array_key_exists("client", $_SESSION) && array_key_exists("id", $_SESSION["client"]) ? $_SESSION["client"]['id'] : "";                      
+                        $i_auteur = array_key_exists("client", $_SESSION) && array_key_exists("id", $_SESSION["client"]) ? $_SESSION["client"]['id'] : "";
                         $this->fm_cinfo($sql, $form, $i_auteur, $i_contenu);
                         $info_images = filter_input(INPUT_POST, 'i_images');
                         $this->fm_cimage($sql, $form, $info_images);
@@ -122,10 +121,12 @@ if (!isset($ClasseInfo)) {
                         $info_titre = new ChampTexte('i_titre', "Titre:", "Le titre de l'information " . Info::GetLanguages(), "50", NULL, $i_titre);
                         $form->ajouterChamp($info_titre);
                 }
+
                 private function fm_ccat(SQL &$sql, Formulaire &$form, $i_categorie) {
                         $info_categorie = CAT_getSelect($sql, 'i_categorie', "Categorie:", "Pour en ajouter une nouvelle, voir page " . HTML_lien($GLOBALS['admin__cat'], "gestion catégorie"), $i_categorie);
                         $form->ajouterChamp($info_categorie);
                 }
+
                 private function fm_cimage(SQL &$sql, Formulaire &$form, $info_images) {
                         $info_image = new ChampFile('i_image', "Ajouter une image JPEG:", "Taille maximale 200ko.", 200000);
                         $info_image_nom = new ChampTexte('i_image_nom', "Titre de l'image:", "Le titre de l'image, qui apparaîtra au-dessous de celle-ci.", "20");
@@ -137,21 +138,22 @@ if (!isset($ClasseInfo)) {
                         $form->ajouterChamp($info_image_nom);
                         $form->ajouterChamp($info_image_desc);
                 }
+
                 private function fm_cinfo(SQL &$sql, Formulaire &$form, $i_auteur, $i_contenu) {
-                        foreach ($i_contenu as $lang => $text)
-                        {
-                        $info_contenu[$lang] = new ChampAireTexte('i_contenu' . $lang, "Info (" . $lang . ") : ", "Le contenu de l'information.", "30", "20", $text);
-                        $form->ajouterChamp($info_contenu[$lang]);
+                        foreach ($i_contenu as $lang => $text) {
+                                $info_contenu[$lang] = new ChampAireTexte('i_contenu' . $lang, "Info (" . $lang . ") : ", "Le contenu de l'information.", "30", "20", $text);
+                                $form->ajouterChamp($info_contenu[$lang]);
                         }
                         $info_auteur = new ChampTexte('i_auteur', "Auteur:", "Nom/surnom de l'auteur de l'info.", "15", "20", $i_auteur);
                         $form->ajouterChamp($info_auteur);
                 }
+
                 private function formulaire_fin(SQL &$sql, Formulaire &$form, $texteValider) {
                         debug("formfin");
-                        
+
                         $info_effacer = new ChampEffacer("Effacer les champs");
                         $info_valider = new ChampValider($texteValider);
-                        
+
                         $form->ajouterChamp($info_effacer);
                         $form->ajouterChamp($info_valider);
                         return $form->fin();
@@ -177,7 +179,7 @@ if (!isset($ClasseInfo)) {
                                 $sql .= $s . "'" . $l . "'";
                                 $s = ",";
                         }
-                        $sql .=")";
+                        $sql .= ")";
                         return $sql;
                 }
 
@@ -239,10 +241,15 @@ if (!isset($ClasseInfo)) {
 
                 public function __destruct() {
                         $this->contenu = array();
+                        $this->titre = array();
                 }
 
-                function getTitre() {
-                        return $this->titre;
+                function getTitre($lang = NULL) {
+                        if ($lang == NULL || !array_key_exists($lang, $this->contenu)) {
+                                return $this->titre[getPrimaryLanguage()];
+                        } else {
+                                return $this->titre[$lang];
+                        }
                 }
 
                 function getDate() {
@@ -290,6 +297,21 @@ if (!isset($ClasseInfo)) {
                 }
 
                 /**
+                  ajoute du texte au titre existant
+                 * @param string $lang si NULL la langue du systeme utilisateur est utilisee. sinon une valeur de {@link php_module_locale.php} est utilisee.                  
+                 */
+                function ajouterTitre($t, $lang = NULL) {
+                        $this->setTitre($this->getTitre($lang) . $t, $lang);
+                }
+
+                function setTitre($t, $lang = NULL) {
+                        if ($lang == NULL) {
+                                $lang = getPrimaryLanguage();
+                        }
+                        $this->titre[$lang] = $t;
+                }
+
+                /**
                   ajoute du texte au contenu existant
                  * @param string $lang si NULL la langue du systeme utilisateur est utilisee. sinon une valeur de {@link php_module_locale.php} est utilisee.                  
                  */
@@ -328,10 +350,12 @@ if (!isset($ClasseInfo)) {
                         return $images;
                 }
 
-                /*                 * * l'info sous forme preformatee prete a l'affichage. */
+                /*
+                 * l'info pour l'affichage HTML. 
+                 */
 
-                function getFormated(SQL &$sql, $caption = NULL, $alllanguages = FALSE) {
-                        $t_bord = new Tableau(1, 1, "info_border");
+                function getTableauMultiLang(SQL &$sql, $caption = NULL, $intl = TRUE) {
+                        $t_bord = new Tableau(3, 1, "info_border");
                         // pour ajouter une legende à l'info. (p.ex. id)
                         if (isset($caption)) {
                                 $t_bord->setCaption($caption, "top");
@@ -341,36 +365,37 @@ if (!isset($ClasseInfo)) {
                                 "CELLPADDING" => 1,
                                 "WIDTH" => "80%"),
                             "class" => "info"));
-                        $t = new Tableau(4, 1, "info");
+                        $row = 0;
+                        foreach ($this->contenu as $lang => $text) {
+                                if ($text == NULL || (!$intl && $lang != $this->langue)) {
+                                        continue;
+                                } else {
+                                        $t_bord->setContenu_Cellule($row++, 0, $this->getTableLangage($sql, $caption, $text, $lang));
+                                }
+                                if (!$intl) {
+                                        break;
+                                }
+                        }
+                        return $t_bord->fin();
+                }
+
+                function getTableLangage(SQL &$sql, $lang = NULL) {
+                        if ($lang == NULL) {
+                                $lang = $this->langue;
+                        }
+                        $t = new Tableau(3, 1, "info");
                         $t->setOptionsArray(array("HTML" => array("WIDTH" => "100%",
                                 "ALIGN" => "CENTER",
                                 "BORDER" => 0,
                                 "CELLSPACING" => 0,
                                 "CELLPADDING" => 5)));
-                        $t->setContenu_Cellule(0, 0, "<b><pre>infos/" . $this->getAuteur() . "/" . $this->getCategorie($sql) . "/" . $this->getDate() . "/_</pre><br>" . stripSlashes($this->getTitre()) . "_</b>");
-
                         // INFO LOCALISEE (lang)
-                        $row = 1;
-                        foreach ($this->contenu as $lang => $text) {
-                                if ($text != NULL) {
-                                        if (!$alllanguages && $lang != getPrimaryLanguage()) {
-                                                continue;
-                                        } else {
-                                                $t->setContenu_Cellule($row, 0, stripSlashes($text));
-                                        }
-                                        if (!$alllanguages) {
-                                                break;
-                                        } else {
-                                                $row++;
-                                        }
-                                }
-                        }
-                        $t->setOptionsArray_Cellule(0, 0, array("HTML" => array("BGCOLOR" => "#ffbb44"),
-                            "class" => "info_titre"));
+                        $t->setContenu_Cellule(0, 0, "news://" . $lang . "/" . $this->getAuteur() . "/" . $this->getCategorie($sql) . "/" . $this->getDate() . "/<div class='info_titre'>" . stripSlashes($this->getTitre($lang)) . "</div>");
+                        $t->setContenu_Cellule(1, 0, stripSlashes($this->getContenu($lang)));
 
-                        $t->setContenu_Cellule(3, 0, $this->tableauImages($sql)->fin());
-                        $t_bord->setContenu_Cellule(0, 0, $t->fin());
-                        return $t_bord->fin();
+                        $t->setOptionsArray_Cellule(0, 0, array("HTML" => array("BGCOLOR" => "#ffbb44"), "class" => "info_titre"));
+                        $t->setContenu_Cellule(2, 0, $this->tableauImages($sql)->fin());
+                        return $t->fin();
                 }
 
                 function tableauImages(SQL &$sql) {
@@ -394,7 +419,7 @@ if (!isset($ClasseInfo)) {
                 }
 
                 //recursive colonne
-                private function tableauImages_rc(SQL &$sql, $img, $i, $j, $n) {
+                private function tableauImages_rc(SQL &$sql, Tableau &$img, $i, $j, $n) {
                         /* images 150px */
                         // tableau d'images associees a l'info, sur 3 colonnes et donc ceil(count($this->images)/3) lignes.
                         if ($n < count($this->images)) {
@@ -425,18 +450,9 @@ if (!isset($ClasseInfo)) {
                                 $infoSQL = new Info($sql, $result);
                                 mysqli_free_result($result);
                                 // prendre les images de l'info courante-nouvelle pour comparer les images de l'ancienne. supprimer de la base SQL les images qui n'apparaissent plus dans le nouveau tableau this->images
-                                foreach ($infoSQL->images as $id_old) {
-                                        $garde = false;
-                                        foreach ($this->images as $id) {
-                                                // pour les images a supprimer
-                                                if ($id == $id_old) {
-                                                        $garde = true;
-                                                }
-                                        }
-                                        // si garde est false, suppression de la base de l'image id_old, plus desiree
-                                        if (!$garde) {
-                                                Image::DeleteSQL($sql, $id_old);
-                                        }
+                                $poubelle = array_diff($infoSQL->images, $this->images);
+                                foreach ($poubelle as $id_old) {
+                                        Image::DeleteSQL($sql, $id_old);
                                 }
                         }
 
@@ -459,5 +475,6 @@ if (!isset($ClasseInfo)) {
                 }
 
         }
+
 }
 ?>

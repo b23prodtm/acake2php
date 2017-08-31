@@ -60,7 +60,7 @@ if (filter_input(INPUT_GET, 'ajouter') === "publie" || filter_input(INPUT_GET, '
                 // ajouter les id des images existantes a l'info
                 $post = filter_input_array(INPUT_POST);
                 $key = 'i_images';
-                if (array_key_exists($key, $post)) {
+                if ($post && array_key_exists($key, $post)) {
                         foreach ($post[$key] as $id) {
                                 $info->ajouterImageSQL($id);
                         }
@@ -70,18 +70,17 @@ if (filter_input(INPUT_GET, 'ajouter') === "publie" || filter_input(INPUT_GET, '
                 $update = FALSE;
         } // donner l'id stocké en session pour une modification de l'info
         if ($info->publier($sql, $update)) {
-                $pAdmin->ajouterContenu("<b><center><br>[ " . filter_input(INPUT_POST, 'i_titre') . " ] ". $r->lang("publiesucces", "infos")."</center></b>");
+                $pAdmin->ajouterContenu("<b><center><br>[ " . filter_input(INPUT_POST, 'i_titre') . " ] " . $r->lang("publiesucces", "infos") . "</center></b>");
                 if (filter_input(INPUT_GET, 'modifier')) {
                         // effacer l'id de l'info en session
                         unset($_SESSION['i_id']);
                 }
-                $sql->close();
-                $pAdmin->fin();
+        } else {
+                $sql->afficheErreurs();
         }
-        // vidage de la mémoire POST
-        unset($_POST);
 }
-
+/** INTERDIT ! vidage de la mémoire POST !
+  unset($_POST); */
 // formulaire ajouter
 if (filter_input(INPUT_GET, 'ajouter')) {
         // ajouter une info, affichage d'un formulaire
@@ -105,7 +104,6 @@ if (filter_input(INPUT_GET, 'modifier')) {
 
                 // vidage de la mémoire POST
                 mysqli_free_result($info);
-                unset($_POST);
         }
 
         /* affichage de la liste des infos avec des coches radio */
@@ -117,7 +115,7 @@ if (filter_input(INPUT_GET, 'modifier')) {
 if (filter_input(INPUT_GET, 'supprimer')) {
         $post = filter_input_array(INPUT_POST);
         $key = "info_a_supprimer";
-        if (array_key_exists($key, $post)) {
+        if ($post && array_key_exists($key, $post)) {
                 $query = postArrayVersQueryID($key, $post);
                 $infos_a_supp = $sql->query("SELECT * FROM info WHERE id IN (" . $query . ")");
                 for ($i = 0; $i < mysqli_num_rows($infos_a_supp); $i++) {
@@ -125,7 +123,6 @@ if (filter_input(INPUT_GET, 'supprimer')) {
                         $infoSQL->supprimer($sql);
                 }
                 mysqli_free_result($infos_a_supp);
-                unset($_POST);
         }
         /* affichage de la liste des infos avec des coches checkbox */
         $listeInfosSupp = Info::GetListe($sql, "supprimer");
@@ -135,18 +132,17 @@ if (filter_input(INPUT_GET, 'supprimer')) {
 if (filter_input(INPUT_GET, 'afficher')) {
         $post = filter_input_array(INPUT_POST);
         $key = "info_a_afficher";
-        if (array_key_exists($key, $post)) {
+        if ($post && array_key_exists($key, $post)) {
                 $query = postArrayVersQueryID($key, $post);
                 $infos = $sql->query("SELECT * FROM info WHERE id IN (" . $query . ") ORDER BY date DESC");
                 for ($i = 0; $i < mysqli_num_rows($infos); $i++) {
                         $info = new Info($sql, $infos);
-                        $pAdmin->ajouterContenu("<br>" . $info->getFormated($sql, "id: " . $post[$i]) . "<br>");
+                        $pAdmin->ajouterContenu("<br>" . $info->getTableauMultiLang($sql, "id: " . $post[$i]) . "<br>");
                 }
                 mysqli_free_result($infos);
         }
         $listeInfos = Info::GetListe($sql, "afficher");
         $pAdmin->ajouterContenu($listeInfos);
-        unset($_POST);
 }
 $sql->close();
 $pAdmin->fin();

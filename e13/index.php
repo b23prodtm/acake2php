@@ -15,7 +15,7 @@ $p_infos->ajouterContenu("<H1>".$p_infos->r->lang("info")."</H1>");
 $infos = $sql->query("SELECT * FROM info WHERE langue IN ".  Info::GetLanguagesDeArray()." ORDER BY date DESC LIMIT 10");
 for ($i = 0; $i < mysqli_num_rows($infos); $i++) {
     $info_SQL = new Info($sql, $infos);    
-    $p_infos->ajouterContenu($info_SQL->getFormated($sql));
+    $p_infos->ajouterContenu($info_SQL->getTableauMultiLang($sql));
 }
 mysqli_free_result($infos);
 
@@ -29,7 +29,7 @@ $info->ajouterContenu($p_infos->r->lang("visitus", "infos")." : ".HTML_lien($GLO
   $p_infos->setInfo($info);
  */
 
-$p_infos->ajouterContenu($contenu . "<BR>" . $info->getFormated($sql));
+$p_infos->ajouterContenu($contenu . "<BR>" . $info->getTableauMultiLang($sql));
 $sql->close();
 $p_infos->fin();
 ?>
