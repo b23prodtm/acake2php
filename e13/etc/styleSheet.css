@@ -212,7 +212,7 @@ td.formulaire {
 */
 @media screen and (min-device-width:1000px) {			
         table {
-                font-size: 0.8em;
+                font-size: 1em;
                 border-width: 0; 
         }
         .body {
