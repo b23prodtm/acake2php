@@ -26,9 +26,9 @@ if (!isset($ClasseInfo)) {
                  * @param mysqli_result $infos l'objet d'un retour base de données (ou initialiser une variable vide pour eviter une erreur fatale)
                  */
 
-                public function __construct(SQL &$sql, mysqli_result &$infos = NULL, $t = NULL, $a = NULL, $c = NULL, $d = NULL) {
+                public function __construct(SQL &$sql, mysqli_result &$infos = NULL, $t = NULL, $a = NULL, $c = NULL, $d = NULL, $l = NULL) {
                         //init var
-                        $this->langue = getPrimaryLanguage();
+                        $this->langue = $l ? $l : getPrimaryLanguage();
                         $this->titre = array($this->langue => $t);
                         $this->date = $d;
                         $this->categorie = $c;
@@ -154,10 +154,12 @@ if (!isset($ClasseInfo)) {
 
                 private function formulaire_fin(SQL &$sql, Formulaire &$form, $texteValider) {
                         debug("formfin");
-
+                        
+                        $info_langue = new ChampCache("i_lang", getPrimaryLanguage());
                         $info_effacer = new ChampEffacer("Effacer les champs");
                         $info_valider = new ChampValider($texteValider);
 
+                        $form->ajouterChamp($info_langue);
                         $form->ajouterChamp($info_effacer);
                         $form->ajouterChamp($info_valider);
                         return $form->fin();
