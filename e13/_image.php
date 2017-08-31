@@ -31,9 +31,9 @@ if (!$id) {
         if ($f) {
                 $image->setFile(urldecode(unserialize($f)));
         } else {
+        trigger_error("image : missing valid file=url parameter", E_ERROR);
                 $image->load_error();
         }
-        $image->afficher();
 } elseif ($motCaptcha) {
         $captcha = new Captcha(strlen($motCaptcha));
         $image = $captcha->image($motCaptcha);
@@ -43,7 +43,8 @@ if (!$id) {
         $image->FromSQL($sql, $id);
         $sql->close();
 } else {
-        die("image : no valid parameter found");
+        trigger_error("image : missing a valid parameter like w,h id or file or captcha", E_ERROR);
+        $image->load_error();
 }
 if ($w && $h) {
         $image->setSize($w, $h);
