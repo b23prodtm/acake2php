@@ -262,7 +262,7 @@ if (!isset($ClasseInfo)) {
                 }
 
                 function getTitre($lang = NULL) {
-                        if ($lang == NULL || !array_key_exists($lang, $this->contenu)) {
+                        if ($lang == NULL || !array_key_exists($lang, $this->titre)) {
                                 return $this->titre[$this->langue];
                         } else {
                                 return $this->titre[$lang];
