@@ -49,6 +49,12 @@ if (!isset($ClasseImage)) {
                         $this->mode = BYTE_MODE;
                 }
 
+                function __destruct() {
+                        if ($this->img) {
+                                imagedestroy($this->img);
+                        }
+                }
+
                 /* ----- partie privée ----- */
 
                 function loadfromfile($nom = "image") {
