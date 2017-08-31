@@ -29,7 +29,8 @@ if (filter_input(INPUT_GET, 'ajouter') === "publie" || filter_input(INPUT_GET, '
 
         /* definition de la date */
         $date = getdate(time());
-        $info = new Info($sql, $result, filter_input(INPUT_POST, 'i_titre' . $lang), filter_input(INPUT_POST, 'i_auteur'), filter_input(INPUT_POST, 'i_categorie'), $date['year'] . "-" . $date['mon'] . "-" . $date['mday'], $lang = filter_input(INPUT_POST,'i_lang'));
+        $lang = filter_input(INPUT_POST,'i_lang');
+        $info = new Info($sql, $result, filter_input(INPUT_POST, 'i_titre' . $lang), filter_input(INPUT_POST, 'i_auteur'), filter_input(INPUT_POST, 'i_categorie'), $date['year'] . "-" . $date['mon'] . "-" . $date['mday'], $lang);
         $info->ajouterContenu(filter_input(INPUT_POST, 'i_contenu' . $lang), $lang);
         // verifier l'image champ info_image:_nom:_desc postee et la stocker en base SQL deja
         /* -- stockage de l'image -- */
