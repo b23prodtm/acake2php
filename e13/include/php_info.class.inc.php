@@ -40,19 +40,19 @@ if (!isset($ClasseInfo)) {
                         }
                 }
 
-                private function loadResult(SQL &$sql, mysqli_result &$result) {        // reception info de la base SQL
+                function loadResult(SQL &$sql, mysqli_result &$result) {        // reception info de la base SQL
                         $info = $sql->ligneSuivante_Array($result);
                         if (!$info) {
                                 return;
                         }
                         // appel fonction de la classe parente Info
                         $this->langue = $info["langue"];
-                        $this->ajouterTitre($info["titre"], $this->langue);
+                        $this->titre[$this->langue] = $info["titre"];
                         $this->auteur = $info["auteur"];
                         $this->categorie = $info["categorie"];
                         $this->date = $info["date"];
                         $this->id = $info["id"];
-                        $this->ajouterContenu($info["contenu"], $this->langue);
+                        $this->contenu[$this->langue] = $info["contenu"];
 
                         // acquisition de la liste des images pour l'info
                         if ($info["images"] != "") {
@@ -96,7 +96,7 @@ if (!isset($ClasseInfo)) {
                         $this->fm_ctitre($sql, $form, $i_titre);
                         $i_categorie = $this->categorie;
                         $this->fm_ccat($sql, $form, $i_categorie);
-                        $i_contenu = array($this->langue, $this->contenu[$this->langue]);
+                        $i_contenu = $this->contenu;
                         $i_auteur = $this->auteur;
                         $this->fm_cinfo($sql, $form, $i_auteur, $i_contenu);
                         /* chaque image existante dans l'info, est affiche dans un groupe de champs checkbox; pour supprimer, decocher. pour ajouter, un champ FILE est ajouté plus bas dans le formulaire */
@@ -114,8 +114,13 @@ if (!isset($ClasseInfo)) {
                 }
 
                 private function fm_ctitre(SQL &$sql, Formulaire &$form, $i_titre) {
-                        $info_titre = new ChampTexte('i_titre', "Titre:", "Le titre du post " . Info::findLangQuery(array($this->langue)), "50", NULL, $i_titre);
-                        $form->ajouterChamp($info_titre);
+                        foreach ($i_titre as $lang => $text) {
+                                $info_titre = new ChampTexte('i_titre' . $lang, "Titre:", "Texte " . Info::findLangQuery(array($lang)), "50", NULL, $text);
+                                if ($lang != getPrimaryLanguage()) {
+                                        $info_titre->desactiver();
+                                }
+                                $form->ajouterChamp($info_titre);
+                        }
                 }
 
                 private function fm_ccat(SQL &$sql, Formulaire &$form, $i_categorie) {
@@ -137,8 +142,11 @@ if (!isset($ClasseInfo)) {
 
                 private function fm_cinfo(SQL &$sql, Formulaire &$form, $i_auteur, $i_contenu) {
                         foreach ($i_contenu as $lang => $text) {
-                                $info_contenu[$lang] = new ChampAireTexte('i_contenu' . $lang, "Texte " . Info::findLangQuery(array($lang)) . " : ", "Le contenu du post.", "30", "20", $text);
-                                $form->ajouterChamp($info_contenu[$lang]);
+                                $info_contenu = new ChampAireTexte('i_contenu' . $lang, "Texte " . Info::findLangQuery(array($lang)) . " : ", "Le contenu du post.", "30", "20", $text);
+                                if ($lang != getPrimaryLanguage()) {
+                                        $info_contenu->desactiver();
+                                }
+                                $form->ajouterChamp($info_contenu);
                         }
                         $info_auteur = new ChampTexte('i_auteur', "Auteur:", "Nom/surnom de l'auteur de l'info.", "15", "20", $i_auteur);
                         $form->ajouterChamp($info_auteur);
