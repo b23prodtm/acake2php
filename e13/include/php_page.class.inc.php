@@ -353,14 +353,14 @@ if (!isset($ClassePage)) {
 
                 function getInfoFlash() {
                         $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
-                        $infos = $sql->query("SELECT * FROM info WHERE langue ='" . getPrimaryLanguage() . "'");
+                        $infos = $sql->query("SELECT * FROM info WHERE langue ='" . getPrimaryLanguage() . "' ORDER BY date DESC LIMIT 1");
                         // déplace le curseur à la derniere ligne
-                        if (@$sql->selectLigne($infos, mysqli_num_rows($infos) - 1)) {
+                        if ($sql->selectLigne($infos, mysqli_num_rows($infos) - 1)) {
                                 $lastInfo = new Info($sql, $infos);
                         } else {
                                 $lastInfo = NULL;
                         }
-                        @mysqli_free_result($infos);
+                        mysqli_free_result($infos);
                         return $lastInfo;
                 }
 
