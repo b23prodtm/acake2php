@@ -1,49 +1,53 @@
 <?php
-/*! 
-@copyrights b23|prod:www.b23prodtm.info - 2004 (all rights reserved to author)
-@author	www.b23prodtm.infoNA
-@date   :brunorakotoarimanana:20050110 
-@filename	_image.php                                              
-*/                                              
 
-/*!                                             
-@script	image                                   
-@param	id, size. fourni en _GET ou _POST       
-#id: id de l'image de la table SQL "image". 
-#size: dimensions de l'image: int(3)[%] ou array(int(4)[px],int(4)[px])
-ou
-#file: urlencode($filename)
-*/
+/* ! 
+  @copyrights b23|prod:www.b23prodtm.info - 2004 (all rights reserved to author)
+  @author	www.b23prodtm.infoNA
+  @date   :brunorakotoarimanana:20050110
+  @filename	_image.php
+ */
 
-include("include/php_registre.inc.php");  
-new Registre(filter_input(INPUT_SERVER,'PHP_SELF'));
+/* !                                             
+  @script	image
+  @param	id, size. fourni en _GET ou _POST
+  #id: id de l'image de la table SQL "image".
+  #size: dimensions de l'image: int(3)[%] ou array(int(4)[px],int(4)[px])
+  ou
+  #file: urlencode($filename)
+ */
+
+include("include/php_registre.inc.php");
+new Registre(filter_input(INPUT_SERVER, 'PHP_SELF'));
 require($GLOBALS["include__php_image.class.inc"]);
-require($GLOBALS["include__php_SQL.class.inc"]);        
+require($GLOBALS["include__php_SQL.class.inc"]);
 
-$image=new Image();  
-if(!filter_input(INPUT_GET,'id')) {
-	if(filter_input(INPUT_GET,'file')) {
-		if(filter_input(INPUT_GET,'size')) {
-			$image->setSize(filter_input(INPUT_GET,'size'));
-			$image->resize();
-		}
-		$image->setFile(urldecode(unserialize(filter_input(INPUT_GET,'file'))));
-        } else
-		$image->erreurJpeg();                               
-	$image->afficher(1);               
+$image = new Image();
+$w = filter_input(INPUT_GET, 'w');
+$h = filter_input(INPUT_GET, 'h');
+$id = filter_input(INPUT_GET, 'id');
+$f = filter_input(INPUT_GET, 'file');
+$motCaptcha = filter_input(INPUT_GET, 'captcha');
+if (!$id) {
+        if ($f) {
+                $image->setFile(urldecode(unserialize($f)));
+        } else {
+                $image->load_error();
+        }
+        $image->afficher();
+} elseif ($motCaptcha) {
+        $captcha = new Captcha(strlen($motCaptcha));
+        $image = $captcha->image($motCaptcha);
+} elseif ($id) {
+        // connexion SQL
+        $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
+        $image->FromSQL($sql, $id);
+        $sql->close();
+} else {
+        die("image : no valid parameter found");
 }
-else {
-	// connexion SQL
-	$sql = new SQL(SERVEUR,BASE,CLIENT,CLIENT_MDP);              
-	$image->FromSQL($sql,filter_input(INPUT_GET,'id'));
-	if(filter_input(INPUT_GET,'size')) {
-		$image->setSize(filter_input(INPUT_GET,'size'));
-		$image->resize();
-	}
-	else
-		$image->setSize();
-	
-	$image->afficher(1);
-	$sql->close();
+if ($w && $h) {
+        $image->setSize($w, $h);
+        $image->resize();
 }
+$image->afficher();
 ?>
