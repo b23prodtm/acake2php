@@ -87,10 +87,7 @@ if (!isset($ClasseInfo)) {
                         $this->fm_ctitre($sql, $form, $i_titre);
                         $i_categorie = filter_input(INPUT_POST, 'i_categorie');
                         $this->fm_ccat($sql, $form, $i_categorie);
-                        $i_contenu = array();
-                        foreach ($this->contenu as $lang => $text) {
-                                $i_contenu[$lang] = filter_input(INPUT_POST, 'i_contenu' . $lang);
-                        }
+                        $i_contenu[$this->langue] = filter_input(INPUT_POST, 'i_contenu' . $this->langue);
                         $i_auteur = array_key_exists("client", $_SESSION) && array_key_exists("id", $_SESSION["client"]) ? $_SESSION["client"]['id'] : "";
                         $this->fm_cinfo($sql, $form, $i_auteur, $i_contenu);
                         $info_images = filter_input(INPUT_POST, 'i_images');
@@ -104,7 +101,7 @@ if (!isset($ClasseInfo)) {
                         $this->fm_ctitre($sql, $form, $i_titre);
                         $i_categorie = $this->categorie;
                         $this->fm_ccat($sql, $form, $i_categorie);
-                        $i_contenu = $this->contenu;
+                        $i_contenu = array($this->langue, $this->contenu[$this->langue]);
                         $i_auteur = $this->auteur;
                         $this->fm_cinfo($sql, $form, $i_auteur, $i_contenu);
                         /* chaque image existante dans l'info, est affiche dans un groupe de champs checkbox; pour supprimer, decocher. pour ajouter, un champ FILE est ajouté plus bas dans le formulaire */
@@ -265,7 +262,7 @@ if (!isset($ClasseInfo)) {
 
                 function getTitre($lang = NULL) {
                         if ($lang == NULL || !array_key_exists($lang, $this->contenu)) {
-                                return $this->titre[getPrimaryLanguage()];
+                                return $this->titre[$this->langue];
                         } else {
                                 return $this->titre[$lang];
                         }
@@ -281,7 +278,7 @@ if (!isset($ClasseInfo)) {
                  * */
                 function getContenu($lang = NULL) {
                         if ($lang == NULL || !array_key_exists($lang, $this->contenu)) {
-                                return $this->contenu[getPrimaryLanguage()];
+                                return $this->contenu[$this->langue];
                         } else {
                                 return $this->contenu[$lang];
                         }
