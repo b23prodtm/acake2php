@@ -89,12 +89,12 @@ if (!isset($registreFichiers)) {
                 $note = array(E_NOTICE, E_USER_NOTICE);
                 $ignore = array(E_COMPILE_WARNING, E_CORE_WARNING, E_DEPRECATED, E_RECOVERABLE_ERROR, E_USER_DEPRECATED, E_USER_WARNING, E_WARNING);
                 $errors = array(E_ERROR, E_USER_ERROR, E_ERROR, E_PARSE);
-                $html = "<font size=1 color='gray'><B>[" . strError($errno) . "] </B>" . $errstr . "<br>\n";
+                $html = "<div class='error'><B>[" . strError($errno) . "] </B>" . $errstr . "<br>\n";
                 if (array_key_exists("debug", $_SESSION) || filter_input(INPUT_GET, "debug")) {
                         $html.="at line " . $errline . " of file " . pathFinder($errfile, filter_input(INPUT_SERVER, "DOCUMENT_ROOT")) . "\n"
                                 . ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br>\n";
                 }
-                $html.="<br></font>\n\n";
+                $html.="<br></div>\n\n";
                 if (in_array($errno, $errors)) {
                         while (ob_get_level() > 0) {
                                 ob_end_clean();
@@ -104,7 +104,7 @@ if (!isset($registreFichiers)) {
                 } else if (errValidType($errno, $note, "verbose") || errValidType($errno, $ignore, "warn") || (array_key_exists("debug", $_SESSION) || filter_input(INPUT_GET, "debug"))) {
                         // n'affiche que si une des conditions est valide :
                         // pour une notice et que verbose est actif
-                        // pour une wanring et que warn est actif
+                        // pour une warning et que warn est actif
                         // si debug est actif
                         echo $html;
                 }

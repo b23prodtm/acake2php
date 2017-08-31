@@ -88,7 +88,10 @@ object, embed, canvas, video, audio, picture {
 /* end SHRINK */
 
 .console {
-        color: yellow; font-family: monospace; background-color: green; 
+        color: orange; font-family: monospace; background-color: green; 
+}
+.error {
+        color: darkgray;
 }
 .info {
         font-size-adjust: 0.8; 	border-style: solid; 	border-top-width: 20px;
@@ -131,13 +134,13 @@ td.formulaire {
 
         table {
                 border-width: 0; 
-                font-size: 1.15em;
+                font-size: 1.1em;
         }
         .body {
                 border-style: dotted; border-color: rgb(70, 190, 40); background-color: rgb(245, 245, 245); 	
                 font-family: sans-serif;
                 width: 100%; 
-                font-size: 1.5em;
+                font-size: 1.4em;
         }
 
         .rubriquebanniere {
@@ -212,13 +215,12 @@ td.formulaire {
 */
 @media screen and (min-device-width:1000px) {			
         table {
-                font-size: 1em;
+                font-size: 0.9em;
                 border-width: 0; 
         }
         .body {
                 border-style: dotted; border-color: rgb(70, 190, 40); background-color: rgb(245, 245, 245);
                 font-family: sans-serif;
-                font-size: 1.15em;
         }
         .rubriquebanniere {
                 visibility: hidden;
