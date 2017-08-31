@@ -11,7 +11,7 @@
   configuration SITEMAP.PROPERTIES _ MENU.PROPERTIES _ CONTENT-LANG.PROPERTIES _ include/PHP_REGISTRE.INC.PHP::__construct() GLOBALES
   =========================================================
  * 
- * UNE INSTANCE DE CE REGISTRE DOIT ETRE CREE POUR CHQUE PAGE PHP AFIN DE POUVOIR UTILISER LES CHEMINS RELATIFS ET VARIABLES DE CONFIGURATIONS
+ * UNE INSTANCE DE CE REGISTRE DOIT ETRE CREE POUR CHAQUE PAGE PHP AFIN DE POUVOIR UTILISER LES CHEMINS RELATIFS ET VARIABLES DE CONFIGURATIONS
  * 
  * 
  */
@@ -28,15 +28,22 @@ if (!isset($registreFichiers)) {
 
         /* controle de l'existence d'une session */
         if (session_status() != PHP_SESSION_ACTIVE) {
-                echo "SESSION INACTIVE " . session_status() == PHP_SESSION_DISABLED ? "(DISABLED)" : "";
+                echo "phpSession: off " . session_status() == PHP_SESSION_DISABLED ? "(DISABLED)" : "";
         } elseif (filter_input(INPUT_GET, "debug") || array_key_exists("debug", $_SESSION)) {
-                echo "SESSION STARTED\n"
+                echo "phpSession: start\n"
                 . "language " . getPrimaryLanguage() . "\n";
         }
         if (filter_input(INPUT_GET, "local") || array_key_exists("local", $_SESSION)) {
                 echo "Local Configuration Enabled\n";
         }
 
+        /**
+         *  BEGIN         ERROR CHECKING 
+         * */
+        /*
+         * @see condor_error
+         * Registre constructeur de registre courant nécessaire sur chaque script .php
+         */
         function strError($no) {
                 $errno = "unknown";
                 switch ($no) {
@@ -76,14 +83,20 @@ if (!isset($registreFichiers)) {
                 return $errno;
         }
 
+        /**
+          validation en sortie du type d'erreur rencontré
+         *         
+         * @see Registre::__construct($selfScript) */
         function errValidType($errno, array $type, $variable) {
                 return in_array($errno, $type) && (array_key_exists($variable, $_SESSION) || filter_input(INPUT_GET, $variable));
         }
 
-        /** Methode INTERNE pour seterrorhander(activé par defaut) les erreurs sont affichées si la page URL contient ?debug
-         * <br> <b>Ajouter &verbose pour afficher les fichiers concernés par les erreurs.</b> par ex. index.php?debug
+        /** 
+         * Journalisation des erreurs et messages PHP.<br>
+         * Ne sont affichées que si la page URL contient ?debug (&verbose pour plus de messages)
          * <br>Voir le fichier php_error.log pour les PHP FATAL ERROR (le processus s'arrete et journalise).
          * <br>debug permet de voir le fichier concerné
+         * @see Registre::__construct($selfScript)
          */
         function condor_error($errno, $errstr, $errfile, $errline) {
                 $note = array(E_NOTICE, E_USER_NOTICE);
@@ -91,10 +104,10 @@ if (!isset($registreFichiers)) {
                 $errors = array(E_ERROR, E_USER_ERROR, E_ERROR, E_PARSE);
                 $html = "<div class='error'><B>[" . strError($errno) . "] </B>" . $errstr . "<br>\n";
                 if (array_key_exists("debug", $_SESSION) || filter_input(INPUT_GET, "debug")) {
-                        $html.="at line " . $errline . " of file " . pathFinder($errfile, filter_input(INPUT_SERVER, "DOCUMENT_ROOT")) . "\n"
+                        $html .= "at line " . $errline . " of file " . pathFinder($errfile, filter_input(INPUT_SERVER, "DOCUMENT_ROOT")) . "\n"
                                 . ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br>\n";
                 }
-                $html.="<br></div>\n\n";
+                $html .= "<br></div>\n\n";
                 if (in_array($errno, $errors)) {
                         while (ob_get_level() > 0) {
                                 ob_end_clean();
@@ -115,9 +128,9 @@ if (!isset($registreFichiers)) {
         function print_array_r($array, &$html = "") {
                 $p = $html === "";
                 if (is_array($array)) {
-                        $html.="<ul>";
+                        $html .= "<ul>";
                         foreach ($array as $k => $v) {
-                                $html.= "<li>" . $k . " : ";
+                                $html .= "<li>" . $k . " : ";
                                 print_array_r($v, $html);
                                 $html .= "</li>";
                         }
@@ -130,12 +143,20 @@ if (!isset($registreFichiers)) {
                 }
         }
 
-        function debug($texte = "debug())") {
+        /** 
+         * index.php?debug affiche les E_ERROR et E_WARNING
+         * index.php?debug&verbose affiche les E_NOTICE
+         * enregistrement en session des parametres de journalisation
+         * */
+        function debug($texte = "about the error") {
                 echo "***DEBUG***\n SCRIPT_NAME:" . filter_input(INPUT_SERVER, 'SCRIPT_NAME') . ": ";
                 print_array_r($texte);
                 echo "\n ***DEBUG***\n";
         }
 
+        /**
+         *  END         ERROR CHECKING 
+         */
         /* fonction qui definit le chemin qui donnera acces au fichier destination depuis le fichier origine (p. ex.: PHP_SELF), attention: la racine de chaque fichier doit ?tre identique a l'autre.
          */
 
@@ -210,11 +231,14 @@ if (!isset($registreFichiers)) {
                  * variables $_SESSION [root, local];
                  *                  
                  */
-
                 public function __construct($selfScript, $force = false) {
                         global $_instanceRegistre;
                         if (!isset($_instanceRegistre) || $force) {
                                 $_instanceRegistre = 1;
+
+                                /**
+                                 * ERROR CHECKING enregistrement en session courante
+                                 */
                                 Registre::registerGETSession(array("root" => stripEnd(filter_input(INPUT_GET, 'root')), "verbose", "local", "warn", "debug"));
                                 $root = array_key_exists('root', $_SESSION) ? $_SESSION['root'] : "";
                                 $cheminSite = pathFinder($root . "/e13/.", $selfScript) . "/";
@@ -245,7 +269,8 @@ if (!isset($registreFichiers)) {
                         $this->localizedStrings = $this->parseBundle($GLOBALS['locale'], "content-lang");
                 }
 
-                /** enregistre en session si specifie par GET 
+                /** 
+                 * enregistre en session si specifie par GET 
                  */
                 private static function registerGETSession($valuesGET = array()) {
                         /** les parametres de sessions pour le debogage */
