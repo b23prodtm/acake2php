@@ -162,7 +162,21 @@ if (!isset($ClasseInfo)) {
                         $form->ajouterChamp($info_valider);
                         return $form->fin();
                 }
+                
+                private function champCoche($mode) {
+                        switch ($mode) {
+                                case "modifier":
+                                        return new ChampCoche("info_a_modifier", $this->getId(), "info id: " . $this->getId(), "", FALSE, "RADIO");
+                                case "supprimer":
+                                        return new ChampCoche("info_a_supprimer[]", $this->getId(), "info id: " . $this->getId(), "");
 
+                                case "afficher":
+                                        return new ChampCoche("info_a_afficher[]", $this->getId(), "info id: " . $this->getId(), "");
+                                default :
+                                        return new ChampCache("info_a_afficher", "erreurDeMode", FALSE);
+                                        break;
+                        }
+                }
                 /* ----- partie publique ----- */
 
                 public static function FormAjouter($pageScript, SQL &$sql) {
@@ -186,6 +200,7 @@ if (!isset($ClasseInfo)) {
                         $sql .= ")";
                         return $sql;
                 }
+               
 
                 // NOTE: utilisee seulement sur la page admin de gestion des infos (admin_infos.php)
                 public static function GetListe(SQL &$sql, $mode = "modifier", $langs = array()) {
@@ -210,7 +225,7 @@ if (!isset($ClasseInfo)) {
                                         $tbl->setOptionsArray_Ligne($row, array("class" => "A" . ($n++) % 2));
                                         $tbl->setContenu_Ligne($row, array($nfo->getId(), $nfo->getTitre(), $nfo->getDate(), $nfo->getLangue(), $nfo->getCategorie()));
                                         // mode afficher                                      
-                                        $tbl->setContenu_Cellule($row, 5, Info::ChampCoche($nfo, $mode)->getHTML(LIBRE, $f->classe));
+                                        $tbl->setContenu_Cellule($row, 5, $nfo->champCoche($mode)->getHTML(LIBRE, $f->classe));
                                 }
                                 mysqli_free_result($infos);
                                 $modifier = new ChampValider($mode, "Si vous avez choisi l'info à $mode, cliquez sur $mode.");
