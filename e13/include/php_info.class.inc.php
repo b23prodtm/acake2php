@@ -25,6 +25,7 @@ if (!isset($ClasseInfo)) {
                  * @param SQL $sql prend la reference de connexion
                  * @param mysqli_result $infos l'objet d'un retour base de données (ou initialiser une variable vide pour eviter une erreur fatale)
                  */
+
                 public function __construct(SQL &$sql, mysqli_result &$infos, $t = NULL, $a = NULL, $c = NULL, $d = NULL) {
                         //init var
                         $this->titre = array(FR => NULL, EN => NULL, DE => NULL);
@@ -159,7 +160,7 @@ if (!isset($ClasseInfo)) {
                         $form->ajouterChamp($info_valider);
                         return $form->fin();
                 }
-                
+
                 private function champCoche($mode) {
                         switch ($mode) {
                                 case "modifier":
@@ -174,6 +175,7 @@ if (!isset($ClasseInfo)) {
                                         break;
                         }
                 }
+
                 /* ----- partie publique ----- */
 
                 public static function FormAjouter($pageScript, SQL &$sql) {
@@ -197,7 +199,6 @@ if (!isset($ClasseInfo)) {
                         $sql .= ")";
                         return $sql;
                 }
-               
 
                 // NOTE: utilisee seulement sur la page admin de gestion des infos (admin_infos.php)
                 public static function GetListe(SQL &$sql, $mode = "modifier", $langs = array()) {
@@ -473,21 +474,13 @@ if (!isset($ClasseInfo)) {
                         }
 
                         // ENVOI SUR SQL
-                        foreach ($this->contenu as $lang => $text) { // gestion multi-langues
-                                if ($text != "") {
-                                        $query = "";
-                                        if ($update) { // MODIFIER
-                                                $query = "UPDATE info SET categorie = \"" . $this->getCategorie() . "\", titre = \"" . addSlashes($this->getTitre()) . "\", contenu = \"" . addSlashes($text) . "\", langue = \"" . $lang . "\", date = \"" . $this->getDate() . "\", auteur = \"" . $this->getAuteur() . "\", images = \"" . $this->listeImagesId() . "\" WHERE id = " . $update;
-                                        } else { // AJOUTER
-                                                $query = "INSERT INTO info (categorie,titre,contenu,langue,date,auteur,images) VALUES (\"" . $this->getCategorie() . "\",\"" . addSlashes($this->getTitre()) . "\",\"" . addSlashes($text) . "\",'" . $lang . "','" . $this->getDate() . "','" . $this->getAuteur() . "',\"" . $this->listeImagesId() . "\")";
-                                        }
-
-                                        if (!$sql->query($query)) {
-                                                $sql->afficheErreurs();
-                                        }
-                                }
+                        $query = "";
+                        if ($update) { // MODIFIER
+                                $query = "UPDATE info SET categorie = \"" . $this->getCategorie() . "\", titre = \"" . addSlashes($this->getTitre()) . "\", contenu = \"" . addSlashes($this->contenu[$this->langue]) . "\", langue = \"" . $this->langue . "\", date = \"" . $this->getDate() . "\", auteur = \"" . $this->getAuteur() . "\", images = \"" . $this->listeImagesId() . "\" WHERE id = " . $update;
+                        } else { // AJOUTER
+                                $query = "INSERT INTO info (categorie,titre,contenu,langue,date,auteur,images) VALUES (\"" . $this->getCategorie() . "\",\"" . addSlashes($this->getTitre()) . "\",\"" . addSlashes($this->contenu[$this->langue]) . "\",'" . $this->langue . "','" . $this->getDate() . "','" . $this->getAuteur() . "',\"" . $this->listeImagesId() . "\")";
                         }
-                        return TRUE;
+                        return $sql->query($query);
                 }
 
         }
