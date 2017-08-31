@@ -118,7 +118,7 @@ if (!isset($classeSQL)) {
                 /* méthodes ligne suivante BEGIN */
 
                 public function ligneSuivante(mysqli_result &$resultat) {
-                        if ($resultat && is_a($resultat, "mysqli_result")) {
+                        if (is_a($resultat, "mysqli_result")) {
                                 return mysqli_fetch_row($resultat);
                         } else {
                                 return FALSE;
@@ -126,7 +126,7 @@ if (!isset($classeSQL)) {
                 }
 
                 public function ligneSuivante_Array(mysqli_result &$resultat) {
-                        if ($resultat && is_a($resultat, "mysqli_result")) {
+                        if (is_a($resultat, "mysqli_result")) {
                                 return mysqli_fetch_array($resultat, MYSQLI_ASSOC);
                         } else {
                                 return FALSE;
@@ -137,7 +137,7 @@ if (!isset($classeSQL)) {
                 }
 
                 public function ligneSuivante_Object(mysqli_result &$resultat) {
-                        if ($resultat && is_a($resultat, "mysqli_result")) {
+                        if (is_a($resultat, "mysqli_result")) {
                                 return mysqli_fetch_object($resultat);
                         } else {
                                 return FALSE;

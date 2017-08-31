@@ -29,7 +29,7 @@ if (filter_input(INPUT_GET, 'ajouter') === "publie" || filter_input(INPUT_GET, '
 
         /* definition de la date */
         $date = getdate(time());
-        $info = new Info($sql, NULL, filter_input(INPUT_POST, 'i_titre'), filter_input(INPUT_POST, 'i_auteur'), filter_input(INPUT_POST, 'i_categorie'), $date['year'] . "-" . $date['mon'] . "-" . $date['mday']);
+        $info = new Info($sql, $result, filter_input(INPUT_POST, 'i_titre'), filter_input(INPUT_POST, 'i_auteur'), filter_input(INPUT_POST, 'i_categorie'), $date['year'] . "-" . $date['mon'] . "-" . $date['mday']);
 
         foreach ($info->contenu as $lang => $text) {
                 $info->ajouterContenu(filter_input(INPUT_POST, 'i_contenu' . $lang), $lang);

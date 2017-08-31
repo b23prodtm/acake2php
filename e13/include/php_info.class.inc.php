@@ -21,6 +21,10 @@ if (!isset($ClasseInfo)) {
                 var $langue; // langue de préférence
                 var $id; // id dans la base SQL
 
+                /**
+                 * @param SQL $sql prend la reference de connexion
+                 * @param mysqli_result $infos l'objet d'un retour base de données (ou initialiser une variable vide pour eviter une erreur fatale)
+                 */
                 public function __construct(SQL &$sql, mysqli_result &$infos, $t = NULL, $a = NULL, $c = NULL, $d = NULL) {
                         //init var
                         $this->titre = array(FR => NULL, EN => NULL, DE => NULL);
