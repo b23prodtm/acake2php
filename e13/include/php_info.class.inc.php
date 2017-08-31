@@ -28,12 +28,13 @@ if (!isset($ClasseInfo)) {
 
                 public function __construct(SQL &$sql, mysqli_result &$infos, $t = NULL, $a = NULL, $c = NULL, $d = NULL) {
                         //init var
+                        $this->langue = getPrimaryLanguage();
                         $this->titre = array(FR => NULL, EN => NULL, DE => NULL);
                         $this->date = $d;
                         $this->categorie = $c;
                         $this->auteur = $a;
                         $this->images = array();
-                        $this->contenu = array(FR => NULL, EN => NULL, DE => NULL);
+                        $this->contenu = array(FR => NULL, EN => NULL, DE => NULL);                        
                         $this->loadResult($sql, $infos);
                 }
 
@@ -43,13 +44,12 @@ if (!isset($ClasseInfo)) {
                                 return;
                         }
                         // appel fonction de la classe parente Info
+                        $this->langue = $info["langue"];
                         $this->ajouterTitre($info["titre"], $this->langue);
                         $this->auteur = $info["auteur"];
                         $this->categorie = $info["categorie"];
                         $this->date = $info["date"];
-
                         $this->id = $info["id"];
-                        $this->langue = $info["langue"];
                         $this->ajouterContenu($info["contenu"], $this->langue);
 
                         // acquisition de la liste des images pour l'info
@@ -476,9 +476,9 @@ if (!isset($ClasseInfo)) {
                         // ENVOI SUR SQL
                         $query = "";
                         if ($update) { // MODIFIER
-                                $query = "UPDATE info SET categorie = \"" . $this->getCategorie() . "\", titre = \"" . addSlashes($this->getTitre()) . "\", contenu = \"" . addSlashes($this->contenu[$this->langue]) . "\", langue = \"" . $this->langue . "\", date = \"" . $this->getDate() . "\", auteur = \"" . $this->getAuteur() . "\", images = \"" . $this->listeImagesId() . "\" WHERE id = " . $update;
+                                $query = "UPDATE info SET categorie = \"" . $this->getCategorie() . "\", titre = \"" . addSlashes($this->getTitre()) . "\", contenu = \"" . addSlashes($this->getContenu()) . "\", langue = \"" . $this->langue . "\", date = \"" . $this->getDate() . "\", auteur = \"" . $this->getAuteur() . "\", images = \"" . $this->listeImagesId() . "\" WHERE id = " . $update;
                         } else { // AJOUTER
-                                $query = "INSERT INTO info (categorie,titre,contenu,langue,date,auteur,images) VALUES (\"" . $this->getCategorie() . "\",\"" . addSlashes($this->getTitre()) . "\",\"" . addSlashes($this->contenu[$this->langue]) . "\",'" . $this->langue . "','" . $this->getDate() . "','" . $this->getAuteur() . "',\"" . $this->listeImagesId() . "\")";
+                                $query = "INSERT INTO info (categorie,titre,contenu,langue,date,auteur,images) VALUES (\"" . $this->getCategorie() . "\",\"" . addSlashes($this->getTitre()) . "\",\"" . addSlashes($this->getContenu()) . "\",'" . $this->langue . "','" . $this->getDate() . "','" . $this->getAuteur() . "',\"" . $this->listeImagesId() . "\")";
                         }
                         return $sql->query($query);
                 }
