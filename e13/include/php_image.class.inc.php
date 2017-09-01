@@ -84,11 +84,10 @@ if (!isset($ClasseImage)) {
                         // init img
                         $this->img = imagecreatefromstring($string);
                         if (!$this->img || !isset($this->img) || $this->img == "") {
-                                $this->load_error();
+                                $this->load_error("empty");
                         }
                         $this->w = imagesx($this->img);
                         $this->h = imagesy($this->img);
-                        $this->file = NULL;
                         $this->mode = BYTE_MODE;
                         return TRUE;
                 }
