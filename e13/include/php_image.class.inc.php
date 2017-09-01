@@ -71,21 +71,7 @@ if (!isset($ClasseImage)) {
                         return $imagedata;
                 }
 
-                /** prend en chagre les URLS distantes et les noms de fichiers locaux */
-                function loadfromfile($nom = "image") {
-                        $imagedata = "";
-                        if (isset($this->file) && ($imagedata = $this->load($this->file))) {
-                                // image ressource
-                                $this->loadFromBytes($imagedata, $nom);
-                                $this->mode = FILE_MODE;
-                                return true;
-                        } else {
-                                $this->mode &= ~FILE_MODE;
-                                return false;
-                        }
-                }
-
-                function loadFromBytes($string, $nom = "image") {
+                private function loadFromBytes($string, $nom = "image") {
                         // init nom
                         if ($nom == "") {
                                 $this->setNom("Image" . time('U'));
@@ -104,6 +90,40 @@ if (!isset($ClasseImage)) {
                         $this->mode = BYTE_MODE;
                         return TRUE;
                 }
+                
+                /** prend en chagre les URLS distantes et les noms de fichiers locaux */
+                private function loadfromfile($nom = "image") {
+                        $imagedata = "";
+                        if (isset($this->file) && ($imagedata = $this->load($this->file))) {
+                                // image ressource
+                                $this->loadFromBytes($imagedata, $nom);
+                                $this->mode = FILE_MODE;
+                                return true;
+                        } else {
+                                $this->mode &= ~FILE_MODE;
+                                return false;
+                        }
+                }
+
+                private function loadFromSQL(SQL &$sql, $id) {
+                        $result = $sql->query("SELECT * FROM image WHERE id = '$id'");
+                        $img = $sql->LigneSuivante_Array($result);
+                        mysqli_free_result($result);
+                        if ($img) {
+                                $nom = stripslashes($img['nom']);
+                                $this->desc = stripslashes($img['description']);
+                                $this->id = $id;
+                                $this->loadFromBytes(stripslashes($img['image']), $nom);
+                                $this->mime = stripslashes($img["mime"]);                                
+                                $this->mode = DB_MODE;
+                                return true;
+                        } else { // il n'y a pas d'image correspondant a id dans la table                                                         
+                                //echo "<b>Attention!</b>: image id:$id n'existe pas dans la base SQL.";
+                                $this->load_error();
+                                return false;
+                        }
+                }
+
 
                 /* ----- partie publique ----- */
 
@@ -116,6 +136,9 @@ if (!isset($ClasseImage)) {
                   To skip this argument in order to provide the quality parameter, use NULL.
                  * */
                 function image($filename = NULL) {
+                        if (($this->mode & FILE_MODE) != 0) {
+                                $this->loadfromfile();
+                        }
                         if ($this->img) {
                                 $this->resize();
                                 switch ($this->mime) {
@@ -267,11 +290,8 @@ if (!isset($ClasseImage)) {
                  * fichier temporaire sur le disque, depuis un script _image.php?id=n&size=n 
                  *  */
                 function afficher_db() {
-                        if ($this->scale == "") {
-                                $this->setScale(100);
-                        }
-                        $image = $GLOBALS["e13___image"]."?id=" . $this->id . "&w=" . $this->w . "&h=" . $this->h;
-                        $imageScale = $GLOBALS["e13___image"]."?id=" . $this->id . "&w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale;
+                        $image = $GLOBALS["e13___image"] . "?id=" . $this->id . "&w=" . $this->w . "&h=" . $this->h;
+                        $imageScale = $GLOBALS["e13___image"] . "?id=" . $this->id . "&w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale;
                         return HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $imageScale . "','zoom ^','width=" . $this->w * $this->scale . ", height=" . $this->h * $this->scale . ", status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
                 }
 
@@ -285,7 +305,7 @@ if (!isset($ClasseImage)) {
                         }
                 }
 
-                function afficherFormatee($mode = 0, $desc = TRUE) {
+                function afficherFormatee($echo = 0, $desc = TRUE) {
                         $tbl = new Tableau(2, 1, str_replace(" ", "_", $this->nom));
                         $tbl->setOptionsArray(array("class" => "image"));
                         $tbl->setContenu_Cellule(0, 0, "<center>" . (0 != ($this->mode & (DB_MODE | FILE_MODE)) ? $this->afficher() : "<i>No Img</i>") . "<center>");
@@ -294,10 +314,10 @@ if (!isset($ClasseImage)) {
                         } else {
                                 $tbl->setContenu_Cellule(1, 0, "<center>" . $this->nom . "</center>");
                         }
-                        if ($mode == 0) {
+                        if ($echo == 0) {
                                 return $tbl->fin();
                         } // HTML
-                        if ($mode == 1) {
+                        if ($echo == 1) {
                                 $tbl->fin(1);
                         } // to stdout
                         return true;
@@ -329,24 +349,6 @@ if (!isset($ClasseImage)) {
                                 }
                         }
                         trigger_error("Error uploading " . $this->file . " " . $sql->afficheErreurs(), E_USER_ERROR);
-                }
-
-                function loadFromSQL(SQL &$sql, $id) {
-                        $result = $sql->query("SELECT * FROM image WHERE id = '$id'");
-                        $img = $sql->LigneSuivante_Array($result);
-                        mysqli_free_result($result);
-                        if ($img) {
-                                $nom = stripslashes($img['nom']);
-                                $this->desc = stripslashes($img['description']);
-                                $this->id = $id;
-                                $this->loadFromBytes(stripslashes($img['image']), $nom);
-                                $this->mime = stripslashes($img["mime"]);
-                                return true;
-                        } else { // il n'y a pas d'image correspondant a id dans la table                                                         
-                                //echo "<b>Attention!</b>: image id:$id n'existe pas dans la base SQL.";
-                                $this->load_error();
-                                return false;
-                        }
                 }
 
                 /* fonctions de base, de classe */

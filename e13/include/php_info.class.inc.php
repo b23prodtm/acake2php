@@ -324,7 +324,7 @@ if (!isset($ClasseInfo)) {
                         $img = new Image;
                         if (is_array($this->images[$link])) {
                                 $img->setFile($this->images[$link][0]);
-                                $img->loadfromfile($this->images[$link][1]);
+                                $img->setNom($this->images[$link][1]);
                                 return $img;
                         } else {
                                 $img->loadFromSQL($sql, $this->images[$link]);
