@@ -275,13 +275,8 @@ if (!isset($ClasseImage)) {
                 function afficher_file($echo = 0) {
                         $w = "";
                         if (isset($this->file)) {
-                                if (file_exists($this->file)) {
-                                        $image = $GLOBALS["e13___image"] . "?w=" . $this->w . "&h=" . $this->h . "&file=" . urlencode(serialize($this->file));
-                                        $imageScale = $GLOBALS["e13___image"] . "?w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale . "&file=" . urlencode(serialize($this->file));
-                                        $w .= HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $imageScale . "','zoom ^','width=" . $this->w * $this->scale . ", height=" . $this->h * $this->scale . ", status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
-                                } else {
-                                        trigger_error("File $this->file not found!", E_USER_WARNING);
-                                }
+                                $image = $this->file;
+                                $w .= HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $image . "','zoom ^','width=" . $this->w * $this->scale . ", height=" . $this->h * $this->scale . ", status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
                         } else {
                                 trigger_error("The variable file isn't initialized. " . $this->nom, E_USER_WARNING);
                         }
