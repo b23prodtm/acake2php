@@ -68,12 +68,14 @@ if (!isset($classeSQL)) {
                 }
 
                 /** prepare stmt */
-                public function send_long_data($query, $data) {
-                        mysqli_stmt_prepare($this->connexion, $query);
+                public function send_long_data($query, &$data) {
+                        $stmt = mysqli_stmt_init($this->connexion);
+                        mysqli_stmt_prepare($stmt, $query);
                         $n = NULL;
-                        mysqli_stmt_bind_param($this->connexion, "b", $n);
-                        mysqli_stmt_send_long_data($this->connexion, 0, $data);
-                        return mysqli_stmt_execute($this->connexion);
+                        mysqli_stmt_bind_param($stmt, "b", $n);
+                        mysqli_stmt_send_long_data($stmt, 0, $data);
+                        mysqli_stmt_execute($stmt);
+                        return mysqli_stmt_close($stmt);
                 }
 
                 /**
