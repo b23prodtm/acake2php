@@ -228,7 +228,7 @@ if (!isset($ClasseImage)) {
                 }
 
                 // wrapper erreurJpeg
-                function load_error() {
+                function load_error($errmsg = "") {
                         $this->img = Image::ErreurImage();
                         $this->setSize(imagesx($this->img), imagesy($this->img));
                         $this->mode = BYTE_MODE;
@@ -244,14 +244,15 @@ if (!isset($ClasseImage)) {
                         $this->mode = BYTE_MODE;
                 }
 
-                public static function ErreurImage() {
+                public static function ErreurImage($errmsg = "Error") {
+                        $font = 1;
                         // gestion d'erreur JPG: créer une image vide
-                        $img = imagecreate(150, 30); /* Création d'une image blanche */
+                        $img = imagecreate(strlen($errmsg) * imagefontwidth($font), 30); /* Création d'une image blanche */
                         $bgc = imagecolorallocate($img, 255, 255, 255);
                         $tc = imagecolorallocate($img, 0, 0, 0);
                         imagefilledrectangle($img, 0, 0, 150, 30, $bgc);
                         // Affichage d'un message d'erreur
-                        imagestring($img, 1, 5, 5, "Erreur de chargement de l'image", $tc);
+                        imagestring($img, $font, 5, 5, $errmsg, $tc);
                         return $img;
                 }
 

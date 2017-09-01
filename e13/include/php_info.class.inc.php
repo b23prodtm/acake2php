@@ -128,18 +128,20 @@ if (!isset($ClasseInfo)) {
                         $form->ajouterChamp($info_categorie);
                 }
 
-                private function fm_cimage(SQL &$sql, Formulaire &$form, $info_images) {
+                private function fm_cimage(SQL &$sql, Formulaire &$form, $i_images) {
                         $info_image = new ChampFile('i_image', Info::R()->lang("ajouter_lab", "images"), Info::R()->lang("ajouter_dsc", "images") . " 800 kb", 800000);
                         $info_image_nom = new ChampTexte('i_image_nom', Info::R()->lang("nom_lab", "images"), Info::R()->lang("nom_dsc", "images"), 20);
                         $info_image_desc = new ChampAireTexte('i_image_desc', Info::R()->lang("desc_lab", "images"), Info::R()->lang("desc_dsc", "images"), 20, 3);
                         /* chaque image existante dans l'info, est affiche dans un groupe de champs checkbox; pour supprimer, decocher. pour ajouter, un champ FILE est ajouté plus bas dans le formulaire */
                         $champs_images = array();
-                        for ($i = 0; $i < count($this->images); $i++) {
-                                if (is_array($this->images[$i])) {
+                        for ($i = 0; $i < count($i_images); $i++) {
+                                if (is_array($i_images[$i])) {
                                         continue;
                                 }
+                                $champs_images[$i] = new ChampCoche("i_images[]", $i_images[$i], "", "", TRUE);
                                 $image = $this->getImage($sql, $i); // retourne l'image en objet Image, l'id est dans l'objet Info (->images[])
-                                $champs_images[] = new ChampCoche("i_images[]", $this->images[$i], $image->afficher(), "", TRUE);
+                                $image->setSize(90, 60);                                
+                                $champs_images[$i]->libelle = $image->afficher();
                         }
 
                         $form->ajouterChamp(new ChampGroupe(Info::R()->lang("images_lab", "infos"), Info::R()->lang("images_dsc", "infos"), "i_images[]", $champs_images));
