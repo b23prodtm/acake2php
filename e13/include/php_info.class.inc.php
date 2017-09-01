@@ -230,7 +230,7 @@ if (!isset($ClasseInfo)) {
                                 $tbl->setOptionsArray(array("HTML" => array("BORDER" => 0), "class" => "liste"));
                                 $tbl->setContenu_Cellule(0, 0, $tbl->id, array("HTML" => array("COLSPAN" => $tbl->nbColonnes), "class" => "titre"));
                                 $tbl->setOptionsArray_Ligne(1, array("class" => "entete"));
-                                $tbl->setContenu_Ligne(1, R()->lang(array("id", "titre", "date", "langue", "categorie"), "infos"));
+                                $tbl->setContenu_Ligne(1, Info::R()->lang(array("id", "titre", "date", "langue", "categorie"), "infos"));
                                 for ($row = 2, $n = 0; $row - 2 < mysqli_num_rows($infos); $row++) {
                                         $nfo = new Info($sql, $infos);
                                         // lignes de couleurs alternées
