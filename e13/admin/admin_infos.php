@@ -12,10 +12,10 @@ require($GLOBALS['include__php_image.class.inc']);
 $pAdmin = new ADMIN_Page($r, "admin__infos", session_id());
 $pAdmin->ajouterContenu("<br><center><b>Gestion des infos</b></center><br>");
 $liste = HTML_listeDebut();
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?ajouter=1", $r->lang("ajouter","infos")));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?modifier=1", $r->lang("modifier","infos")));
+$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?ajouter=1", $r->lang("ajouter", "infos")));
+$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?modifier=1", $r->lang("modifier", "infos")));
 $liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?supprimer=1", $r->lang("supprimer", "infos")));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?afficher=1", $r->lang("voirtous","infos")));
+$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?afficher=1", $r->lang("voirtous", "infos")));
 $liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__index'], $r->lang("retouradmin", "infos")));
 $liste .= HTML_listeFin();
 $pAdmin->ajouterContenu($liste);
@@ -29,7 +29,7 @@ if (filter_input(INPUT_GET, 'ajouter') === "publie" || filter_input(INPUT_GET, '
 
         /* definition de la date */
         $date = getdate(time());
-        $lang = filter_input(INPUT_POST,'i_lang');
+        $lang = filter_input(INPUT_POST, 'i_lang');
         $info = new Info($sql, $result, filter_input(INPUT_POST, 'i_titre' . $lang), filter_input(INPUT_POST, 'i_auteur'), filter_input(INPUT_POST, 'i_categorie'), $date['year'] . "-" . $date['mon'] . "-" . $date['mday'], $lang);
         $info->ajouterContenu(filter_input(INPUT_POST, 'i_contenu' . $lang), $lang);
         // verifier l'image champ info_image:_nom:_desc postee et la stocker en base SQL deja
@@ -49,8 +49,8 @@ if (filter_input(INPUT_GET, 'ajouter') === "publie" || filter_input(INPUT_GET, '
                 $image->setNom($image_nom);
                 //$image->loadBin(file_get_contents($_FILES['i_image']['tmp_name']), $image_nom);
                 $image->setDesc(filter_input(INPUT_POST, 'i_image_desc'));
-                $image_id = $image->saveToSQL($sql);
-                $info->ajouterImageSQL($image_id);
+                $image->saveToSQL($sql);
+                $info->ajouterImageSQL($image->id);
         }
 
         if (filter_input(INPUT_GET, 'modifier')) {
@@ -67,7 +67,7 @@ if (filter_input(INPUT_GET, 'ajouter') === "publie" || filter_input(INPUT_GET, '
                 $update = FALSE;
         } // donner l'id stocké en session pour une modification de l'info
         if ($info->publier($sql, $update)) {
-                $pAdmin->ajouterContenu("<b><center><br>[ " . $info->getId() . " ] " . $r->lang("publiesucces", "infos") . "</center></b>");
+                $pAdmin->ajouterContenu("<b><center><br>[ " . $info->getId() . " " . $info->getTitre($lang) . "] " . $r->lang("publiesucces", "infos") . "</center></b>");
                 if (filter_input(INPUT_GET, 'modifier')) {
                         // effacer l'id de l'info en session
                         unset($_SESSION['i_id']);

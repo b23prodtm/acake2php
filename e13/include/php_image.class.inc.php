@@ -375,10 +375,11 @@ if (!isset($ClasseImage)) {
                                 // init id
                                 $this->id = mysqli_insert_id($sql->connexion);
                                 if ($sql->query("UPDATE image SET image=\"" . addslashes($imagedata) . "\" WHERE id=$this->id")) {
-                                        return;
+                                        return $this->id;
                                 }
                         }
                         trigger_error("Error uploading " . $this->file . " " . $sql->afficheErreurs(), E_USER_ERROR);
+                        return 0;
                 }
 
                 /* fonctions de base, de classe */
