@@ -42,7 +42,7 @@ if ($id) {
         trigger_error("image : missing a valid parameter like w,h id or file or captcha", E_USER_ERROR);
         $image->load_error();
 }
-if ($w && $h) {
+if ($w != 0 && $h != 0) {
         $image->setSize($w, $h);
         $image->resize();
 }

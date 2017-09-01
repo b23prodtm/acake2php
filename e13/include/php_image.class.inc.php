@@ -34,9 +34,9 @@ if (!isset($ClasseImage)) {
                 var $file;
                 var $nom;
                 var $desc;
-                var $scale;
-                var $w;
-                var $h;
+                var $scale = 1.;
+                var $w=0;
+                var $h=0;
                 var $mime;
                 var $mode;
 
@@ -252,7 +252,7 @@ if (!isset($ClasseImage)) {
                         if (isset($this->file)) {
                                 if (file_exists($this->file)) {
                                         error_reporting($old);
-                                        $image = $GLOBALS["e13___image"] . "?file=" . urlencode($this->file) . "&size=" . (4 * $this->scale);
+                                        $image = $GLOBALS["e13___image"] . "?file=" . urlencode($this->file) . "&w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale;
                                         return HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $image . "','b23::Open Window ^','width=this.width*4, height=this.height*4, status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
                                 } else {
                                         trigger_error("File $this->file not found!", E_USER_WARNING);

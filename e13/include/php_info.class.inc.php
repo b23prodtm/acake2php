@@ -124,7 +124,7 @@ if (!isset($ClasseInfo)) {
 
                 private function fm_ctitre(SQL &$sql, Formulaire &$form, $i_titre) {
                         foreach ($i_titre as $lang => $text) {
-                                $info_titre = new ChampTexte('i_titre' . $lang, "Titre:", "Texte " . Info::findLangQuery(array($lang)), "50", NULL, $text);
+                                $info_titre = new ChampTexte('i_titre' . $lang, Info::R()->lang("titre_lab", "infos"), Info::R()->lang("titre_dsc", "infos"), "50", NULL, $text);
                                 if ($lang != getPrimaryLanguage()) {
                                         $info_titre->desactiver();
                                 }
