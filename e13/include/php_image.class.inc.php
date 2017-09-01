@@ -22,7 +22,8 @@ if (!isset($ClasseImage)) {
          */
 
 
-        define("JPEG_QUALITY", 100);
+        define("JPEG_QUALITY", 60);
+        define("PNG_QUALITY", 6);
         define("BYTE_MODE", 0x0);
         define("FILE_MODE", 0x1);
         define("DB_MODE", 0x2);
@@ -142,13 +143,13 @@ if (!isset($ClasseImage)) {
                                 $this->resize();
                                 switch ($this->mime) {
                                         case "image/jpeg": case "image/jpg":
-                                                imagejpeg($this->img, $filename ? $filename .= ".jpg" : NULL);
+                                                imagejpeg($this->img, $filename ? $filename .= ".jpg" : NULL, JPEG_QUALITY);
                                                 break;
                                         case "image/gif":
                                                 imagegif($this->img, $filename ? $filename .= ".gif" : NULL);
                                                 break;
                                         case "image/png":
-                                                imagepng($this->img, $filename ? $filename .= ".png" : NULL);
+                                                imagepng($this->img, $filename ? $filename .= ".png" : NULL, PNG_QUALITY);
                                                 break;
                                         default:
                                                 trigger_error("No support $this->mime .", E_USER_ERROR);
@@ -224,8 +225,10 @@ if (!isset($ClasseImage)) {
                 }
 
                 function resize() {
+                        $res = true;
                         if (!isset($this->img)) {
-                                trigger_error("Image ressource not defined, can't resize().", E_USER_WARNING);
+                                trigger_error("Image resource not defined, can't resize().", E_USER_WARNING);
+                                $res = false;
                         }
                         if (isset($this->scale)) {
                                 $width = imagesx($this->img);
@@ -235,10 +238,14 @@ if (!isset($ClasseImage)) {
                                 $nh = $this->h * $this->scale;
                                 if ($nw != $width || $nh != $height) {
                                         $dst = imagecreate($nw, $nh);
-                                        imagecopyresampled($dst, $this->img, 0, 0, 0, 0, $nw, $nh, $width, $height);
+                                        $res = imagecopyresampled($dst, $this->img, 0, 0, 0, 0, $nw, $nh, $width, $height);
                                 }
                                 $this->img = $dst;
                         }
+                        if (!$res) {
+                                trigger_error($this->id . " resizing failed.");
+                        }
+                        return $res;
                 }
 
                 // problème d'accès au fichier
