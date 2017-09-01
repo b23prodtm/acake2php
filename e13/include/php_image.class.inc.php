@@ -59,8 +59,8 @@ if (!isset($ClasseImage)) {
                 /* ----- partie privée ----- */
 
                 function loadfromfile($nom = "image") {
-                        if (isset($this->file) && fopen($this->file, 'r')) {
-                                $imagedata = fread($this->file, MAX_FILE_SIZE);
+                        if (isset($this->file) && fopen($this->file, 'rb')) {
+                                $imagedata = fread($this->file, filesize($this->file));
                                 fclose($this->file);
                                 // image ressource
                                 $this->loadFromBytes($imagedata, $nom);
@@ -229,10 +229,10 @@ if (!isset($ClasseImage)) {
                                         $image = $GLOBALS["e13___image"] . "?file=" . urlencode($this->file) . "&size=" . (4 * $this->scale);
                                         return HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $image . "','b23::Open Window ^','width=this.width*4, height=this.height*4, status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
                                 } else {
-                                        trigger_error("display(2):File $this->file not found! display() returned unsuccessfully.", E_USER_WARNING);
+                                        trigger_error("File $this->file not found!", E_USER_WARNING);
                                 }
                         } else {
-                                trigger_error("display(2):Function call setFile() expected for variable file isn't initialized.", E_USER_WARNING);
+                                trigger_error("The variable file isn't initialized.", E_USER_WARNING);
                         }
                 }
 
