@@ -126,14 +126,15 @@ if (!isset($ClasseInfo)) {
                         $form->ajouterChamp($info_categorie);
                 }
 
-                        /* chaque image existante dans l'info, est affiche dans un groupe de champs checkbox; pour supprimer, decocher. pour ajouter, un champ FILE est ajouté plus bas dans le formulaire */
+                /* chaque image existante dans l'info, est affiche dans un groupe de champs checkbox; pour supprimer, decocher. pour ajouter, un champ FILE est ajouté plus bas dans le formulaire */
+
                 private function fm_cimage(SQL &$sql, Formulaire &$form, $i_images) {
-                        /* nouvelle image*/
+                        /* nouvelle image */
                         $info_image = new ChampFile('i_image', Info::R()->lang("ajouter_lab", "images"), Info::R()->lang("ajouter_dsc", "images") . " 800 kb", 800000);
                         $info_image_nom = new ChampTexte('i_image_nom', Info::R()->lang("nom_lab", "images"), Info::R()->lang("nom_dsc", "images"), 20);
                         $info_image_desc = new ChampAireTexte('i_image_desc', Info::R()->lang("desc_lab", "images"), Info::R()->lang("desc_dsc", "images"), 20, 3);
-                        $info_image_mime = new ChampSelect("i_image_mime", Info::R()->lang("mime_lab", "images"), Info::R()->lang("mime_dsc", "images"), array("PNG" => "image/png", "JPEG" => "image/jpg", "GIF" => "image/gif"), 3, "jpg");
-                        /** existant*/
+                        $info_image_mime = new ChampSelect("i_image_mime", Info::R()->lang("mime_lab", "images"), Info::R()->lang("mime_dsc", "images"), array("PNG" => "image/png", "JPEG" => "image/jpg", "GIF" => "image/gif"), 1, "image/jpg");
+                        /** existant */
                         $champs_images = array();
                         for ($i = 0; $i < count($i_images); $i++) {
                                 if (is_array($i_images[$i])) {
@@ -144,7 +145,7 @@ if (!isset($ClasseInfo)) {
                                 $image->FromSQL($sql, $i_images[$i]);
                                 $image->setWidth(90);
                                 $champs_images[$i]->libelle = $image->afficher_db();
-                        }                        
+                        }
                         $form->ajouterChamp(new ChampGroupe(Info::R()->lang("images_lab", "infos"), Info::R()->lang("images_dsc", "infos"), "i_images[]", $champs_images));
                         $form->ajouterChamp($info_image);
                         $form->ajouterChamp($info_image_nom);
@@ -481,33 +482,48 @@ if (!isset($ClasseInfo)) {
                 }
 
                 /* ---- fonctions vers SQL ---- */
+                /* $update = id de l'info qui est modifiee si utilise sinon false
+                  // chaine ids des images (id1,id2,id3,...,idn) (reference table image de la base SQL) de l'info */
 
-                function publier(SQL &$sql, $update) { // $update = id de l'info qui est modifiee si utilise sinon false
-                        // chaine ids des images (id1,id2,id3,...,idn) (reference table image de la base SQL) de l'info
-                        // PREPARATION
-                        if ($update) { // MODIFIER
-                                // recuperer l'info sur SQL qui est modifiee
-                                $result = $sql->query("SELECT * FROM info WHERE id ='" . $update . "'");
-                                $infoSQL = new Info($sql, $result);
-                                mysqli_free_result($result);
-                                // prendre les images de l'info courante-nouvelle pour comparer les images de l'ancienne. supprimer de la base SQL les images qui n'apparaissent plus dans le nouveau tableau this->images
-                                $poubelle = array_diff($infoSQL->images, $this->images);
-                                foreach ($poubelle as $id_old) {
-                                        if (is_array($id_old)) {
-                                                continue;
-                                        }
-                                        Image::DeleteSQL($sql, $id_old);
+                function update(SQL &$sql, $id) {
+                        // recuperer l'info sur SQL qui est modifiee
+                        $result = $sql->query("SELECT * FROM info WHERE id ='" . $id . "'");
+                        $infoSQL = new Info($sql, $result);
+                        mysqli_free_result($result);
+                        // prendre les images de l'info courante-nouvelle pour comparer les images de l'ancienne. supprimer de la base SQL les images qui n'apparaissent plus dans le nouveau tableau this->images
+                        $poubelle = array_diff($infoSQL->images, $this->images);
+                        foreach ($poubelle as $id_old) {
+                                if (is_array($id_old)) {
+                                        continue;
                                 }
+                                Image::DeleteSQL($sql, $id_old);
                         }
+                        $query = "UPDATE info SET categorie = \"" . $this->getCategorie() . "\", titre = \"" . addSlashes($this->getTitre()) . "\", contenu = \"" . addSlashes($this->getContenu()) . "\", langue = \"" . $this->langue . "\", date = \"" . $this->getDate() . "\", auteur = \"" . $this->getAuteur() . "\", images = \"" . $this->listeImagesId() . "\" WHERE id = " . $id;
 
-                        // ENVOI SUR SQL
+                        $result2 = $sql->query($query);
+                        if ($result2) {
+                                mysqli_free_result($result2);
+                                return true;
+                        } else {
+                                return false;
+                        }
+                }
+
+                function publier(SQL &$sql, $update) {
                         $query = "";
                         if ($update) { // MODIFIER
-                                $query = "UPDATE info SET categorie = \"" . $this->getCategorie() . "\", titre = \"" . addSlashes($this->getTitre()) . "\", contenu = \"" . addSlashes($this->getContenu()) . "\", langue = \"" . $this->langue . "\", date = \"" . $this->getDate() . "\", auteur = \"" . $this->getAuteur() . "\", images = \"" . $this->listeImagesId() . "\" WHERE id = " . $update;
+                                return $this->update($sql, $update);
                         } else { // AJOUTER
                                 $query = "INSERT INTO info (categorie,titre,contenu,langue,date,auteur,images) VALUES (\"" . $this->getCategorie() . "\",\"" . addSlashes($this->getTitre()) . "\",\"" . addSlashes($this->getContenu()) . "\",'" . $this->langue . "','" . $this->getDate() . "','" . $this->getAuteur() . "',\"" . $this->listeImagesId() . "\")";
                         }
-                        return $sql->query($query);
+                        $result = $sql->query($query);
+                        $this->id = mysqli_insert_id($sql);
+                        if ($result) {
+                                mysqli_free_result($result);
+                                return true;
+                        } else {
+                                return false;
+                        }
                 }
 
         }

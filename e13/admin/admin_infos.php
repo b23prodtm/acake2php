@@ -67,7 +67,7 @@ if (filter_input(INPUT_GET, 'ajouter') === "publie" || filter_input(INPUT_GET, '
                 $update = FALSE;
         } // donner l'id stocké en session pour une modification de l'info
         if ($info->publier($sql, $update)) {
-                $pAdmin->ajouterContenu("<b><center><br>[ " . filter_input(INPUT_POST, 'i_titre') . " ] " . $r->lang("publiesucces", "infos") . "</center></b>");
+                $pAdmin->ajouterContenu("<b><center><br>[ " . $info->getId() . " ] " . $r->lang("publiesucces", "infos") . "</center></b>");
                 if (filter_input(INPUT_GET, 'modifier')) {
                         // effacer l'id de l'info en session
                         unset($_SESSION['i_id']);
