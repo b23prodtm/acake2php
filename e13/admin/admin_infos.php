@@ -12,11 +12,11 @@ require($GLOBALS['include__php_image.class.inc']);
 $pAdmin = new ADMIN_Page($r, "admin__infos", session_id());
 $pAdmin->ajouterContenu("<br><center><b>Gestion des infos</b></center><br>");
 $liste = HTML_listeDebut();
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?ajouter=1", "Ajouter une info >"));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?modifier=1", "Modifier une info >"));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?supprimer=1", "Supprimer une(des) info(s) >"));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?afficher=1", "Voir toutes les infos >"));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__index'], "Retour la page Administration >"));
+$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?ajouter=1", $r->lang("ajouter","infos")));
+$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?modifier=1", $r->lang("modifier","infos")));
+$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?supprimer=1", $r->lang("supprimer", "infos")));
+$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?afficher=1", $r->lang("voirtous","infos")));
+$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__index'], $r->lang("retouradmin", "infos")));
 $liste .= HTML_listeFin();
 $pAdmin->ajouterContenu($liste);
 
