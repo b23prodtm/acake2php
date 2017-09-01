@@ -202,8 +202,6 @@ if (!isset($ClasseImage)) {
 
                 // problème d'accès au fichier
                 function setMime($mime) {
-                        /* list($width,$height,$type,$attr) = getimagesize($file);
-                          $this->mime = image_type_to_mime_type($type); */
                         $this->mime = $mime;
                 }
 
@@ -216,6 +214,10 @@ if (!isset($ClasseImage)) {
 
                 function setImageGD(&$img, $mime) {
                         $this->img = $img;
+                        if ($img) {
+                                $this->w = imagesx($img);
+                                $this->h = imagesy($img);
+                        }
                         $this->setMime($mime);
                         $this->mode = BYTE_MODE;
                 }
@@ -249,14 +251,13 @@ if (!isset($ClasseImage)) {
                 function afficher_file() {
                         if (isset($this->file)) {
                                 if (file_exists($this->file)) {
-                                        error_reporting($old);
                                         $image = $GLOBALS["e13___image"] . "?file=" . urlencode($this->file) . "&w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale;
                                         return HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $image . "','b23::Open Window ^','width=this.width*4, height=this.height*4, status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
                                 } else {
                                         trigger_error("File $this->file not found!", E_USER_WARNING);
                                 }
                         } else {
-                                trigger_error("The variable file isn't initialized.", E_USER_WARNING);
+                                trigger_error("The variable file isn't initialized. " . $this->nom, E_USER_WARNING);
                         }
                 }
 
