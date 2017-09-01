@@ -35,8 +35,8 @@ if (!isset($ClasseImage)) {
                 var $nom;
                 var $desc;
                 var $scale = 1.;
-                var $w=0;
-                var $h=0;
+                var $w = 0;
+                var $h = 0;
                 var $mime;
                 var $mode;
 
@@ -184,19 +184,17 @@ if (!isset($ClasseImage)) {
 
                 function resize() {
                         if (!isset($this->img)) {
-                                trigger_error("Image ressource not defined, can't do resize().", E_USER_WARNING);
+                                trigger_error("Image ressource not defined, can't resize().", E_USER_WARNING);
                         }
                         if (isset($this->scale)) {
-                                $width = imagesX($this->img);
-                                $height = imagesY($this->img);
+                                $width = imagesx($this->img);
+                                $height = imagesy($this->img);
                                 $dst = $this->img;
                                 $nw = $this->w * $this->scale;
-                                if ($nw != $width) {
-                                        $dst = imagescale($this->img, $nw);
-                                }
                                 $nh = $this->h * $this->scale;
-                                if ($nh != $height) {
-                                        $dst = imagescale($this->img, $nh);
+                                if ($nw != $width || $nh != $height) {
+                                        $dst = imagecreate($nw, $nh);
+                                        imagecopyresampled($dst, $src, 0, 0, 0, 0, $nw, $nh, $width, $height);
                                 }
                                 $this->img = $dst;
                         }
