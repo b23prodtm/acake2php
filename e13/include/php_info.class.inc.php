@@ -26,7 +26,7 @@ if (!isset($ClasseInfo)) {
                 }
 
                 var $titre, $date, $contenu, $auteur, $categorie;
-                var $images; // tableau d'urls des images
+                var $images; // tableau d'urls des images (id ou url=>nom)
                 var $langue; // langue de préférence
                 var $id; // id dans la base SQL
 
@@ -311,19 +311,19 @@ if (!isset($ClasseInfo)) {
                         return $this->auteur;
                 }
 
+                function getImageAsTag(&$sql, $n) {
+                        return $this->getImage($sql, $n)->afficher();
+                }
+
                 function getImage(SQL &$sql, $n) {
-                        foreach ($this->images as $key => $id) {
-                                if ($n == $key) {
-                                        if (!is_array($this->images[$n])) {
-                                                // il s'agit de l'id d'une image stockée dans la base SQL, table Image
-                                                $img = new Image;
-                                                $img->loadFromSQL($sql, $id);
-                                                return $img;
-                                        } else {
-                                                return $this->images[$n];
-                                        } // retourne l'image stockée en URL sous forme d'un array ([0] => $url, [1] => $desc_courte)
-                                        break;
-                                }
+                        $img = new Image;
+                        if (is_array($this->images[$n])) {
+                                $img->setFile($this->images[$n][0]);
+                                $img->loadfromfile($this->images[$n][1]);
+                                return $img;
+                        } else {
+                                $img->loadFromSQL($sql, $id);
+                                return $img;
                         }
                 }
 
@@ -453,20 +453,16 @@ if (!isset($ClasseInfo)) {
                 private function tableauImages_rc(SQL &$sql, Tableau &$img, $i, $j, $n) {
                         /* images 150px */
                         // tableau d'images associees a l'info, sur 3 colonnes et donc ceil(count($this->images)/3) lignes.
-                        if ($n < count($this->images)) {
-                                if ($j < $img->nbColonnes) {
-                                        $image = $this->getImage($sql, $n);
-                                        if (is_a($image, "Image")) {
-                                                $image->setSize(150,150);
-                                                $image->resize();
-                                                $image_html = $image->afficherFormatee();
-                                        } else {
-                                                $image_html = HTML_image($image[0]) . "<br>" . $image[1];
-                                        } // cas info non sql, image url
-                                        $img->setContenu_Cellule($i, $j, $image_html, array("css" => array("text-align" => "center")));
-                                        $this->tableauImages_rc($sql, $img, $i, ++$j, ++$n);
-                                        /* images[][0] : url et images[][1] : description breve de l'image. */
+                        if ($n < count($this->images) && $j < $img->nbColonnes) {
+                                $image = $this->getImage($sql, $n);
+                                if (is_a($image, "Image")) {
+                                        $image->setSize(150, 150);
+                                        $image->resize();
+                                        $image_html = $image->afficherFormatee();
                                 }
+                                $img->setContenu_Cellule($i, $j, $image_html, array("css" => array("text-align" => "center")));
+                                $this->tableauImages_rc($sql, $img, $i, ++$j, ++$n);
+                                /* images[][0] : url et images[][1] : description breve de l'image. */
                         }
                 }
 

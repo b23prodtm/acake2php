@@ -142,7 +142,10 @@ if (!isset($ClasseImage)) {
                 }
 
                 function resize() {
-                        if (isset($this->img) && isset($this->scale)) {
+                        if (!isset($this->img)) {
+                                trigger_error("Image ressource not defined, can't do resize().", E_USER_WARNING);
+                        }
+                        if (isset($this->scale)) {
                                 $width = imagesX($this->img);
                                 $height = imagesY($this->img);
                                 $dst = $this->img;
@@ -155,10 +158,6 @@ if (!isset($ClasseImage)) {
                                         $dst = imagescale($this->img, $nh);
                                 }
                                 $this->img = $dst;
-                                return true;
-                        } else {
-                                trigger_error("Image ressource not defined, can't do resize().", E_USER_WARNING);
-                                return false;
                         }
                 }
 
