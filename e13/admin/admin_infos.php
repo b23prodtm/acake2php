@@ -38,7 +38,7 @@ if (filter_input(INPUT_GET, 'ajouter') === "publie" || filter_input(INPUT_GET, '
                 $image = new Image();
                 $image->setFile($_FILES['i_image']['tmp_name']);
                 // format d'image
-                $image->setMime("image/png");
+                $image->setMime(filter_input(INPUT_POST, 'i_image_mime'));
                 //			debug(print_r($_FILES['i_image']));
                 //			die();
                 if (!filter_input(INPUT_POST, 'i_image_nom') || strlen(filter_input(INPUT_POST, 'i_image_nom')) < 1) {
@@ -91,16 +91,16 @@ if (filter_input(INPUT_GET, 'modifier')) {
                 // placer l'id de l'info en session pour la retrouver dans une requete UPDATE, prochaine etape
                 $_SESSION['i_id'] = filter_input(INPUT_POST, 'info_a_modifier');
                 //debug("post");
-                $info = $sql->query("SELECT * FROM info WHERE id=" . filter_input(INPUT_POST, 'info_a_modifier'));
+                $dbinfo = $sql->query("SELECT * FROM info WHERE id=" . filter_input(INPUT_POST, 'info_a_modifier'));
                 //debug("query");
-                $infoSQL = new Info($sql, $info);
+                $info = new Info($sql, $dbinfo);
                 debug("info");
-                $form = $infoSQL->formModifier($sql, $GLOBALS['admin__infos'] . "?modifier=publie");
+                $form = $info->formModifier($sql, $GLOBALS['admin__infos'] . "?modifier=publie");
                 debug("form");
                 $pAdmin->ajouterContenu($form);
 
                 // vidage de la mémoire
-                mysqli_free_result($info);
+                mysqli_free_result($dbinfo);
         }
 
         /* affichage de la liste des infos avec des coches radio */
@@ -116,8 +116,8 @@ if (filter_input(INPUT_GET, 'supprimer')) {
                 $query = postArrayVersQueryID($key, $post);
                 $infos_a_supp = $sql->query("SELECT * FROM info WHERE id IN (" . $query . ")");
                 for ($i = 0; $i < mysqli_num_rows($infos_a_supp); $i++) {
-                        $infoSQL = new Info($sql, $infos_a_supp);
-                        $infoSQL->supprimer($sql);
+                        $info = new Info($sql, $infos_a_supp);
+                        $info->supprimer($sql);
                 }
                 mysqli_free_result($infos_a_supp);
         }

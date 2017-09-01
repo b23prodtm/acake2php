@@ -64,12 +64,10 @@ if (!isset($ClasseInfo)) {
                         $this->contenu[$dbInfo["langue"]] = $dbInfo["contenu"];
 
                         // acquisition de la liste des images pour l'info
-                        if ($dbInfo["images"] != "") {
-                                $image = strtok($dbInfo["images"], ',');
-                                while ($image) {
-                                        $this->ajouterImageSQL($image);
-                                        $image = strtok(',');
-                                }
+                        $image = strtok($dbInfo["images"], ",");
+                        while ($image) {
+                                $this->ajouterImageSQL($image);
+                                $image = strtok(",");
                         }
                 }
 
@@ -132,6 +130,7 @@ if (!isset($ClasseInfo)) {
                         $info_image = new ChampFile('i_image', Info::R()->lang("ajouter_lab", "images"), Info::R()->lang("ajouter_dsc", "images") . " 800 kb", 800000);
                         $info_image_nom = new ChampTexte('i_image_nom', Info::R()->lang("nom_lab", "images"), Info::R()->lang("nom_dsc", "images"), 20);
                         $info_image_desc = new ChampAireTexte('i_image_desc', Info::R()->lang("desc_lab", "images"), Info::R()->lang("desc_dsc", "images"), 20, 3);
+                        $info_image_mime = new ChampSelect("i_image_mime", Info::R()->lang("mime_lab", "images"), Info::R()->lang("mime_dsc", "images"), array("png", "jpg", "gif"), 3, "jpg");
                         /* chaque image existante dans l'info, est affiche dans un groupe de champs checkbox; pour supprimer, decocher. pour ajouter, un champ FILE est ajouté plus bas dans le formulaire */
                         $champs_images = array();
                         for ($i = 0; $i < count($i_images); $i++) {
@@ -140,7 +139,7 @@ if (!isset($ClasseInfo)) {
                                 }
                                 $champs_images[$i] = new ChampCoche("i_images[]", $i_images[$i], "", "", TRUE);
                                 $image = $this->getImage($sql, $i); // retourne l'image en objet Image, l'id est dans l'objet Info (->images[])
-                                $image->setSize(90, 60);                                
+                                $image->setSize(90, 60);
                                 $champs_images[$i]->libelle = $image->afficher();
                         }
 
@@ -148,6 +147,7 @@ if (!isset($ClasseInfo)) {
                         $form->ajouterChamp($info_image);
                         $form->ajouterChamp($info_image_nom);
                         $form->ajouterChamp($info_image_desc);
+                        $form->ajouterChamp($info_image_mime);
                 }
 
                 private function fm_cinfo(SQL &$sql, Formulaire &$form, $i_auteur, $i_contenu) {
@@ -262,7 +262,7 @@ if (!isset($ClasseInfo)) {
 
                 function supprimer(SQL &$sql) {
                         if (!$sql->query("DELETE FROM info WHERE id=" . $this->getId())) {
-                                die(Info::R()->lang("effacer_echec", "infos") . " [" . $this->getId() . "] " . $this->getTitre() . "");
+                                trigger_error(Info::R()->lang("effacer_echec", "infos") . " [" . $this->getId() . "] " . $this->getTitre() . "", E_USER_NOTICE);
                         }
                         // suppression des images
                         foreach ($this->images as $id) {
@@ -364,7 +364,7 @@ if (!isset($ClasseInfo)) {
                         $this->contenu[$lang] = $s;
                 }
 
-                /* 
+                /*
                  * ajouter une image dans une info non stockée en base de données
                  * (on utilise is_array() pour controler la variable $this->images)
                  */
@@ -374,7 +374,7 @@ if (!isset($ClasseInfo)) {
                 }
 
                 /* ajouter une image de la base SQL table image 
-                 (id de l'entrée mysql_insert_id)*/
+                  (id de l'entrée mysql_insert_id) */
 
                 function ajouterImageSQL($id) {
                         $this->images[] = $id;
