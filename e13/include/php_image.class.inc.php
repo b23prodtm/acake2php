@@ -65,7 +65,7 @@ if (!isset($ClasseImage)) {
                         $h = fopen($filename, 'rb');
                         $imagedata = "";
                         while (!feof($h)) {
-                                $imagedata .= fread($h, filesize($this->file));
+                                $imagedata .= fread($h, filesize($filename));
                         }
                         fclose($h);
                         return $imagedata;
