@@ -38,9 +38,9 @@ object, embed, canvas, video, audio, picture {
         text-height: max-size; font-weight: bold; text-align: right; padding-right: 50px;
 }
 .image {
-        color: white; font-family: courier; 
+        font-family: courier; 
+        font-style: italic;
         font-size-adjust: 0.6; 
-        background-color: black; 
 }
 .badge {
         width: 323px; height: 256px; 
@@ -230,6 +230,16 @@ td.formulaire {
         }
         .menu {
                 border: 1px outset rgb(250, 245, 245); vertical-align: top; background-color: rgb(243, 243, 243); 
+        }
+        .menu_contents TD{
+                -webkit-transition: all 1s ease;
+                -moz-transition: all 1s ease;
+                -o-transition: all 1s ease;
+                -ms-transition: all 1s ease;
+                transition: all 1s ease;
+        }
+        .menu_contents TD:hover{
+                background-color: rgb(243, 200, 80);
         }
         .boutonMenu {
                 position: absolute;
