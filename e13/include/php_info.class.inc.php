@@ -138,7 +138,7 @@ if (!isset($ClasseInfo)) {
                 }
 
                 private function fm_cimage(SQL &$sql, Formulaire &$form, $info_images) {
-                        $info_image = new ChampFile('i_image', Info::R()->lang("ajouter_lab", "images"), Info::R()->lang("ajouter_dsc", "images") . " 200 kb", 200000);
+                        $info_image = new ChampFile('i_image', Info::R()->lang("ajouter_lab", "images"), Info::R()->lang("ajouter_dsc", "images") . " 800 kb", 800000);
                         $info_image_nom = new ChampTexte('i_image_nom', Info::R()->lang("nom_lab", "images"), Info::R()->lang("nom_dsc", "images"), 20);
                         $info_image_desc = new ChampAireTexte('i_image_desc', Info::R()->lang("desc_lab", "images"), Info::R()->lang("desc_dsc", "images"), 20, 3);
                         if (isset($info_images)) {
@@ -315,14 +315,17 @@ if (!isset($ClasseInfo)) {
                         return $this->getImage($sql, $n)->afficher();
                 }
 
-                function getImage(SQL &$sql, $n) {
+                /**
+                 * @param $link soit array(url => nom) ou mysql_insert_id
+                 * */
+                function getImage(SQL &$sql, $link) {
                         $img = new Image;
-                        if (is_array($this->images[$n])) {
-                                $img->setFile($this->images[$n][0]);
-                                $img->loadfromfile($this->images[$n][1]);
+                        if (is_array($this->images[$link])) {
+                                $img->setFile($this->images[$link][0]);
+                                $img->loadfromfile($this->images[$link][1]);
                                 return $img;
                         } else {
-                                $img->loadFromSQL($sql, $this->images[$n]);
+                                $img->loadFromSQL($sql, $this->images[$link]);
                                 return $img;
                         }
                 }

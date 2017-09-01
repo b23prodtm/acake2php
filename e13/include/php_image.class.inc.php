@@ -330,19 +330,19 @@ if (!isset($ClasseImage)) {
                 }
 
                 function loadFromSQL(SQL &$sql, $id) {
-                        $image = $sql->query("SELECT * FROM image WHERE id = '$id'");
-                        $img = $sql->LigneSuivante_Array($image);
-                        mysqli_free_result($image);
+                        $result = $sql->query("SELECT * FROM image WHERE id = '$id'");
+                        $img = $sql->LigneSuivante_Array($result);
+                        mysqli_free_result($result);
                         if ($img) {
                                 $nom = stripslashes($img['nom']);
                                 $this->desc = stripslashes($img['description']);
-                                $this->setId($id);
-                                $this->loadFromBytes($img['image'], $nom);
+                                $this->id = $id;
+                                $this->loadFromBytes(stripslashes($img['image']), $nom);
                                 $this->mime = stripslashes($img["mime"]);
                                 return true;
                         } else { // il n'y a pas d'image correspondant a id dans la table                                                         
                                 //echo "<b>Attention!</b>: image id:$id n'existe pas dans la base SQL.";
-                                $this->loadFromBytes("", "Image introuvable");
+                                $this->load_error();
                                 return false;
                         }
                 }
