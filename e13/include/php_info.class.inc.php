@@ -56,12 +56,12 @@ if (!isset($ClasseInfo)) {
                         }
                         // appel fonction de la classe parente Info
                         $this->langue = $info["langue"];
-                        $this->titre[$this->langue] = $info["titre"];
+                        $this->titre[$info->langue] = $info["titre"];
                         $this->auteur = $info["auteur"];
                         $this->categorie = $info["categorie"];
                         $this->date = $info["date"];
                         $this->id = $info["id"];
-                        $this->contenu[$this->langue] = $info["contenu"];
+                        $this->contenu[$info->langue] = $info["contenu"];
 
                         // acquisition de la liste des images pour l'info
                         if ($info["images"] != "") {
