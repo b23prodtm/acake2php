@@ -17,7 +17,7 @@
  */
 
 include("include/php_registre.inc.php");
-new Registre(filter_input(INPUT_SERVER, 'PHP_SELF'));
+$r = new Registre(filter_input(INPUT_SERVER, 'PHP_SELF'));
 require($GLOBALS["include__php_image.class.inc"]);
 require($GLOBALS["include__php_captcha.class.inc"]);
 require($GLOBALS["include__php_SQL.class.inc"]);
@@ -42,5 +42,5 @@ if ($id) {
 if ($w != 0 && $h != 0) {
         $image->setSize($w, $h);
 }
-$image->raw_http_bytes(1);
+$image->raw_http_bytes(1, $GLOBALS["images"]."/".$image->nom);
 ?>

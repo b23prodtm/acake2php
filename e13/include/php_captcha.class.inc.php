@@ -75,7 +75,7 @@ if (!isset($ClasseCapt)) {
                         imagestring($img, 6, strlen($mot) / 2, $milieuHauteur, $mot, $noir);
                         imagerectangle($img, 1, 1, $largeur - 1, $hauteur - 1, $noir); // La bordure
                         
-                        $captcha = new Image();
+                        $captcha = new Image($mot);
                         $captcha->setImageGD($img, "image/png");
                         return $captcha;
                 }

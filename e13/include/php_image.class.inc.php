@@ -45,9 +45,10 @@ if (!isset($ClasseImage)) {
                   @discussion
                  */
 
-                function __construct() {
+                function __construct($nom = "image") {
                         $this->id = 0;
                         $this->mode = BYTE_MODE;
+                        $this->nom = $nom;
                 }
 
                 function __destruct() {
@@ -57,7 +58,7 @@ if (!isset($ClasseImage)) {
                 }
 
                 /* ----- partie privée ----- */
-
+                
                 private function load($filename) {
                         if (!file_exists($filename)) {
                                 return NULL;
@@ -80,7 +81,6 @@ if (!isset($ClasseImage)) {
                         }
                         // init img
                         $this->img = imagecreatefromstring($string);
-
                         if (!$this->img || !isset($this->img) || $this->img == "") {
                                 $this->load_error();
                         }
@@ -151,7 +151,7 @@ if (!isset($ClasseImage)) {
                                                 imagepng($this->img, $filename);
                                                 break;
                                         default:
-                                                die("No support $this->mime .");
+                                                trigger_error("No support $this->mime .", E_USER_ERROR);
                                                 break;
                                 }
                         }
@@ -276,12 +276,12 @@ if (!isset($ClasseImage)) {
 
                 /**
                   ecrit sur la sortie ou attend flush (echo = 0) */
-                function raw_http_bytes($echo = 1) {
+                function raw_http_bytes($echo = 1, $file = NULL) {
                         // conversion de la sortie pour les images
                         mb_http_output("pass");
                         ob_start("mb_output_handler");
                         header("Content-type: " . $this->mime);
-                        $this->image();
+                        $this->image($file);
                         if ($echo == 1) {
                                 ob_end_flush();
                         }
