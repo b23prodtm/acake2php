@@ -45,7 +45,7 @@ if ($w != 0 && $h != 0) {
 /* toujours ecrire un fichier cache sur le serveur si possible */
 $output = NULL;
 if (is_writable($output)) {
-        $GLOBALS["images"] . "/" . $image->nom;
+        $GLOBALS["images"] . "/db/" . $image->nom;
 }
 $image->raw_http_bytes(1, $output);
 ?>
