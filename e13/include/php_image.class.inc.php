@@ -58,7 +58,7 @@ if (!isset($ClasseImage)) {
                 }
 
                 /* ----- partie privée ----- */
-                
+
                 private function load($filename) {
                         if (!file_exists($filename)) {
                                 return NULL;
@@ -142,13 +142,13 @@ if (!isset($ClasseImage)) {
                                 $this->resize();
                                 switch ($this->mime) {
                                         case "image/jpeg": case "image/jpg":
-                                                imagejpeg($this->img, $filename);
+                                                imagejpeg($this->img, $filename ? $filename . ".jpg" : NULL);
                                                 break;
                                         case "image/gif":
-                                                imagegif($this->img, $filename);
+                                                imagegif($this->img, $filename ? $filename . ".gif" : NULL);
                                                 break;
                                         case "image/png":
-                                                imagepng($this->img, $filename);
+                                                imagepng($this->img, $filename ? $filename . ".png" : NULL);
                                                 break;
                                         default:
                                                 trigger_error("No support $this->mime .", E_USER_ERROR);
