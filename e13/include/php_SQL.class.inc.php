@@ -67,6 +67,15 @@ if (!isset($classeSQL)) {
                         return mysqli_query($this->connexion, $string);
                 }
 
+                /** prepare stmt */
+                public function send_long_data($query, $data) {
+                        mysqli_stmt_prepare($this->connexion, $query);
+                        $n = NULL;
+                        mysqli_stmt_bind_param($this->connexion, "b", $n);
+                        mysqli_stmt_send_long_data($this->connexion, 0, $data);
+                        return mysqli_stmt_execute($this->connexion);
+                }
+
                 /**
                  * retourne la liste des erreurs de le commande précédant sous forme de liste.
                  * c.f : mysqli_error_list
