@@ -63,7 +63,7 @@ if (!isset($ClasseImage)) {
                         if (!file_exists($filename)) {
                                 return NULL;
                         }
-                        $h = fopen($filename, 'rb');
+                        $h = fopen($filename, 'r');
                         $imagedata = "";
                         while (!feof($h)) {
                                 $imagedata .= fread($h, filesize($filename));
