@@ -181,7 +181,7 @@ if (!isset($ClasseImage)) {
                         $this->desc = $desc;
                 }
 
-                /** zoom percentage */
+                /** zoom en pourcentage */
                 function setScale($scale = 100) {
                         $this->scale = $scale / 100.;
                 }
@@ -189,6 +189,24 @@ if (!isset($ClasseImage)) {
                 function setSize($w, $h) {
                         $this->w = $w;
                         $this->h = $h;
+                }
+
+                /** préserve le ratio de w/h */
+                function setWidth($w) {
+                        if ($this->w != 0) {
+                                $this->setSize($w, $this->h * ($w / $this->w));
+                        } else {
+                                $this->setSize($w, $this->h);
+                        }
+                }
+
+                /** préserve le ratio de w/h */
+                function setHeight($h) {
+                        if ($this->h != 0) {
+                                $this->setSize($h, $this->w * ($h / $this->h));
+                        } else {
+                                $this->setSize($h, $this->w);
+                        }
                 }
 
                 /** zoom percentage */
