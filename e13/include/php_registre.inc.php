@@ -347,7 +347,7 @@ if (!isset($registreFichiers)) {
                         if (is_array($key)) {
                                 $result = array();
                                 foreach ($key as $k) {
-                                        $result[] = lang($k, $section);
+                                        $result[] = $this->lang($k, $section);
                                 }
                                 return $result;
                         } else {
