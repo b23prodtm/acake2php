@@ -55,7 +55,7 @@ if (!isset($ModuleCat)) {
         }
 
         // cree un champ SELECT avec toutes les categories existantes, valeur par defaut: "aucune" => id == -1
-        function CAT_getSelect(SQL &$sql, $name, $libelle, $desc = "", $vPdefaut = -1, $exclure = "") {
+        function CAT_getSelect(SQL &$sql, $name, $libelle, $desc = "", $vPdefaut = -1, $exclure = "-----") {
                 // acquérir les categories existantes SQL
                 $choix = array("---" => -1);
                 $cats = $sql->query("SELECT * FROM categorie");
