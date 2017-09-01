@@ -55,14 +55,16 @@ if (!isset($ModuleCat)) {
         }
 
         // cree un champ SELECT avec toutes les categories existantes, valeur par defaut: "aucune" => id == -1
-        function CAT_getSelect(SQL &$sql, $name, $libelle, $desc = "", $vPdefaut = -1) {
+        function CAT_getSelect(SQL &$sql, $name, $libelle, $desc = "", $vPdefaut = -1, $exclure = "") {
                 // acquérir les categories existantes SQL
                 $choix = array("---" => -1);
                 $cats = $sql->query("SELECT * FROM categorie");
                 while ($cat = $sql->LigneSuivante_array($cats)) {
                         // creer liste de choix
                         $nom = CAT_getNom($cat, $sql);
-                        $choix[$nom] = $cat['id'];
+                        if (!stripos($nom, $exclure)) {
+                                $choix[$nom] = $cat["id"];
+                        }
                 }
                 if ($cats) {
                         mysqli_free_result($cats);

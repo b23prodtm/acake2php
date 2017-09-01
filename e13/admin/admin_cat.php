@@ -122,7 +122,7 @@ if (filter_input(INPUT_GET, 'modifier')) {
 
                 $chNom = new ChampTexte("new_nom", $r->lang("newcat_lab", "categories"),$r->lang("newcat_dsc", "categories"), 10, NULL, $cat["nom"]);
                 $f->ajouterChamp($chNom);
-                $chParent = CAT_getSelect($sql, "new_parent", $r->lang("newcat_parent_lab", "categories"),$r->lang("newcat_parent_dsc", "categories")." (" . $cat["parent"] . ")", $cat['parent']);
+                $chParent = CAT_getSelect($sql, "new_parent", $r->lang("newcat_parent_lab", "categories"),$r->lang("newcat_parent_dsc", "categories")." (" . $cat["parent"] . ")", $cat['parent'],$cat["nom"]);
                 $f->ajouterChamp($chParent);
         }
         $valid = new ChampValider($r->lang("valider", "form"));
