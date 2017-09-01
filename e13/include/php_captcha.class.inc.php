@@ -86,7 +86,7 @@ if (!isset($ClasseCapt)) {
                         switch ($mode) {
                                 case "IMG":
                                         $mot = $this->nombre($this->t);
-                                        $captcha = HTML_image($GLOBALS["e13___image"]."?captcha=".$mot);                                        
+                                        $captcha = HTML_image($GLOBALS["e13___image"]."?captcha=". strlen($mot));                                        
                                         break;
                                 default:
                                         $captcha = $mot = $this->motListe(file($GLOBALS['locale__dict-lang.txt']), 0);
