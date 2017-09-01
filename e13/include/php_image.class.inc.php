@@ -374,7 +374,7 @@ if (!isset($ClasseImage)) {
                         if ($imagedata && $sql->query("INSERT INTO image (nom, image, description,mime) VALUES (\"" . addslashes($this->nom) . "\", \"\", \"" . addslashes($this->desc) . "\",\"" . $this->mime . "\")")) {
                                 // init id
                                 $this->id = mysqli_insert_id($sql->connexion);
-                                if ($sql->query("UPDATE image SET image=\"" . addslashes($imagedata) . "\" WHERE id=$this->id")) {
+                                if ($sql->query("UPDATE image SET image=\"{" . addslashes($imagedata) . "}\" WHERE id=$this->id")) {
                                         return $this->id;
                                 }
                         }
