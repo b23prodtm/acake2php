@@ -96,11 +96,11 @@ if (!isset($ClasseInfo)) {
                         $this->fm_cinfo($sql, $form, $i_auteur, $i_contenu);
                         $info_images = filter_input(INPUT_POST, 'i_images');
                         $this->fm_cimage($sql, $form, $info_images);
-                        return $this->formulaire_fin($sql, $form, Info::R()->lang("valider", $CLSEC));
+                        return $this->formulaire_fin($sql, $form, Info::R()->lang("ajouter", "infos"));
                 }
 
                 private function formulaire_modif($pageScript, SQL &$sql) {
-                        $form = new Formulaire(Info::R()->lang("modifier", $CLSEC) . " id:" . $this->id, $pageScript);
+                        $form = new Formulaire(Info::R()->lang("modifier", "infos") . " id:" . $this->id, $pageScript);
                         $i_titre = $this->titre;
                         $this->fm_ctitre($sql, $form, $i_titre);
                         $i_categorie = $this->categorie;
@@ -119,7 +119,7 @@ if (!isset($ClasseInfo)) {
 
                         $info_images = new ChampGroupe(Info::R()->lang("images_lab", "infos"), Info::R()->lang("images_dsc", "infos"), "i_images[]", $champs_images);
                         $this->fm_cimage($sql, $form, $info_images);
-                        return $this->formulaire_fin($sql, $form, Info::R()->lang("sauve", "infos"));
+                        return $this->formulaire_fin($sql, $form, Info::R()->lang("modifier", "infos"));
                 }
 
                 private function fm_ctitre(SQL &$sql, Formulaire &$form, $i_titre) {
