@@ -142,19 +142,20 @@ if (!isset($ClasseImage)) {
                                 $this->resize();
                                 switch ($this->mime) {
                                         case "image/jpeg": case "image/jpg":
-                                                imagejpeg($this->img, $filename ? $filename . ".jpg" : NULL);
+                                                imagejpeg($this->img, $filename ? $filename .= ".jpg" : NULL);
                                                 break;
                                         case "image/gif":
-                                                imagegif($this->img, $filename ? $filename . ".gif" : NULL);
+                                                imagegif($this->img, $filename ? $filename .= ".gif" : NULL);
                                                 break;
                                         case "image/png":
-                                                imagepng($this->img, $filename ? $filename . ".png" : NULL);
+                                                imagepng($this->img, $filename ? $filename .= ".png" : NULL);
                                                 break;
                                         default:
                                                 trigger_error("No support $this->mime .", E_USER_ERROR);
                                                 break;
                                 }
                         }
+                        return $filename;
                 }
 
                 function setFile($file) {
@@ -281,7 +282,10 @@ if (!isset($ClasseImage)) {
                         mb_http_output("pass");
                         ob_start("mb_output_handler");
                         header("Content-type: " . $this->mime);
-                        $this->image($file);
+                        $cache = $this->image($file);
+                        if ($cache) {
+                                $this->setFile($cache);
+                        }
                         if ($echo == 1) {
                                 ob_end_flush();
                         }

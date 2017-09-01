@@ -42,5 +42,10 @@ if ($id) {
 if ($w != 0 && $h != 0) {
         $image->setSize($w, $h);
 }
-$image->raw_http_bytes(1, $GLOBALS["images"]."/".$image->nom);
+/* toujours ecrire un fichier cache sur le serveur si possible */
+$output = NULL;
+if (is_writable($output)) {
+        $GLOBALS["images"] . "/" . $image->nom;
+}
+$image->raw_http_bytes(1, $output);
 ?>
