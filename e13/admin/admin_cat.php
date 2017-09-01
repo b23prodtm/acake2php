@@ -12,13 +12,11 @@ require($GLOBALS['include__php_module_cat.inc']);
 $pCat = new ADMIN_Page($r, "admin__cat", session_id());
 $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 
-define(CLSEC,CLSEC);
-
 $pCat->ajouterContenu("<center><b>" . $pCat->getTitre() . "</b></center><br>");
 $liste = HTML_listeDebut();
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__cat'] . "?ajouter=1", $r->lang("ajouter",CLSEC)));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__cat'] . "?supprimer=1", $r->lang("supprimer",CLSEC)));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__cat'] . "?modifier=1", $r->lang("modifier",CLSEC)));
+$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__cat'] . "?ajouter=1", $r->lang("ajouter","categories")));
+$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__cat'] . "?supprimer=1", $r->lang("supprimer","categories")));
+$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__cat'] . "?modifier=1", $r->lang("modifier","categories")));
 $liste .= HTML_listeFin();
 $pCat->ajouterContenu($liste);
 
@@ -32,22 +30,22 @@ if (filter_input(INPUT_GET, 'ajouter')) {
                         $cp = "0";
                 }
                 if (!$sql->query("INSERT INTO categorie (nom, parent) VALUES ('" . filter_input(INPUT_POST, 'newcat') . "', '$cp')")) {
-                        $pCat->ajouterMessage($r->lang("cat_sauve_echec", CLSEC));
+                        $pCat->ajouterMessage($r->lang("cat_sauve_echec", "categories"));
                         $sql->afficheErreurs();
                 } else {
-                        $pCat->ajouterMessage($r->lang("cat_sauve", CLSEC) . " (".filter_input(INPUT_POST, 'newcat') . ").");
+                        $pCat->ajouterMessage($r->lang("cat_sauve", "categories") . " (".filter_input(INPUT_POST, 'newcat') . ").");
                 }
                 unset($_POST);
         }
 
-        $f = new Formulaire($r->lang("ajouter", CLSEC), filter_input(INPUT_SERVER, 'PHP_SELF') . "?ajouter=publie");
+        $f = new Formulaire($r->lang("ajouter", "categories"), filter_input(INPUT_SERVER, 'PHP_SELF') . "?ajouter=publie");
 
-        $newCat = new ChampTexte("newcat", $r->lang("newcat_lab",CLSEC), $r->lang("newcat_dsc",CLSEC), 20, 15);
+        $newCat = new ChampTexte("newcat", $r->lang("newcat_lab","categories"), $r->lang("newcat_dsc","categories"), 20, 15);
 
-        $newCat_parent = CAT_getSelect($sql, "newcat_parent", $r->lang("newcat_parent_lab",CLSEC), $r->lang("newcat_parent_dsc",CLSEC));
+        $newCat_parent = CAT_getSelect($sql, "newcat_parent", $r->lang("newcat_parent_lab","categories"), $r->lang("newcat_parent_dsc","categories"));
 
         $effacer = new ChampEffacer($r->lang("effacer", "form"));
-        $valider = new ChampValider($r->lang("valider", "form"), $r->lang("ajouter", CLSEC));
+        $valider = new ChampValider($r->lang("valider", "form"), $r->lang("ajouter", "categories"));
 
         $f->ajouterChamp($newCat);
         $f->ajouterChamp($newCat_parent);
@@ -76,15 +74,15 @@ if (filter_input(INPUT_GET, 'supprimer')) {
                         // suppression
                         $res = $sql->query("DELETE FROM categorie WHERE id IN($catQuery)");
                         if ($res) {
-                                $pCat->ajouterMessage($r->lang("cat_effacees", CLSEC) . " (". $sql->lignesAffectees() . ")");
+                                $pCat->ajouterMessage($r->lang("cat_effacees", "categories") . " (". $sql->lignesAffectees() . ")");
                         }
                 }
         }
-        $f = new Formulaire($r->lang("supprimer",CLSEC), $GLOBALS['admin__cat'] . "?supprimer=publie", VERTICAL);
+        $f = new Formulaire($r->lang("supprimer","categories"), $GLOBALS['admin__cat'] . "?supprimer=publie", VERTICAL);
         // nombre de champs
         $n = 5;
         for ($i = 0; $i < $n; $i++) {
-                $chSelect = CAT_getSelect($sql, "cat[]", $r->lang("cat_select_lab", CLSEC), $r->lang("cat_select_dsc", CLSEC));
+                $chSelect = CAT_getSelect($sql, "cat[]", $r->lang("cat_select_lab", "categories"), $r->lang("cat_select_dsc", "categories"));
                 $f->ajouterChamp($chSelect);
         }
         $valid = new ChampValider($r->lang("valider","form"));
@@ -107,24 +105,24 @@ if (filter_input(INPUT_GET, 'modifier')) {
                 }
                 $id = $cat['id'];
                 if ($nom === NULL || !$nom) {
-                        $pCat->ajouterMessage($r->lang("cat_incomplet",CLSEC));
+                        $pCat->ajouterMessage($r->lang("cat_incomplet","categories"));
                 } elseif (!$sql->query("UPDATE categorie SET nom = '" . $nom . "', parent = " . $parent . " WHERE id = " . $id)) {
-                        $pCat->ajouterMessage($r->lang("cat_sauve_echec",CLSEC));
+                        $pCat->ajouterMessage($r->lang("cat_sauve_echec","categories"));
                 } else {
-                        $pCat->ajouterMessage($r->lang("cat_sauve", CLSEC));
+                        $pCat->ajouterMessage($r->lang("cat_sauve", "categories"));
                 }
         }
         // formulaire
-        $f = new Formulaire($r->lang("modifier", CLSEC), $GLOBALS['admin__cat'] . "?modifier=publie", VERTICAL);
-        $chSelect = CAT_getSelect($sql, "cat_mod", $r->lang("cat_select_lab", CLSEC));
+        $f = new Formulaire($r->lang("modifier", "categories"), $GLOBALS['admin__cat'] . "?modifier=publie", VERTICAL);
+        $chSelect = CAT_getSelect($sql, "cat_mod", $r->lang("cat_select_lab", "categories"));
         if (filter_input(INPUT_POST, 'cat_mod')) {
                 $chSelect = new ChampCache("cat_mod", filter_input(INPUT_POST, 'cat_mod'));
                 $cat = CAT_getCat(filter_input(INPUT_POST, 'cat_mod'), $sql); // données de la categorie
-                $f->nom = $r->lang("modifier", CLSEC) . CAT_getNom($cat, $sql);
+                $f->nom = $r->lang("modifier", "categories") . CAT_getNom($cat, $sql);
 
-                $chNom = new ChampTexte("new_nom", $r->lang("newcat_lab", CLSEC),$r->lang("newcat_dsc", CLSEC), 10, NULL, $cat["nom"]);
+                $chNom = new ChampTexte("new_nom", $r->lang("newcat_lab", "categories"),$r->lang("newcat_dsc", "categories"), 10, NULL, $cat["nom"]);
                 $f->ajouterChamp($chNom);
-                $chParent = CAT_getSelect($sql, "new_parent", $r->lang("newcat_parent_lab", CLSEC),$r->lang("newcat_parent_dsc", CLSEC)." (" . $cat["parent"] . ")", $cat['parent']);
+                $chParent = CAT_getSelect($sql, "new_parent", $r->lang("newcat_parent_lab", "categories"),$r->lang("newcat_parent_dsc", "categories")." (" . $cat["parent"] . ")", $cat['parent']);
                 $f->ajouterChamp($chParent);
         }
         $valid = new ChampValider($r->lang("valider", "form"));

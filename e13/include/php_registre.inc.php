@@ -91,7 +91,7 @@ if (!isset($registreFichiers)) {
                 return in_array($errno, $type) && (array_key_exists($variable, $_SESSION) || filter_input(INPUT_GET, $variable));
         }
 
-        /** 
+        /**
          * Journalisation des erreurs et messages PHP.<br>
          * Ne sont affichées que si la page URL contient ?debug (&verbose pour plus de messages)
          * <br>Voir le fichier php_error.log pour les PHP FATAL ERROR (le processus s'arrete et journalise).
@@ -143,7 +143,7 @@ if (!isset($registreFichiers)) {
                 }
         }
 
-        /** 
+        /**
          * index.php?debug affiche les E_ERROR et E_WARNING
          * index.php?debug&verbose affiche les E_NOTICE
          * enregistrement en session des parametres de journalisation
@@ -231,6 +231,7 @@ if (!isset($registreFichiers)) {
                  * variables $_SESSION [root, local];
                  *                  
                  */
+
                 public function __construct($selfScript, $force = false) {
                         global $_instanceRegistre;
                         if (!isset($_instanceRegistre) || $force) {
@@ -269,7 +270,7 @@ if (!isset($registreFichiers)) {
                         $this->localizedStrings = $this->parseBundle($GLOBALS['locale'], "content-lang");
                 }
 
-                /** 
+                /**
                  * enregistre en session si specifie par GET 
                  */
                 private static function registerGETSession($valuesGET = array()) {
@@ -343,12 +344,20 @@ if (!isset($registreFichiers)) {
                  * selon la platforme client)
                  */
                 function lang($key, $section = "default") {
-                        if (!array_key_exists($section, $this->localizedStrings)) {
-                                debug("unknown section " . $section . " in content_lang.");
-                        } else if (!array_key_exists($key, $this->localizedStrings[$section])) {
-                                debug("undefined key in content_lang [" . $section . "] for " . $key);
+                        if (is_array($key)) {
+                                $result = array();
+                                foreach ($key as $k) {
+                                        $result[] = lang($k, $section);
+                                }
+                                return $result;
+                        } else {
+                                if (!array_key_exists($section, $this->localizedStrings)) {
+                                        debug("unknown section " . $section . " in content_lang.");
+                                } else if (!array_key_exists($key, $this->localizedStrings[$section])) {
+                                        debug("undefined key in content_lang [" . $section . "] for " . $key);
+                                }
+                                return $this->localizedStrings[$section][$key];
                         }
-                        return $this->localizedStrings[$section][$key];
                 }
 
         }
