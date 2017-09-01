@@ -35,7 +35,8 @@ if (!isset($ClasseImage)) {
                 var $nom;
                 var $desc;
                 var $scale;
-                var $w, $h;
+                var $w;
+                var $h;
                 var $mime;
                 var $mode;
 
@@ -117,7 +118,8 @@ if (!isset($ClasseImage)) {
                         $this->desc = $desc;
                 }
 
-                function setScale($scale = "100") { // pour le zoom $size=int() et en px size=string(int()."x".int())
+                /** zoom percentage */
+                function setScale($scale = 100) {
                         $this->scale = $scale / 100.;
                 }
 
@@ -126,6 +128,7 @@ if (!isset($ClasseImage)) {
                         $this->h = $h;
                 }
 
+                /** zoom percentage */
                 function getScale() {
                         return ceil($this->scale * 100);
                 }
@@ -154,7 +157,8 @@ if (!isset($ClasseImage)) {
                                 $this->img = $dst;
                                 return true;
                         } else {
-                                trigger_error("Image ressource not defined, can't do resize().", E_WARNING);
+                                trigger_error("Image ressource not defined, can't do resize().", E_USER_WARNING);
+                                return false;
                         }
                 }
 
@@ -226,10 +230,10 @@ if (!isset($ClasseImage)) {
                                         $image = $GLOBALS["e13___image"] . "?file=" . urlencode($this->file) . "&size=" . (4 * $this->scale);
                                         return HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $image . "','b23::Open Window ^','width=this.width*4, height=this.height*4, status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
                                 } else {
-                                        trigger_error("display(2):File $this->file not found! display() returned unsuccessfully.", E_WARNING);
+                                        trigger_error("display(2):File $this->file not found! display() returned unsuccessfully.", E_USER_WARNING);
                                 }
                         } else {
-                                trigger_error("display(2):Function call setFile() expected for variable file isn't initialized.", E_WARNING);
+                                trigger_error("display(2):Function call setFile() expected for variable file isn't initialized.", E_USER_WARNING);
                         }
                 }
 
@@ -239,7 +243,7 @@ if (!isset($ClasseImage)) {
                  *  */
                 function afficher_db() {
                         if ($this->scale == "") {
-                                $this->setSize("100");
+                                $this->setScale(100);
                         }
                         $image = $GLOBALS["include___image"] . "?file=" . urlencode(serialize($this->file)) . "&size=" . (4 * $this->scale);
                         return HTML_image($GLOBALS["include___image"] . "?id=" . $this->id . "&size=" . $this->scale, array("javascript" => array('onClick' => "window.open('" . $image . "','b23::Open Window ^','width=this.width*4, height=this.height*4, status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));

@@ -457,7 +457,7 @@ if (!isset($ClasseInfo)) {
                                 if ($j < $img->nbColonnes) {
                                         $image = $this->getImage($sql, $n);
                                         if (is_a($image, "Image")) {
-                                                $image->setSize("150x150");
+                                                $image->setSize(150,150);
                                                 $image->resize();
                                                 $image_html = $image->afficherFormatee();
                                         } else {

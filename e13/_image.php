@@ -39,7 +39,7 @@ if ($id) {
         $captcha = new Captcha(strlen($motCaptcha));
         $image = $captcha->image($motCaptcha);
 } else {
-        trigger_error("image : missing a valid parameter like w,h id or file or captcha", E_ERROR);
+        trigger_error("image : missing a valid parameter like w,h id or file or captcha", E_USER_ERROR);
         $image->load_error();
 }
 if ($w && $h) {

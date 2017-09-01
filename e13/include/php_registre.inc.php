@@ -333,7 +333,7 @@ if (!isset($registreFichiers)) {
                         if ($filename !== $localized) {
                                 $bundle_localized = parse_ini_file($localized, true);
                                 if (!$bundle_localized) {
-                                        trigger_error($localized . " was not parsed.");
+                                        trigger_error($localized . " was not parsed.", E_USER_WARNING);
                                 }
                                 $bundle = array_replace_recursive($bundle, $bundle_localized);
                         }
