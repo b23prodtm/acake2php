@@ -251,8 +251,9 @@ if (!isset($ClasseImage)) {
                 function afficher_file() {
                         if (isset($this->file)) {
                                 if (file_exists($this->file)) {
-                                        $image = $GLOBALS["e13___image"] . "?file=" . urlencode($this->file) . "&w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale;
-                                        return HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $image . "','b23::Open Window ^','width=this.width*4, height=this.height*4, status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
+                                        $image = $GLOBALS["e13___image"] . "?w=" . $this->w . "&h=" . $this->h . "&file=" . urlencode(serialize($this->file));
+                                        $imageScale = $GLOBALS["e13___image"] . "?w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale . "&file=" . urlencode(serialize($this->file));
+                                        return HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $imageScale . "','zoom ^','width=" . $this->w * $this->scale . ", height=" . $this->h * $this->scale . ", status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
                                 } else {
                                         trigger_error("File $this->file not found!", E_USER_WARNING);
                                 }
@@ -269,8 +270,9 @@ if (!isset($ClasseImage)) {
                         if ($this->scale == "") {
                                 $this->setScale(100);
                         }
-                        $image = $GLOBALS["include___image"] . "?file=" . urlencode(serialize($this->file)) . "&size=" . (4 * $this->scale);
-                        return HTML_image($GLOBALS["include___image"] . "?id=" . $this->id . "&size=" . $this->scale, array("javascript" => array('onClick' => "window.open('" . $image . "','b23::Open Window ^','width=this.width*4, height=this.height*4, status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
+                        $param = "?id=" . $this->id . "&w=" . $this->w . "&h=" . $this->h;
+                        $paramScale = "?id=" . $this->id . "&w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale;
+                        return HTML_image($GLOBALS["include___image"] . $param, array("javascript" => array('onClick' => "window.open('" . $GLOBALS["include___image"] . $paramScale . "','zoom ^','width=" . $this->w * $this->scale . ", height=" . $this->h * $this->scale . ", status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
                 }
 
                 function afficher() {

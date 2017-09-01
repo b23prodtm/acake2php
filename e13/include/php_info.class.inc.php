@@ -469,7 +469,6 @@ if (!isset($ClasseInfo)) {
                                 $image = $this->getImage($sql, $n);
                                 if (is_a($image, "Image")) {
                                         $image->setSize(150, 150);
-                                        $image->resize();
                                         $image_html = $image->afficherFormatee();
                                 }
                                 $img->setContenu_Cellule($i, $j, $image_html, array("css" => array("text-align" => "center")));

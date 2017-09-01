@@ -26,8 +26,8 @@ $image = new Image();
 $w = filter_input(INPUT_GET, 'w');
 $h = filter_input(INPUT_GET, 'h');
 $id = filter_input(INPUT_GET, 'id');
-$f = filter_input(INPUT_GET, 'file');
-$motCaptcha = filter_input(INPUT_GET, 'captcha');
+$f = filter_input(INPUT_GET, 'file'); // must have been encoded and serialized to decode
+$captchaSize = filter_input(INPUT_GET, 'captcha'); // must have been sent through session
 if ($id) {
         // connexion SQL
         $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
@@ -35,16 +35,15 @@ if ($id) {
         $sql->close();
 } elseif ($f) {
         $image->setFile(urldecode(unserialize($f)));
-} elseif ($motCaptcha) {
-        $captcha = new Captcha(strlen($motCaptcha));
-        $image = $captcha->image($motCaptcha);
+} elseif ($captchaSize) {
+        $captchaSize = new Captcha($captchaSize);
+        $image = $captchaSize->image($_SESSION['captcha']);
 } else {
         trigger_error("image : missing a valid parameter like w,h id or file or captcha", E_USER_ERROR);
         $image->load_error();
 }
 if ($w != 0 && $h != 0) {
         $image->setSize($w, $h);
-        $image->resize();
 }
 $image->afficher();
 ?>
