@@ -438,8 +438,8 @@ if (!isset($ClasseInfo)) {
                                 "CELLSPACING" => 0,
                                 "CELLPADDING" => 5)));
                         // INFO LOCALISEE (lang)
-                        $t->setContenu_Cellule(0, 0, "news://" . $lang . "/" . $this->getAuteur() . "/" . $this->getCategorie($sql) . "/" . $this->getDate() . "/<div class='info_titre'>" . stripSlashes($this->getTitre($lang)) . "</div>");
-                        $t->setContenu_Cellule(1, 0, stripSlashes($this->getContenu($lang)));
+                        $t->setContenu_Cellule(0, 0, "news://" . $lang . "/" . $this->getAuteur() . "/" . $this->getCategorie($sql) . "/" . $this->getDate() . "/<div class='info_titre'>" . $this->getTitre($lang) . "</div>");
+                        $t->setContenu_Cellule(1, 0, $this->getContenu($lang));
 
                         $t->setOptionsArray_Cellule(0, 0, array("HTML" => array("BGCOLOR" => "#ffbb44"), "class" => "info_titre"));
                         $t->setContenu_Cellule(2, 0, $this->tableauImages($sql)->fin());
