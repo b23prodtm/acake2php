@@ -64,13 +64,14 @@ if (!isset($ClasseImage)) {
                         if (!file_exists($filename)) {
                                 return NULL;
                         }
-                        $h = fopen($filename, 'r');
-                        $imagedata = "";
-                        while (!feof($h)) {
-                                $imagedata .= fread($h, filesize($filename));
-                        }
-                        fclose($h);
-                        return $imagedata;
+                        /* $h = fopen($filename, 'r');
+                          $imagedata = "";
+                          while (!feof($h)) {
+                          $imagedata .= fread($h, filesize($filename));
+                          }
+                          fclose($h)
+                          return $imagedata; */
+                        return file_get_contents($filename);
                 }
 
                 private function loadFromBytes($string, $nom = "image") {
@@ -378,10 +379,13 @@ if (!isset($ClasseImage)) {
                                 $this->file = $tmp;
                         }
                         $imagedata = $this->load($this->file);
-                        if ($imagedata && $sql->send_long_data("INSERT INTO image (nom, image, description,mime) VALUES (\"" . addslashes($this->nom) . "\", ?, \"" . addslashes($this->desc) . "\",\"" . $this->mime . "\")", $imagedata, $this->id)) {
+                        $stmt = NULL;
+                        if ($imagedata && $sql->send_long_data("INSERT INTO image (nom, image, description,mime) VALUES (\"" . addslashes($this->nom) . "\", ?, \"" . addslashes($this->desc) . "\",\"" . $this->mime . "\")", $imagedata, $this->id, $stmt)) {
+                                mysqli_stmt_close($stmt);
                                 return $this->id;
                         }
                         trigger_error("Error uploading " . $this->file . " " . $sql->afficheErreurs(), E_USER_ERROR);
+                        mysqli_stmt_close($stmt);
                         return 0;
                 }
 

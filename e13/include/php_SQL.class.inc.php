@@ -68,15 +68,14 @@ if (!isset($classeSQL)) {
                 }
 
                 /** prepare stmt */
-                public function send_long_data($query, &$data, &$insert_id) {
+                public function send_long_data($query, &$data, &$insert_id, &$stmt) {
                         $stmt = mysqli_stmt_init($this->connexion);
                         mysqli_stmt_prepare($stmt, $query);
                         $n = NULL;
                         mysqli_stmt_bind_param($stmt, "b", $n);
                         mysqli_stmt_send_long_data($stmt, 0, $data);
                         $b = mysqli_stmt_execute($stmt);
-                        $insert_id = mysqli_stmt_insert_id($stmt);                                
-                        mysqli_stmt_close($stmt);
+                        $insert_id = mysqli_stmt_insert_id($stmt);
                         return $b;
                 }
 
@@ -84,14 +83,14 @@ if (!isset($classeSQL)) {
                  * retourne la liste des erreurs de le commande précédant sous forme de liste.
                  * c.f : mysqli_error_list
                  */
-                public function listeErreurs() {
-                        return mysqli_error_list($this->connexion);
+                public function listeErreurs(&$stmt = NULL) {
+                        return $stmt ? mysqli_stmt_error_list($stmt) : mysqli_error_list($this->connexion);
                 }
 
                 /** écrit sur la sortie standard une liste HTML des erreurs reportées */
-                public function afficheErreurs() {
+                public function afficheErreurs(&$stmt = NULL) {
                         echo "<ol>";
-                        foreach ($this->listeErreurs() as $err) {
+                        foreach ($this->listeErreurs($stmt) as $err) {
                                 echo "<li>";
                                 foreach ($err as $c => $v) {
                                         echo $c . " : " . $v . "<BR>";
