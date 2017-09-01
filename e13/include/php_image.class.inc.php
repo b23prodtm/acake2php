@@ -58,15 +58,23 @@ if (!isset($ClasseImage)) {
 
                 /* ----- partie privée ----- */
 
-                /** prend en chagre les URLS distantes et les noms de fichiers locaux*/
+                private function load($filename) {
+                        if (!file_exists($filename)) {
+                                return NULL;
+                        }
+                        $h = fopen($filename, 'rb');
+                        $imagedata = "";
+                        while (!feof($h)) {
+                                $imagedata .= fread($h, filesize($this->file));
+                        }
+                        fclose($h);
+                        return $imagedata;
+                }
+
+                /** prend en chagre les URLS distantes et les noms de fichiers locaux */
                 function loadfromfile($nom = "image") {
-                        $h = NULL;                        
-                        if (isset($this->file) && ($h = fopen($this->file, 'rb'))) {
-                                $imagedata = "";
-                                while (!feof($h)) {
-                                        $imagedata .= fread($h, filesize($this->file));
-                                }
-                                fclose($h);
+                        $imagedata = "";
+                        if (isset($this->file) && ($imagedata = $this->load($this->file))) {
                                 // image ressource
                                 $this->loadFromBytes($imagedata, $nom);
                                 $this->mode = FILE_MODE;
@@ -99,7 +107,35 @@ if (!isset($ClasseImage)) {
 
                 /* ----- partie publique ----- */
 
-                function setFile(&$file) {
+                /**
+                  Output image to browser or file (GD support png,gif and jpeg
+                  Parameters:
+                  string $filename
+                  [optional]
+                  The path to save the file to. If not set or NULL, the raw image stream will be outputted directly.
+                  To skip this argument in order to provide the quality parameter, use NULL.
+                 * */
+                function image($filename = NULL) {
+                        if ($this->img) {
+                                $this->resize();
+                                switch ($this->mime) {
+                                        case "image/jpeg": case "image/jpg":
+                                                imagejpeg($this->img, $filename);
+                                                break;
+                                        case "image/gif":
+                                                imagegif($this->img, $filename);
+                                                break;
+                                        case "image/png":
+                                                imagepng($this->img, $filename);
+                                                break;
+                                        default:
+                                                die("No support $this->mime .");
+                                                break;
+                                }
+                        }
+                }
+
+                function setFile($file) {
                         $this->file = $file;
                         if ($file) {
                                 $this->mode = FILE_MODE;
@@ -205,22 +241,7 @@ if (!isset($ClasseImage)) {
                         mb_http_output("pass");
                         ob_start("mb_output_handler");
                         header("Content-type: " . $this->mime);
-                        $this->resize();
-                        switch ($this->mime) {
-                                case "image/jpeg": case "image/jpg":
-                                        imagejpeg($this->img);
-                                        break;
-                                case "image/gif":
-                                        imagegif($this->img);
-                                        break;
-                                case "image/png":
-                                        imagepng($this->img);
-                                        break;
-                                default:
-                                        die("Pas de support $this->mime sur cette page.");
-                                        break;
-                        }
-                        imagedestroy($this->img);
+                        $this->image();
                         ob_end_flush();
                 }
 
@@ -293,32 +314,20 @@ if (!isset($ClasseImage)) {
                 }
 
                 function saveToSQL(SQL &$sql) {
-                        if (isset($this->file)) {
-                                // mime type
-                                /* le fichier uploadé $this->file est temporairement accessible , s'il est touché il s'efface. image_type_to_mime_type "touche" le fichier alors il faut une copie pour préserver le fichier a charger sur la base. */
-                                /* $tmp = tempnam(realpath(filter_input(INPUT_SERVER,'SCRIPT_NAME')), "IMG_");
-                                  if(copy($this->file,$tmp)) debug ("Fichier déplacé avec succès. $this->file -> $tmp");
-                                  chmod($tmp, 0777); */
-                                //$this->setMime($this->file);
-
-                                if (!$sql->query("INSERT INTO image (nom, image, description,mime) VALUES (\"" . addslashes($this->nom) . "\", \"\", \"" . addslashes($this->desc) . "\",\"" . $this->mime . "\")")) {
-                                        die("L'image n'a pas correctement ete stockee sur la base SQL: " . $sql->afficheErreurs());
-                                }
-                                // init id
-                                $this->setId(mysqli_insert_id($sql->connexion));
-                                $imagedata = fread($this->file, 2000000);
-                                fclose($this->file);
-                                // insertion du contenu de l'image
-                                //if(!$sql->query("UPDATE image SET image=LOAD_FILE('$this->file') WHERE id=$this->id")) die("L'image n'a pas correctement ete stockee sur la base SQL: ".mysqli_error());
-                                if (!$sql->query("UPDATE image SET image=\"" . addslashes($imagedata) . "\" WHERE id=$this->id")) {
-                                        die("L'image n'a pas correctement ete stockee sur la base SQL: " . $sql->afficheErreurs());
-                                }
-                                echo HTML_image($GLOBALS["include___image"] . "?id=" . $this->id);
-                                // retourner l'id de l'image ainsi stockée pour ne pas perdre sa trace
-                                return $this->id;
-                        } else {
-                                die("image.class: ToSQL(): Pas d'image chargée!!!");
+                        if (($this->mode & BYTE_MODE) != 0) {
+                                $tmp = tempnam($GLOBALS["images"], $this->nom);
+                                $this->image($tmp);
+                                $this->file = $tmp;
                         }
+                        $imagedata = $this->load($this->file);
+                        if ($imagedata && $sql->query("INSERT INTO image (nom, image, description,mime) VALUES (\"" . addslashes($this->nom) . "\", \"\", \"" . addslashes($this->desc) . "\",\"" . $this->mime . "\")")) {
+                                // init id
+                                $this->id = mysqli_insert_id($sql->connexion);
+                                if ($sql->query("UPDATE image SET image=\"" . addslashes($imagedata) . "\" WHERE id=$this->id")) {
+                                        return;
+                                }
+                        }
+                        trigger_error("Error uploading " . $this->file . " " . $sql->afficheErreurs(), E_USER_ERROR);
                 }
 
                 function loadFromSQL(SQL &$sql, $id) {
