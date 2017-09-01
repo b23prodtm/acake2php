@@ -371,9 +371,7 @@ if (!isset($ClasseImage)) {
                                 $this->file = $tmp;
                         }
                         $imagedata = $this->load($this->file);
-                        if ($imagedata && $sql->send_long_data("INSERT INTO image (nom, image, description,mime) VALUES (\"" . addslashes($this->nom) . "\", ?, \"" . addslashes($this->desc) . "\",\"" . $this->mime . "\")", $imagedata)) {
-                                // init id
-                                $this->id = mysqli_stmt_insert_id($sql->connexion);
+                        if ($imagedata && $sql->send_long_data("INSERT INTO image (nom, image, description,mime) VALUES (\"" . addslashes($this->nom) . "\", ?, \"" . addslashes($this->desc) . "\",\"" . $this->mime . "\")", $imagedata, $this->id)) {
                                 return $this->id;
                         }
                         trigger_error("Error uploading " . $this->file . " " . $sql->afficheErreurs(), E_USER_ERROR);
