@@ -94,8 +94,8 @@ if (!isset($ClasseInfo)) {
                         $i_contenu[$this->langue] = filter_input(INPUT_POST, 'i_contenu' . $this->langue);
                         $i_auteur = array_key_exists("client", $_SESSION) && array_key_exists("id", $_SESSION["client"]) ? $_SESSION["client"]['id'] : "";
                         $this->fm_cinfo($sql, $form, $i_auteur, $i_contenu);
-                        $info_images = filter_input(INPUT_POST, 'i_images');
-                        $this->fm_cimage($sql, $form, $info_images);
+                        $i_images = filter_input(INPUT_POST, 'i_images');
+                        $this->fm_cimage($sql, $form, $i_images);
                         return $this->formulaire_fin($sql, $form, Info::R()->lang("ajouter", "infos"));
                 }
 
@@ -108,17 +108,8 @@ if (!isset($ClasseInfo)) {
                         $i_contenu = $this->contenu;
                         $i_auteur = $this->auteur;
                         $this->fm_cinfo($sql, $form, $i_auteur, $i_contenu);
-                        /* chaque image existante dans l'info, est affiche dans un groupe de champs checkbox; pour supprimer, decocher. pour ajouter, un champ FILE est ajouté plus bas dans le formulaire */
-                        $champs_images = array();
-                        foreach ($this->images as $key => $id) {
-                                $image = $this->getImage($sql, $key); // retourne l'image en objet Image, l'id est dans l'objet Info (->images[])
-                                if (is_a($image, "Image")) {
-                                        $champs_images[] = new ChampCoche("i_images[]", $id, $image->afficher(), "", TRUE);
-                                }
-                        }
-
-                        $info_images = new ChampGroupe(Info::R()->lang("images_lab", "infos"), Info::R()->lang("images_dsc", "infos"), "i_images[]", $champs_images);
-                        $this->fm_cimage($sql, $form, $info_images);
+                        $i_images = $this->images;
+                        $this->fm_cimage($sql, $form, $i_images);
                         return $this->formulaire_fin($sql, $form, Info::R()->lang("modifier", "infos"));
                 }
 
@@ -141,9 +132,17 @@ if (!isset($ClasseInfo)) {
                         $info_image = new ChampFile('i_image', Info::R()->lang("ajouter_lab", "images"), Info::R()->lang("ajouter_dsc", "images") . " 800 kb", 800000);
                         $info_image_nom = new ChampTexte('i_image_nom', Info::R()->lang("nom_lab", "images"), Info::R()->lang("nom_dsc", "images"), 20);
                         $info_image_desc = new ChampAireTexte('i_image_desc', Info::R()->lang("desc_lab", "images"), Info::R()->lang("desc_dsc", "images"), 20, 3);
-                        if (isset($info_images)) {
-                                $form->ajouterChamp($info_images);
+                        /* chaque image existante dans l'info, est affiche dans un groupe de champs checkbox; pour supprimer, decocher. pour ajouter, un champ FILE est ajouté plus bas dans le formulaire */
+                        $champs_images = array();
+                        for ($i = 0; $i < count($this->images); $i++) {
+                                if (is_array($this->images[$i])) {
+                                        continue;
+                                }
+                                $image = $this->getImage($sql, $i); // retourne l'image en objet Image, l'id est dans l'objet Info (->images[])
+                                $champs_images[] = new ChampCoche("i_images[]", $this->images[$i], $image->afficher(), "", TRUE);
                         }
+
+                        $form->ajouterChamp(new ChampGroupe(Info::R()->lang("images_lab", "infos"), Info::R()->lang("images_dsc", "infos"), "i_images[]", $champs_images));
                         $form->ajouterChamp($info_image);
                         $form->ajouterChamp($info_image_nom);
                         $form->ajouterChamp($info_image_desc);
@@ -264,7 +263,10 @@ if (!isset($ClasseInfo)) {
                                 die(Info::R()->lang("effacer_echec", "infos") . " [" . $this->getId() . "] " . $this->getTitre() . "");
                         }
                         // suppression des images
-                        foreach ($this->images as $key => $id) {
+                        foreach ($this->images as $id) {
+                                if (is_array($id)) {
+                                        continue;
+                                }
                                 Image::DeleteSQL($sql, $id);
                         }
                         return true;
@@ -360,14 +362,17 @@ if (!isset($ClasseInfo)) {
                         $this->contenu[$lang] = $s;
                 }
 
-                /* ajouter une image dans une info non SQL, stockee dans la page php */
+                /* 
+                 * ajouter une image dans une info non stockée en base de données
+                 * (on utilise is_array() pour controler la variable $this->images)
+                 */
 
                 function ajouterImage($url, $desc_courte) {
-                        /* !!!!! image non geree pour etre envoyee par SQL !!!!! */
                         $this->images[] = array($url, $desc_courte); // l'url et une courte description de l'image. index 0 url et index 1 description
                 }
 
-                /* ajouter une image de la base SQL table image */
+                /* ajouter une image de la base SQL table image 
+                 (id de l'entrée mysql_insert_id)*/
 
                 function ajouterImageSQL($id) {
                         $this->images[] = $id;
@@ -377,8 +382,11 @@ if (!isset($ClasseInfo)) {
 
                 function listeImagesId() {
                         $images = "";
-                        $sep="";
+                        $sep = "";
                         foreach ($this->images as $id) {
+                                if (is_array($id)) {
+                                        continue;
+                                }
                                 $images .= $sep . $id;
                                 $sep = ",";
                         }
@@ -483,6 +491,9 @@ if (!isset($ClasseInfo)) {
                                 // prendre les images de l'info courante-nouvelle pour comparer les images de l'ancienne. supprimer de la base SQL les images qui n'apparaissent plus dans le nouveau tableau this->images
                                 $poubelle = array_diff($infoSQL->images, $this->images);
                                 foreach ($poubelle as $id_old) {
+                                        if (is_array($id_old)) {
+                                                continue;
+                                        }
                                         Image::DeleteSQL($sql, $id_old);
                                 }
                         }
