@@ -327,7 +327,7 @@ if (!isset($ClasseInfo)) {
                                 $img->setNom($this->images[$link][1]);
                                 return $img;
                         } else {
-                                $img->loadFromSQL($sql, $this->images[$link]);
+                                $img->FromSQL($sql, $this->images[$link]);
                                 return $img;
                         }
                 }
