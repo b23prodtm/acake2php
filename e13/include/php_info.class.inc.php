@@ -498,7 +498,7 @@ if (!isset($ClasseInfo)) {
                                 }
                                 Image::DeleteSQL($sql, $id_old);
                         }
-                        $query = "UPDATE info SET categorie = \"" . $this->getCategorie() . "\", titre = \"" . addSlashes($this->getTitre()) . "\", contenu = \"" . addSlashes($this->getContenu()) . "\", langue = \"" . $this->langue . "\", date = \"" . $this->getDate() . "\", auteur = \"" . $this->getAuteur() . "\", images = \"" . $this->listeImagesId() . "\" WHERE id = " . $id;
+                        $query = "UPDATE info SET categorie = \"" . $this->getCategorie() . "\", titre = \"" . addSlashes($this->getTitre()) . "\", contenu = \"" . addSlashes($this->getContenu()) . "\", langue = \"" . $this->langue . "\", auteur = \"" . $this->getAuteur() . "\", images = \"" . $this->listeImagesId() . "\" WHERE id = " . $id;
 
                         $result2 = $sql->query($query);
                         if ($result2) {
