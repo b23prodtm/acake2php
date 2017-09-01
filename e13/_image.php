@@ -45,5 +45,5 @@ if ($id) {
 if ($w != 0 && $h != 0) {
         $image->setSize($w, $h);
 }
-$image->afficher();
+$image->raw_http_bytes(1);
 ?>

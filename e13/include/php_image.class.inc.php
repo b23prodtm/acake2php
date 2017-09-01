@@ -90,7 +90,7 @@ if (!isset($ClasseImage)) {
                         $this->mode = BYTE_MODE;
                         return TRUE;
                 }
-                
+
                 /** prend en chagre les URLS distantes et les noms de fichiers locaux */
                 private function loadfromfile($nom = "image") {
                         $imagedata = "";
@@ -114,7 +114,7 @@ if (!isset($ClasseImage)) {
                                 $this->desc = stripslashes($img['description']);
                                 $this->id = $id;
                                 $this->loadFromBytes(stripslashes($img['image']), $nom);
-                                $this->mime = stripslashes($img["mime"]);                                
+                                $this->mime = stripslashes($img["mime"]);
                                 $this->mode = DB_MODE;
                                 return true;
                         } else { // il n'y a pas d'image correspondant a id dans la table                                                         
@@ -123,7 +123,6 @@ if (!isset($ClasseImage)) {
                                 return false;
                         }
                 }
-
 
                 /* ----- partie publique ----- */
 
@@ -257,31 +256,38 @@ if (!isset($ClasseImage)) {
                 }
 
                 /**
-                  affichage sur stdout, envoyer directement au navigateur l'image stockée dans $this->file ou $this->img
-                 * enclenchement de la bufferisation de sortie --output buffering--, fonction callback qui appelle la fonction de conversion avant l'envoi de la sortie au navigateur. Les entetes http ne sont pas affectés, ils sont envoyés à leur apppel. */
-                function afficher_bytes() {
+                  ecrit sur la sortie ou attend flush (echo = 0) */
+                function raw_http_bytes($echo = 1) {
                         // conversion de la sortie pour les images
                         mb_http_output("pass");
                         ob_start("mb_output_handler");
                         header("Content-type: " . $this->mime);
                         $this->image();
-                        ob_end_flush();
+                        if ($echo == 1) {
+                                ob_end_flush();
+                        }
                 }
 
                 /**
                  * retourner balise HTML avec $this->file comme source de l'image
                  */
-                function afficher_file() {
+                function afficher_file($echo = 0) {
+                        $w = "";
                         if (isset($this->file)) {
                                 if (file_exists($this->file)) {
                                         $image = $GLOBALS["e13___image"] . "?w=" . $this->w . "&h=" . $this->h . "&file=" . urlencode(serialize($this->file));
                                         $imageScale = $GLOBALS["e13___image"] . "?w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale . "&file=" . urlencode(serialize($this->file));
-                                        return HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $imageScale . "','zoom ^','width=" . $this->w * $this->scale . ", height=" . $this->h * $this->scale . ", status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
+                                        $w .= HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $imageScale . "','zoom ^','width=" . $this->w * $this->scale . ", height=" . $this->h * $this->scale . ", status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
                                 } else {
                                         trigger_error("File $this->file not found!", E_USER_WARNING);
                                 }
                         } else {
                                 trigger_error("The variable file isn't initialized. " . $this->nom, E_USER_WARNING);
+                        }
+                        if ($echo == 1) {
+                                echo $w;
+                        } else {
+                                return $w;
                         }
                 }
 
@@ -289,19 +295,25 @@ if (!isset($ClasseImage)) {
                  * retourner une balise pour l'affichage d'image depuis la base de données
                  * fichier temporaire sur le disque, depuis un script _image.php?id=n&size=n 
                  *  */
-                function afficher_db() {
+                function afficher_db($echo = 0) {
                         $image = $GLOBALS["e13___image"] . "?id=" . $this->id . "&w=" . $this->w . "&h=" . $this->h;
                         $imageScale = $GLOBALS["e13___image"] . "?id=" . $this->id . "&w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale;
-                        return HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $imageScale . "','zoom ^','width=" . $this->w * $this->scale . ", height=" . $this->h * $this->scale . ", status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
+                        $w = HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $imageScale . "','zoom ^','width=" . $this->w * $this->scale . ", height=" . $this->h * $this->scale . ", status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
+
+                        if ($echo == 1) {
+                                echo $w;
+                        } else {
+                                return $w;
+                        }
                 }
 
-                function afficher() {
+                function afficher($echo = 0) {
                         if (($this->mode & FILE_MODE) != 0) {
-                                $this->afficher_file();
+                                return $this->afficher_file($echo);
                         } elseif (($this->mode & DB_MODE) != 0) {
-                                $this->afficher_db();
+                                return $this->afficher_db($echo);
                         } else {
-                                $this->afficher_bytes();
+                                return $this->raw_http_bytes($echo);
                         }
                 }
 
