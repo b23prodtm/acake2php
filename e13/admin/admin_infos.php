@@ -99,7 +99,7 @@ if (filter_input(INPUT_GET, 'modifier')) {
                 debug("form");
                 $pAdmin->ajouterContenu($form);
 
-                // vidage de la mémoire POST
+                // vidage de la mémoire
                 mysqli_free_result($info);
         }
 

@@ -87,7 +87,7 @@ if (!isset($ClasseInfo)) {
                 private function formulaire_ajout($pageScript, SQL &$sql) {
                         $form = new Formulaire(Info::R()->lang("ajouter", "infos"), $pageScript);
                         // valeurs deja enregistree mais qui n'ont pas pu etre publiees
-                        $i_titre = filter_input(INPUT_POST, 'i_titre');
+                        $i_titre[$this->langue] = filter_input(INPUT_POST, 'i_titre' . $this->langue);
                         $this->fm_ctitre($sql, $form, $i_titre);
                         $i_categorie = filter_input(INPUT_POST, 'i_categorie');
                         $this->fm_ccat($sql, $form, $i_categorie);
@@ -374,8 +374,9 @@ if (!isset($ClasseInfo)) {
 
                 function listeImagesId() {
                         $images = "";
+                        $sep="";
                         foreach ($this->images as $id) {
-                                $images .= @$sep . $id;
+                                $images .= $sep . $id;
                                 $sep = ",";
                         }
                         return $images;
