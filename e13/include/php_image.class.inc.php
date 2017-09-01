@@ -22,8 +22,8 @@ if (!isset($ClasseImage)) {
          */
 
 
-        define("JPEG_QUALITY", 60);
-        define("PNG_QUALITY", 6);
+        define("JPEG_QUALITY", 100);
+        define("PNG_QUALITY", 9);
         define("BYTE_MODE", 0x0);
         define("FILE_MODE", 0x1);
         define("DB_MODE", 0x2);
@@ -64,14 +64,13 @@ if (!isset($ClasseImage)) {
                         if (!file_exists($filename)) {
                                 return NULL;
                         }
-                        /* $h = fopen($filename, 'r');
-                          $imagedata = "";
-                          while (!feof($h)) {
-                          $imagedata .= fread($h, filesize($filename));
-                          }
-                          fclose($h)
-                          return $imagedata; */
-                        return file_get_contents($filename);
+                        $h = fopen($filename, 'r');
+                        $imagedata = "";
+                        while (!feof($h)) {
+                                $imagedata .= fread($h, filesize($filename));
+                        }
+                        fclose($h);
+                        return $imagedata;
                 }
 
                 private function loadFromBytes($string, $nom = "image") {
@@ -114,7 +113,7 @@ if (!isset($ClasseImage)) {
                                 $nom = stripslashes($dbImg['nom']);
                                 $this->desc = stripslashes($dbImg['description']);
                                 $this->id = $id;
-                                $this->loadFromBytes(stripslashes($dbImg['image']), $nom);
+                                $this->loadFromBytes($dbImg['image'], $nom);
                                 $this->mime = stripslashes($dbImg["mime"]);
                                 $this->mode = DB_MODE;
                                 return true;
