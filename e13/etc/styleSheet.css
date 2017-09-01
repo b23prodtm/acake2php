@@ -228,18 +228,17 @@ td.formulaire {
         .rubrique {
                 background-color: rgb(239, 221, 0);
         }
-        .menu {
+        .menu TR{
                 border: 1px outset rgb(250, 245, 245); vertical-align: top; background-color: rgb(243, 243, 243); 
-        }
-        .menu_contents TD{
+                
                 -webkit-transition: all 1s ease;
                 -moz-transition: all 1s ease;
                 -o-transition: all 1s ease;
                 -ms-transition: all 1s ease;
                 transition: all 1s ease;
         }
-        .menu_contents TD:hover{
-                background-color: rgb(243, 200, 80);
+        .menu TR:hover{
+                background-color: rgb(239, 221, 0);
         }
         .boutonMenu {
                 position: absolute;
