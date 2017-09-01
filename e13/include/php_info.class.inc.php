@@ -50,22 +50,22 @@ if (!isset($ClasseInfo)) {
                 }
 
                 function loadResult(SQL &$sql, mysqli_result &$result) {        // reception info de la base SQL
-                        $info = $sql->ligneSuivante_Array($result);
-                        if (!$info) {
+                        $dbInfo = $sql->ligneSuivante_Array($result);
+                        if (!$dbInfo) {
                                 return;
                         }
                         // appel fonction de la classe parente Info
-                        $this->langue = $info["langue"];
-                        $this->titre[$info->langue] = $info["titre"];
-                        $this->auteur = $info["auteur"];
-                        $this->categorie = $info["categorie"];
-                        $this->date = $info["date"];
-                        $this->id = $info["id"];
-                        $this->contenu[$info->langue] = $info["contenu"];
+                        $this->langue = $dbInfo["langue"];
+                        $this->titre[$dbInfo["langue"]] = $dbInfo["titre"];
+                        $this->auteur = $dbInfo["auteur"];
+                        $this->categorie = $dbInfo["categorie"];
+                        $this->date = $dbInfo["date"];
+                        $this->id = $dbInfo["id"];
+                        $this->contenu[$dbInfo["langue"]] = $dbInfo["contenu"];
 
                         // acquisition de la liste des images pour l'info
-                        if ($info["images"] != "") {
-                                $image = strtok($info["images"], ',');
+                        if ($dbInfo["images"] != "") {
+                                $image = strtok($dbInfo["images"], ',');
                                 while ($image) {
                                         $this->ajouterImageSQL($image);
                                         $image = strtok(',');
@@ -233,12 +233,12 @@ if (!isset($ClasseInfo)) {
                                 $tbl->setOptionsArray_Ligne(1, array("class" => "entete"));
                                 $tbl->setContenu_Ligne(1, Info::R()->lang(array("id", "titre", "date", "langue", "categorie"), "infos"));
                                 for ($row = 2, $n = 0; $row - 2 < mysqli_num_rows($infos); $row++) {
-                                        $nfo = new Info($sql, $infos);
+                                        $post = new Info($sql, $infos);
                                         // lignes de couleurs alternées
                                         $tbl->setOptionsArray_Ligne($row, array("class" => "A" . ($n++) % 2));
-                                        $tbl->setContenu_Ligne($row, array($nfo->getId(), $nfo->getTitre(), $nfo->getDate(), $nfo->getLangue(), $nfo->getCategorie()));
+                                        $tbl->setContenu_Ligne($row, array($post->getId(), $post->getTitre(), $post->getDate(), $post->getLangue(), $post->getCategorie()));
                                         // mode afficher                                      
-                                        $tbl->setContenu_Cellule($row, 5, $nfo->champCoche($mode)->getHTML(LIBRE, $f->classe));
+                                        $tbl->setContenu_Cellule($row, 5, $post->champCoche($mode)->getHTML(LIBRE, $f->classe));
                                 }
                                 mysqli_free_result($infos);
                                 $modifier = new ChampValider(Info::R()->lang("valider", "form"));

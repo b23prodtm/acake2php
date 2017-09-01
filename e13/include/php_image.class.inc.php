@@ -107,14 +107,14 @@ if (!isset($ClasseImage)) {
 
                 private function loadFromSQL(SQL &$sql, $id) {
                         $result = $sql->query("SELECT * FROM image WHERE id = '$id'");
-                        $img = $sql->LigneSuivante_Array($result);
+                        $dbImg = $sql->LigneSuivante_Array($result);
                         mysqli_free_result($result);
-                        if ($img) {
-                                $nom = stripslashes($img['nom']);
-                                $this->desc = stripslashes($img['description']);
+                        if ($dbImg) {
+                                $nom = stripslashes($dbImg['nom']);
+                                $this->desc = stripslashes($dbImg['description']);
                                 $this->id = $id;
-                                $this->loadFromBytes(stripslashes($img['image']), $nom);
-                                $this->mime = stripslashes($img["mime"]);
+                                $this->loadFromBytes(stripslashes($dbImg['image']), $nom);
+                                $this->mime = stripslashes($dbImg["mime"]);
                                 $this->mode = DB_MODE;
                                 return true;
                         } else { // il n'y a pas d'image correspondant a id dans la table                                                         
