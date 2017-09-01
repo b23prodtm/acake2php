@@ -58,10 +58,15 @@ if (!isset($ClasseImage)) {
 
                 /* ----- partie privée ----- */
 
+                /** prend en chagre les URLS distantes et les noms de fichiers locaux*/
                 function loadfromfile($nom = "image") {
-                        if (isset($this->file) && fopen($this->file, 'rb')) {
-                                $imagedata = fread($this->file, filesize($this->file));
-                                fclose($this->file);
+                        $h = NULL;                        
+                        if (isset($this->file) && ($h = fopen($this->file, 'rb'))) {
+                                $imagedata = "";
+                                while (!feof($h)) {
+                                        $imagedata .= fread($h, filesize($this->file));
+                                }
+                                fclose($h);
                                 // image ressource
                                 $this->loadFromBytes($imagedata, $nom);
                                 $this->mode = FILE_MODE;
