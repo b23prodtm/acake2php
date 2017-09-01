@@ -74,8 +74,9 @@ if (!isset($classeSQL)) {
                         $n = NULL;
                         mysqli_stmt_bind_param($stmt, "b", $n);
                         mysqli_stmt_send_long_data($stmt, 0, $data);
-                        mysqli_stmt_execute($stmt);
-                        return mysqli_stmt_close($stmt);
+                        $b = mysqli_stmt_execute($stmt);
+                        mysqli_stmt_close($stmt);
+                        return $b;
                 }
 
                 /**
