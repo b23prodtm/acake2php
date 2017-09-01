@@ -344,11 +344,11 @@ if (!isset($ClasseImage)) {
                 function afficherFormatee($echo = 0, $desc = TRUE) {
                         $tbl = new Tableau(2, 1, str_replace(" ", "_", $this->nom));
                         $tbl->setOptionsArray(array("class" => "image"));
-                        $tbl->setContenu_Cellule(0, 0, "<center>" . (0 != ($this->mode & (DB_MODE | FILE_MODE)) ? $this->afficher() : "<i>No Img</i>") . "<center>");
+                        $tbl->setContenu_Cellule(0, 0, (0 != ($this->mode & (DB_MODE | FILE_MODE)) ? $this->afficher() : "<i>No Img</i>"));
                         if ($desc) {
-                                $tbl->setContenu_Cellule(1, 0, $this->nom . " : " . $this->desc);
+                                $tbl->setContenu_Cellule(1, 0, $this->desc);
                         } else {
-                                $tbl->setContenu_Cellule(1, 0, "<center>" . $this->nom . "</center>");
+                                $tbl->setContenu_Cellule(1, 0, $this->nom);
                         }
                         if ($echo == 0) {
                                 return $tbl->fin();
