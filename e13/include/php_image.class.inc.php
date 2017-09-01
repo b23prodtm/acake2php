@@ -22,8 +22,8 @@ if (!isset($ClasseImage)) {
          */
 
 
-        define("JPEG_QUALITY", 100);
-        define("PNG_QUALITY", 9);
+        define("JPEG_QUALITY", 60);
+        define("PNG_QUALITY", 6);
         define("BYTE_MODE", 0x0);
         define("FILE_MODE", 0x1);
         define("DB_MODE", 0x2);
