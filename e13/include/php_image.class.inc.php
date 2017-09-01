@@ -110,11 +110,11 @@ if (!isset($ClasseImage)) {
                         $dbImg = $sql->LigneSuivante_Array($result);
                         mysqli_free_result($result);
                         if ($dbImg) {
-                                $nom = stripslashes($dbImg['nom']);
-                                $this->desc = stripslashes($dbImg['description']);
+                                $nom = $dbImg['nom'];
+                                $this->desc = $dbImg['description'];
                                 $this->id = $id;
                                 $this->loadFromBytes($dbImg['image'], $nom);
-                                $this->mime = stripslashes($dbImg["mime"]);
+                                $this->mime = $dbImg["mime"];
                                 $this->mode = DB_MODE;
                                 return true;
                         } else { // il n'y a pas d'image correspondant a id dans la table                                                         
