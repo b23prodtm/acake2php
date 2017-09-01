@@ -270,9 +270,9 @@ if (!isset($ClasseImage)) {
                         if ($this->scale == "") {
                                 $this->setScale(100);
                         }
-                        $param = "?id=" . $this->id . "&w=" . $this->w . "&h=" . $this->h;
-                        $paramScale = "?id=" . $this->id . "&w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale;
-                        return HTML_image($GLOBALS["include___image"] . $param, array("javascript" => array('onClick' => "window.open('" . $GLOBALS["include___image"] . $paramScale . "','zoom ^','width=" . $this->w * $this->scale . ", height=" . $this->h * $this->scale . ", status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
+                        $image = $GLOBALS["e13___image"]."?id=" . $this->id . "&w=" . $this->w . "&h=" . $this->h;
+                        $imageScale = $GLOBALS["e13___image"]."?id=" . $this->id . "&w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale;
+                        return HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $imageScale . "','zoom ^','width=" . $this->w * $this->scale . ", height=" . $this->h * $this->scale . ", status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
                 }
 
                 function afficher() {
