@@ -194,7 +194,7 @@ if (!isset($ClasseImage)) {
                                 $nh = $this->h * $this->scale;
                                 if ($nw != $width || $nh != $height) {
                                         $dst = imagecreate($nw, $nh);
-                                        imagecopyresampled($dst, $src, 0, 0, 0, 0, $nw, $nh, $width, $height);
+                                        imagecopyresampled($dst, $this->img, 0, 0, 0, 0, $nw, $nh, $width, $height);
                                 }
                                 $this->img = $dst;
                         }
