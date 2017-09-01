@@ -322,7 +322,7 @@ if (!isset($ClasseInfo)) {
                                 $img->loadfromfile($this->images[$n][1]);
                                 return $img;
                         } else {
-                                $img->loadFromSQL($sql, $id);
+                                $img->loadFromSQL($sql, $this->images[$n]);
                                 return $img;
                         }
                 }
