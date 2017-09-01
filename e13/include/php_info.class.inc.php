@@ -16,13 +16,13 @@ if (!isset($ClasseInfo)) {
 
         class Info {
 
-                static $R;
+                static $R = NULL;
 
                 static function R() {
-                        if ($R == null) {
-                                $R = new Registre(NULL);
+                        if (Info::$R === null) {
+                                Info::$R = new Registre(NULL);
                         }
-                        return $R;
+                        return Info::$R;
                 }
 
                 var $titre, $date, $contenu, $auteur, $categorie;
@@ -85,7 +85,7 @@ if (!isset($ClasseInfo)) {
                   $pageScript devra gérer les valeurs POSTees et notamment les images qui envoient leurs id (supprimer les anciennes dans la table image, avant.) et le champ FILE avec la nouvelle image. */
 
                 private function formulaire_ajout($pageScript, SQL &$sql) {
-                        $form = new Formulaire(R()->lang("ajouter", "infos"), $pageScript);
+                        $form = new Formulaire(Info::R()->lang("ajouter", "infos"), $pageScript);
                         // valeurs deja enregistree mais qui n'ont pas pu etre publiees
                         $i_titre = filter_input(INPUT_POST, 'i_titre');
                         $this->fm_ctitre($sql, $form, $i_titre);
@@ -96,11 +96,11 @@ if (!isset($ClasseInfo)) {
                         $this->fm_cinfo($sql, $form, $i_auteur, $i_contenu);
                         $info_images = filter_input(INPUT_POST, 'i_images');
                         $this->fm_cimage($sql, $form, $info_images);
-                        return $this->formulaire_fin($sql, $form, R()->lang("valider", $CLSEC));
+                        return $this->formulaire_fin($sql, $form, Info::R()->lang("valider", $CLSEC));
                 }
 
                 private function formulaire_modif($pageScript, SQL &$sql) {
-                        $form = new Formulaire(R()->lang("modifier", $CLSEC) . " id:" . $this->id, $pageScript);
+                        $form = new Formulaire(Info::R()->lang("modifier", $CLSEC) . " id:" . $this->id, $pageScript);
                         $i_titre = $this->titre;
                         $this->fm_ctitre($sql, $form, $i_titre);
                         $i_categorie = $this->categorie;
@@ -117,9 +117,9 @@ if (!isset($ClasseInfo)) {
                                 }
                         }
 
-                        $info_images = new ChampGroupe(R()->lang("images_lab", "infos"), R()->lang("images_dsc", "infos"), "i_images[]", $champs_images);
+                        $info_images = new ChampGroupe(Info::R()->lang("images_lab", "infos"), Info::R()->lang("images_dsc", "infos"), "i_images[]", $champs_images);
                         $this->fm_cimage($sql, $form, $info_images);
-                        return $this->formulaire_fin($sql, $form, R()->lang("sauve", "infos"));
+                        return $this->formulaire_fin($sql, $form, Info::R()->lang("sauve", "infos"));
                 }
 
                 private function fm_ctitre(SQL &$sql, Formulaire &$form, $i_titre) {
@@ -133,14 +133,14 @@ if (!isset($ClasseInfo)) {
                 }
 
                 private function fm_ccat(SQL &$sql, Formulaire &$form, $i_categorie) {
-                        $info_categorie = CAT_getSelect($sql, 'i_categorie', R()->lang("newcat_lab", "categories"), HTML_lien($GLOBALS['admin__cat'], "gestion catégorie"), $i_categorie);
+                        $info_categorie = CAT_getSelect($sql, 'i_categorie', Info::R()->lang("newcat_lab", "categories"), HTML_lien($GLOBALS['admin__cat'], "gestion catégorie"), $i_categorie);
                         $form->ajouterChamp($info_categorie);
                 }
 
                 private function fm_cimage(SQL &$sql, Formulaire &$form, $info_images) {
-                        $info_image = new ChampFile('i_image', R()->lang("ajouter_lab", "images"), R()->lang("ajouter_dsc", "images") . " 200 kb", 200000);
-                        $info_image_nom = new ChampTexte('i_image_nom', R()->lang("nom_lab", "images"), R()->lang("nom_dsc", "images"), 20);
-                        $info_image_desc = new ChampAireTexte('i_image_desc', R()->lang("desc_lab", "images"), R()->lang("desc_dsc", "images"), 20, 3);
+                        $info_image = new ChampFile('i_image', Info::R()->lang("ajouter_lab", "images"), Info::R()->lang("ajouter_dsc", "images") . " 200 kb", 200000);
+                        $info_image_nom = new ChampTexte('i_image_nom', Info::R()->lang("nom_lab", "images"), Info::R()->lang("nom_dsc", "images"), 20);
+                        $info_image_desc = new ChampAireTexte('i_image_desc', Info::R()->lang("desc_lab", "images"), Info::R()->lang("desc_dsc", "images"), 20, 3);
                         if (isset($info_images)) {
                                 $form->ajouterChamp($info_images);
                         }
@@ -151,13 +151,13 @@ if (!isset($ClasseInfo)) {
 
                 private function fm_cinfo(SQL &$sql, Formulaire &$form, $i_auteur, $i_contenu) {
                         foreach ($i_contenu as $lang => $text) {
-                                $info_contenu = new ChampAireTexte('i_contenu' . $lang, R()->lang("contenu_lab", "infos"), R()->lang("contenu_dsc", "infos"), 30, 20, $text);
+                                $info_contenu = new ChampAireTexte('i_contenu' . $lang, Info::R()->lang("contenu_lab", "infos"), Info::R()->lang("contenu_dsc", "infos"), 30, 20, $text);
                                 if ($lang != getPrimaryLanguage()) {
                                         $info_contenu->desactiver();
                                 }
                                 $form->ajouterChamp($info_contenu);
                         }
-                        $info_auteur = new ChampTexte('i_auteur', R()->lang("auteur_lab", "infos"), R()->lang("auteur_dsc", "infos"), 15, 20, $i_auteur);
+                        $info_auteur = new ChampTexte('i_auteur', Info::R()->lang("auteur_lab", "infos"), Info::R()->lang("auteur_dsc", "infos"), 15, 20, $i_auteur);
                         $form->ajouterChamp($info_auteur);
                 }
 
@@ -165,7 +165,7 @@ if (!isset($ClasseInfo)) {
                         debug("formfin");
 
                         $info_langue = new ChampCache("i_lang", getPrimaryLanguage());
-                        $info_effacer = new ChampEffacer(R()->lang("effacer", "form"));
+                        $info_effacer = new ChampEffacer(Info::R()->lang("effacer", "form"));
                         $info_valider = new ChampValider($texteValider);
 
                         $form->ajouterChamp($info_langue);
@@ -240,7 +240,7 @@ if (!isset($ClasseInfo)) {
                                         $tbl->setContenu_Cellule($row, 5, $nfo->champCoche($mode)->getHTML(LIBRE, $f->classe));
                                 }
                                 mysqli_free_result($infos);
-                                $modifier = new ChampValider(R()->lang("valider", "form"));
+                                $modifier = new ChampValider(Info::R()->lang("valider", "form"));
                                 return $html . $tbl->fin() . $modifier->getHTML(VERTICAL, $f->classe) . $f->fin();
                         }
                 }
@@ -261,7 +261,7 @@ if (!isset($ClasseInfo)) {
 
                 function supprimer(SQL &$sql) {
                         if (!$sql->query("DELETE FROM info WHERE id=" . $this->getId())) {
-                                die(R()->lang("effacer_echec", "infos") . " [" . $this->getId() . "] " . $this->getTitre() . "");
+                                die(Info::R()->lang("effacer_echec", "infos") . " [" . $this->getId() . "] " . $this->getTitre() . "");
                         }
                         // suppression des images
                         foreach ($this->images as $key => $id) {
