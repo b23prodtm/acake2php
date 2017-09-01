@@ -36,8 +36,7 @@ if (filter_input(INPUT_GET, 'ajouter') === "publie" || filter_input(INPUT_GET, '
         /* -- stockage de l'image -- */
         if (is_uploaded_file($_FILES['i_image']['tmp_name'])) {
                 $image = new Image();
-                $file = fopen($_FILES['i_image']['tmp_name'], 'r');
-                $image->setFile($file);
+                $image->setFile($_FILES['i_image']['tmp_name']);
                 // format d'image
                 $image->setMime("image/png");
                 //			debug(print_r($_FILES['i_image']));
