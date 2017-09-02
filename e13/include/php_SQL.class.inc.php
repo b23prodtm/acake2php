@@ -23,7 +23,7 @@ if (!isset($classeSQL)) {
                 var $utilisateur;
                 var $mdp;
 
-                /* connexion automatique, appeler close() en fin de script si $pconnect actif (par défaut) */
+                /* connexion automatique, appeler close() en fin de script si $pconnect actif (par dÃ©faut) */
 
                 public function __construct($serveur, $base, $utilisateur, $mdp, $port = PORT) {
                         $this->connect($serveur, $utilisateur, $mdp, $base, $port);
@@ -47,22 +47,22 @@ if (!isset($classeSQL)) {
                         }
                 }
 
-                /* ---- partie privÃ©e ---- */
+                /* ---- partie privÃƒÂ©e ---- */
 
                 private function connect($serveur, $utilisateur, $mdp, $base, $port) {
                         if ($this->connexion !== NULL) {
                                 $this->close();
-                                echo "Une connexion existante à la base a été fermée.";
+                                echo "Une connexion existante Ã  la base a Ã©tÃ© fermÃ©e.";
                         }
                         $this->connexion = mysqli_init();
                         // pour ajouter une commande d'options avant connexion reseau
                         //  mysqli_options($link, MYSQLI_INIT_COMMAND, "SQL command");
-                        mysqli_real_connect($this->connexion, $serveur, $utilisateur, $mdp, $base, $port) or trigger_error(ÇÊImpossible de se connecter au serveur/base de donnee : " . mysqli_connect_error(), E_USER_ERROR);
+                        mysqli_real_connect($this->connexion, $serveur, $utilisateur, $mdp, $base, $port) or trigger_error("Impossible de se connecter au serveur/base de donnee : " . mysqli_connect_error(), E_USER_ERROR);
                 }
 
                 /* ---- partie publique ---- */
 
-                /** retourne un résultat mwsqli_result ou FALSE. */
+                /** retourne un rÃ©sultat mwsqli_result ou FALSE. */
                 public function query($string) {
                         return mysqli_query($this->connexion, $string);
                 }
@@ -80,14 +80,14 @@ if (!isset($classeSQL)) {
                 }
 
                 /**
-                 * retourne la liste des erreurs de le commande précédant sous forme de liste.
+                 * retourne la liste des erreurs de le commande prÃ©cÃ©dant sous forme de liste.
                  * c.f : mysqli_error_list
                  */
                 public function listeErreurs(&$stmt = NULL) {
                         return $stmt ? mysqli_stmt_error_list($stmt) : mysqli_error_list($this->connexion);
                 }
 
-                /** écrit sur la sortie standard une liste HTML des erreurs reportées */
+                /** Ã©crit sur la sortie standard une liste HTML des erreurs reportÃ©es */
                 public function afficheErreurs(&$stmt = NULL) {
                         echo "<ol>";
                         foreach ($this->listeErreurs($stmt) as $err) {
@@ -126,8 +126,8 @@ if (!isset($classeSQL)) {
                         }
                 }
 
-                /* ---- mÃ©thodes de base BEGIN ---- */
-                /* mÃ©thodes ligne suivante BEGIN */
+                /* ---- mÃƒÂ©thodes de base BEGIN ---- */
+                /* mÃƒÂ©thodes ligne suivante BEGIN */
 
                 public function ligneSuivante(mysqli_result &$resultat) {
                         if ($resultat && is_a($resultat, "mysqli_result")) {
