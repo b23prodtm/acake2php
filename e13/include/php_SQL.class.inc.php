@@ -57,7 +57,7 @@ if (!isset($classeSQL)) {
                         $this->connexion = mysqli_init();
                         // pour ajouter une commande d'options avant connexion reseau
                         //  mysqli_options($link, MYSQLI_INIT_COMMAND, "SQL command");
-                        mysqli_real_connect($this->connexion, $serveur, $utilisateur, $mdp, $base, $port) or die("Impossible de se connecter au serveur/base de donnée : " . mysqli_connect_error());
+                        mysqli_real_connect($this->connexion, $serveur, $utilisateur, $mdp, $base, $port) or trigger_error(ÇÊImpossible de se connecter au serveur/base de donnee : " . mysqli_connect_error(), E_USER_ERROR);
                 }
 
                 /* ---- partie publique ---- */
