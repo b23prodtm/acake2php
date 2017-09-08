@@ -79,7 +79,7 @@ if (filter_input(INPUT_GET,'images')) {
 /* ----- (2) ------- */
 if (filter_input(INPUT_GET,'page')) { // formulaire changer la page activites
         /* ------ script de reception de la page ----- */
-        $path = $GLOBALS['FTPDOCS'] . "activites.html";
+        $path = $GLOBALS['FTPDOCS'] . "activites_inc";
         $ftpid = ftp();
         $pAdmin->ajouterContenu("<div class='console'>Chargement du fichier $path:<br>");
         $ret = ftp_nb_put($ftpid, $path, $_FILES['page']['tmp_name'], FTP_ASCII);
