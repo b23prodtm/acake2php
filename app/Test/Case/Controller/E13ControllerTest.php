@@ -1,4 +1,5 @@
 <?php
+
 App::uses('E13Controller', 'Controller');
 
 /**
@@ -6,24 +7,21 @@ App::uses('E13Controller', 'Controller');
  */
 class E13ControllerTest extends ControllerTestCase {
 
-/**
- * Fixtures
- *
- * @var array
- */
-	public $fixtures = array(
-		'app.e13'
-	);
+        public function setUp() {
+                parent::setUp();
+                $E13Controller = new E13Controller();
+                $HomeView = new View($E13Controller);
+        }
 
-/**
- * testIndex method
- *
- * @return void
- */
-	public function testIndex() {
-                $this->testAction('/', array('method' => 'get', 'return' => 'contents')
+        /**
+         * testIndex method
+         *
+         * @return void
+         */
+        public function testIndex() {
+                $result = $this->testAction('/e13', array('method' => 'get', 'return' => 'contents',"named" => array("local" => 1))
                 );
-                $this->assertContains('&copy; ', $result);       
-	}
+                $this->assertContains('&copy; ', $result);
+        }
 
 }

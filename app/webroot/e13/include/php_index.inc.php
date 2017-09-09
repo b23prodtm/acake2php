@@ -16,7 +16,7 @@
  * 
  */
 global $registreFichiers;
-if (!isset($registreFichiers)) {
+if (!isset($registreFichiers)) {if(!defined("WWW_ROOT")){define("WWW_ROOT", "");}
 
         $registreFichiers = 1;
 
@@ -149,9 +149,9 @@ if (!isset($registreFichiers)) {
          * enregistrement en session des parametres de journalisation
          * */
         function i_debug($texte = "about the error") {
-                echo "***DEBUG***\n SCRIPT_NAME:" . filter_input(INPUT_SERVER, 'SCRIPT_NAME') . ": ";
+                echo "\n<br>*DEBUG*\n<br> SCRIPT_NAME:" . filter_input(INPUT_SERVER, 'SCRIPT_NAME') . ": ";
                 print_array_r($texte);
-                echo "\n ***DEBUG***\n";
+                echo "\n<br>*********\n<br>";
         }
 
         /**
@@ -188,7 +188,7 @@ if (!isset($registreFichiers)) {
                                                 $path .= "../";
                                         }
                                 } else {
-                                        $path = "./";
+                                        $path .= "./";
                                 }
                                 break;
                         }//endif
@@ -232,7 +232,7 @@ if (!isset($registreFichiers)) {
                  *                  
                  */
 
-                public function __construct($selfScript, $force = false) {
+                public function __construct($selfScript, $force = false, $initRootPath = "") {
                         global $_instanceRegistre;
                         if (!isset($_instanceRegistre) || $force) {
                                 $_instanceRegistre = 1;
@@ -241,7 +241,7 @@ if (!isset($registreFichiers)) {
                                  * ERROR CHECKING enregistrement en session courante
                                  */
                                 Index::registerGETSession(array("root" => stripEnd(filter_input(INPUT_GET, 'root')), "verbose", "local", "warn", "debug"));
-                                $root = array_key_exists('root', $_SESSION) ? $_SESSION['root'] : "";
+                                $root = array_key_exists('root', $_SESSION) ? $_SESSION['root'] : $initRootPath;
                                 $cheminSite = pathFinder($root . "/e13/.", $selfScript) . "/";
                                 $cheminHttpdocs = pathFinder($root . "/.", $selfScript) . "/";
                                 $cheminInc = $cheminSite . "include/";

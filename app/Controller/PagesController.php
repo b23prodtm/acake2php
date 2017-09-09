@@ -78,48 +78,5 @@ class PagesController extends AppController {
                 }
         }
 
-        public function __construct($request = null, $response = null) {
-                parent::__construct($request, $response);
-                $this->set("r", new Index(filter_input(INPUT_SERVER, "PHP_SELF")));
-        }
-
-        public function e13_index($p) {
-                debug($this->request->params);
-                if (stristr($p, ".php")) {
-                        require($GLOBALS["e13"] . "/" . $p);
-                } else if ($p) {
-                        require($GLOBALS["e13__" . $p]);
-                } else {
-                        require($GLOBALS["e13__index"]);
-                }
-        }
-
-        /**
-         * @param String $p SITEMAP.PROPERTIES key in [admin]
-         */
-        public function e13_admin($p) {
-                debug($this->request->params);
-                if (stristr($p, ".php")) {
-                        require($GLOBALS["admin"] . "/" . $p);
-                } else if ($p) {
-                        require($GLOBALS["admin__" . $p]);
-                } else {
-                        require($GLOBALS["admin__index"]);
-                }
-        }
-
-        /**
-         * @param String $page SITEMAP.PROPERTIES key in [admin]
-         */
-        public function e13_images($p) {
-                debug($this->request->params);
-                if (stristr($p, ".gif") || stristr($p, ".png") || stristr($p, ".jpg")) {
-                        require($GLOBALS["images"] . "/" . $p);
-                } else if ($p) {
-                        require($GLOBALS["images__" . $p]);
-                } else {
-                        $this->redirect(array('action' => 'index', 'e13' => true));
-                }
-        }
 
 }
