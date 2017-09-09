@@ -473,6 +473,12 @@ if (!isset($ClasseInfo)) {
                         if ($n < count($this->images) && $j < $img->nbColonnes) {
                                 $image = $this->getImage($sql, $n);
                                 if (is_a($image, "Image")) {
+                                        if ($image->getWidth() > IMAGE_MAX_LARG) {
+                                                $image->setWidth(IMAGE_MAX_LARG);
+                                        }
+                                        if ($image->getHeight() > IMAGE_MAX_HAUT) {
+                                                $image->setHeight(IMAGE_MAX_HAUT);
+                                        }
                                         $image_html = $image->afficherFormatee();
                                 }
                                 $img->setContenu_Cellule($i, $j, $image_html, array("css" => array("text-align" => "center")));
