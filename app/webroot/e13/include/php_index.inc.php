@@ -37,13 +37,22 @@ if (!isset($registreFichiers)) {
                         echo $html;
                 }
         }
-        
+
+        function i_isdebug() {
+                $d = filter_input(INPUT_GET, "debug");
+                $s = array_key_exists("debug", $_SESSION) ? $_SESSION["debug"] : false;
+                return ($d && $d != 0) || ($s && $s != 0);
+        }
+
         /**
          * index.php?debug affiche les E_ERROR et E_WARNING
          * index.php?debug&verbose affiche les E_NOTICE
          * enregistrement en session des parametres de journalisation
          * */
         function i_debug($texte = "about the error") {
+                if (!i_isdebug()) {
+                        return;
+                }
                 echo "\n<b>" . filter_input(INPUT_SERVER, 'SCRIPT_NAME') . ":/></b> ";
                 print_array_r($texte);
                 echo "\n<br>*********\n<br>";
@@ -153,7 +162,6 @@ if (!isset($registreFichiers)) {
         }
 
         set_error_handler("condor_error");
-
 
         /**
          *  END         ERROR CHECKING 
