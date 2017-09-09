@@ -1,5 +1,5 @@
 <?php
-$nouvelleAdresse='e13/index.php';	//Nouvelle adresse
+$nouvelleAdresse='/e13/';	//Nouvelle adresse
 if (filter_input(INPUT_SERVER,'QUERY_STRING')&&(filter_input(INPUT_SERVER,'QUERY_STRING')!=''))
  $nouvelleAdresse.='?'.substr(filter_input(INPUT_SERVER,'QUERY_STRING'),0,2048);	//Récupère les paramètres
 header('Location: '.$nouvelleAdresse);	//Redirection HTTP

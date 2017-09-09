@@ -6,8 +6,7 @@
  */
 
 App::uses('AppController', 'Controller');
-App::build(array('E13' => array(WWW_ROOT . 'e13')));
-App::import('E13', 'Index', false, array('file' => 'include' . DS . 'php_index.inc.php'));
+App::import('file', 'Index', false, array(WWW_ROOT . 'e13' . DS . 'include' . DS), 'php_index.inc.php');
 
 /**
  * CakePHP E13
@@ -22,7 +21,8 @@ class E13Controller extends AppController {
         }
 
         public function index($p = NULL) {
-                debug($this->request->params);
+                //debug($this->request->params);
+                debug($GLOBALS);
                 if (stristr($p, ".php")) {
                         include($GLOBALS["e13"] . "/" . $p);
                 } else if ($p) {
@@ -33,7 +33,7 @@ class E13Controller extends AppController {
         }
 
         public function etc($p = NULL) {
-                debug($this->request->params);
+                //debug($this->request->params);
                 if (stristr($p, ".css")) {
                         $this->response->file($GLOBALS["etc"] . "/" . $p);
                 } else if ($p) {
@@ -47,7 +47,7 @@ class E13Controller extends AppController {
          * @param String $p SITEMAP.PROPERTIES key in [admin]
          */
         public function admin($p = NULL) {
-                debug($this->request->params);
+                //debug($this->request->params);
                 if (stristr($p, ".php")) {
                         include($GLOBALS["admin"] . "/" . $p);
                 } else if ($p) {
@@ -61,7 +61,7 @@ class E13Controller extends AppController {
          * @param String $page SITEMAP.PROPERTIES key in [admin]
          */
         public function images($p = NULL) {
-                debug($this->request->params);
+                //debug($this->request->params);
                 if (stristr($p, ".gif") || stristr($p, ".png") || stristr($p, ".jpg")) {
                         $this->response->file($GLOBALS["images"] . "/" . $p);
                 } else if ($p) {
