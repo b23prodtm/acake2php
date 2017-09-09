@@ -17,12 +17,12 @@ class E13Controller extends AppController {
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
                 /** initalize $GLOBALS */
-                $this->set("r", new Index(filter_input(INPUT_SERVER, "PHP_SELF"), false, WWW_ROOT));
+                $this->set("r", new Index(WWW_ROOT.filter_input(INPUT_SERVER, "PHP_SELF"), false, WWW_ROOT));
         }
 
         public function index($p = NULL) {
                 //debug($this->request->params);
-                debug($GLOBALS);
+                //debug($GLOBALS);
                 if (stristr($p, ".php")) {
                         include($GLOBALS["e13"] . "/" . $p);
                 } else if ($p) {
@@ -48,6 +48,7 @@ class E13Controller extends AppController {
          */
         public function admin($p = NULL) {
                 //debug($this->request->params);
+                //debug($GLOBALS);
                 if (stristr($p, ".php")) {
                         include($GLOBALS["admin"] . "/" . $p);
                 } else if ($p) {
@@ -67,7 +68,7 @@ class E13Controller extends AppController {
                 } else if ($p) {
                         $this->response->file($GLOBALS["images__" . $p]);
                 } else {
-                        $this->redirect(array('action' => 'index'));
+                        $this->redirect(array('Controller' => 'E13', 'action' => 'index'));
                 }
         }
 

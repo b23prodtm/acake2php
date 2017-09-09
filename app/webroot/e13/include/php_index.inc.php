@@ -16,9 +16,38 @@
  * 
  */
 global $registreFichiers;
-if (!isset($registreFichiers)) {if(!defined("WWW_ROOT")){define("WWW_ROOT", "");}
+if (!isset($registreFichiers)) {
 
         $registreFichiers = 1;
+
+        function print_array_r($array, &$html = "") {
+                $p = $html === "";
+                if (is_array($array)) {
+                        $html .= "<ul>";
+                        foreach ($array as $k => $v) {
+                                $html .= "<li>" . $k . " : ";
+                                print_array_r($v, $html);
+                                $html .= "</li>";
+                        }
+                        $html .= "</ul>";
+                } else {
+                        $html .= $array;
+                }
+                if ($p) {
+                        echo $html;
+                }
+        }
+        
+        /**
+         * index.php?debug affiche les E_ERROR et E_WARNING
+         * index.php?debug&verbose affiche les E_NOTICE
+         * enregistrement en session des parametres de journalisation
+         * */
+        function i_debug($texte = "about the error") {
+                echo "\n<b>" . filter_input(INPUT_SERVER, 'SCRIPT_NAME') . ":/></b> ";
+                print_array_r($texte);
+                echo "\n<br>*********\n<br>";
+        }
 
         session_start();
         /** TIMEZONE http://php.net/manual/fr/timezones.php */
@@ -28,13 +57,13 @@ if (!isset($registreFichiers)) {if(!defined("WWW_ROOT")){define("WWW_ROOT", "");
 
         /* controle de l'existence d'une session */
         if (session_status() != PHP_SESSION_ACTIVE) {
-                echo "phpSession: off " . session_status() == PHP_SESSION_DISABLED ? "(DISABLED)" : "";
+                i_debug("phpSession: off " . session_status() == PHP_SESSION_DISABLED ? "(DISABLED)" : "");
         } elseif (filter_input(INPUT_GET, "debug") || array_key_exists("debug", $_SESSION)) {
-                echo "phpSession: start\n"
-                . "language " . getPrimaryLanguage() . "\n";
+                i_debug("phpSession: start\n"
+                        . "language " . getPrimaryLanguage() . "\n");
         }
         if (filter_input(INPUT_GET, "local") || array_key_exists("local", $_SESSION)) {
-                echo "Local Configuration Enabled\n";
+                i_debug("Local Configuration Enabled\n");
         }
 
         /**
@@ -125,34 +154,6 @@ if (!isset($registreFichiers)) {if(!defined("WWW_ROOT")){define("WWW_ROOT", "");
 
         set_error_handler("condor_error");
 
-        function print_array_r($array, &$html = "") {
-                $p = $html === "";
-                if (is_array($array)) {
-                        $html .= "<ul>";
-                        foreach ($array as $k => $v) {
-                                $html .= "<li>" . $k . " : ";
-                                print_array_r($v, $html);
-                                $html .= "</li>";
-                        }
-                        $html .= "</ul>";
-                } else {
-                        $html .= $array;
-                }
-                if ($p) {
-                        echo $html;
-                }
-        }
-
-        /**
-         * index.php?debug affiche les E_ERROR et E_WARNING
-         * index.php?debug&verbose affiche les E_NOTICE
-         * enregistrement en session des parametres de journalisation
-         * */
-        function i_debug($texte = "about the error") {
-                echo "\n<br>*DEBUG*\n<br> SCRIPT_NAME:" . filter_input(INPUT_SERVER, 'SCRIPT_NAME') . ": ";
-                print_array_r($texte);
-                echo "\n<br>*********\n<br>";
-        }
 
         /**
          *  END         ERROR CHECKING 
@@ -177,7 +178,10 @@ if (!isset($registreFichiers)) {if(!defined("WWW_ROOT")){define("WWW_ROOT", "");
                                 // (1)
                                 $origine_reste_rep = count($origine_tokenized) - $i;
                                 $dest_reste_rep = count($dest_tokenized) - $i;
-
+                                /** ajouter la racine du fichier si le chemin démarre à la racine */
+                                if ($i == 1 && substr($dest, 0, 1) === "/") {
+                                        $path = "/" . $path;
+                                }
                                 // (2)
                                 if ($origine_reste_rep < $dest_reste_rep) {
                                         for ($j = $i; $j < count($dest_tokenized) - 1; $j++) {

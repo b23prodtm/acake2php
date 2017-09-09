@@ -229,7 +229,7 @@ if (!isset($ClasseImage)) {
                                 trigger_error("Image resource not defined, can't resize().", E_USER_WARNING);
                                 $res = false;
                         }
-                        if (isset($this->scale) && res) {
+                        if (isset($this->scale) && $res) {
                                 $width = imagesx($this->img);
                                 $height = imagesy($this->img);
                                 $dst = $this->img;
