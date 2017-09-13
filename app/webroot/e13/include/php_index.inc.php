@@ -18,8 +18,16 @@
 global $registreFichiers;
 if (!isset($registreFichiers)) {
 
+        
         $registreFichiers = 1;
 
+        /** ------  REGISTRES DES ERREURS COURANTES **/
+        /** error connexion SQL.class */
+        define("ERROR_DB_CONNECT", 0x01);
+        /** image : parametres incorrects */
+        define("ERROR_IMG_PARAM", 0x02);
+        
+        
         function print_array_r($array, &$html = "") {
                 $p = $html === "";
                 if (is_array($array)) {

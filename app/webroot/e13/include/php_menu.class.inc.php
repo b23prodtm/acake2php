@@ -33,7 +33,7 @@ if (!isset($ClasseMenu)) {
                 var $logo;
 
                 /**
-                 * @param string $cleLocale clé appartenant au fichier de langue locale/content-lang.properties (gestion 
+                 * @param string $cleLocale cle appartenant au fichier de langue locale/content-lang.properties (gestion 
                  * multilangue i8n.
                  */
                 function __construct($cleLocale, $url, $rubriques = array()) {
@@ -41,7 +41,7 @@ if (!isset($ClasseMenu)) {
                         $this->nom = $this->r->lang($cleLocale);
                         $this->nomBnd = $cleLocale;
                         $this->url = $url;
-                        $this->rubriques = $rubriques; // les rubriques sont aussi des instances de Menu.class ! rassemblées dans un tableau
+                        $this->rubriques = $rubriques; // les rubriques sont aussi des instances de Menu.class ! rassemblees dans un tableau
 
                         $this->setActif();
 
@@ -75,7 +75,7 @@ if (!isset($ClasseMenu)) {
                         $this->actif = FALSE;
                 }
 
-                // méthode auxiliaire a ouvrirBonneRubrique()
+                // methode auxiliaire a ouvrirBonneRubrique()
                 function pageEnCours($pageEnCours) {
                         if ($this->url === $pageEnCours) {
                                 return TRUE;
@@ -121,7 +121,7 @@ if (!isset($ClasseMenu)) {
                 }
 
                 /**
-                 * ***** méthode recursive pour ouvrir la bonne rubrique du menu correspondant a la page en cours. 
+                 * ***** methode recursive pour ouvrir la bonne rubrique du menu correspondant a la page en cours. 
                  * @param string $pageEnCours URL de la page en cours, corrspondant à un lien dans le menu.
                  * @return Menu rubrique ouverte
                  * **** */
@@ -129,7 +129,7 @@ if (!isset($ClasseMenu)) {
                         $rub = FALSE;
                         for ($i = 0; $i < count($this->rubriques); $i++) {
                                 if (($rub = $this->rubriques[$i]->ouvrirBonneRubrique($pageEnCours))) { // on commence par verifier s'il la page n'est pas une des sousrubriques
-                                        $this->ouvrir(); //si une sous rubrique est ouverte, la rubrique ($i) a été ouverte (c.f. plus bas), il faut aussi ouvrir le menu-rubrique courant ($this)
+                                        $this->ouvrir(); //si une sous rubrique est ouverte, la rubrique ($i) a ete ouverte (c.f. plus bas), il faut aussi ouvrir le menu-rubrique courant ($this)
                                         break;
                                 } else if ($this->rubriques[$i]->pageEnCours($pageEnCours)) { //s'il n'y a pas de ssrub ou aucune n'est la page courante, test de la rubrique ($i) comme page courante
                                         $this->rubriques[$i]->ouvrir(); //si oui, alors on ouvre la rubrique

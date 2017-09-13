@@ -1,12 +1,12 @@
 <?php
 $nouvelleAdresse='http://blog.b23prodtm.info';	//Nouvelle adresse
 if (filter_input(INPUT_SERVER,'QUERY_STRING')&&(filter_input(INPUT_SERVER,'QUERY_STRING')!=''))
- $nouvelleAdresse.='?'.substr(filter_input(INPUT_SERVER,'QUERY_STRING'),0,2048);	//Récupère les paramètres
+ $nouvelleAdresse.='?'.substr(filter_input(INPUT_SERVER,'QUERY_STRING'),0,2048);	//Recupère les paramètres
 header('Location: '.$nouvelleAdresse);	//Redirection HTTP
 header('HTTP/1.1 301 Moved Permanently');
 header('Status: 301 Moved Permanently');
 header('Content-Type: text/html; charset=UTF-8');
-$nouvelleAdresse=htmlspecialchars($nouvelleAdresse,ENT_QUOTES);	//Encode les caractères HTML spéciaux
+$nouvelleAdresse=htmlspecialchars($nouvelleAdresse,ENT_QUOTES);	//Encode les caractères HTML speciaux
 echo '<!DOCTYPE html>'."\n",
  '<html xmlns="http://www.w3.org/1999/xhtml">'."\n",
  '<head>'."\n",

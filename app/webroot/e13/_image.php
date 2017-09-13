@@ -30,19 +30,23 @@ $captchaSize = filter_input(INPUT_GET, 'captcha'); // must have been sent throug
 if ($id) {
         // connexion SQL
         $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
-        $image->FromSQL($sql, $id);
-        $sql->close();
+        if ($sql->connect_succes()) {
+                $image->FromSQL($sql, $id);
+                $sql->close();
+        } else {
+                $image->load_error(ERROR_DB_CONNECT);
+        }
 } elseif ($captchaSize) {
         $captchaSize = new Captcha($captchaSize);
         $image = $captchaSize->image($_SESSION['captcha']);
 } else {
-        trigger_error("image : missing a valid parameter like w,h id or captcha", E_USER_ERROR);
-        $image->load_error("ERROR PARAM");
+        i_debug("image : missing a valid parameter like w,h id or captcha");
+        $image->load_error(ERROR_IMG_PARAM);
 }
 if ($w != 0 && $h != 0) {
         $image->setSize($w, $h);
 }
 /* toujours ecrire un fichier cache sur le serveur si possible */
-$output =  $GLOBALS["images"] . "/db/" . $image->nom;
+$output = $GLOBALS["images"] . "/db/" . $image->nom;
 $image->raw_http_bytes(1, is_writable($output) ? $output : NULL);
 ?>

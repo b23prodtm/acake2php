@@ -23,7 +23,7 @@ global $ClassePage;
 if (!isset($ClassePage)) {
         $ClassePage = 1;
 
-        // Classe gérant toutes les pages php du site
+        // Classe gerant toutes les pages php du site
         require ($GLOBALS['include__php_module_html.inc']);
         require ($GLOBALS["include__php_tbl.class.inc"]);
         require ($GLOBALS["include__php_menu.class.inc"]);
@@ -41,8 +41,8 @@ if (!isset($ClassePage)) {
         /*
          * 
           @class		Page
-          @abstract   Elle definit les pages HTML dans leur globalité. Le code HTML est écrit sur la sortie à l'appel de la methode fin(), en dernier donc. un tableau associatif $proprietes contient les proprietes de la page que l'on peut modifier. | MENU | une variable d'instance $menu contient un objet de classe Menu qui s'affiche avec la rubrique concernant la *page en cours* mise en evidence. on peut a tout moment retourner a une rubrique hierachiquement superieure. | CONTENU | un tableau php associatif rassemble le contenu de la page, $this->tbl. le contenu de la page est formaté à l'aide de tableaux HTML (classe php Tableau). | SITUATION-HISTORIQUE | un des tableau HTML contient le nom de la *page en cours* ainsi que son chemin virtuel depuis la page racine du site (situation). Le chemin (par ex. Home/Admin/Gestion Infos/_) affiché depend de la hierarchie du Menu de la Page, ordinairement correspondant au plan du site. | LOGO-ONGLETS | une barre d'onglets donne acces aux rubriques principales du site, affichee sous le logo. Elle est dynamique et permet | ADMIN_PAGE | cette sous-classe étend les possibilités de Page vers une page verouillée par un accès réservé aux administrateurs. voir class ADMIN_Page (plus bas...)
-          @discussion | MENU | possibilité de développer l'affichage du menu de la page en DHTML pour un design et un espace d'affichage dans le tableau[contenu] améliorés. | LOGO-ONGLETS | a terminer graphiquement sous photoshop et a integrer dans la page pour avoir une synchronisation avec le menu.
+          @abstract   Elle definit les pages HTML dans leur globalite. Le code HTML est ecrit sur la sortie à l'appel de la methode fin(), en dernier donc. un tableau associatif $proprietes contient les proprietes de la page que l'on peut modifier. | MENU | une variable d'instance $menu contient un objet de classe Menu qui s'affiche avec la rubrique concernant la *page en cours* mise en evidence. on peut a tout moment retourner a une rubrique hierachiquement superieure. | CONTENU | un tableau php associatif rassemble le contenu de la page, $this->tbl. le contenu de la page est formate à l'aide de tableaux HTML (classe php Tableau). | SITUATION-HISTORIQUE | un des tableau HTML contient le nom de la *page en cours* ainsi que son chemin virtuel depuis la page racine du site (situation). Le chemin (par ex. Home/Admin/Gestion Infos/_) affiche depend de la hierarchie du Menu de la Page, ordinairement correspondant au plan du site. | LOGO-ONGLETS | une barre d'onglets donne acces aux rubriques principales du site, affichee sous le logo. Elle est dynamique et permet | ADMIN_PAGE | cette sous-classe etend les possibilites de Page vers une page verouillee par un accès reserve aux administrateurs. voir class ADMIN_Page (plus bas...)
+          @discussion | MENU | possibilite de developper l'affichage du menu de la page en DHTML pour un design et un espace d'affichage dans le tableau[contenu] ameliores. | LOGO-ONGLETS | a terminer graphiquement sous photoshop et a integrer dans la page pour avoir une synchronisation avec le menu.
          */
 
         class Page {
@@ -82,7 +82,7 @@ if (!isset($ClassePage)) {
                  * @param Index r une instance de Registre de la page courante (Registre(filter_input(INPUT_SERVER,'PHP_SELF') pour 
                  * instancier tous les parametres locaux (liens html).
                   @param pgnews boolean pour afficher ou non les news en marge de la page
-                 * @param String $localeKey clé vers le fichier locale/content-lang
+                 * @param String $localeKey cle vers le fichier locale/content-lang
                  */
                 function __construct($r, $sitemapKey, $pgnews = false, $sessionId = NULL, $enc = MYENCODING, $adsense = true) {
 // ********* output buffer ********
@@ -116,10 +116,10 @@ if (!isset($ClassePage)) {
                         $this->tbl["contenu"] = new Tableau(1, 1, "contenu"); // le contenu informel de la page; le contenu de ce tableau correspond au contenu de $proprietes["contenu"] est modifie par la fonction ajouterContenu
                         $this->tbl["entete"] = new Tableau(1, 2, "entete"); // l'entete avec le logo et la date/heure
                         $this->tbl["logo_onglets"] = new Tableau(2, 1, "logo_onglets"); // le logo et dessous les onglets
-                        $this->tbl["onglets"] = new Tableau(1, 11, "onglets"); // les onglets séparés
+                        $this->tbl["onglets"] = new Tableau(1, 11, "onglets"); // les onglets separes
 
                         /*                         * *************************************
-                          réglages apparences de chaque tableau */
+                          reglages apparences de chaque tableau */
 
                         $this->tbl["body"]->options = array("HTML" => array("BORDER" => 3,
                                 "ALIGN" => "CENTER",
@@ -209,7 +209,7 @@ if (!isset($ClassePage)) {
 
                 function afficheOnglets() {
                         die("methode instable Page.afficheOnglets()");
-                        $n = 0; // quel onglet doit apparaitre presse? $emplacement, "Accueil" ... rubrique corrspondante au numéro de l'onglet
+                        $n = 0; // quel onglet doit apparaitre presse? $emplacement, "Accueil" ... rubrique corrspondante au numero de l'onglet
                         $emplacement = $this->menu->getRubriqueOuverte();
                         if (strstr($emplacement->nom, $MENU['e13__index']->nom))
                                 $n = 1;
@@ -354,7 +354,7 @@ if (!isset($ClassePage)) {
                 function getInfoFlash() {
                         $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
                         $infos = $sql->query("SELECT * FROM info WHERE langue ='" . getPrimaryLanguage() . "' ORDER BY date DESC LIMIT 1");
-                        // déplace le curseur à la derniere ligne
+                        // deplace le curseur à la derniere ligne
                         if ($sql->selectLigne($infos, mysqli_num_rows($infos) - 1)) {
                                 $lastInfo = new Info($sql, $infos);
                         } else {
@@ -447,13 +447,13 @@ if (!isset($ClassePage)) {
                 }
 
                 /**
-                 * écrit tout le contenu du buffer (ex. les E_* erreurs levées) vers un message html
-                 * @param boolean $close déclenche tout le buffer si "true" ou relance un buffer apres vidage si "false".
+                 * ecrit tout le contenu du buffer (ex. les E_* erreurs levees) vers un message html
+                 * @param boolean $close declenche tout le buffer si "true" ou relance un buffer apres vidage si "false".
                  */
                 function flushBuffer($close = false) {
                         /*                         * ***** recuperation du buffer ********* */
                         while (ob_get_level() > 0) {
-                                $this->ajouterMessage(BUF_OFF ? "_ob off_" : @ob_get_clean());
+                                $this->ajouterMessage(BUF_OFF ? "_ob off_" : ob_get_clean());
                         }
                         if (!$close && !BUF_OFF) {
                                 ob_start("mb_output_handler");
@@ -514,7 +514,7 @@ if (!isset($ClassePage)) {
 
         class ADMIN_Page extends Page {
 
-                var $mdp; // mode passe pour $this->user ($user hérité de Page...)
+                var $mdp; // mode passe pour $this->user ($user herite de Page...)
 
                 function __construct($r, $sitemapKey, $sessionId) {
 
@@ -535,9 +535,9 @@ if (!isset($ClassePage)) {
                                 $this->user = filter_input(INPUT_POST, 'identifiant') ? filter_input(INPUT_POST, 'identifiant') : $_SESSION['client']['id'];
                                 echo $this->r->lang("enregistrementsession", "admin");                                      
                                 /** utilise le salt de PASSWORD_ADMIN pour crypter motdepasse, et donc retourne le meme hashcode si le
-                                 * motdepasse est le meme que celui enregistré par PASSWORD_ADMIN  */
+                                 * motdepasse est le meme que celui enregistre par PASSWORD_ADMIN  */
                                 if (ADMIN_Page::valide($mdpmd5)) {
-                                        /** la safeSession est activée (voir classe formulaire et balise FORM), qui desactive les formulaires si non activee */
+                                        /** la safeSession est activee (voir classe formulaire et balise FORM), qui desactive les formulaires si non activee */
                                         $_SESSION["client"]['id'] = $this->user;
                                         $_SESSION["client"]['mdp'] = $mdpmd5;
                                         $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("vousetesauthentifie", "admin") . " : " . $this->user);
@@ -559,7 +559,7 @@ if (!isset($ClassePage)) {
                         return (array_key_exists('client', $_SESSION) && array_key_exists('mdp', $_SESSION['client'])) ? ADMIN_Page::valide($_SESSION['client']["mdp"]) : false;
                 }
 
-                /* ----- partie privée ----- */
+                /* ----- partie privee ----- */
 
                 function form_authentification($script) {
                         echo "formulaire";
