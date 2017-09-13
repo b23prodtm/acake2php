@@ -103,10 +103,9 @@ class DATABASE_CONFIG {
 
                 $this->test['host'] = "localhost";
                 $this->test['port'] = "3306";
-                $this->test['login'] = getenv("DATABASE_USER");
-                $this->test['password'] = getenv("DATABASE_PASSWORD");
-                $this->test['database'] = getenv("DATABASE_NAME");
-                $this->test['datasource'] = $datasource;
+                $this->test['login'] = "test";
+                $this->test['password'] = "mypassword";
+                $this->test['database'] = "phpcms";
         }
 
 }

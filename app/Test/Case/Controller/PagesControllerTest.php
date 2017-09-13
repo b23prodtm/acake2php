@@ -18,7 +18,7 @@ class PagesControllerTest extends ControllerTestCase {
                 if (filter_input(INPUT_SERVER, "SERVER_NAME") !== 'localhost') {
                         $this->assertContains('the rapid development', $result);
                 } else {
-                        $this->assertContains('Release Notes for CakePHP&copy; ', $result);
+                        $this->assertContains('the rapid development', $result);
                 }
         }
 

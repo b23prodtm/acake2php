@@ -17,29 +17,24 @@ class E13Controller extends AppController {
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
                 /** initalize $GLOBALS */
-                $this->set("r", new Index(WWW_ROOT.filter_input(INPUT_SERVER, "PHP_SELF"), false, WWW_ROOT));
+                $this->set("r", new Index(WWW_ROOT . filter_input(INPUT_SERVER, "PHP_SELF"), false, WWW_ROOT));
         }
 
         public function index($p = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
-                if (stristr($p, ".php")) {
-                        include($GLOBALS["e13"] . "/" . $p);
-                } else if ($p) {
-                        include($GLOBALS["e13__" . $p]);
-                } else {
-                        include($GLOBALS["e13__index"]);
-                }
+                $this->set("p", $p);
+                $this->render("index");
         }
 
         public function etc($p = NULL) {
-                //debug($this->request->params);
+                //debug($this->request->params);                
                 if (stristr($p, ".css")) {
-                        $this->response->file($GLOBALS["etc"] . "/" . $p);
+                        return $this->response->file($GLOBALS["etc"] . "/" . $p);
                 } else if ($p) {
-                        $this->response->file($GLOBALS["etc__" . $p]);
+                        return $this->response->file($GLOBALS["etc__" . $p]);
                 } else {
-                        $this->redirect(array('action' => 'index'));
+                        return $this->redirect(array('action' => 'index'));
                 }
         }
 
@@ -49,13 +44,8 @@ class E13Controller extends AppController {
         public function admin($p = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
-                if (stristr($p, ".php")) {
-                        include($GLOBALS["admin"] . "/" . $p);
-                } else if ($p) {
-                        include($GLOBALS["admin__" . $p]);
-                } else {
-                        include($GLOBALS["admin__index"]);
-                }
+                $this->set("p", $p);
+                $this->render();
         }
 
         /**
@@ -64,11 +54,11 @@ class E13Controller extends AppController {
         public function images($p = NULL) {
                 //debug($this->request->params);
                 if (stristr($p, ".gif") || stristr($p, ".png") || stristr($p, ".jpg")) {
-                        $this->response->file($GLOBALS["images"] . "/" . $p);
+                        return $this->response->file($GLOBALS["images"] . "/" . $p);
                 } else if ($p) {
-                        $this->response->file($GLOBALS["images__" . $p]);
+                        return $this->response->file($GLOBALS["images__" . $p]);
                 } else {
-                        $this->redirect(array('Controller' => 'E13', 'action' => 'index'));
+                        return $this->redirect(array('Controller' => 'E13', 'action' => 'index'));
                 }
         }
 

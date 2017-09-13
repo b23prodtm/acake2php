@@ -19,11 +19,24 @@ class E13ControllerTest extends ControllerTestCase {
          * @return void
          */
         public function testIndex() {
-                $result = $this->testAction('/e13', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
+                $result = $this->testAction('/e13/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
                 if (filter_input(INPUT_SERVER, "SERVER_NAME") !== 'localhost') {
                         $this->assertContains('the rapid development', $result);
                 } else {
-                        $this->assertContains('Release Notes for CakePHP&copy; ', $result);
+                        $this->assertContains('the rapid development', $result);
+                }
+        }
+        /**
+         * testIndex method
+         *
+         * @return void
+         */
+        public function testAdmin() {
+                $result = $this->testAction('/e13/admin/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
+                if (filter_input(INPUT_SERVER, "SERVER_NAME") !== 'localhost') {
+                        $this->assertContains('the rapid development', $result);
+                } else {
+                        $this->assertContains('the rapid development', $result);
                 }
         }
 
