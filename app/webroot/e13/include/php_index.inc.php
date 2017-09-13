@@ -18,16 +18,26 @@
 global $registreFichiers;
 if (!isset($registreFichiers)) {
 
-        
+
         $registreFichiers = 1;
 
-        /** ------  REGISTRES DES ERREURS COURANTES **/
+        /** remplace filter_input(INPUT_SESSION,$var)
+         * retourne la variable enregistree si elle existe ou NULL
+         */
+        function filter_session($var) {
+                if (session_status() == PHP_SESSION_ACTIVE && array_key_exists($var, $_SESSION)) {
+                        return $_SESSION[$var];
+                } else {
+                        return NULL;
+                }
+        }
+
+        /** ------  REGISTRES DES ERREURS COURANTES * */
         /** error connexion SQL.class */
         define("ERROR_DB_CONNECT", 0x01);
         /** image : parametres incorrects */
         define("ERROR_IMG_PARAM", 0x02);
-        
-        
+
         function print_array_r($array, &$html = "") {
                 $p = $html === "";
                 if (is_array($array)) {
@@ -48,7 +58,7 @@ if (!isset($registreFichiers)) {
 
         function i_isdebug() {
                 $d = filter_input(INPUT_GET, "debug");
-                $s = session_status() == PHP_SESSION_ACTIVE && array_key_exists("debug", $_SESSION) ? $_SESSION["debug"] : false;
+                $s = filter_session("debug");
                 return ($d && $d != 0) || ($s && $s != 0);
         }
 
@@ -77,12 +87,14 @@ if (!isset($registreFichiers)) {
         /* controle de l'existence d'une session */
         if (session_status() != PHP_SESSION_ACTIVE) {
                 i_debug("phpSession: off " . session_status() == PHP_SESSION_DISABLED ? "(DISABLED)" : "");
-        } elseif (filter_input(INPUT_GET, "debug") || array_key_exists("debug", $_SESSION)) {
-                i_debug("phpSession: start\n"
-                        . "language " . getPrimaryLanguage() . "\n");
-        }
-        if (filter_input(INPUT_GET, "local") || array_key_exists("local", $_SESSION)) {
-                i_debug("Local Configuration Enabled\n");
+        } else {
+                if (filter_input(INPUT_GET, "debug") || filter_session("debug")) {
+                        i_debug("phpSession: start\n"
+                                . "language " . getPrimaryLanguage() . "\n");
+                }
+                if (filter_input(INPUT_GET, "local") || filter_session("local")) {
+                        i_debug("Local Configuration Enabled\n");
+                }
         }
 
         /**
@@ -136,7 +148,8 @@ if (!isset($registreFichiers)) {
          *         
          * @see Index::__construct($selfScript) */
         function errValidType($errno, array $type, $variable) {
-                return in_array($errno, $type) && (array_key_exists($variable, $_SESSION) || filter_input(INPUT_GET, $variable));
+                $s = session_status() == PHP_SESSION_ACTIVE && array_key_exists($variable, $_SESSION);
+                return in_array($errno, $type) && ($s || filter_input(INPUT_GET, $variable));
         }
 
         /**
@@ -151,7 +164,7 @@ if (!isset($registreFichiers)) {
                 $ignore = array(E_COMPILE_WARNING, E_CORE_WARNING, E_DEPRECATED, E_RECOVERABLE_ERROR, E_USER_DEPRECATED, E_USER_WARNING, E_WARNING);
                 $errors = array(E_ERROR, E_USER_ERROR, E_ERROR, E_PARSE);
                 $html = "<div class='error'><B>[" . strError($errno) . "] </B>" . $errstr . "<br>\n";
-                if (array_key_exists("debug", $_SESSION) || filter_input(INPUT_GET, "debug")) {
+                if (i_isdebug()) {
                         $html .= "at line " . $errline . " of file " . pathFinder($errfile, filter_input(INPUT_SERVER, "DOCUMENT_ROOT")) . "\n"
                                 . ", PHP " . PHP_VERSION . " (" . PHP_OS . ")<br>\n";
                 }
@@ -162,7 +175,7 @@ if (!isset($registreFichiers)) {
                         }
                         echo $html;
                         exit;
-                } else if (errValidType($errno, $note, "verbose") || errValidType($errno, $ignore, "warn") || (array_key_exists("debug", $_SESSION) || filter_input(INPUT_GET, "debug"))) {
+                } else if (errValidType($errno, $note, "verbose") || errValidType($errno, $ignore, "warn") || (i_isdebug())) {
                         // n'affiche que si une des conditions est valide :
                         // pour une notice et que verbose est actif
                         // pour une warning et que warn est actif
@@ -263,7 +276,7 @@ if (!isset($registreFichiers)) {
                                  * ERROR CHECKING enregistrement en session courante
                                  */
                                 Index::registerGETSession(array("root" => stripEnd(filter_input(INPUT_GET, 'root')), "verbose", "local", "warn", "debug"));
-                                $root = array_key_exists('root', $_SESSION) ? $_SESSION['root'] : $initRootPath;
+                                $root = filter_session('root') ? $_SESSION['root'] : $initRootPath;
                                 $cheminSite = pathFinder($root . "/e13/.", $selfScript) . "/";
                                 $cheminHttpdocs = pathFinder($root . "/.", $selfScript) . "/";
                                 $cheminInc = $cheminSite . "include/";
@@ -320,7 +333,9 @@ if (!isset($registreFichiers)) {
                         /** PHP < 5.4 if (!session_is_registered($variableName)) {
                           session_register($variableName);
                           } */
-                        $_SESSION[$variableName] = $value;
+                        if (session_status() == PHP_SESSION_ACTIVE) {
+                                $_SESSION[$variableName] = $value;
+                        }
                         return $value;
                 }
 
