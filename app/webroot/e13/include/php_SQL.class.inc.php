@@ -68,11 +68,7 @@ if (!isset($classeSQL)) {
 
                 public function connect_succes() {
                         $e = mysqli_connect_error();
-                        if ($e) {
-                                return false;
-                        } else {
-                                return true;
-                        }
+                        return $e === NULL;
                 }
 
                 /** retourne un resultat mwsqli_result ou FALSE. */
