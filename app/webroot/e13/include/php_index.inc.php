@@ -48,7 +48,7 @@ if (!isset($registreFichiers)) {
 
         function i_isdebug() {
                 $d = filter_input(INPUT_GET, "debug");
-                $s = array_key_exists("debug", $_SESSION) ? $_SESSION["debug"] : false;
+                $s = $_SESSION && array_key_exists("debug", $_SESSION) ? $_SESSION["debug"] : false;
                 return ($d && $d != 0) || ($s && $s != 0);
         }
 
