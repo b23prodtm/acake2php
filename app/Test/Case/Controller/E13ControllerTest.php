@@ -19,9 +19,12 @@ class E13ControllerTest extends ControllerTestCase {
          * @return void
          */
         public function testIndex() {
-                $result = $this->testAction('/e13', array('method' => 'get', 'return' => 'contents',"named" => array("local" => 1))
-                );
-                $this->assertContains('&copy; ', $result);
+                $result = $this->testAction('/e13', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
+                if (filter_input(INPUT_SERVER, "SERVER_NAME") !== 'localhost') {
+                        $this->assertContains('&copy; ', $result);
+                } else {
+                        $this->assertContains('Release Notes for CakePHP&copy; ', $result);
+                }
         }
 
 }
