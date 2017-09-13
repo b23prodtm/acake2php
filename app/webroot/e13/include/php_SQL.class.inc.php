@@ -71,8 +71,7 @@ if (!isset($classeSQL)) {
                         if ($e) {
                                 return false;
                         } else {
-                                trigger_error(ERROR_DB_CONNECT, E_USER_WARNING);
-                                return false;
+                                return true;
                         }
                 }
 
