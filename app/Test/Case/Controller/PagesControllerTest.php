@@ -14,8 +14,12 @@ class PagesControllerTest extends ControllerTestCase {
         public function testHomePageContents() {
                 $result = $this->testAction('/', array('method' => 'get', 'return' => 'contents')
                 );
-                /** Look AT app/View/Layouts/Default.ctp */
-                $this->assertContains('Voila', $result);
+                /** Look AT app/View/Pages/home.ctp */ 
+                if (filter_input(INPUT_SERVER, "SERVER_NAME") !== 'localhost') {
+                        $this->assertContains('the rapid development', $result);
+                } else {
+                        $this->assertContains('Release Notes for CakePHP&copy; ', $result);
+                }
         }
 
 }
