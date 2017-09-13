@@ -66,7 +66,9 @@ if (!isset($registreFichiers)) {
                 echo "\n<br>*********\n<br>";
         }
 
-        session_start();
+        if (!headers_sent()) {
+                session_start();
+        }
         /** TIMEZONE http://php.net/manual/fr/timezones.php */
         date_default_timezone_set("Europe/Paris");
 

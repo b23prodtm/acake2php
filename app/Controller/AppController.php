@@ -35,5 +35,5 @@ class AppController extends Controller {
 	 * Add in the DebugKit toolbar
 	 */
 	public $components = array('DebugKit.Toolbar');
-        public $helpers = array('Image');
+        public $helpers = array();
 }

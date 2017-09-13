@@ -1,4 +1,4 @@
-<!-- Voilà l'endroit ou je souhaite que mes vues soient affichées //-->
+<!-- Voila l'endroit ou je souhaite que mes vues soient affichées //-->
 <?php
 if (filter_input(INPUT_SERVER, "SERVER_NAME") === 'localhost') {
         echo $this->fetch('content');

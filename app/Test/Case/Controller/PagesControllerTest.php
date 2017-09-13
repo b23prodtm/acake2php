@@ -15,7 +15,7 @@ class PagesControllerTest extends ControllerTestCase {
                 $result = $this->testAction('/', array('method' => 'get', 'return' => 'contents')
                 );
                 /** Look AT app/View/Layouts/Default.ctp */
-                $this->assertContains('Voilà', $result);
+                $this->assertContains('Voila', $result);
         }
 
 }
