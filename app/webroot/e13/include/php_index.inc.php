@@ -38,21 +38,23 @@ if (!isset($registreFichiers)) {
         /** image : parametres incorrects */
         define("ERROR_IMG_PARAM", 0x02);
 
-        function print_array_r($array, &$html = "") {
-                $p = $html === "";
+        function print_array_r($array, &$i_html = "") {
+                $p = $i_html === "";
                 if (is_array($array)) {
-                        $html .= "<ul>";
+                        $i_html .= "<ul>";
                         foreach ($array as $k => $v) {
-                                $html .= "<li>" . $k . " : ";
-                                print_array_r($v, $html);
-                                $html .= "</li>";
+                                $i_html .= "<li>" . $k . " : ";
+                                print_array_r($v, $i_html);
+                                $i_html .= "</li>";
                         }
-                        $html .= "</ul>";
+                        $i_html .= "</ul>";
+                } else if (is_object($array)) {
+                        $i_html .= get_class($array);
                 } else {
-                        $html .= $array;
+                        $i_html .= $array;
                 }
                 if ($p) {
-                        echo $html;
+                        echo $i_html;
                 }
         }
 
@@ -195,40 +197,30 @@ if (!isset($registreFichiers)) {
         function pathFinder($dest, $origine) {
                 $path = "";
                 // tokenization des url
-                $origine_tokenized = explode("/", $origine);
-                $dest_tokenized = explode("/", $dest);
+                $origine_tokenized = explode("/", stripEnd(str_replace("//", "/", $origine)));
+                $dest_tokenized = explode("/", stripEnd(str_replace("//", "/", $dest)));
                 // recherche du token different
+                $origine_reste_rep = count($origine_tokenized);
+                $dest_reste_rep = count($dest_tokenized);
                 for ($i = 0; ($i < count($origine_tokenized)) && ($i < count($dest_tokenized)); $i++) {
-                        if ($origine_tokenized[$i] != $dest_tokenized[$i]) { /* tokens dissemblables (chemin non-?gaux)  difference detect?e ? l'index $i;
-                          (1) calcul du nombre de tokens restant jusqu'a la fin de chaque chemin depuis l'index $i y compris.
-                          (2) #path: s'il reste plus de tokens dans le chemin d'origine, c'est que le chemin de destination est repertoriellement et hierarchiquement plus haut: il faut remonter les repertoires avec des ../ prec?dant le nom du fichier de destination pour chaque token de trop depuis $i jusqu'? < count($origine_tokenized) - 1 (i.e. moins le token du nom du fichier d'origine)
-                          #path: s'il reste plus de tokens dans le chemin de destination, c'est que le chemin de destination est repertoriellement et hierarchiquement plus bas: il faut entrer dans les repertoires; chaque token depuis $i moins le dernier (i.e. le nom du fichier) du chemin de destination doit pr?c?der le nom du fichier de destination
-                          #path: s'il reste un nombre ?gal de token dans chacun des chemin origine et destination, c'est que le repertoire de chacun est identique. Le nom du fichier de destination ? atteindre n'est pas preced?.
-                         * note : le dernier token = la destination (le fichier ou repertoire courant ./), donc omis.
-                         */
+                        if ($origine_tokenized[$i] !== $dest_tokenized[$i]) {
                                 // (1)
-                                $origine_reste_rep = count($origine_tokenized) - $i;
-                                $dest_reste_rep = count($dest_tokenized) - $i;
-                                /** ajouter la racine du fichier si le chemin démarre à la racine */
+                                $origine_reste_rep -= $i;
+                                $dest_reste_rep -= $i;
+                                /** ajouter la racine du rep si le chemin démarre à la racine */
                                 if ($i == 1 && substr($dest, 0, 1) === "/") {
                                         $path = "/" . $path;
                                 }
-                                // (2)
-                                if ($origine_reste_rep < $dest_reste_rep) {
-                                        for ($j = $i; $j < count($dest_tokenized) - 1; $j++) {
-                                                $path .= $dest_tokenized[$j] . "/";
-                                        }
-                                } elseif ($origine_reste_rep > $dest_reste_rep) {
-                                        for ($j = $i; $j < count($origine_tokenized) - 1; $j++) {
-                                                $path .= "../";
-                                        }
-                                } else {
-                                        $path .= "./";
-                                }
                                 break;
-                        }//endif
-                }//endfor
-                $path .= $dest_tokenized[count($dest_tokenized) - 1];
+                        }
+                }
+                // (2)
+                for ($j = 0; $j < $origine_reste_rep; $j++) {
+                        $path .= "../";
+                }
+                for ($j = 0; $j < $dest_reste_rep - 1; $j++) {
+                        $path .= $dest_tokenized[count($dest_tokenized) - $dest_reste_rep + $j] . "/";
+                }
                 /* echo "return " . $path . "<br>"; */
                 return $path; // ajoute le nom de fichier ou repertoire destination.
         }
@@ -277,7 +269,9 @@ if (!isset($registreFichiers)) {
                                  */
                                 Index::registerGETSession(array("root" => stripEnd(filter_input(INPUT_GET, 'root')), "verbose", "local", "warn", "debug"));
                                 $root = filter_session('root') ? $_SESSION['root'] : $initRootPath;
-                                $cheminSite = pathFinder($root . "/e13/.", $selfScript) . "/";
+                                $selfScript = str_replace("//", "/", $selfScript);
+                                i_debug($selfScript);
+                                $cheminSite = pathFinder($root . "e13/.", $selfScript) . "/";
                                 $cheminHttpdocs = pathFinder($root . "/.", $selfScript) . "/";
                                 $cheminInc = $cheminSite . "include/";
                                 $cheminImg = $cheminSite . "images/";

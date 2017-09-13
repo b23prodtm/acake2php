@@ -1,63 +1,29 @@
+<!-- Voila l'endroit ou je souhaite que mes vues soient affichées //-->
 <?php
-/**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.View.Layouts
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
- */
 
-$cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework');
-$cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
+        $nouvelleAdresse = '/e14/'; //Nouvelle adresse
+        if (filter_input(INPUT_SERVER, 'QUERY_STRING') && (filter_input(INPUT_SERVER, 'QUERY_STRING') != '')) {
+                $nouvelleAdresse .= '?' . substr(filter_input(INPUT_SERVER, 'QUERY_STRING'), 0, 2048);
+        } //RÃ©cupÃšre les paramÃštres
+        if (!headers_sent()) {
+                header('Location: ' . $nouvelleAdresse); //Redirection HTTP
+                header('HTTP/1.1 301 Moved Permanently');
+                header('Status: 301 Moved Permanently');
+                header('Content-Type: text/html; charset=UTF-8');
+        }
+        $nouvelleAdresse = htmlspecialchars($nouvelleAdresse, ENT_QUOTES); //Encode les caractÃšres HTML spÃ©ciaux
+        echo '<!DOCTYPE html>' . "\n",
+        '<html xmlns="http://www.w3.org/1999/xhtml">' . "\n",
+        '<head>' . "\n",
+        '<meta charset="UTF-8" />' . "\n",
+        '<meta http-equiv="refresh" content="0; url=' . $nouvelleAdresse . '" />' . "\n", //Redirection HTML
+        '<title>Redirection</title>' . "\n",
+        '<meta name="robots" content="noindex" />' . "\n",
+        '</head>' . "\n",
+        "\n",
+        '<body>' . "\n",
+        '<p><a href="' . $nouvelleAdresse . '">Redirection</a></p>' . "\n",
+        '</body>' . "\n",
+        '</html>' . "\n";
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<?php echo $this->Html->charset(); ?>
-	<title>
-		<?php echo $cakeDescription ?>:
-		<?php echo $this->fetch('title'); ?>
-	</title>
-	<?php
-		echo $this->Html->meta('icon');
 
-		echo $this->Html->css('cake.generic');
-
-		echo $this->fetch('meta');
-		echo $this->fetch('css');
-		echo $this->fetch('script');
-	?>
-</head>
-<body>
-	<div id="container">
-		<div id="header">
-			<h1><?php echo $this->Html->link($cakeDescription, 'http://cakephp.org'); ?></h1>
-		</div>
-		<div id="content">
-
-			<?php echo $this->Flash->render(); ?>
-
-			<?php echo $this->fetch('content'); ?>
-		</div>
-		<div id="footer">
-			<?php echo $this->Html->link(
-					$this->Html->image('cake.power.gif', array('alt' => $cakeDescription, 'border' => '0')),
-					'http://www.cakephp.org/',
-					array('target' => '_blank', 'escape' => false, 'id' => 'cake-powered')
-				);
-			?>
-			<p>
-				<?php echo $cakeVersion; ?>
-			</p>
-		</div>
-	</div>
-	<?php /** DEBUG KIT REPLACES echo $this->element('sql_dump'); */?>
-</body>
-</html>

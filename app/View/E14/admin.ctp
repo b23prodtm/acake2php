@@ -1,5 +1,5 @@
 <?php
-                if (stristr($p, ".php")) {
+               if (stristr($p, ".php")) {
                         include($GLOBALS["admin"] . "/" . $p);
                 } else if ($p) {
                         include($GLOBALS["admin__" . $p]);

@@ -12,29 +12,31 @@ App::import('file', 'Index', false, array(WWW_ROOT . 'e13' . DS . 'include' . DS
  * CakePHP E13
  * @author wwwb23prodtminfo <b23prodtm at sourceforge.net>
  */
-class E13Controller extends AppController {
+class E14Controller extends AppController {
 
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
                 /** initalize $GLOBALS */
-                $this->set("r", new Index(WWW_ROOT . filter_input(INPUT_SERVER, "PHP_SELF"), false, WWW_ROOT));
+                $this->set("r", new Index(WWW_ROOT, false, APP));
         }
 
         public function index($p = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("p", $p);
-                $this->render("index");
+                $this->render();
         }
 
         public function etc($p = NULL) {
                 //debug($this->request->params);                
                 if (stristr($p, ".css")) {
-                        return $this->response->file($GLOBALS["etc"] . "/" . $p);
+                        $this->response->file($GLOBALS["etc"] . "/" . $p);
+                        $this->response->send();
                 } else if ($p) {
-                        return $this->response->file($GLOBALS["etc__" . $p]);
+                        $this->response->file($GLOBALS["etc__" . $p]);
+                        $this->response->send();
                 } else {
-                        return $this->redirect(array('action' => 'index'));
+                        return $this->redirect(array('Controller' => 'E14', 'action' => 'index'));
                 }
         }
 
@@ -54,11 +56,13 @@ class E13Controller extends AppController {
         public function images($p = NULL) {
                 //debug($this->request->params);
                 if (stristr($p, ".gif") || stristr($p, ".png") || stristr($p, ".jpg")) {
-                        return $this->response->file($GLOBALS["images"] . "/" . $p);
+                        $this->response->file($GLOBALS["images"] . "/" . $p);
+                        $this->response->send();
                 } else if ($p) {
-                        return $this->response->file($GLOBALS["images__" . $p]);
+                        $this->response->file($GLOBALS["images__" . $p]);
+                        $this->response->send();
                 } else {
-                        return $this->redirect(array('Controller' => 'E13', 'action' => 'index'));
+                        return $this->redirect(array('Controller' => 'E14', 'action' => 'index'));
                 }
         }
 
