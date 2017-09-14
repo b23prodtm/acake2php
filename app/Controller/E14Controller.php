@@ -65,7 +65,7 @@ class E14Controller extends AppController {
         public function images($p = NULL) {
                 //debug($this->request->params);
                 if (stristr($p, ".gif") || stristr($p, ".png") || stristr($p, ".jpg")) {
-                        echo $GLOBALS["images"] . "/" . $p;
+                        debug($GLOBALS["images"] . "/" . $p);
                         $this->response->file($GLOBALS["images"] . "/" . $p);
                         $this->response->send();
                 } else if ($p) {

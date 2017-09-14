@@ -15,11 +15,7 @@ class PagesControllerTest extends ControllerTestCase {
                 $result = $this->testAction('/', array('method' => 'get', 'return' => 'contents')
                 );
                 /** Look AT app/View/Pages/home.ctp */ 
-                if (filter_input(INPUT_SERVER, "SERVER_NAME") !== 'localhost') {
-                        $this->assertContains('the rapid development', $result);
-                } else {
-                        $this->assertContains('the rapid development', $result);
-                }
+                $this->assertContains('webmaster@b23prodtm.info', $result);
         }
 
 }
