@@ -1,7 +1,7 @@
 <?php
 
 // stylesheet  precision losss //ob_start();
-require("../include/php_index.inc.php");
+if (!$i_sitemap) { require '../include/php_index.inc.php'; }
 //Gestion de la chaine GET pour l'URI
 $get = "";
 $sep = "";
@@ -10,12 +10,12 @@ foreach ($_GET as $key => $val) {
     $sep = "&";
 }
 $r = new Index(filter_input(INPUT_SERVER,'PHP_SELF') . "?" . $get);
-require($GLOBALS["include__php_page.class.inc"]);
-require($GLOBALS["include__php_module_html.inc"]);
-require($GLOBALS["include__php_module_DVD.inc"]);
+require $GLOBALS["include__php_page.class.inc"];
+require $GLOBALS["include__php_module_html.inc"];
+require $GLOBALS["include__php_module_DVD.inc"];
 
 $clefPage = "library__index";
-foreach ($GLOBALS["library"] as $p => $url) {
+foreach ($r->sitemap["library"] as $p => $url) {
     if (stristr(filter_input(INPUT_SERVER,'PHP_SELF') . "?" . $get, $url)) {
         $clefPage = $p;
     }
@@ -26,7 +26,7 @@ if (!filter_input(INPUT_POST,'base'))
 /* mode Afficher */
 if (filter_input(INPUT_GET,'nom') && filter_input(INPUT_GET,'base')) {
     $page = new Page($r, $clefPage, false);
-    // récupérer les infos du dvd
+    // recuperer les infos du dvd
     $dvd = lireFichier(filter_input(INPUT_GET,'nom'), filter_input(INPUT_GET,'base'));
     echo var_dump($dvd);
     $liste = get_dir_files(filter_input(INPUT_GET,'base'));
@@ -38,7 +38,7 @@ if (filter_input(INPUT_GET,'nom') && filter_input(INPUT_GET,'base')) {
     );
     $tbl->setContenu_cellule(1, 0, $dvd[1]);
 
-    /* lier les entrées précédant et suivant le film courant */
+    /* lier les entrees precedant et suivant le film courant */
     sort($liste);
     $courant = array_search($dvd[0] . ".dat", $liste);
     echo var_dump($liste);
@@ -50,7 +50,7 @@ if (filter_input(INPUT_GET,'nom') && filter_input(INPUT_GET,'base')) {
         $precedent = $courant - 1;
     else
         $precedent = $courant;
-    $tbl->setContenu_cellule(2, 0, HTML_lien($pageURL . "?nom=" . substr($liste[$precedent], 0, -4) . "&base=" . urlencode(filter_input(INPUT_GET,'base')), "< enregistrement précédent") . " " . HTML_lien($pageURL . "?nom=" . substr($liste[$suivant], 0, -4) . "&base=" . urlencode(filter_input(INPUT_GET,'base')), "enregistrement suivant >"), array("HTML" => array("ALIGN" => "CENTER")));
+    $tbl->setContenu_cellule(2, 0, HTML_lien($pageURL . "?nom=" . substr($liste[$precedent], 0, -4) . "&base=" . urlencode(filter_input(INPUT_GET,'base')), "< enregistrement precedent") . " " . HTML_lien($pageURL . "?nom=" . substr($liste[$suivant], 0, -4) . "&base=" . urlencode(filter_input(INPUT_GET,'base')), "enregistrement suivant >"), array("HTML" => array("ALIGN" => "CENTER")));
 
     $page->ajouterContenu($tbl->fin());
 } elseif (filter_input(INPUT_GET,'mode') === "admin") {

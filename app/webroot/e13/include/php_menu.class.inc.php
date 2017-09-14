@@ -10,13 +10,22 @@ global $ClasseMenu;
 if (!isset($ClasseMenu)) {
 
         $ClasseMenu = 1;
-        require($GLOBALS["include__php_tbl.class.inc"]);
-        require($GLOBALS["include__php_module_html.inc"]);
+        require $GLOBALS["include__php_tbl.class.inc"];
+        require $GLOBALS["include__php_module_html.inc"];
 
         define("OUVERT", 0);
         define("FERME", 1);
 
         class Menu {
+
+                static $R = NULL;
+
+                static function R() {
+                        if (Info::$R === null) {
+                                Info::$R = new Index(NULL);
+                        }
+                        return Info::$R;
+                }
 
                 /** nom reellement lisible */
                 var $nom;
@@ -33,7 +42,7 @@ if (!isset($ClasseMenu)) {
                 var $logo;
 
                 /**
-                 * @param string $cleLocale clé appartenant au fichier de langue locale/content-lang.properties (gestion 
+                 * @param string $cleLocale cle appartenant au fichier de langue locale/content-lang.properties (gestion 
                  * multilangue i8n.
                  */
                 function __construct($cleLocale, $url, $rubriques = array()) {
@@ -41,7 +50,7 @@ if (!isset($ClasseMenu)) {
                         $this->nom = $this->r->lang($cleLocale);
                         $this->nomBnd = $cleLocale;
                         $this->url = $url;
-                        $this->rubriques = $rubriques; // les rubriques sont aussi des instances de Menu.class ! rassemblées dans un tableau
+                        $this->rubriques = $rubriques; // les rubriques sont aussi des instances de Menu.class ! rassemblees dans un tableau
 
                         $this->setActif();
 
@@ -75,7 +84,7 @@ if (!isset($ClasseMenu)) {
                         $this->actif = FALSE;
                 }
 
-                // méthode auxiliaire a ouvrirBonneRubrique()
+                // methode auxiliaire a ouvrirBonneRubrique()
                 function pageEnCours($pageEnCours) {
                         if ($this->url === $pageEnCours) {
                                 return TRUE;
@@ -121,7 +130,7 @@ if (!isset($ClasseMenu)) {
                 }
 
                 /**
-                 * ***** méthode recursive pour ouvrir la bonne rubrique du menu correspondant a la page en cours. 
+                 * ***** methode recursive pour ouvrir la bonne rubrique du menu correspondant a la page en cours. 
                  * @param string $pageEnCours URL de la page en cours, corrspondant à un lien dans le menu.
                  * @return Menu rubrique ouverte
                  * **** */
@@ -129,7 +138,7 @@ if (!isset($ClasseMenu)) {
                         $rub = FALSE;
                         for ($i = 0; $i < count($this->rubriques); $i++) {
                                 if (($rub = $this->rubriques[$i]->ouvrirBonneRubrique($pageEnCours))) { // on commence par verifier s'il la page n'est pas une des sousrubriques
-                                        $this->ouvrir(); //si une sous rubrique est ouverte, la rubrique ($i) a été ouverte (c.f. plus bas), il faut aussi ouvrir le menu-rubrique courant ($this)
+                                        $this->ouvrir(); //si une sous rubrique est ouverte, la rubrique ($i) a ete ouverte (c.f. plus bas), il faut aussi ouvrir le menu-rubrique courant ($this)
                                         break;
                                 } else if ($this->rubriques[$i]->pageEnCours($pageEnCours)) { //s'il n'y a pas de ssrub ou aucune n'est la page courante, test de la rubrique ($i) comme page courante
                                         $this->rubriques[$i]->ouvrir(); //si oui, alors on ouvre la rubrique
@@ -252,19 +261,20 @@ if (!isset($ClasseMenu)) {
                  * @param bundle $menu $this->menu = $this->parseBundle($GLOBALS["etc"], "menu");            
                  * @param Menu $parent une instance Menu ou NULL
                  */
-                static function creerMenuGlobals($pages, &$menu, &$parent = NULL) {
+                static function creerMenuGlobals($sitemap, $pages, &$menu, &$parent = NULL) {
                         foreach ($pages as $p => $cleLoc) {
                                 if (!is_array($cleLoc)) {
                                         if (substr($cleLoc, 0, 1) === "@") {
                                                 continue;
                                         }
-                                        $m = new Menu($cleLoc, $GLOBALS[$p]);
+                                        /** LIBELLE , URL */
+                                        $m = new Menu($cleLoc, $sitemap[$p]);
                                         $menu[$p] = $m;
                                         if ($parent instanceof Menu) {
                                                 $parent->ajouterRubrique($m);
                                         }
                                 } else {
-                                        Menu::creerMenuGlobals($cleLoc, $menu, $menu[$p . "__index"]);
+                                        Menu::creerMenuGlobals($sitemap, $cleLoc, $menu, $menu[$p . "__index"]);
                                 }
                         }
                 }
@@ -284,7 +294,7 @@ if (!isset($ClasseMenu)) {
 				document.getElementById('" . $this->rubriques[$i]->nomBnd . "').style.visibility = 'hidden';
 				}," . $timeout . ");";
                         }
-                        return "<div class='$idName'>" . HTML_lien("#", HTML_image($small ? $GLOBALS["images__boutonMenu_small"] : $GLOBALS["images__boutonMenu"], array("class" => "boutonMenu")), array("javascript" =>
+                        return "<div class='$idName'>" . HTML_lien("#", HTML_image($small ? Menu::R()->sitemap["images__boutonMenu_small"] : Menu::R()->sitemap["images__boutonMenu"], array("class" => "boutonMenu")), array("javascript" =>
                                     array("onClick" => $js . " return;"))) . "</div>";
                 }
 

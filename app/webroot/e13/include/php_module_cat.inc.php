@@ -9,9 +9,9 @@
 global $ModuleCat;
 if (!isset($ModuleCat)) {
         $ModuleCat = 1;
-        require($GLOBALS['include__php_SQL.class.inc']);
-        require($GLOBALS['include__php_image.class.inc']);
-        require($GLOBALS['include__php_formulaire.class.inc']);
+        require $GLOBALS['include__php_SQL.class.inc'];
+        require $GLOBALS['include__php_image.class.inc'];
+        require $GLOBALS['include__php_formulaire.class.inc'];
 
         // retourne un array contenant les champs de la table Categorie et indexés, ou false
         function CAT_getCat($id, SQL &$sql) {

@@ -92,7 +92,14 @@ class DATABASE_CONFIG {
 
         public function __construct() {
 
-                $datasource = 'Database/' . ucfirst(getenv('DATABASE_ENGINE'));
+                $this->test['host'] = "localhost";
+                $this->test['port'] = "3306";
+                $this->test['login'] = "test";
+                $this->test['password'] = "mypassword";
+                $this->test['database'] = "phpcms";
+
+
+                $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) : FALSE;
 
                 $this->default['host'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
                 $this->default['port'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
@@ -101,12 +108,12 @@ class DATABASE_CONFIG {
                 $this->default['database'] = getenv("DATABASE_NAME");
                 $this->default['datasource'] = $datasource;
 
-                $this->test['host'] = "localhost";
-                $this->test['port'] = "3306";
-                $this->test['login'] = getenv("DATABASE_USER");
-                $this->test['password'] = getenv("DATABASE_PASSWORD");
-                $this->test['database'] = getenv("DATABASE_NAME");
-                $this->test['datasource'] = $datasource;
+                /** rediriger les variables non enregistrees vers l'environment de test */
+                foreach ($this->default as $key => $val) {
+                        if (!$val) {
+                                $this->default[$key] = $this->test[$key];
+                        }
+                }
         }
 
 }

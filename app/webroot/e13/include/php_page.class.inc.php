@@ -15,15 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- /*
-  * @date	Sat Sep 18 15:43:19 CEST 2004 @613 /Internet Time/
-  * @filename	php_page.class.inc
+/*
+ * @date	Sat Sep 18 15:43:19 CEST 2004 @613 /Internet Time/
+ * @filename	php_page.class.inc
  */
 global $ClassePage;
 if (!isset($ClassePage)) {
         $ClassePage = 1;
 
-        // Classe gérant toutes les pages php du site
+        // Classe gerant toutes les pages php du site
         require ($GLOBALS['include__php_module_html.inc']);
         require ($GLOBALS["include__php_tbl.class.inc"]);
         require ($GLOBALS["include__php_menu.class.inc"]);
@@ -41,8 +41,8 @@ if (!isset($ClassePage)) {
         /*
          * 
           @class		Page
-          @abstract   Elle definit les pages HTML dans leur globalité. Le code HTML est écrit sur la sortie à l'appel de la methode fin(), en dernier donc. un tableau associatif $proprietes contient les proprietes de la page que l'on peut modifier. | MENU | une variable d'instance $menu contient un objet de classe Menu qui s'affiche avec la rubrique concernant la *page en cours* mise en evidence. on peut a tout moment retourner a une rubrique hierachiquement superieure. | CONTENU | un tableau php associatif rassemble le contenu de la page, $this->tbl. le contenu de la page est formaté à l'aide de tableaux HTML (classe php Tableau). | SITUATION-HISTORIQUE | un des tableau HTML contient le nom de la *page en cours* ainsi que son chemin virtuel depuis la page racine du site (situation). Le chemin (par ex. Home/Admin/Gestion Infos/_) affiché depend de la hierarchie du Menu de la Page, ordinairement correspondant au plan du site. | LOGO-ONGLETS | une barre d'onglets donne acces aux rubriques principales du site, affichee sous le logo. Elle est dynamique et permet | ADMIN_PAGE | cette sous-classe étend les possibilités de Page vers une page verouillée par un accès réservé aux administrateurs. voir class ADMIN_Page (plus bas...)
-          @discussion | MENU | possibilité de développer l'affichage du menu de la page en DHTML pour un design et un espace d'affichage dans le tableau[contenu] améliorés. | LOGO-ONGLETS | a terminer graphiquement sous photoshop et a integrer dans la page pour avoir une synchronisation avec le menu.
+          @abstract   Elle definit les pages HTML dans leur globalite. Le code HTML est ecrit sur la sortie à l'appel de la methode fin(), en dernier donc. un tableau associatif $proprietes contient les proprietes de la page que l'on peut modifier. | MENU | une variable d'instance $menu contient un objet de classe Menu qui s'affiche avec la rubrique concernant la *page en cours* mise en evidence. on peut a tout moment retourner a une rubrique hierachiquement superieure. | CONTENU | un tableau php associatif rassemble le contenu de la page, $this->tbl. le contenu de la page est formate à l'aide de tableaux HTML (classe php Tableau). | SITUATION-HISTORIQUE | un des tableau HTML contient le nom de la *page en cours* ainsi que son chemin virtuel depuis la page racine du site (situation). Le chemin (par ex. Home/Admin/Gestion Infos/_) affiche depend de la hierarchie du Menu de la Page, ordinairement correspondant au plan du site. | LOGO-ONGLETS | une barre d'onglets donne acces aux rubriques principales du site, affichee sous le logo. Elle est dynamique et permet | ADMIN_PAGE | cette sous-classe etend les possibilites de Page vers une page verouillee par un accès reserve aux administrateurs. voir class ADMIN_Page (plus bas...)
+          @discussion | MENU | possibilite de developper l'affichage du menu de la page en DHTML pour un design et un espace d'affichage dans le tableau[contenu] ameliores. | LOGO-ONGLETS | a terminer graphiquement sous photoshop et a integrer dans la page pour avoir une synchronisation avec le menu.
          */
 
         class Page {
@@ -82,9 +82,9 @@ if (!isset($ClassePage)) {
                  * @param Index r une instance de Registre de la page courante (Registre(filter_input(INPUT_SERVER,'PHP_SELF') pour 
                  * instancier tous les parametres locaux (liens html).
                   @param pgnews boolean pour afficher ou non les news en marge de la page
-                 * @param String $localeKey clé vers le fichier locale/content-lang
+                 * @param String $localeKey cle vers le fichier locale/content-lang
                  */
-                function __construct($r, $sitemapKey, $pgnews = false, $sessionId = NULL, $enc = MYENCODING, $adsense = true) {
+                function __construct(Index $r, $sitemapKey, $pgnews = false, $sessionId = NULL, $enc = MYENCODING, $adsense = true) {
 // ********* output buffer ********
                         mb_http_output($enc);
                         mb_internal_encoding("ISO-8859-15");
@@ -93,7 +93,7 @@ if (!isset($ClassePage)) {
                         }
                         $this->r = $r;
                         global $MENU;
-                        Menu::creerMenuGlobals($this->r->menu_ini, $MENU);
+                        Menu::creerMenuGlobals($this->r->sitemap, $this->r->menu_ini, $MENU);
                         // ********* Entetes HTTP *********
                         header("Default-Charset: $enc");
                         header("Content-Type: text/html");
@@ -116,10 +116,10 @@ if (!isset($ClassePage)) {
                         $this->tbl["contenu"] = new Tableau(1, 1, "contenu"); // le contenu informel de la page; le contenu de ce tableau correspond au contenu de $proprietes["contenu"] est modifie par la fonction ajouterContenu
                         $this->tbl["entete"] = new Tableau(1, 2, "entete"); // l'entete avec le logo et la date/heure
                         $this->tbl["logo_onglets"] = new Tableau(2, 1, "logo_onglets"); // le logo et dessous les onglets
-                        $this->tbl["onglets"] = new Tableau(1, 11, "onglets"); // les onglets séparés
+                        $this->tbl["onglets"] = new Tableau(1, 11, "onglets"); // les onglets separes
 
                         /*                         * *************************************
-                          réglages apparences de chaque tableau */
+                          reglages apparences de chaque tableau */
 
                         $this->tbl["body"]->options = array("HTML" => array("BORDER" => 3,
                                 "ALIGN" => "CENTER",
@@ -209,7 +209,7 @@ if (!isset($ClassePage)) {
 
                 function afficheOnglets() {
                         die("methode instable Page.afficheOnglets()");
-                        $n = 0; // quel onglet doit apparaitre presse? $emplacement, "Accueil" ... rubrique corrspondante au numéro de l'onglet
+                        $n = 0; // quel onglet doit apparaitre presse? $emplacement, "Accueil" ... rubrique corrspondante au numero de l'onglet
                         $emplacement = $this->menu->getRubriqueOuverte();
                         if (strstr($emplacement->nom, $MENU['e13__index']->nom))
                                 $n = 1;
@@ -219,7 +219,7 @@ if (!isset($ClassePage)) {
                                 $n = 3;
                         if (strstr($emplacement->nom, $MENU['e13__contacts']->nom))
                                 $n = 4;
-                        if (strstr($emplacement->nom, $MENU['e13__blog']->nom))
+                        if (strstr($emplacement->nom, $MENU['blog__index']->nom))
                                 $n = 5;
 
                         /**
@@ -236,7 +236,7 @@ if (!isset($ClassePage)) {
                                 if ($i == 8)
                                         $lien_image = HTML_lien($MENU['e13__contacts']->url, $MENU['e13__contacts']->nom);
                                 if ($i == 10)
-                                        $lien_image = HTML_lien($MENU['e13__blog']->url, $MENU['e13__blog']->nom);
+                                        $lien_image = HTML_lien($MENU['blog__index']->url, $MENU['blog__index']->nom);
                                 /* les images sont nommees onglets-$i.jpg OU onglets.presse-$n.$i.jpg */
                                 if ($n != 0)
                                         $presse = ".presse-$n.";
@@ -263,7 +263,7 @@ if (!isset($ClassePage)) {
                         $this->HTML = "<html>\n";
                         $this->HTML .= "<head><title>" . $this->r->lang("siteTitle") . " " . $this->proprietes['titre'] . " ::</title>\n";
                         $this->setStyles();
-                        $this->HTML .= "<LINK REL=stylesheet HREF=\"" . $GLOBALS['etc__stylesheet.css'] . "\" TYPE=\"text/css\">";
+                        $this->HTML .= "<LINK REL=stylesheet HREF=\"" . $this->r->sitemap['etc__stylesheet.css'] . "\" TYPE=\"text/css\">";
                         $this->HTML .= "</head>\n";
                         $o = optionsArrayToHTML($options);
                         $this->HTML .= "<body " . $o['javascript'] . ">\n";
@@ -277,9 +277,9 @@ if (!isset($ClassePage)) {
                         /** choix lang */
                         $HTML = "<div class='lang' align='$align'>";
                         $o = array("HTML" => array("WIDTH" => "16"));
-                        $HTML .= HTML_lien($this->getURL() . "?lang=" . EN, HTML_image($GLOBALS["images__uk"], $o));
-                        $HTML .= HTML_lien($this->getURL() . "?lang=" . FR, HTML_image($GLOBALS["images__fr"], $o));
-                        $HTML .= HTML_lien($this->getURL() . "?lang=" . DE, HTML_image($GLOBALS["images__de"], $o));
+                        $HTML .= HTML_lien($this->getURL() . "?lang=" . EN, HTML_image($this->r->sitemap["images__uk"], $o));
+                        $HTML .= HTML_lien($this->getURL() . "?lang=" . FR, HTML_image($this->r->sitemap["images__fr"], $o));
+                        $HTML .= HTML_lien($this->getURL() . "?lang=" . DE, HTML_image($this->r->sitemap["images__de"], $o));
                         $HTML .= "</div>\n";
                         return $HTML;
                 }
@@ -326,18 +326,18 @@ if (!isset($ClassePage)) {
                         $date = $date["weekday"] . ", " . $date["month"] . " " . $date["mday"] . " " . $date["year"];
                         /* les onglets */
                         //$this->afficheOnglets();
-                        if ($this->isEnteteLogoEnabled()) { 
-                                $this->tbl["logo_onglets"]->setContenu_Cellule(0, 0, HTML_image($GLOBALS['images__logo-sur-fond.logo.jpg'], array("HTML" => array("ALT" => filter_input(INPUT_SERVER, 'SERVER_NAME')), "class" => "shrink logo")));
+                        if ($this->isEnteteLogoEnabled()) {
+                                $this->tbl["logo_onglets"]->setContenu_Cellule(0, 0, HTML_image($this->r->sitemap['images__logo-sur-fond.logo.jpg'], array("HTML" => array("ALT" => filter_input(INPUT_SERVER, 'SERVER_NAME')), "class" => "shrink logo")));
                         } else {
-                               $this->tbl["logo_onglets"]->setContenu_Cellule(0, 0, $date);
+                                $this->tbl["logo_onglets"]->setContenu_Cellule(0, 0, $date);
                         }
                         $this->tbl["logo_onglets"]->setContenu_Cellule(1, 0, $this->tbl["onglets"]->fin());
                         $this->tbl["entete"]->setContenu_Cellule(0, 0, $this->tbl["logo_onglets"]->fin());
-                        
+
                         if ($this->isEnteteLogoEnabled()) {
-                                $this->tbl["entete"]->setContenu_Cellule(0, 1, "<div class='page_titre'>" . $this->proprietes["titre"] . "</div>" . HTML_lien($GLOBALS['e13__index'], HTML_image($GLOBALS['images__logo_full.png'], array("HTML" => array("ALIGN" => "RIGHT"), "class" => "badge"))));
+                                $this->tbl["entete"]->setContenu_Cellule(0, 1, "<div class='page_titre'>" . $this->proprietes["titre"] . "</div>" . HTML_lien($this->r->sitemap['e13__index'], HTML_image($this->r->sitemap['images__logo_full.png'], array("HTML" => array("ALIGN" => "RIGHT"), "class" => "badge"))));
                         } else {
-                                $this->tbl["entete"]->setContenu_Cellule(0, 1, "<H1>" . $this->proprietes["titre"] . "</h1>" . HTML_lien($GLOBALS['e13__index'], $this->r->lang("siteTitle")));
+                                $this->tbl["entete"]->setContenu_Cellule(0, 1, "<H1>" . $this->proprietes["titre"] . "</h1>" . HTML_lien($this->r->sitemap['e13__index'], $this->r->lang("siteTitle")));
                         }
                         // affichage menu
                         $this->tbl["menu"]->setContenu_Cellule(0, 0, $this->menu->getBoutonOuvrirRubriques("siteName") . $this->menu->getHTML(), array("class" => "menu_contents"));
@@ -353,21 +353,25 @@ if (!isset($ClassePage)) {
 
                 function getInfoFlash() {
                         $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
-                        $infos = $sql->query("SELECT * FROM info WHERE langue ='" . getPrimaryLanguage() . "' ORDER BY date DESC LIMIT 1");
-                        // déplace le curseur à la derniere ligne
-                        if ($sql->selectLigne($infos, mysqli_num_rows($infos) - 1)) {
-                                $lastInfo = new Info($sql, $infos);
+                        if ($sql->connect_succes()) {
+                                $infos = $sql->query("SELECT * FROM info WHERE langue ='" . getPrimaryLanguage() . "' ORDER BY date DESC LIMIT 1");
+                                // deplace le curseur à la derniere ligne
+                                if ($sql->selectLigne($infos, mysqli_num_rows($infos) - 1)) {
+                                        $lastInfo = new Info($sql, $infos);
+                                } else {
+                                        $lastInfo = NULL;
+                                }
+                                mysqli_free_result($infos);
+                                return $lastInfo;
                         } else {
-                                $lastInfo = NULL;
+                                return new Info($sql, NULL, $this->r->lang("titre_dsc", "info"), "staff", $this->r->lang("contenu_dsc", "infos"));
                         }
-                        mysqli_free_result($infos);
-                        return $lastInfo;
                 }
 
                 function setInfo($info) {
                         if ($info) {
                                 $lang = $info->getLangue();
-                                $this->tbl["menu"]->setContenu_Cellule(2, 0, HTML_lien($GLOBALS["e13__index"],"<div class='info_flash'>" . $info->getDate() . " - " . $info->getTitre() . " : " . $info->getContenu($lang)."</div>"));
+                                $this->tbl["menu"]->setContenu_Cellule(2, 0, HTML_lien($this->r->sitemap["e13__index"], "<div class='info_flash'>" . $info->getDate() . " - " . $info->getTitre() . " : " . $info->getContenu($lang) . "</div>"));
                         }
                 }
 
@@ -447,13 +451,13 @@ if (!isset($ClassePage)) {
                 }
 
                 /**
-                 * écrit tout le contenu du buffer (ex. les E_* erreurs levées) vers un message html
-                 * @param boolean $close déclenche tout le buffer si "true" ou relance un buffer apres vidage si "false".
+                 * ecrit tout le contenu du buffer (ex. les E_* erreurs levees) vers un message html
+                 * @param boolean $close declenche tout le buffer si "true" ou relance un buffer apres vidage si "false".
                  */
                 function flushBuffer($close = false) {
                         /*                         * ***** recuperation du buffer ********* */
                         while (ob_get_level() > 0) {
-                                $this->ajouterMessage(BUF_OFF ? "_ob off_" : @ob_get_clean());
+                                $this->ajouterMessage(BUF_OFF ? "_ob off_" : ob_get_clean());
                         }
                         if (!$close && !BUF_OFF) {
                                 ob_start("mb_output_handler");
@@ -514,7 +518,7 @@ if (!isset($ClassePage)) {
 
         class ADMIN_Page extends Page {
 
-                var $mdp; // mode passe pour $this->user ($user hérité de Page...)
+                var $mdp; // mode passe pour $this->user ($user herite de Page...)
 
                 function __construct($r, $sitemapKey, $sessionId) {
 
@@ -525,19 +529,19 @@ if (!isset($ClassePage)) {
                         $this->mdp = PASSWORD_ADMIN;
                         echo $this->r->lang("login", "admin");
                         /** nothing set in session and no captcha */
-                                $captcha = "";
-                        if (!Captcha::verification($this, $captcha) && (!array_key_exists('client', $_SESSION) || !array_key_exists('mdp', $_SESSION['client']))) {                                        
-                                $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("loginsvp", "admin") ."<br>".$captcha);
+                        $captcha = "";
+                        if (!Captcha::verification($this, $captcha) && (!array_key_exists('client', $_SESSION) || !array_key_exists('mdp', $_SESSION['client']))) {
+                                $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("loginsvp", "admin") . "<br>" . $captcha);
                                 $this->form_authentification($this->getURL());
                                 $this->fin();
                         } else {
                                 $mdpmd5 = filter_input(INPUT_POST, 'motdepasse') ? md5(filter_input(INPUT_POST, 'motdepasse')) : $_SESSION['client']['mdp'];
                                 $this->user = filter_input(INPUT_POST, 'identifiant') ? filter_input(INPUT_POST, 'identifiant') : $_SESSION['client']['id'];
-                                echo $this->r->lang("enregistrementsession", "admin");                                      
+                                echo $this->r->lang("enregistrementsession", "admin");
                                 /** utilise le salt de PASSWORD_ADMIN pour crypter motdepasse, et donc retourne le meme hashcode si le
-                                 * motdepasse est le meme que celui enregistré par PASSWORD_ADMIN  */
+                                 * motdepasse est le meme que celui enregistre par PASSWORD_ADMIN  */
                                 if (ADMIN_Page::valide($mdpmd5)) {
-                                        /** la safeSession est activée (voir classe formulaire et balise FORM), qui desactive les formulaires si non activee */
+                                        /** la safeSession est activee (voir classe formulaire et balise FORM), qui desactive les formulaires si non activee */
                                         $_SESSION["client"]['id'] = $this->user;
                                         $_SESSION["client"]['mdp'] = $mdpmd5;
                                         $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("vousetesauthentifie", "admin") . " : " . $this->user);
@@ -559,7 +563,7 @@ if (!isset($ClassePage)) {
                         return (array_key_exists('client', $_SESSION) && array_key_exists('mdp', $_SESSION['client'])) ? ADMIN_Page::valide($_SESSION['client']["mdp"]) : false;
                 }
 
-                /* ----- partie privée ----- */
+                /* ----- partie privee ----- */
 
                 function form_authentification($script) {
                         echo "formulaire";

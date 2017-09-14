@@ -15,13 +15,12 @@
   ou
   #file: urlencode($filename)
  */
-
-include("include/php_index.inc.php");
+ob_start();
+if (!$i_sitemap) { require 'include/php_index.inc.php'; }
 $r = new Index(filter_input(INPUT_SERVER, 'PHP_SELF'));
-require($GLOBALS["include__php_image.class.inc"]);
-require($GLOBALS["include__php_captcha.class.inc"]);
-require($GLOBALS["include__php_SQL.class.inc"]);
-
+require $GLOBALS["include__php_image.class.inc"];
+require $GLOBALS["include__php_captcha.class.inc"];
+require $GLOBALS["include__php_SQL.class.inc"];
 $image = new Image();
 $w = filter_input(INPUT_GET, 'w');
 $h = filter_input(INPUT_GET, 'h');
@@ -30,22 +29,24 @@ $captchaSize = filter_input(INPUT_GET, 'captcha'); // must have been sent throug
 if ($id) {
         // connexion SQL
         $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
-        $image->FromSQL($sql, $id);
-        $sql->close();
+        if ($sql->connect_succes()) {
+                $image->FromSQL($sql, $id);
+                $sql->close();
+        } else {
+                $image->load_error(ERROR_DB_CONNECT);
+        }
 } elseif ($captchaSize) {
         $captchaSize = new Captcha($captchaSize);
         $image = $captchaSize->image($_SESSION['captcha']);
 } else {
-        trigger_error("image : missing a valid parameter like w,h id or captcha", E_USER_ERROR);
-        $image->load_error("ERROR PARAM");
+        i_debug("image : missing a valid parameter like w,h id or captcha");
+        $image->load_error(ERROR_IMG_PARAM);
 }
 if ($w != 0 && $h != 0) {
         $image->setSize($w, $h);
 }
 /* toujours ecrire un fichier cache sur le serveur si possible */
-$output = NULL;
-if (is_writable($output)) {
-        $GLOBALS["images"] . "/db/" . $image->nom;
-}
-$image->raw_http_bytes(1, $output);
+$output = $GLOBALS["images"] . "/db/" . $image->nom;
+ob_clean();
+$image->raw_http_bytes(1, is_writable($output) ? $output : NULL);
 ?>

@@ -90,9 +90,6 @@ Configure::write('Dispatcher.filters', array(
     'AssetDispatcher',
     'CacheDispatcher',
     'e13-Index' => array('callable' => function($event) {
-                $my_index_class = WWW_ROOT . 'e13' . DS . 'include' . DS . 'php_index.inc.php';
-                debug('e13-filter-ok : '.$my_index_class);
-                include($my_index_class);
         }, 'on' => 'before')
 ));
 

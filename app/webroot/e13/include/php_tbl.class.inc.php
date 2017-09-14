@@ -23,11 +23,11 @@ global $ClasseTableau;
 if (!isset($ClasseTableau)) {
         $ClasseTableau = 1;
 
-        require($GLOBALS["include__php_module_html.inc"]);
+        require $GLOBALS["include__php_module_html.inc"];
 
         class Tableau {
 
-                var $HTML, $options; // la variable $options est un tableau indexÃ©
+                var $HTML, $options; // la variable $options est un tableau indexe
                 var $nbLignes, $nbColonnes;
                 var $opt_ligne; // pour pouvoir attribuer des options aux lignes
                 var $tableau;
@@ -220,7 +220,7 @@ if (!isset($ClasseTableau)) {
                         }
 
                         $this->HTML .= "\n\t</TABLE><!-- END MODULE TABLE id " . $this->id . '-->';
-                        //La mÃ©thode peut retourner le code HTML ou l'écrire directement sur la sortie standard
+                        //La methode peut retourner le code HTML ou l'écrire directement sur la sortie standard
                         switch ($mode) {
                                 case 0:
                                         return $this->HTML;

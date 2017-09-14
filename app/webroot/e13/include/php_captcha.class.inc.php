@@ -23,9 +23,18 @@
 global $ClasseCapt;
 if (!isset($ClasseCapt)) {
         $ClasseCapt = 1;
-        require($GLOBALS['include__php_image.class.inc']);
+        require $GLOBALS['include__php_image.class.inc'];
 
         class Captcha {
+
+                static $R = NULL;
+
+                static function R() {
+                        if (Info::$R === null) {
+                                Info::$R = new Index(NULL);
+                        }
+                        return Info::$R;
+                }
 
                 var $t;
 
@@ -74,7 +83,7 @@ if (!isset($ClasseCapt)) {
                         $milieuHauteur = ($hauteur / 2) - 8;
                         imagestring($img, 6, strlen($mot) / 2, $milieuHauteur, $mot, $noir);
                         imagerectangle($img, 1, 1, $largeur - 1, $hauteur - 1, $noir); // La bordure
-                        
+
                         $captcha = new Image($mot);
                         $captcha->setImageGD($img, "image/png");
                         return $captcha;
@@ -86,7 +95,7 @@ if (!isset($ClasseCapt)) {
                         switch ($mode) {
                                 case "IMG":
                                         $mot = $this->nombre($this->t);
-                                        $captcha = HTML_image($GLOBALS["e13___image"]."?captcha=". strlen($mot));                                        
+                                        $captcha = HTML_image(Captcha::R()->sitemap["e13___image"] . "?captcha=" . strlen($mot));
                                         break;
                                 default:
                                         $captcha = $mot = $this->motListe(file($GLOBALS['locale__dict-lang.txt']), 0);

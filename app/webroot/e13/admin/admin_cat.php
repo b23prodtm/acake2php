@@ -1,22 +1,22 @@
 <?php
 
-require("../include/php_index.inc.php");
+if (!$i_sitemap) { require '../include/php_index.inc.php'; }
 $r = new Index(filter_input(INPUT_SERVER, 'PHP_SELF'));
-require($GLOBALS['include__php_page.class.inc']);
-require($GLOBALS['include__php_formulaire.class.inc']);
-require($GLOBALS['include__php_SQL.class.inc']);
-require($GLOBALS['include__php_constantes.inc']);
-require($GLOBALS['include__php_module_html.inc']);
-require($GLOBALS['include__php_module_cat.inc']);
+require $GLOBALS['include__php_page.class.inc'];
+require $GLOBALS['include__php_formulaire.class.inc'];
+require $GLOBALS['include__php_SQL.class.inc'];
+require $GLOBALS['include__php_constantes.inc'];
+require $GLOBALS['include__php_module_html.inc'];
+require $GLOBALS['include__php_module_cat.inc'];
 
 $pCat = new ADMIN_Page($r, "admin__cat", session_id());
 $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 
 $pCat->ajouterContenu("<center><b>" . $pCat->getTitre() . "</b></center><br>");
 $liste = HTML_listeDebut();
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__cat'] . "?ajouter=1", $r->lang("ajouter","categories")));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__cat'] . "?supprimer=1", $r->lang("supprimer","categories")));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__cat'] . "?modifier=1", $r->lang("modifier","categories")));
+$liste .= HTML_listeElement(HTML_lien($r->sitemap['admin__cat'] . "?ajouter=1", $r->lang("ajouter","categories")));
+$liste .= HTML_listeElement(HTML_lien($r->sitemap['admin__cat'] . "?supprimer=1", $r->lang("supprimer","categories")));
+$liste .= HTML_listeElement(HTML_lien($r->sitemap['admin__cat'] . "?modifier=1", $r->lang("modifier","categories")));
 $liste .= HTML_listeFin();
 $pCat->ajouterContenu($liste);
 
@@ -78,7 +78,7 @@ if (filter_input(INPUT_GET, 'supprimer')) {
                         }
                 }
         }
-        $f = new Formulaire($r->lang("supprimer","categories"), $GLOBALS['admin__cat'] . "?supprimer=publie", VERTICAL);
+        $f = new Formulaire($r->lang("supprimer","categories"), $r->sitemap['admin__cat'] . "?supprimer=publie", VERTICAL);
         // nombre de champs
         $n = 5;
         for ($i = 0; $i < $n; $i++) {
@@ -113,7 +113,7 @@ if (filter_input(INPUT_GET, 'modifier')) {
                 }
         }
         // formulaire
-        $f = new Formulaire($r->lang("modifier", "categories"), $GLOBALS['admin__cat'] . "?modifier=publie", VERTICAL);
+        $f = new Formulaire($r->lang("modifier", "categories"), $r->sitemap['admin__cat'] . "?modifier=publie", VERTICAL);
         $chSelect = CAT_getSelect($sql, "cat_mod", $r->lang("cat_select_lab", "categories"));
         if (filter_input(INPUT_POST, 'cat_mod')) {
                 $chSelect = new ChampCache("cat_mod", filter_input(INPUT_POST, 'cat_mod'));

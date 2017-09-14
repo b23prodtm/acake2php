@@ -12,21 +12,34 @@ global $registreConstantes;
 if (!isset($registreConstantes)) {
         $registreConstantes = 1;
         $registre = new Index(filter_input(INPUT_SERVER, 'PHP_SELF'));
+
         function varEnv(&$val) {
-                $d = stripos($val,"\$\{")+1;
-                $f = stripos($val, "\}");
+                /** 1ere occurence */
+                $d = stripos($val, "\$\{") + 1;
+                /** derniere occurence */
+                $f = strripos($val, "\}");
                 if ($d && $f) {
                         $val = substr($val, $d + 1, $f - $d);
+                        /* variable imbriquee */
+                        $v = "" . $val;
+                        if (varEnv($v)) {
+                                $str = "\$\{" . $v . "\}";
+                                $val = stristr($val, $str, true) . getenv($v) . substr($val, stripos($val, $str) + strlen($str));
+                        }
+                        i_debug("load env : " . $val);
                         return true;
                 } else {
                         return false;
                 }
-        } 
-        $local = array_key_exists('local', $_SESSION) ? "_local" : "";
+        }
+
+        $local = i_islocal() ? "_local" : "";
         $constantes = $registre->parseBundle($GLOBALS["etc"], "constantes" . $local);
         foreach ($constantes as $key => $val) {
                 if (varEnv($val)) {
+                        i_debug("env : " . $val);
                         $val = getenv($val);
+                        i_debug("= : " . $val);
                 }
                 define($key, $val);
         }

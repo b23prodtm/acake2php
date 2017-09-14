@@ -14,8 +14,8 @@ class PagesControllerTest extends ControllerTestCase {
         public function testHomePageContents() {
                 $result = $this->testAction('/', array('method' => 'get', 'return' => 'contents')
                 );
-                /** Look AT app/View/Layouts/Default.ctp */
-                $this->assertContains('Redirection', $result);
+                /** Look AT app/View/Pages/home.ctp */ 
+                $this->assertContains('webmaster@b23prodtm.info', $result);
         }
 
 }

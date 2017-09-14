@@ -10,9 +10,9 @@
 global $ClasseInfo;
 if (!isset($ClasseInfo)) {
         $ClasseInfo = 1;
-        require($GLOBALS['include__php_image.class.inc']);
-        require($GLOBALS['include__php_module_cat.inc']);
-        require($GLOBALS['include__php_module_locale.inc']);
+        require $GLOBALS['include__php_image.class.inc'];
+        require $GLOBALS['include__php_module_cat.inc'];
+        require $GLOBALS['include__php_module_locale.inc'];
 
         class Info {
 
@@ -122,7 +122,7 @@ if (!isset($ClasseInfo)) {
                 }
 
                 private function fm_ccat(SQL &$sql, Formulaire &$form, $i_categorie) {
-                        $info_categorie = CAT_getSelect($sql, 'i_categorie', Info::R()->lang("newcat_lab", "categories"), HTML_lien($GLOBALS['admin__cat'], "gestion catégorie"), $i_categorie);
+                        $info_categorie = CAT_getSelect($sql, 'i_categorie', Info::R()->lang("newcat_lab", "categories"), HTML_lien(Info::R()->sitemap['admin__cat'], "gestion catégorie"), $i_categorie);
                         $form->ajouterChamp($info_categorie);
                 }
 
@@ -221,7 +221,7 @@ if (!isset($ClasseInfo)) {
                 // NOTE: utilisee seulement sur la page admin de gestion des infos (admin_infos.php)
                 public static function GetListe(SQL &$sql, $mode = "modifier", $langs = array()) {
                         // ***** FORMULAIRE DEBUT pour choisir l'info a modifier, par selection radio
-                        $f = new Formulaire($mode . "_info", $GLOBALS['admin__infos'] . "?" . $mode . "=1", LIBRE);
+                        $f = new Formulaire($mode . "_info", Info::R()->sitemap['admin__infos'] . "?" . $mode . "=1", LIBRE);
                         $html = $f->getHTML();
                         //debug("form");
                         $infos = $sql->query("SELECT * FROM info WHERE langue IN " . Info::findLangQuery($langs) . " ORDER BY 'date' DESC");
@@ -399,7 +399,7 @@ if (!isset($ClasseInfo)) {
                 }
 
                 /*
-                 * l'info pour l'affichage HTML. 
+                 * Cadre d'affichage avec une bordure.
                  */
 
                 function getTableauMultiLang(SQL &$sql, $caption = NULL, $intl = TRUE) {
@@ -416,6 +416,7 @@ if (!isset($ClasseInfo)) {
                         $row = 0;
                         foreach ($this->contenu as $lang => $text) {
                                 if ($text == NULL || (!$intl && $lang != $this->langue)) {
+                                        i_debug("Nothing for this post : ".$this->getTitre($lang));
                                         continue;
                                 } else {
                                         $t_bord->setContenu_Cellule($row++, 0, $this->getTableLangage($sql, $lang));
@@ -426,7 +427,9 @@ if (!isset($ClasseInfo)) {
                         }
                         return $t_bord->fin();
                 }
-
+ /*
+                 * Lignes d'affichage de l'info.
+                 */
                 function getTableLangage(SQL &$sql, $lang = NULL) {
                         if ($lang == NULL) {
                                 $lang = $this->langue;
@@ -473,6 +476,12 @@ if (!isset($ClasseInfo)) {
                         if ($n < count($this->images) && $j < $img->nbColonnes) {
                                 $image = $this->getImage($sql, $n);
                                 if (is_a($image, "Image")) {
+                                        if ($image->getWidth() > IMAGE_MAX_LARG) {
+                                                $image->setWidth(IMAGE_MAX_LARG);
+                                        }
+                                        if ($image->getHeight() > IMAGE_MAX_HAUT) {
+                                                $image->setHeight(IMAGE_MAX_HAUT);
+                                        }
                                         $image_html = $image->afficherFormatee();
                                 }
                                 $img->setContenu_Cellule($i, $j, $image_html, array("css" => array("text-align" => "center")));
@@ -505,6 +514,7 @@ if (!isset($ClasseInfo)) {
                                 mysqli_free_result($result2);
                                 return true;
                         } else {
+                                $sql->afficheErreurs();
                                 return false;
                         }
                 }

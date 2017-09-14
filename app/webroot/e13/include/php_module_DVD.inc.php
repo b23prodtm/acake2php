@@ -10,8 +10,8 @@ global $Module_DVD;
 // eviter la double inclusion
 if (!isset($Module_DVD)) {
         $Module_DVD = 1;
-        require($GLOBALS["include__php_module_html.inc"]);
-        require($GLOBALS["include__php_formulaire.class.inc"]);
+        require $GLOBALS["include__php_module_html.inc"];
+        require $GLOBALS["include__php_formulaire.class.inc"];
 
         /* !
           @function   lireFichier

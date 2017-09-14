@@ -1,0 +1,14 @@
+- database.php test configuration : 
+
+                $this->test['host'] = "localhost";
+                $this->test['port'] = "3306";
+                $this->test['login'] = "test";
+                $this->test['password'] = "mypassword";
+                $this->test['database'] = "phpcms";
+                /**
+                 * RUN THE FOLLOWING SQL COMMAND TO SETUP TEST DATABASE :
+                 * GRANT ALL ON *.* TO 'test'@'localhost' IDENTIFIED BY 'mypassword';
+                 **/
+-  test post commit hook shell script
+        
+        $:/> ./lib/Cake/Console/cake test app AllTests

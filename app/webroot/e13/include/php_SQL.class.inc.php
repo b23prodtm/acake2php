@@ -8,7 +8,7 @@
  */
 global $classeSQL;
 if (!isset($classeSQL)) {
-        require($GLOBALS['include__php_constantes.inc']);
+        require $GLOBALS['include__php_constantes.inc'];
         $classeSQL = 1;
 
         /* ne pas omettre de fermer les connexions SQL avant de quitter le script */
@@ -23,7 +23,7 @@ if (!isset($classeSQL)) {
                 var $utilisateur;
                 var $mdp;
 
-                /* connexion automatique, appeler close() en fin de script si $pconnect actif (par défaut) */
+                /* connexion automatique, appeler close() en fin de script si $pconnect actif (par defaut) */
 
                 public function __construct($serveur, $base, $utilisateur, $mdp, $port = PORT) {
                         $this->connect($serveur, $utilisateur, $mdp, $base, $port);
@@ -32,7 +32,11 @@ if (!isset($classeSQL)) {
                         $this->mdp = $mdp;
                         $this->serveur = $serveur;
                         $this->port = $port;
-                        $this->listeTables();
+                        if (mysqli_connect_error()) {
+                                return;
+                        } else {
+                                $this->listeTables();
+                        }
                 }
 
                 public function __destruct() {
@@ -47,7 +51,7 @@ if (!isset($classeSQL)) {
                         }
                 }
 
-                /* ---- partie privÃ©e ---- */
+                /* ---- partie privee ---- */
 
                 private function connect($serveur, $utilisateur, $mdp, $base, $port) {
                         if ($this->connexion !== NULL) {
@@ -57,17 +61,23 @@ if (!isset($classeSQL)) {
                         $this->connexion = mysqli_init();
                         // pour ajouter une commande d'options avant connexion reseau
                         //  mysqli_options($link, MYSQLI_INIT_COMMAND, "SQL command");
-                        mysqli_real_connect($this->connexion, $serveur, $utilisateur, $mdp, $base, $port) or trigger_error("Impossible de se connecter au serveur/base de donnees : " . substr($serveur, 0, 10) . "... " . mysqli_connect_error(), E_USER_ERROR);
+                        mysqli_real_connect($this->connexion, $serveur, $utilisateur, $mdp, $base, $port) or i_debug("Impossible de se connecter au serveur/base de donnees : " . substr($serveur, 0, 10) . "... " . mysqli_connect_error());
                 }
 
                 /* ---- partie publique ---- */
 
-                /** retourne un résultat mwsqli_result ou FALSE. */
+                public function connect_succes() {
+                        $e = mysqli_connect_error();
+                        return $e === NULL;
+                }
+
+                /** retourne un resultat mwsqli_result ou FALSE. */
                 public function query($string) {
                         return mysqli_query($this->connexion, $string);
                 }
 
-                /** prepare stmt */
+                /** prepare un statement 
+                 */
                 public function send_long_data($query, &$data, &$insert_id, &$stmt) {
                         $stmt = mysqli_stmt_init($this->connexion);
                         mysqli_stmt_prepare($stmt, $query);
@@ -80,14 +90,15 @@ if (!isset($classeSQL)) {
                 }
 
                 /**
-                 * retourne la liste des erreurs de le commande précédant sous forme de liste.
-                 * c.f : mysqli_error_list
+                 * retourne la liste des erreurs de le commande precedant sous forme de liste (array() par defaut).
+                 * @see mysqli_error_list
+                 * @see mysqli_stmt_error_list
                  */
                 public function listeErreurs(&$stmt = NULL) {
                         return $stmt ? mysqli_stmt_error_list($stmt) : mysqli_error_list($this->connexion);
                 }
 
-                /** écrit sur la sortie standard une liste HTML des erreurs reportées */
+                /** ecrit sur la sortie standard une liste HTML des erreurs reportees */
                 public function afficheErreurs(&$stmt = NULL) {
                         echo "<ol>";
                         foreach ($this->listeErreurs($stmt) as $err) {
@@ -126,8 +137,8 @@ if (!isset($classeSQL)) {
                         }
                 }
 
-                /* ---- mÃ©thodes de base BEGIN ---- */
-                /* mÃ©thodes ligne suivante BEGIN */
+                /* ---- methodes de base BEGIN ---- */
+                /* methodes ligne suivante BEGIN */
 
                 public function ligneSuivante(mysqli_result &$resultat) {
                         if ($resultat && is_a($resultat, "mysqli_result")) {

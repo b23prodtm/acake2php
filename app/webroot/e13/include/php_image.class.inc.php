@@ -10,7 +10,8 @@ global $ClasseImage;
 if (!isset($ClasseImage)) {
 
         $ClasseImage = 1;
-        require($GLOBALS['include__php_tbl.class.inc']);
+        require $GLOBALS['include__php_tbl.class.inc'];
+
 
 
         /* !
@@ -29,6 +30,15 @@ if (!isset($ClasseImage)) {
         define("DB_MODE", 0x2);
 
         class Image {
+
+                static $R = NULL;
+
+                static function R() {
+                        if (Info::$R === null) {
+                                Info::$R = new Index(NULL);
+                        }
+                        return Info::$R;
+                }
 
                 var $img; // ressource image (GD2)
                 var $id; // dans la base SQL
@@ -229,7 +239,7 @@ if (!isset($ClasseImage)) {
                                 trigger_error("Image resource not defined, can't resize().", E_USER_WARNING);
                                 $res = false;
                         }
-                        if (isset($this->scale) && res) {
+                        if (isset($this->scale) && $res) {
                                 $width = imagesx($this->img);
                                 $height = imagesy($this->img);
                                 $dst = $this->img;
@@ -293,7 +303,7 @@ if (!isset($ClasseImage)) {
                                 $this->setFile($cache);
                         }
                         if ($echo == 1) {
-                                ob_end_flush();
+                                ob_flush();
                         }
                 }
 
@@ -320,8 +330,9 @@ if (!isset($ClasseImage)) {
                  * fichier temporaire sur le disque, depuis un script _image.php?id=n&size=n 
                  *  */
                 function afficher_db($echo = 0) {
-                        $image = $GLOBALS["e13___image"] . "?id=" . $this->id . "&w=" . $this->w . "&h=" . $this->h;
-                        $imageScale = $GLOBALS["e13___image"] . "?id=" . $this->id . "&w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale;
+                        $r = Image::R();
+                        $image = $r->sitemap["e13___image"] . "?id=" . $this->id . "&w=" . $this->w . "&h=" . $this->h;
+                        $imageScale = $r->sitemap["e13___image"] . "?id=" . $this->id . "&w=" . $this->w * $this->scale . "&h=" . $this->h * $this->scale;
                         $w = HTML_image($image, array("javascript" => array('onClick' => "window.open('" . $imageScale . "','zoom ^','width=" . $this->w * $this->scale . ", height=" . $this->h * $this->scale . ", status=no, directories=no, toolbar=no, location=no, menubar=no,scrollbars=no, resizable=yes'")));
 
                         if ($echo == 1) {
@@ -390,7 +401,7 @@ if (!isset($ClasseImage)) {
                 /* fonctions de base, de classe */
                 /* ----- partie publique ----- */
 
-                function DeleteSQL(SQL &$sql, $id) {
+                static function DeleteSQL(SQL &$sql, $id) {
                         if ($sql->query("DELETE FROM image WHERE id = $id")) {
                                 return TRUE;
                         } else {
