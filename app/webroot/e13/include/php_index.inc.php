@@ -120,7 +120,7 @@ if (!isset($registreFichiers)) {
         /** TIMEZONE http://php.net/manual/fr/timezones.php */
         date_default_timezone_set("Europe/Paris");
 
-        require ("php_module_locale.inc.php");
+        require "php_module_locale.inc.php";
 
         /* controle de l'existence d'une session */
         if (session_status() != PHP_SESSION_ACTIVE) {
@@ -331,8 +331,7 @@ if (!isset($registreFichiers)) {
                                 $GLOBALS['shop'] = $cheminSite . 'shop/';
                         }
                         $this->menu_ini = $this->parseBundle($GLOBALS["etc"], "menu");
-                        $this->sitemap = $this->parseBundle($GLOBALS["etc"], "sitemap");
-                        $this->creerSitemapGlobals($this->sitemap);
+                        $this->creerSitemapGlobals($this->parseBundle($GLOBALS["etc"], "sitemap"), $this->sitemap);
                         $this->localizedStrings = $this->parseBundle($GLOBALS['locale'], "content-lang");
                 }
 
@@ -349,16 +348,18 @@ if (!isset($registreFichiers)) {
                         }
                 }
 
-                private function creerSitemapGlobals(&$bundle) {
+                private function creerSitemapGlobals($bundle, &$out = array()) {
                         foreach ($bundle as $section => $pages) {
-                                if (!is_array($pages))
-                                        return;
+                                if (!is_array($pages)) {
+                                        continue;
+                                }
                                 foreach ($pages as $nom => $nomFichier) {
-                                        $GLOBALS[$section . "__" . $nom] = $GLOBALS[$section] . $nomFichier;
                                         if ($section !== "root") {
-                                                $bundle[$section . "__" . $nom] = pathFinder($bundle["root"][$section], $bundle["root"]['index']) . $nomFichier;
+                                                $GLOBALS[$section . "__" . $nom] = $GLOBALS[$section] . $nomFichier;
+                                                $out[$section . "__" . $nom] = pathFinder($bundle["root"][$section], $bundle["root"]['index']) . $nomFichier;
                                         } else {
-                                                $bundle[$section . "__" . $nom] = $nomFichier;
+                                                //$GLOBALS[$nom] = $nomFichier;
+                                                $out[$nom] = $nomFichier;
                                         }
                                 }
                         }
