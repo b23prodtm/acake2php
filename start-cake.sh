@@ -1,2 +1,2 @@
 #!/bin/sh
-sudo lib/Cake/Console/cake server
+lib/Cake/Console/cake server -p 8080
