@@ -10,8 +10,8 @@ global $ClasseMenu;
 if (!isset($ClasseMenu)) {
 
         $ClasseMenu = 1;
-        require($GLOBALS["include__php_tbl.class.inc"]);
-        require($GLOBALS["include__php_module_html.inc"]);
+        require $GLOBALS["include__php_tbl.class.inc"];
+        require $GLOBALS["include__php_module_html.inc"];
 
         define("OUVERT", 0);
         define("FERME", 1);
@@ -252,19 +252,20 @@ if (!isset($ClasseMenu)) {
                  * @param bundle $menu $this->menu = $this->parseBundle($GLOBALS["etc"], "menu");            
                  * @param Menu $parent une instance Menu ou NULL
                  */
-                static function creerMenuGlobals($pages, &$menu, &$parent = NULL) {
+                static function creerMenuGlobals($sitemap, $pages, &$menu, &$parent = NULL) {
                         foreach ($pages as $p => $cleLoc) {
                                 if (!is_array($cleLoc)) {
                                         if (substr($cleLoc, 0, 1) === "@") {
                                                 continue;
                                         }
-                                        $m = new Menu($cleLoc, $GLOBALS[$p]);
+                                        /** LIBELLE , URL */
+                                        $m = new Menu($cleLoc, $sitemap[$p]);
                                         $menu[$p] = $m;
                                         if ($parent instanceof Menu) {
                                                 $parent->ajouterRubrique($m);
                                         }
                                 } else {
-                                        Menu::creerMenuGlobals($cleLoc, $menu, $menu[$p . "__index"]);
+                                        Menu::creerMenuGlobals($sitemap, $cleLoc, $menu, $menu[$p . "__index"]);
                                 }
                         }
                 }

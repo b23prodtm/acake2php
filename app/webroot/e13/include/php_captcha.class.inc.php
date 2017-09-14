@@ -23,7 +23,7 @@
 global $ClasseCapt;
 if (!isset($ClasseCapt)) {
         $ClasseCapt = 1;
-        require($GLOBALS['include__php_image.class.inc']);
+        require $GLOBALS['include__php_image.class.inc'];
 
         class Captcha {
 

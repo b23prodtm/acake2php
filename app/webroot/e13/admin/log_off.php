@@ -1,5 +1,5 @@
 <?php
-require ("../include/php_index.inc.php");
+if (!$i_sitemap) { require '../include/php_index.inc.php'; }
 $r = new Index(filter_input(INPUT_SERVER,'PHP_SELF'));
 session_destroy();
 ?>

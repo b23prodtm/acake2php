@@ -84,7 +84,7 @@ if (!isset($ClassePage)) {
                   @param pgnews boolean pour afficher ou non les news en marge de la page
                  * @param String $localeKey cle vers le fichier locale/content-lang
                  */
-                function __construct($r, $sitemapKey, $pgnews = false, $sessionId = NULL, $enc = MYENCODING, $adsense = true) {
+                function __construct(Index $r, $sitemapKey, $pgnews = false, $sessionId = NULL, $enc = MYENCODING, $adsense = true) {
 // ********* output buffer ********
                         mb_http_output($enc);
                         mb_internal_encoding("ISO-8859-15");
@@ -93,7 +93,7 @@ if (!isset($ClassePage)) {
                         }
                         $this->r = $r;
                         global $MENU;
-                        Menu::creerMenuGlobals($this->r->menu_ini, $MENU);
+                        Menu::creerMenuGlobals($this->r->sitemap, $this->r->menu_ini, $MENU);
                         // ********* Entetes HTTP *********
                         header("Default-Charset: $enc");
                         header("Content-Type: text/html");

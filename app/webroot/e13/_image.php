@@ -16,11 +16,11 @@
   #file: urlencode($filename)
  */
 ob_start();
-include("include/php_index.inc.php");
+if (!$i_sitemap) { require 'include/php_index.inc.php'; }
 $r = new Index(filter_input(INPUT_SERVER, 'PHP_SELF'));
-require($GLOBALS["include__php_image.class.inc"]);
-require($GLOBALS["include__php_captcha.class.inc"]);
-require($GLOBALS["include__php_SQL.class.inc"]);
+require $GLOBALS["include__php_image.class.inc"];
+require $GLOBALS["include__php_captcha.class.inc"];
+require $GLOBALS["include__php_SQL.class.inc"];
 ob_clean();
 $image = new Image();
 $w = filter_input(INPUT_GET, 'w');

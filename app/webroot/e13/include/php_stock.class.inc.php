@@ -7,11 +7,11 @@
   @filename	php_stock.class.inc
  */
 
-require($GLOBALS["php_module_html.inc.php"]);
-require($GLOBALS["php_tbl.class.inc"]);
-require($GLOBALS["php_SQL.class.inc"]);
-require($GLOBALS["php_image.class.inc"]);
-require($GLOBALS["php_formulaire.class.inc"]);
+require $GLOBALS["php_module_html.inc.php"];
+require $GLOBALS["php_tbl.class.inc"];
+require $GLOBALS["php_SQL.class.inc"];
+require $GLOBALS["php_image.class.inc"];
+require $GLOBALS["php_formulaire.class.inc"];
 
 global $ClasseStock;
 if (!isset($ClasseStock)) {

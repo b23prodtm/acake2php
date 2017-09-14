@@ -1,7 +1,7 @@
 <?php
 
 // stylesheet  precision losss //ob_start();
-require("../include/php_index.inc.php");
+if (!$i_sitemap) { require '../include/php_index.inc.php'; }
 //Gestion de la chaine GET pour l'URI
 $get = "";
 $sep = "";
@@ -10,9 +10,9 @@ foreach ($_GET as $key => $val) {
     $sep = "&";
 }
 $r = new Index(filter_input(INPUT_SERVER,'PHP_SELF') . "?" . $get);
-require($GLOBALS["include__php_page.class.inc"]);
-require($GLOBALS["include__php_module_html.inc"]);
-require($GLOBALS["include__php_module_DVD.inc"]);
+require $GLOBALS["include__php_page.class.inc"];
+require $GLOBALS["include__php_module_html.inc"];
+require $GLOBALS["include__php_module_DVD.inc"];
 
 $clefPage = "library__index";
 foreach ($GLOBALS["library"] as $p => $url) {

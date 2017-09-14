@@ -1,11 +1,11 @@
 <?php
 
-require("include/php_index.inc.php");
+if (!$i_sitemap) { require 'include/php_index.inc.php'; }
 $r = new Index(filter_input(INPUT_SERVER, 'PHP_SELF'));
-require($GLOBALS['include__php_page.class.inc']);
-require($GLOBALS['include__php_info.class.inc']);
-require($GLOBALS['include__php_SQL.class.inc']);
-require($GLOBALS['include__php_constantes.inc']);
+require $GLOBALS['include__php_page.class.inc'];
+require $GLOBALS['include__php_info.class.inc'];
+require $GLOBALS['include__php_SQL.class.inc'];
+require $GLOBALS['include__php_constantes.inc'];
 
 $p_infos = new Page($r, 'e13__index', true, true);
 $contenu = $p_infos->r->lang("contents", "infos");

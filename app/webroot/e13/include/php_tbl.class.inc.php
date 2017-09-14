@@ -23,7 +23,7 @@ global $ClasseTableau;
 if (!isset($ClasseTableau)) {
         $ClasseTableau = 1;
 
-        require($GLOBALS["include__php_module_html.inc"]);
+        require $GLOBALS["include__php_module_html.inc"];
 
         class Tableau {
 

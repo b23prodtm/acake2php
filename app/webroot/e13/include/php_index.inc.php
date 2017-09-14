@@ -191,14 +191,16 @@ if (!isset($registreFichiers)) {
         /**
          *  END         ERROR CHECKING 
          */
-        /* fonction qui definit le chemin qui donnera acces au fichier destination depuis le fichier origine (p. ex.: PHP_SELF), attention: la racine de chaque fichier doit ?tre identique a l'autre.
+        /* fonction qui definit le chemin qui donnera acces au fichier destination depuis le fichier origine (p. ex.: PHP_SELF), attention: si les parametres sont de meme nature (Dossiers ou Fichiers)
          */
 
-        function pathFinder($dest, $origine) {
+        function pathFinder($dest, $origine, $cheminsDeFichiers = false, $pathSeparator = "/") {
                 $path = "";
+
                 // tokenization des url
-                $origine_tokenized = explode("/", stripEnd(str_replace("//", "/", $origine)));
-                $dest_tokenized = explode("/", stripEnd(str_replace("//", "/", $dest)));
+                $origine_tokenized = explode($pathSeparator, $cheminsDeFichiers ? dirname($origine) : $origine);
+                $dest_tokenized = explode($pathSeparator, $cheminsDeFichiers ? dirname($dest) : $dest);
+
                 // recherche du token different
                 $origine_reste_rep = count($origine_tokenized);
                 $dest_reste_rep = count($dest_tokenized);
@@ -207,29 +209,24 @@ if (!isset($registreFichiers)) {
                                 // (1)
                                 $origine_reste_rep -= $i;
                                 $dest_reste_rep -= $i;
-                                /** ajouter la racine du rep si le chemin démarre à la racine */
-                                if ($i == 1 && substr($dest, 0, 1) === "/") {
-                                        $path = "/" . $path;
-                                }
                                 break;
                         }
                 }
-                // (2)
-                for ($j = 0; $j < $origine_reste_rep; $j++) {
-                        $path .= "../";
+                // concatenation du chemin d'origine
+                $path .= cdUp($cheminsDeFichiers ? dirname($origine) : stripEnd($origine), $origine_reste_rep) . $pathSeparator;
+                // chemin de destination fichier ou dossier
+                $path .= implode($pathSeparator, array_slice($dest_tokenized, -$dest_reste_rep, $dest_reste_rep));
+                if ($cheminsDeFichiers) {
+                        $path .= basename($dest);
                 }
-                for ($j = 0; $j < $dest_reste_rep - 1; $j++) {
-                        $path .= $dest_tokenized[count($dest_tokenized) - $dest_reste_rep + $j] . "/";
-                }
-                /* echo "return " . $path . "<br>"; */
                 return $path; // ajoute le nom de fichier ou repertoire destination.
         }
 
         // fonction qui "remonte" de n dossiers dans un chemin type unix/url
 
-        function cdup($path, $n) {
+        function cdUp($path, $n) {
                 for ($i = 0; $i < $n; $i++) {
-                        $path = substr($path, 0, strrpos($path, '/'));
+                        $path = dirname($path);
                 }
                 return $path;
         }
@@ -259,7 +256,7 @@ if (!isset($registreFichiers)) {
                  *                  
                  */
 
-                public function __construct($selfScript, $force = false, $initRootPath = "") {
+                public function __construct($selfScript, $force = false, $initRootPath = "./") {
                         global $_instanceRegistre;
                         if (!isset($_instanceRegistre) || $force) {
                                 $_instanceRegistre = 1;
@@ -267,12 +264,11 @@ if (!isset($registreFichiers)) {
                                 /**
                                  * ERROR CHECKING enregistrement en session courante
                                  */
-                                Index::registerGETSession(array("root" => stripEnd(filter_input(INPUT_GET, 'root')), "verbose", "local", "warn", "debug"));
-                                $root = filter_session('root') ? $_SESSION['root'] : $initRootPath;
+                                Index::registerGETSession(array("verbose", "local", "warn", "debug"));
                                 $selfScript = str_replace("//", "/", $selfScript);
                                 i_debug($selfScript);
-                                $cheminSite = pathFinder($root . "e13/.", $selfScript) . "/";
-                                $cheminHttpdocs = pathFinder($root . "/.", $selfScript) . "/";
+                                $cheminSite = pathFinder($initRootPath . "e13/", dirname($selfScript));
+                                $cheminHttpdocs = pathFinder($initRootPath . "", dirname($selfScript));
                                 $cheminInc = $cheminSite . "include/";
                                 $cheminImg = $cheminSite . "images/";
                                 $cheminAdmin = $cheminSite . "admin/";
@@ -312,10 +308,17 @@ if (!isset($registreFichiers)) {
                         }
                 }
 
-                private function creerSitemapGlobals($bundle) {
-                        foreach ($bundle as $section => $page) {
-                                foreach ($page as $nom => $nomFichier) {
+                private function creerSitemapGlobals(&$bundle) {
+                        foreach ($bundle as $section => $pages) {
+                                if (!is_array($pages))
+                                        return;
+                                foreach ($pages as $nom => $nomFichier) {
                                         $GLOBALS[$section . "__" . $nom] = $GLOBALS[$section] . $nomFichier;
+                                        if ($section !== "root") {
+                                                $bundle[$section . "__" . $nom] = pathFinder($bundle["root"][$section], $bundle["root"]['index']) . $nomFichier;
+                                        } else {
+                                                $bundle[$section . "__" . $nom] = $nomFichier;
+                                        }
                                 }
                         }
                 }

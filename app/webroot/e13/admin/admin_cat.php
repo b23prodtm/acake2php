@@ -1,13 +1,13 @@
 <?php
 
-require("../include/php_index.inc.php");
+if (!$i_sitemap) { require '../include/php_index.inc.php'; }
 $r = new Index(filter_input(INPUT_SERVER, 'PHP_SELF'));
-require($GLOBALS['include__php_page.class.inc']);
-require($GLOBALS['include__php_formulaire.class.inc']);
-require($GLOBALS['include__php_SQL.class.inc']);
-require($GLOBALS['include__php_constantes.inc']);
-require($GLOBALS['include__php_module_html.inc']);
-require($GLOBALS['include__php_module_cat.inc']);
+require $GLOBALS['include__php_page.class.inc'];
+require $GLOBALS['include__php_formulaire.class.inc'];
+require $GLOBALS['include__php_SQL.class.inc'];
+require $GLOBALS['include__php_constantes.inc'];
+require $GLOBALS['include__php_module_html.inc'];
+require $GLOBALS['include__php_module_cat.inc'];
 
 $pCat = new ADMIN_Page($r, "admin__cat", session_id());
 $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);

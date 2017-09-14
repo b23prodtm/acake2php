@@ -10,9 +10,9 @@
 global $ClasseInfo;
 if (!isset($ClasseInfo)) {
         $ClasseInfo = 1;
-        require($GLOBALS['include__php_image.class.inc']);
-        require($GLOBALS['include__php_module_cat.inc']);
-        require($GLOBALS['include__php_module_locale.inc']);
+        require $GLOBALS['include__php_image.class.inc'];
+        require $GLOBALS['include__php_module_cat.inc'];
+        require $GLOBALS['include__php_module_locale.inc'];
 
         class Info {
 

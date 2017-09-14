@@ -10,7 +10,7 @@ global $ClasseImage;
 if (!isset($ClasseImage)) {
 
         $ClasseImage = 1;
-        require($GLOBALS['include__php_tbl.class.inc']);
+        require $GLOBALS['include__php_tbl.class.inc'];
 
 
         /* !

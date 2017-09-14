@@ -8,7 +8,7 @@
  */
 global $classeSQL;
 if (!isset($classeSQL)) {
-        require($GLOBALS['include__php_constantes.inc']);
+        require $GLOBALS['include__php_constantes.inc'];
         $classeSQL = 1;
 
         /* ne pas omettre de fermer les connexions SQL avant de quitter le script */

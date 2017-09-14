@@ -14,17 +14,26 @@ App::import('file', 'Index', false, array(WWW_ROOT . 'e13' . DS . 'include' . DS
  */
 class E14Controller extends AppController {
 
+        /**
+         * This controller does not use a model
+         *
+         * @var array
+         */
+        public $uses = array();
+        var $r;
+
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
                 /** initalize $GLOBALS */
-                $this->set("r", new Index(WWW_ROOT, false, APP));
+                $this->r = new Index(APP . DS . 'Controller' . DS . 'E14Controller.php', false, WWW_ROOT);
+                $this->set("i_sitemap", $this->r->sitemap);
         }
 
         public function index($p = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("p", $p);
-                $this->render();
+                $this->render(null, "e14-layout");
         }
 
         public function etc($p = NULL) {
@@ -36,7 +45,7 @@ class E14Controller extends AppController {
                         $this->response->file($GLOBALS["etc__" . $p]);
                         $this->response->send();
                 } else {
-                        return $this->redirect(array('Controller' => 'E14', 'action' => 'index'));
+                        
                 }
         }
 
@@ -62,8 +71,38 @@ class E14Controller extends AppController {
                         $this->response->file($GLOBALS["images__" . $p]);
                         $this->response->send();
                 } else {
-                        return $this->redirect(array('Controller' => 'E14', 'action' => 'index'));
+                        
                 }
+        }
+
+        /**
+         * @param String $p SITEMAP.PROPERTIES key in [admin]
+         */
+        public function blog($p = NULL) {
+                //debug($this->request->params);
+                //debug($GLOBALS);
+                $this->set("p", $p);
+                $this->render();
+        }
+
+        /**
+         * @param String $p SITEMAP.PROPERTIES key in [admin]
+         */
+        public function dvd($p = NULL) {
+                //debug($this->request->params);
+                //debug($GLOBALS);
+                $this->set("p", $p);
+                $this->render();
+        }
+
+        /**
+         * @param String $p SITEMAP.PROPERTIES key in [admin]
+         */
+        public function shop($p = NULL) {
+                //debug($this->request->params);
+                //debug($GLOBALS);
+                $this->set("p", $p);
+                $this->render();
         }
 
 }
