@@ -15,7 +15,7 @@ require $GLOBALS["include__php_module_html.inc"];
 require $GLOBALS["include__php_module_DVD.inc"];
 
 $clefPage = "library__index";
-foreach ($GLOBALS["library"] as $p => $url) {
+foreach ($r->sitemap["library"] as $p => $url) {
     if (stristr(filter_input(INPUT_SERVER,'PHP_SELF') . "?" . $get, $url)) {
         $clefPage = $p;
     }

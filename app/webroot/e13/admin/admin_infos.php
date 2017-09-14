@@ -12,11 +12,11 @@ require $GLOBALS['include__php_image.class.inc'];
 $pAdmin = new ADMIN_Page($r, "admin__infos", session_id());
 $pAdmin->ajouterContenu("<br><center><b>Gestion des infos</b></center><br>");
 $liste = HTML_listeDebut();
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?ajouter=1", $r->lang("ajouter", "infos")));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?modifier=1", $r->lang("modifier", "infos")));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?supprimer=1", $r->lang("supprimer", "infos")));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__infos'] . "?afficher=1", $r->lang("voirtous", "infos")));
-$liste .= HTML_listeElement(HTML_lien($GLOBALS['admin__index'], $r->lang("retouradmin", "infos")));
+$liste .= HTML_listeElement(HTML_lien($r->sitemap['admin__infos'] . "?ajouter=1", $r->lang("ajouter", "infos")));
+$liste .= HTML_listeElement(HTML_lien($r->sitemap['admin__infos'] . "?modifier=1", $r->lang("modifier", "infos")));
+$liste .= HTML_listeElement(HTML_lien($r->sitemap['admin__infos'] . "?supprimer=1", $r->lang("supprimer", "infos")));
+$liste .= HTML_listeElement(HTML_lien($r->sitemap['admin__infos'] . "?afficher=1", $r->lang("voirtous", "infos")));
+$liste .= HTML_listeElement(HTML_lien($r->sitemap['admin__index'], $r->lang("retouradmin", "infos")));
 $liste .= HTML_listeFin();
 $pAdmin->ajouterContenu($liste);
 
@@ -81,7 +81,7 @@ if (filter_input(INPUT_GET, 'ajouter') === "publie" || filter_input(INPUT_GET, '
 // formulaire ajouter
 if (filter_input(INPUT_GET, 'ajouter')) {
         // ajouter une info, affichage d'un formulaire
-        $form = Info::FormAjouter($GLOBALS['admin__infos'] . "?ajouter=publie", $sql);
+        $form = Info::FormAjouter($r->sitemap['admin__infos'] . "?ajouter=publie", $sql);
         $pAdmin->ajouterContenu($form);
 }
 
@@ -95,7 +95,7 @@ if (filter_input(INPUT_GET, 'modifier')) {
                 //debug("query");
                 $info = new Info($sql, $dbinfo);
                 i_debug("info");
-                $form = $info->formModifier($sql, $GLOBALS['admin__infos'] . "?modifier=publie");
+                $form = $info->formModifier($sql, $r->sitemap['admin__infos'] . "?modifier=publie");
                 i_debug("form");
                 $pAdmin->ajouterContenu($form);
 

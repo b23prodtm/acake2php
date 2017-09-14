@@ -33,11 +33,13 @@ if (!isset($registreConstantes)) {
                 }
         }
 
-        $local = array_key_exists('local', $_SESSION) ? "_local" : "";
+        $local = i_islocal() ? "_local" : "";
         $constantes = $registre->parseBundle($GLOBALS["etc"], "constantes" . $local);
         foreach ($constantes as $key => $val) {
                 if (varEnv($val)) {
+                        i_debug("env : " . $val);
                         $val = getenv($val);
+                        i_debug("= : " . $val);
                 }
                 define($key, $val);
         }

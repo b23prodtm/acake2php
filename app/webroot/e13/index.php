@@ -23,8 +23,8 @@ if ($sql->connect_succes()) {
 
 // info normale
         $info = new Info($sql, $result, $p_infos->r->lang("message", "infos"), "webmaster", "admin/update", "19/10/2013");
-        $info->ajouterImage($GLOBALS['images__wip.png'], "Rebuilding...");
-        $info->ajouterContenu($p_infos->r->lang("visitus", "infos") . " : " . HTML_lien($GLOBALS["e13__blog"], $p_infos->r->lang("blog")));
+        $info->ajouterImage($r->sitemap['images__wip.png'], "Rebuilding...");
+        $info->ajouterContenu($r->lang("visitus", "infos") . " : " . HTML_lien($r->sitemap["blog__index"], $r->lang("blog")));
 
         /* // enregistrement dans une var de session, serialize obligatoire unserialize pour le recuperer
           $_SESSION['info'] = serialize($info);

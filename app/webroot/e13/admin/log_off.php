@@ -7,8 +7,8 @@ session_destroy();
     <head>
         <title><?php echo $r->lang("logoff", "admin"); ?></title>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-        <meta http-equiv="refresh" content="2;URL=<?php echo $GLOBALS['e13__index']; ?>">
-        <link rel="stylesheet" href=<?php echo $GLOBALS['etc__stylesheet.css']; ?> type="text/css">
+        <meta http-equiv="refresh" content="2;URL=<?php echo $r->sitemap['e13__index']; ?>">
+        <link rel="stylesheet" href=<?php echo $r->sitemap['etc__stylesheet.css']; ?> type="text/css">
     </head>
 
     <body bgcolor="#000000" text="#FFFFFF">

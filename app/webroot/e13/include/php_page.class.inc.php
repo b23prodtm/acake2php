@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- /*
-  * @date	Sat Sep 18 15:43:19 CEST 2004 @613 /Internet Time/
-  * @filename	php_page.class.inc
+/*
+ * @date	Sat Sep 18 15:43:19 CEST 2004 @613 /Internet Time/
+ * @filename	php_page.class.inc
  */
 global $ClassePage;
 if (!isset($ClassePage)) {
@@ -219,7 +219,7 @@ if (!isset($ClassePage)) {
                                 $n = 3;
                         if (strstr($emplacement->nom, $MENU['e13__contacts']->nom))
                                 $n = 4;
-                        if (strstr($emplacement->nom, $MENU['e13__blog']->nom))
+                        if (strstr($emplacement->nom, $MENU['blog__index']->nom))
                                 $n = 5;
 
                         /**
@@ -236,7 +236,7 @@ if (!isset($ClassePage)) {
                                 if ($i == 8)
                                         $lien_image = HTML_lien($MENU['e13__contacts']->url, $MENU['e13__contacts']->nom);
                                 if ($i == 10)
-                                        $lien_image = HTML_lien($MENU['e13__blog']->url, $MENU['e13__blog']->nom);
+                                        $lien_image = HTML_lien($MENU['blog__index']->url, $MENU['blog__index']->nom);
                                 /* les images sont nommees onglets-$i.jpg OU onglets.presse-$n.$i.jpg */
                                 if ($n != 0)
                                         $presse = ".presse-$n.";
@@ -263,7 +263,7 @@ if (!isset($ClassePage)) {
                         $this->HTML = "<html>\n";
                         $this->HTML .= "<head><title>" . $this->r->lang("siteTitle") . " " . $this->proprietes['titre'] . " ::</title>\n";
                         $this->setStyles();
-                        $this->HTML .= "<LINK REL=stylesheet HREF=\"" . $GLOBALS['etc__stylesheet.css'] . "\" TYPE=\"text/css\">";
+                        $this->HTML .= "<LINK REL=stylesheet HREF=\"" . $this->r->sitemap['etc__stylesheet.css'] . "\" TYPE=\"text/css\">";
                         $this->HTML .= "</head>\n";
                         $o = optionsArrayToHTML($options);
                         $this->HTML .= "<body " . $o['javascript'] . ">\n";
@@ -277,9 +277,9 @@ if (!isset($ClassePage)) {
                         /** choix lang */
                         $HTML = "<div class='lang' align='$align'>";
                         $o = array("HTML" => array("WIDTH" => "16"));
-                        $HTML .= HTML_lien($this->getURL() . "?lang=" . EN, HTML_image($GLOBALS["images__uk"], $o));
-                        $HTML .= HTML_lien($this->getURL() . "?lang=" . FR, HTML_image($GLOBALS["images__fr"], $o));
-                        $HTML .= HTML_lien($this->getURL() . "?lang=" . DE, HTML_image($GLOBALS["images__de"], $o));
+                        $HTML .= HTML_lien($this->getURL() . "?lang=" . EN, HTML_image($this->r->sitemap["images__uk"], $o));
+                        $HTML .= HTML_lien($this->getURL() . "?lang=" . FR, HTML_image($this->r->sitemap["images__fr"], $o));
+                        $HTML .= HTML_lien($this->getURL() . "?lang=" . DE, HTML_image($this->r->sitemap["images__de"], $o));
                         $HTML .= "</div>\n";
                         return $HTML;
                 }
@@ -326,18 +326,18 @@ if (!isset($ClassePage)) {
                         $date = $date["weekday"] . ", " . $date["month"] . " " . $date["mday"] . " " . $date["year"];
                         /* les onglets */
                         //$this->afficheOnglets();
-                        if ($this->isEnteteLogoEnabled()) { 
-                                $this->tbl["logo_onglets"]->setContenu_Cellule(0, 0, HTML_image($GLOBALS['images__logo-sur-fond.logo.jpg'], array("HTML" => array("ALT" => filter_input(INPUT_SERVER, 'SERVER_NAME')), "class" => "shrink logo")));
+                        if ($this->isEnteteLogoEnabled()) {
+                                $this->tbl["logo_onglets"]->setContenu_Cellule(0, 0, HTML_image($this->r->sitemap['images__logo-sur-fond.logo.jpg'], array("HTML" => array("ALT" => filter_input(INPUT_SERVER, 'SERVER_NAME')), "class" => "shrink logo")));
                         } else {
-                               $this->tbl["logo_onglets"]->setContenu_Cellule(0, 0, $date);
+                                $this->tbl["logo_onglets"]->setContenu_Cellule(0, 0, $date);
                         }
                         $this->tbl["logo_onglets"]->setContenu_Cellule(1, 0, $this->tbl["onglets"]->fin());
                         $this->tbl["entete"]->setContenu_Cellule(0, 0, $this->tbl["logo_onglets"]->fin());
-                        
+
                         if ($this->isEnteteLogoEnabled()) {
-                                $this->tbl["entete"]->setContenu_Cellule(0, 1, "<div class='page_titre'>" . $this->proprietes["titre"] . "</div>" . HTML_lien($GLOBALS['e13__index'], HTML_image($GLOBALS['images__logo_full.png'], array("HTML" => array("ALIGN" => "RIGHT"), "class" => "badge"))));
+                                $this->tbl["entete"]->setContenu_Cellule(0, 1, "<div class='page_titre'>" . $this->proprietes["titre"] . "</div>" . HTML_lien($this->r->sitemap['e13__index'], HTML_image($this->r->sitemap['images__logo_full.png'], array("HTML" => array("ALIGN" => "RIGHT"), "class" => "badge"))));
                         } else {
-                                $this->tbl["entete"]->setContenu_Cellule(0, 1, "<H1>" . $this->proprietes["titre"] . "</h1>" . HTML_lien($GLOBALS['e13__index'], $this->r->lang("siteTitle")));
+                                $this->tbl["entete"]->setContenu_Cellule(0, 1, "<H1>" . $this->proprietes["titre"] . "</h1>" . HTML_lien($this->r->sitemap['e13__index'], $this->r->lang("siteTitle")));
                         }
                         // affichage menu
                         $this->tbl["menu"]->setContenu_Cellule(0, 0, $this->menu->getBoutonOuvrirRubriques("siteName") . $this->menu->getHTML(), array("class" => "menu_contents"));
@@ -353,21 +353,25 @@ if (!isset($ClassePage)) {
 
                 function getInfoFlash() {
                         $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
-                        $infos = $sql->query("SELECT * FROM info WHERE langue ='" . getPrimaryLanguage() . "' ORDER BY date DESC LIMIT 1");
-                        // deplace le curseur à la derniere ligne
-                        if ($sql->selectLigne($infos, mysqli_num_rows($infos) - 1)) {
-                                $lastInfo = new Info($sql, $infos);
+                        if ($sql->connect_succes()) {
+                                $infos = $sql->query("SELECT * FROM info WHERE langue ='" . getPrimaryLanguage() . "' ORDER BY date DESC LIMIT 1");
+                                // deplace le curseur à la derniere ligne
+                                if ($sql->selectLigne($infos, mysqli_num_rows($infos) - 1)) {
+                                        $lastInfo = new Info($sql, $infos);
+                                } else {
+                                        $lastInfo = NULL;
+                                }
+                                mysqli_free_result($infos);
+                                return $lastInfo;
                         } else {
-                                $lastInfo = NULL;
+                                return new Info($sql, NULL, $this->r->lang("titre_dsc", "info"), "staff", $this->r->lang("contenu_dsc", "infos"));
                         }
-                        mysqli_free_result($infos);
-                        return $lastInfo;
                 }
 
                 function setInfo($info) {
                         if ($info) {
                                 $lang = $info->getLangue();
-                                $this->tbl["menu"]->setContenu_Cellule(2, 0, HTML_lien($GLOBALS["e13__index"],"<div class='info_flash'>" . $info->getDate() . " - " . $info->getTitre() . " : " . $info->getContenu($lang)."</div>"));
+                                $this->tbl["menu"]->setContenu_Cellule(2, 0, HTML_lien($this->r->sitemap["e13__index"], "<div class='info_flash'>" . $info->getDate() . " - " . $info->getTitre() . " : " . $info->getContenu($lang) . "</div>"));
                         }
                 }
 
@@ -525,15 +529,15 @@ if (!isset($ClassePage)) {
                         $this->mdp = PASSWORD_ADMIN;
                         echo $this->r->lang("login", "admin");
                         /** nothing set in session and no captcha */
-                                $captcha = "";
-                        if (!Captcha::verification($this, $captcha) && (!array_key_exists('client', $_SESSION) || !array_key_exists('mdp', $_SESSION['client']))) {                                        
-                                $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("loginsvp", "admin") ."<br>".$captcha);
+                        $captcha = "";
+                        if (!Captcha::verification($this, $captcha) && (!array_key_exists('client', $_SESSION) || !array_key_exists('mdp', $_SESSION['client']))) {
+                                $this->ajouterContenu("<br><br><center><b>" . $this->r->lang("section", "admin") . "</b></center><br>" . $this->r->lang("loginsvp", "admin") . "<br>" . $captcha);
                                 $this->form_authentification($this->getURL());
                                 $this->fin();
                         } else {
                                 $mdpmd5 = filter_input(INPUT_POST, 'motdepasse') ? md5(filter_input(INPUT_POST, 'motdepasse')) : $_SESSION['client']['mdp'];
                                 $this->user = filter_input(INPUT_POST, 'identifiant') ? filter_input(INPUT_POST, 'identifiant') : $_SESSION['client']['id'];
-                                echo $this->r->lang("enregistrementsession", "admin");                                      
+                                echo $this->r->lang("enregistrementsession", "admin");
                                 /** utilise le salt de PASSWORD_ADMIN pour crypter motdepasse, et donc retourne le meme hashcode si le
                                  * motdepasse est le meme que celui enregistre par PASSWORD_ADMIN  */
                                 if (ADMIN_Page::valide($mdpmd5)) {

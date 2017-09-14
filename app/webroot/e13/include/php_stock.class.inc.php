@@ -30,9 +30,18 @@ if (!isset($ClasseStock)) {
         define("COMMANDE", 1);
         define("INFOS", 2);
 
-        define("HREF_CONDITIONS_VENTE", $GLOBALS["shop__cgv"]);
+        define("HREF_CONDITIONS_VENTE", Client::R()->sitemap["shop__cgv"]);
 
         class Client {
+
+                static $R = NULL;
+
+                static function R() {
+                        if (Info::$R === null) {
+                                Info::$R = new Index(NULL);
+                        }
+                        return Info::$R;
+                }
 
                 var $attributs; // attributs primaires [],
                 var $profil;
@@ -72,7 +81,7 @@ if (!isset($ClasseStock)) {
 
                 /* !
                   @method     authentification
-                  @abstract   authentification de l'utilisateur. 
+                  @abstract   authentification de l'utilisateur.
                   @discussion (description)
                  */
 

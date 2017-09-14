@@ -37,6 +37,13 @@ if (!isset($registreFichiers)) {
         define("ERROR_DB_CONNECT", 0x01);
         /** image : parametres incorrects */
         define("ERROR_IMG_PARAM", 0x02);
+        /** index : pas d'objet courant */
+        define("ERROR_INDEX_NULL", 0x04);
+
+        /** ------ Debugger -------- */
+        define("DEBUG_STANDARD", 0x1);
+        define("DEBUG_VERBOSE", 0x2);
+        define("DEBUG_LOCAL", 0x4);
 
         function print_array_r($array, &$i_html = "") {
                 $p = $i_html === "";
@@ -58,10 +65,39 @@ if (!isset($registreFichiers)) {
                 }
         }
 
-        function i_isdebug() {
-                $d = filter_input(INPUT_GET, "debug");
-                $s = filter_session("debug");
+        /** teste parametre local != 0 */
+        function i_isVarGETSess($var) {
+                $d = intval(filter_input(INPUT_GET, $var));
+                $s = intval(filter_session($var));
                 return ($d && $d != 0) || ($s && $s != 0);
+        }
+
+        function i_isFlagsNot($var) {
+                if (is_int($var)) {
+                        $v = $var;
+                        $var = array();
+                        if (($v & DEBUG_LOCAL) != 0 && !i_isVarGETSess("local")) {
+                                return false;
+                        }
+                        if (($v & DEBUG_STANDARD) != 0 && !i_isVarGETSess("debug")) {
+                                return false;
+                        }
+                        if (($v & DEBUG_VERBOSE) != 0 && !i_isVarGETSess("verbose")) {
+                                return false;
+                        }
+                        return true;
+                }
+                return false;
+        }
+
+        /** teste parametre debug != 0 */
+        function i_isdebug() {
+                return i_isVarGETSess("debug");
+        }
+
+        /** teste parametre local != 0 */
+        function i_islocal() {
+                return i_isVarGETSess("local");
         }
 
         /**
@@ -69,8 +105,8 @@ if (!isset($registreFichiers)) {
          * index.php?debug&verbose affiche les E_NOTICE
          * enregistrement en session des parametres de journalisation
          * */
-        function i_debug($texte = "about the error") {
-                if (!i_isdebug()) {
+        function i_debug($texte = "about the error", $d = DEBUG_STANDARD) {
+                if (!i_isFlagsNot($d)) {
                         return;
                 }
                 echo "\n<b>" . filter_input(INPUT_SERVER, 'SCRIPT_NAME') . ":/></b> ";
@@ -90,12 +126,12 @@ if (!isset($registreFichiers)) {
         if (session_status() != PHP_SESSION_ACTIVE) {
                 i_debug("phpSession: off " . session_status() == PHP_SESSION_DISABLED ? "(DISABLED)" : "");
         } else {
-                if (filter_input(INPUT_GET, "debug") || filter_session("debug")) {
+                if (i_isdebug()) {
                         i_debug("phpSession: start\n"
-                                . "language " . getPrimaryLanguage() . "\n");
+                                . "language " . getPrimaryLanguage() . "\n", DEBUG_STANDARD | DEBUG_VERBOSE);
                 }
-                if (filter_input(INPUT_GET, "local") || filter_session("local")) {
-                        i_debug("Local Configuration Enabled\n");
+                if (i_islocal()) {
+                        i_debug("Local Configuration Enabled\n", DEBUG_STANDARD | DEBUG_VERBOSE);
                 }
         }
 
@@ -213,11 +249,15 @@ if (!isset($registreFichiers)) {
                         }
                 }
                 // concatenation du chemin d'origine
-                $path .= cdUp($cheminsDeFichiers ? dirname($origine) : stripEnd($origine), $origine_reste_rep) . $pathSeparator;
+                $path .= cdUp($cheminsDeFichiers ? dirname($origine) : stripEnd($origine), $origine_reste_rep);
+                // enleve excedent et ajoute un pathseparator
+                $path = stripEnd($path) . $pathSeparator;
                 // chemin de destination fichier ou dossier
                 $path .= implode($pathSeparator, array_slice($dest_tokenized, -$dest_reste_rep, $dest_reste_rep));
                 if ($cheminsDeFichiers) {
                         $path .= basename($dest);
+                } else {
+                        $path .= $pathSeparator;
                 }
                 return $path; // ajoute le nom de fichier ou repertoire destination.
         }
@@ -233,7 +273,7 @@ if (!isset($registreFichiers)) {
 
         // efface les caracteres de fin de chaine
         function stripEnd($string, $stringEnd = "/") {
-                /* enleve le dernier slash '/' */
+                /* recursion ! enleve les dernier slashes '/' */
                 return (substr($string, -1) === $stringEnd) ? stripEnd(substr($string, 0, -1), $stringEnd) : $string;
         }
 
@@ -256,17 +296,18 @@ if (!isset($registreFichiers)) {
                  *                  
                  */
 
-                public function __construct($selfScript, $force = false, $initRootPath = "./") {
+                public function __construct($selfScript, $force = false, $initRootPath = "/") {
                         global $_instanceRegistre;
+                        /**
+                         * ERROR CHECKING enregistrement en session courante
+                         */
+                        Index::registerGETSession(array("verbose", "local", "warn", "debug"));
                         if (!isset($_instanceRegistre) || $force) {
                                 $_instanceRegistre = 1;
 
-                                /**
-                                 * ERROR CHECKING enregistrement en session courante
-                                 */
-                                Index::registerGETSession(array("verbose", "local", "warn", "debug"));
                                 $selfScript = str_replace("//", "/", $selfScript);
-                                i_debug($selfScript);
+                                /* */
+                                i_debug($selfScript, DEBUG_STANDARD | DEBUG_VERBOSE);
                                 $cheminSite = pathFinder($initRootPath . "e13/", dirname($selfScript));
                                 $cheminHttpdocs = pathFinder($initRootPath . "", dirname($selfScript));
                                 $cheminInc = $cheminSite . "include/";
@@ -274,7 +315,7 @@ if (!isset($registreFichiers)) {
                                 $cheminAdmin = $cheminSite . "admin/";
                                 /**
                                  * 
-                                 *  GLOBALES des chemins relatifs et correspondant aux section du fichier sitemap.properties
+                                 *  GLOBALS des chemins reels et relatives au fichier sitemap.properties 
                                  * 
                                  * */
                                 $GLOBALS['root'] = $cheminHttpdocs;
@@ -300,10 +341,10 @@ if (!isset($registreFichiers)) {
                  */
                 private static function registerGETSession($valuesGET = array()) {
                         /** les parametres de sessions pour le debogage */
-                        foreach ($valuesGET as $value) {
-                                $object = filter_input(INPUT_GET, $value);
-                                if ($object) {
-                                        Index::registerSession($value, $object ? $object : TRUE);
+                        foreach ($valuesGET as $param) {
+                                $value = filter_input(INPUT_GET, $param);
+                                if ($value) {
+                                        Index::registerSession($param, $value);
                                 }
                         }
                 }
@@ -326,12 +367,12 @@ if (!isset($registreFichiers)) {
                 /**
                  * enregistre une variable en session. 
                  */
-                private static function registerSession($variableName, $value) {
+                private static function registerSession($param, $value) {
                         /** PHP < 5.4 if (!session_is_registered($variableName)) {
                           session_register($variableName);
                           } */
                         if (session_status() == PHP_SESSION_ACTIVE) {
-                                $_SESSION[$variableName] = $value;
+                                $_SESSION[$param] = $value;
                         }
                         return $value;
                 }

@@ -18,6 +18,15 @@ if (!isset($ClasseMenu)) {
 
         class Menu {
 
+                static $R = NULL;
+
+                static function R() {
+                        if (Info::$R === null) {
+                                Info::$R = new Index(NULL);
+                        }
+                        return Info::$R;
+                }
+
                 /** nom reellement lisible */
                 var $nom;
 
@@ -285,7 +294,7 @@ if (!isset($ClasseMenu)) {
 				document.getElementById('" . $this->rubriques[$i]->nomBnd . "').style.visibility = 'hidden';
 				}," . $timeout . ");";
                         }
-                        return "<div class='$idName'>" . HTML_lien("#", HTML_image($small ? $GLOBALS["images__boutonMenu_small"] : $GLOBALS["images__boutonMenu"], array("class" => "boutonMenu")), array("javascript" =>
+                        return "<div class='$idName'>" . HTML_lien("#", HTML_image($small ? Menu::R()->sitemap["images__boutonMenu_small"] : Menu::R()->sitemap["images__boutonMenu"], array("class" => "boutonMenu")), array("javascript" =>
                                     array("onClick" => $js . " return;"))) . "</div>";
                 }
 

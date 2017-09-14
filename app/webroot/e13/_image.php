@@ -21,7 +21,6 @@ $r = new Index(filter_input(INPUT_SERVER, 'PHP_SELF'));
 require $GLOBALS["include__php_image.class.inc"];
 require $GLOBALS["include__php_captcha.class.inc"];
 require $GLOBALS["include__php_SQL.class.inc"];
-ob_clean();
 $image = new Image();
 $w = filter_input(INPUT_GET, 'w');
 $h = filter_input(INPUT_GET, 'h');
@@ -48,5 +47,6 @@ if ($w != 0 && $h != 0) {
 }
 /* toujours ecrire un fichier cache sur le serveur si possible */
 $output = $GLOBALS["images"] . "/db/" . $image->nom;
+ob_clean();
 $image->raw_http_bytes(1, is_writable($output) ? $output : NULL);
 ?>

@@ -33,7 +33,7 @@ class E14Controller extends AppController {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("p", $p);
-                $this->render(null, "e14-layout");
+                $this->render(null, "default-e14");
         }
 
         public function etc($p = NULL) {
@@ -56,7 +56,7 @@ class E14Controller extends AppController {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("p", $p);
-                $this->render();
+                $this->render(null, "default-e14");
         }
 
         /**
@@ -65,6 +65,7 @@ class E14Controller extends AppController {
         public function images($p = NULL) {
                 //debug($this->request->params);
                 if (stristr($p, ".gif") || stristr($p, ".png") || stristr($p, ".jpg")) {
+                        echo $GLOBALS["images"] . "/" . $p;
                         $this->response->file($GLOBALS["images"] . "/" . $p);
                         $this->response->send();
                 } else if ($p) {
@@ -82,7 +83,7 @@ class E14Controller extends AppController {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("p", $p);
-                $this->render();
+                $this->render(null, "default-e14");
         }
 
         /**
@@ -92,7 +93,7 @@ class E14Controller extends AppController {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("p", $p);
-                $this->render();
+                $this->render(null, "default-e14");
         }
 
         /**
@@ -102,7 +103,7 @@ class E14Controller extends AppController {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("p", $p);
-                $this->render();
+                $this->render(null, "default-e14");
         }
 
 }
