@@ -6,7 +6,7 @@
  */
 
 App::uses('AppController', 'Controller');
-App::import('file', 'Index', false, array(WWW_ROOT . 'e13' . DS . 'include' . DS), 'php_index.inc.php');
+App::import('file', 'Index', false, array(WWW_ROOT . 'php-cms' . DS . 'e13' . DS . 'include' . DS), 'php_index.inc.php');
 
 /**
  * CakePHP E13
@@ -25,7 +25,7 @@ class E14Controller extends AppController {
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
                 /** initalize $GLOBALS */
-                $this->r = new Index(APP . DS . 'Controller' . DS . 'E14Controller.php', false, WWW_ROOT);
+                $this->r = new Index(APP . DS . 'Controller' . DS . 'E14Controller.php', false, WWW_ROOT.'php-cms/');
                 $this->set("i_sitemap", $this->r->sitemap);
         }
 

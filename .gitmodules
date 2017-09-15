@@ -1,0 +1,3 @@
+[submodule "app/webroot/php-cms"]
+	path = app/webroot/php-cms
+	url = https://b23prodtm@bitbucket.org/b23prodtm/php-cms.git

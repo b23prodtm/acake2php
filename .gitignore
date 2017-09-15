@@ -5,3 +5,4 @@
 /app/tmp/sessions/
 /app/tmp/cache/
 /app/tmp/logs/
+/app/webroot/php-cms/e13/nbproject/private/
