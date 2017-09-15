@@ -25,5 +25,6 @@
         '<p><a href="' . $nouvelleAdresse . '">Redirection</a></p>' . "\n",
         '</body>' . "\n",
         '</html>' . "\n";
+        exit;
 ?>
 

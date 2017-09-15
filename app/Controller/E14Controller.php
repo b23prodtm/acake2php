@@ -25,7 +25,7 @@ class E14Controller extends AppController {
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
                 /** initalize $GLOBALS */
-                $this->r = new Index(APP . DS . 'Controller' . DS . 'E14Controller.php', false, WWW_ROOT.'php-cms/');
+                $this->r = new Index(APP . DS . 'Controller' . DS . 'E14Controller.php', false, WWW_ROOT . 'php-cms/');
                 $this->set("i_sitemap", $this->r->sitemap);
         }
 
@@ -36,16 +36,20 @@ class E14Controller extends AppController {
                 $this->render(null, "default-e14");
         }
 
-        public function etc($p = NULL) {
+        public function etc($p = NULL, $locale = NULL) {
                 //debug($this->request->params);                
-                if (stristr($p, ".css")) {
-                        $this->response->file($GLOBALS["etc"] . "/" . $p);
+                if ($p === "locale") {
+                        $this->response->file($GLOBALS["etc"] . DS . $p . DS . $locale);
                         $this->response->send();
-                } else if ($p) {
-                        $this->response->file($GLOBALS["etc__" . $p]);
-                        $this->response->send();
+                } else if (stristr($p, ".php")) {
+                        /** THE FOLOWING DOESNT WORK ??
+                          $this->render(null, "default-e14");
+                         */
+                        $this->set("p", $p);
+                        $this->render();
                 } else {
-                        
+                        $this->response->file($GLOBALS["etc"] . DS . $p);
+                        $this->response->send();
                 }
         }
 
@@ -64,16 +68,8 @@ class E14Controller extends AppController {
          */
         public function images($p = NULL) {
                 //debug($this->request->params);
-                if (stristr($p, ".gif") || stristr($p, ".png") || stristr($p, ".jpg")) {
-                        debug($GLOBALS["images"] . "/" . $p);
-                        $this->response->file($GLOBALS["images"] . "/" . $p);
-                        $this->response->send();
-                } else if ($p) {
-                        $this->response->file($GLOBALS["images__" . $p]);
-                        $this->response->send();
-                } else {
-                        
-                }
+                $this->response->file($GLOBALS["images"] . DS . $p);
+                $this->response->send();
         }
 
         /**
