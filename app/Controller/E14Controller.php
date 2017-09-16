@@ -29,11 +29,15 @@ class E14Controller extends AppController {
                 $this->set("i_sitemap", $this->r->sitemap);
         }
 
-        public function index($p = NULL) {
+        public function index($p = NULL, $images = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
-                $this->set("p", $p);
-                $this->render(null, "default-e14");
+                if ($p === "images") {
+                        return $this->images($images);
+                } else {
+                        $this->set("p", $p);
+                        $this->render(null, "default-e14");
+                }
         }
 
         public function etc($p = NULL, $locale = NULL) {
@@ -100,6 +104,25 @@ class E14Controller extends AppController {
                 //debug($GLOBALS);
                 $this->set("p", $p);
                 $this->render(null, "default-e14");
+        }
+
+        /**
+         * @param String $p SITEMAP.PROPERTIES key in [admin]
+         */
+        public function content($p = NULL) {
+                //debug($this->request->params);
+                //debug($GLOBALS);
+                if (stristr($p, "images")) {
+                        $this->response->file($GLOBALS['activites'] . DS . $p);
+                        $this->response->send();
+                } elseif (stristr($p, ".html")) {
+                        $this->set('pIndex', 'activites__index');
+                        $this->set('pUrl', $GLOBALS['activites'] . DS . $p);
+                } else {
+                        $this->set('pIndex', 'activites__' . $p);
+                        $this->set('pUrl', $GLOBALS['activites' . $p]);
+                }
+                $this->render('content', "default-e14");
         }
 
 }
