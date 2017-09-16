@@ -1,7 +1,7 @@
 <!-- Voila l'endroit ou je souhaite que mes vues soient affichées //-->
 <?php
         
-        $nouvelleAdresse = '/e14/index'; //Nouvelle adresse
+        $nouvelleAdresse = '/index.php/e14/index'; //Nouvelle adresse
         if (filter_input(INPUT_SERVER, 'QUERY_STRING') && (filter_input(INPUT_SERVER, 'QUERY_STRING') != '')) {
                 $nouvelleAdresse .= '?' . substr(filter_input(INPUT_SERVER, 'QUERY_STRING'), 0, 2048);
         } //RÃ©cupÃšre les paramÃštres
