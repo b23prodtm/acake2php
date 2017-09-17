@@ -189,7 +189,7 @@ $key_list = openshift_secure($_default_keys,'make_secure_key');
 /**
  * Turn off all caching application-wide.
  */
-	//Configure::write('Cache.disable', true);
+	Configure::write('Cache.disable', true);
 
 /**
  * Enable cache checking.
