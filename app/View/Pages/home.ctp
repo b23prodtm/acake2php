@@ -17,7 +17,7 @@
         '<html xmlns="http://www.w3.org/1999/xhtml">' . "\n".
         '<head>' . "\n".
         '<meta charset="UTF-8" />' . "\n".
-        /*'<meta http-equiv="refresh" content="0; url=' . $nouvelleAdresse . '" />' . "\n", //Redirection HTML*/
+        /*'<meta http-equiv="refresh" content="0; url=' . $nouvelleAdresse . '" />' . "\n". //Redirection HTML*/
         '<title>Redirection</title>' . "\n".
         '<meta name="robots" content="noindex" />' . "\n".
         '</head>' . "\n".
