@@ -250,7 +250,7 @@ $key_list = openshift_secure($_default_keys,'make_secure_key');
  * the cake shell command: cake schema create Sessions
  */
 	Configure::write('Session', array(
-		'defaults' => 'cake'
+		'defaults' => 'php'
 	));
 
 /**
@@ -384,7 +384,7 @@ $key_list = openshift_secure($_default_keys,'make_secure_key');
  *       Please check the comments in bootstrap.php for more info on the cache engines available
  *       and their settings.
  */
-$engine = 'File';
+$engine = 'APC';
 
 // In development mode, caches should expire quickly.
 $duration = '+999 days';
