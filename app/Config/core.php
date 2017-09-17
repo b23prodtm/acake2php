@@ -140,7 +140,7 @@ $key_list = openshift_secure($_default_keys,'make_secure_key');
  * included primarily as a development convenience - and
  * thus not recommended for production applications.
  */
-	Configure::write('App.baseUrl', env('SCRIPT_NAME'));
+	//Configure::write('App.baseUrl', env('SCRIPT_NAME'));
 
 /**
  * To configure CakePHP to use a particular domain URL
