@@ -60,7 +60,7 @@ class E14Controller extends AppController {
         /**
          * @param String $p SITEMAP.PROPERTIES key in [admin]
          */
-        public function admin($p = NULL) {
+        public function admin_index($p = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("p", $p);
@@ -68,7 +68,7 @@ class E14Controller extends AppController {
         }
 
         /**
-         * @param String $page SITEMAP.PROPERTIES key in [admin]
+         * @param String $page SITEMAP.PROPERTIES key in [images]
          */
         public function images($p = NULL) {
                 //debug($this->request->params);
@@ -77,7 +77,7 @@ class E14Controller extends AppController {
         }
 
         /**
-         * @param String $p SITEMAP.PROPERTIES key in [admin]
+         * @param String $p SITEMAP.PROPERTIES key in [blog]
          */
         public function blog($p = NULL) {
                 //debug($this->request->params);
@@ -87,7 +87,7 @@ class E14Controller extends AppController {
         }
 
         /**
-         * @param String $p SITEMAP.PROPERTIES key in [admin]
+         * @param String $p SITEMAP.PROPERTIES key in [library]
          */
         public function dvd($p = NULL) {
                 //debug($this->request->params);
@@ -97,7 +97,7 @@ class E14Controller extends AppController {
         }
 
         /**
-         * @param String $p SITEMAP.PROPERTIES key in [admin]
+         * @param String $p SITEMAP.PROPERTIES key in [shop]
          */
         public function shop($p = NULL) {
                 //debug($this->request->params);
@@ -107,7 +107,7 @@ class E14Controller extends AppController {
         }
 
         /**
-         * @param String $p SITEMAP.PROPERTIES key in [admin]
+         * @param String $p SITEMAP.PROPERTIES key in [activites]
          */
         public function content($p = NULL) {
                 //debug($this->request->params);
