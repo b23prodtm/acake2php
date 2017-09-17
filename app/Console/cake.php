@@ -14,7 +14,6 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Console
  * @since         CakePHP(tm) v 2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 if (!defined('DS')) {
@@ -30,7 +29,7 @@ if (function_exists('ini_set')) {
 	$composerInstall = $root . DS . $appDir . DS . 'Vendor' . DS . 'cakephp' . DS . 'cakephp' . DS . 'lib';
 
 	// the following lines differ from its sibling
-	// /lib/Cake/Console/Templates/skel/Console/cake.php
+	// /app/Console/cake.php
 	if (file_exists($composerInstall . DS . $dispatcher)) {
 		$install = $composerInstall;
 	}
