@@ -25,7 +25,7 @@ class E14Controller extends AppController {
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
                 /** initalize $GLOBALS */
-                $this->r = new Index(APP . DS . 'Controller' . DS . 'E14Controller.php', false, WWW_ROOT . 'php-cms/');
+                $this->r = new Index(ROOT . DS . 'index.php', false, WWW_ROOT . 'php-cms/');
                 $this->set("i_sitemap", $this->r->sitemap);
         }
 
