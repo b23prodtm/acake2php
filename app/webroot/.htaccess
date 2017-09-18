@@ -1,12 +1,10 @@
-# Uncomment the following to prevent the httpoxy vulnerability
-# See: https://httpoxy.org/
-<IfModule mod_headers.c>
-	RequestHeader unset Proxy
-</IfModule>
-
 <IfModule mod_rewrite.c>
-	RewriteEngine On
-	RewriteCond %{REQUEST_FILENAME} !-d
-	RewriteCond %{REQUEST_FILENAME} !-f
-        RewriteRule ^(.*)$ index.php/$1 [QSA,L]
+    RewriteEngine On
+    RewriteBase /app/webroot/
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !^(img|css|js)/(.*)$
+    RewriteCond %{REQUEST_URI} !^(php-cms/e13)/etc/(.*)$
+    RewriteCond %{REQUEST_URI} !^(php-cms/e13)/images/(.*)$
+    RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
