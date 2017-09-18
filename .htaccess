@@ -1,12 +1,7 @@
-<Directory />
-Options FollowSymLinks
-AllowOverride All
-Order deny,allow
-Allow from all
-</Directory>
 <IfModule mod_rewrite.c>
    RewriteEngine on
+   RewriteBase /opt/app-root/src/
+   RewriteCond %{REQUEST_FILENAME} !^health.php$
    RewriteRule    ^$ app/webroot/    [L]
-   RewriteCond %{REQUEST_FILENAME} !-f
    RewriteRule    (.*) app/webroot/$1 [L]
 </IfModule>
