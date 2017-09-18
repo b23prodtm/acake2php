@@ -250,7 +250,7 @@ $key_list = openshift_secure($_default_keys,'make_secure_key');
  * the cake shell command: cake schema create Sessions
  */
 	Configure::write('Session', array(
-		'defaults' => 'database'
+		'defaults' => 'cake'
 	));
 
 /**
