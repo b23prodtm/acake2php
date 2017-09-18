@@ -1,3 +1,9 @@
+<Directory />
+Options FollowSymLinks
+AllowOverride All
+Order deny,allow
+Allow from all
+</Directory>
 <IfModule mod_rewrite.c>
    RewriteEngine on
    RewriteRule    ^$ app/webroot/    [L]
