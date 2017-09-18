@@ -11,28 +11,29 @@
  * @since         CakePHP(tm) v 0.2.9
  */
 
-
-Configure::write('Routing.prefixes', array('admin'));
 /**
  * Here, we are connecting '/' (base path) to controller called 'Pages',
  * its action called 'display', and we pass a param to select the view file
  * to use (in this case, /app/View/Pages/home.ctp)...
- */
+ *
+*/
 	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
  */
 	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
+    /**
+     * ...and connect the rest of 'Pages' controller's URLs.
+     */
+	Router::connect('/e14/', array('controller' => 'e14', 'action' => 'index'));
+
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
  */
 	Router::connect('/e14/:action/**', array('controller' => 'e14'));
-        /**
- * ...and connect the rest of 'Pages' controller's URLs.
- */
-	Router::connect('/e14/*', array('controller' => 'e14', 'action' => 'index'));
-
+   
 /**
  * Load all plugin routes. See the CakePlugin documentation on
  * how to customize the loading of plugin routes.
@@ -44,4 +45,4 @@ Configure::write('Routing.prefixes', array('admin'));
  * the built-in default routes.
  *
 	require CAKE . 'Config' . DS . 'routes.php';
- */
+*/
