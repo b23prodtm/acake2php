@@ -92,15 +92,17 @@ class DATABASE_CONFIG {
 
         public function __construct() {
 
-                $this->test['host'] = "localhost";
-                $this->test['port'] = "3306";
-                $this->test['login'] = "test";
-                $this->test['password'] = "mypassword";
-                $this->test['database'] = "phpcms";
-
-
                 $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) : FALSE;
 
+                
+                /** a different test/local configuration (shall not be the same as production)*/ 
+                $this->test['host'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
+                $this->test['port'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
+                $this->test['login'] = getenv('TEST_DATABASE_USER');
+                $this->test['password'] = getenv('TEST_DATABASE_PASSWORD');
+                $this->test['database'] = getenv('TEST_DATABASE_NAME');
+                $this->test['datasource'] = $datasource;
+                
                 $this->default['host'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
                 $this->default['port'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
                 $this->default['login'] = getenv("DATABASE_USER");
@@ -110,7 +112,7 @@ class DATABASE_CONFIG {
 
                 /** rediriger les variables non enregistrees vers l'environment de test */
                 foreach ($this->default as $key => $val) {
-                        if (!$val) {
+                        if (!$val || $val === "") {
                                 $this->default[$key] = $this->test[$key];
                         }
                 }
