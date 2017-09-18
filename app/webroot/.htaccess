@@ -4,5 +4,7 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_URI} !^/(app/webroot/)?(img|css|js)/(.*)$
-    RewriteRule ^(.*)$ index.php/$1 [QSA,L]
+    RewriteCond %{REQUEST_URI} !^/(app/webroot/)?(php-cms/e13)/etc/(.*)$
+    RewriteCond %{REQUEST_URI} !^/(app/webroot/)?(php-cms/e13)/images/(.*)$
+    RewriteRule ^$ index.php [QSA,L]
 </IfModule>
