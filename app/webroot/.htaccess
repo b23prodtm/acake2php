@@ -1,9 +1,3 @@
-<Directory />
-    Options Indexes FollowSymLinks MultiViews
-    AllowOverride All
-    Order Allow,Deny
-    Allow from all
-</Directory>
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /app/webroot/
