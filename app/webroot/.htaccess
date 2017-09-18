@@ -1,10 +1,16 @@
+<Directory />
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order Allow,Deny
+    Allow from all
+</Directory>
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /opt/app-root/src/
+    RewriteBase /app/webroot/
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_URI} !^/(app/webroot/)?(img|css|js)/(.*)$
-    RewriteCond %{REQUEST_URI} !^/(app/webroot/)?(php-cms/e13)/etc/(.*)$
-    RewriteCond %{REQUEST_URI} !^/(app/webroot/)?(php-cms/e13)/images/(.*)$
-    RewriteRule ^$ index.php [QSA,L]
+    RewriteCond %{REQUEST_URI} !^(img|css|js)/(.*)$
+    RewriteCond %{REQUEST_URI} !^(php-cms/e13)/etc/(.*)$
+    RewriteCond %{REQUEST_URI} !^(php-cms/e13)/images/(.*)$
+    RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
