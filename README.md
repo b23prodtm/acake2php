@@ -12,12 +12,14 @@
 
 <!-- tocstop -->
 
-CakePHP on OpenShift
+CakePHP for [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) on OpenShift
 ===============================
 
 This is a quickstart CakePHP application for OpenShift v3 that you ''can'' use as a starting point to develop your own application and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
 
 If you'd like to install it, follow [these directions](https://github.com/openshift/cakephp-ex/blob/master/README.md#installation).  
+
+It includes a link to [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) and its [GIT cake-php release](https://bitbucket.org/b23prodtm/php-cms/branch/cake-php). The latter PHP CMS is featuring well-known functionalities as Posting with pictures on database oriented coding. More features to come thank to the powerful [Cake PHP framework](http://www.cakephp.org).
 
 ### Source repository layout
 
