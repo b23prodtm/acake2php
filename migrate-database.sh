@@ -8,3 +8,5 @@ fi
 
 echo "Migrating database 'cake schema create' ..."
 ./lib/Cake/Console/cake schema create
+echo 'Building default Sessions table...'
+./lib/Cake/Console/cake schema create Sessions
