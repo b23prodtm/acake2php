@@ -1,4 +1,13 @@
 #!/bin/bash
+
+export DATABASE_ENGINE="mysql"
+export DATABASE_SERVICE_NAME="mysql"
+export TEST_MYSQL_SERVICE_HOST="localhost"
+export TEST_MYSQL_SERVICE_PORT="3306"
+export TEST_DATABASE_NAME="phpcms"
+export TEST_DATABASE_USER="test"
+export TEST_DATABASE_PASSWORD="mypassword"
+
 set -e 
 
 if [ ! -f app/Config/Schema/schema.php ]; then
