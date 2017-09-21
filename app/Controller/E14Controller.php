@@ -36,7 +36,7 @@ class E14Controller extends AppController {
                         return $this->images($images);
                 } else {
                         $this->set("p", $p);
-                        $this->render(null, "default-e14");
+                        $this->render(null, "admin_default-e14");
                 }
         }
 
@@ -123,6 +123,16 @@ class E14Controller extends AppController {
                         $this->set('pUrl', $GLOBALS['activites' . $p]);
                 }
                 $this->render('content', "default-e14");
+        }
+        /**
+         * @param String $p SITEMAP.PROPERTIES key in [activites]
+         */
+        public function admin_content($p = null) {
+                //debug($this->request->params);
+                //debug($GLOBALS);
+                $this->set('pIndex','admin__activites');;
+                $this->set('pMethod',$p);
+                $this->render(null, "admin_default-e14");
         }
 
 }
