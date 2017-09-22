@@ -11,4 +11,5 @@ export FTP_SERVICE_USER="test"
 export FTP_SERVICE_PASSWORD="mypassword"
 export GET_HASH_PASSWORD="saINNH2X5e87I"
 
+echo "CALL THE FOLLOWING URL ON YOUR BROWSER http://localhost:2233?local=1"
 lib/Cake/Console/cake server -p 2233
