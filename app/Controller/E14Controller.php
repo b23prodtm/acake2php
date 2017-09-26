@@ -29,14 +29,34 @@ class E14Controller extends AppController {
                 $this->set("i_sitemap", $this->r->sitemap);
         }
 
-        public function index($p = NULL, $images = NULL) {
+        public function index($p = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 if ($p === "images") {
                         return $this->images($images);
                 } else {
                         $this->set("p", $p);
-                        $this->render(null, "admin_default-e14");
+                        $d = "";
+                        if (isset($YYYY)) {
+                                $d = $YYYY;
+                                if (isset($MM)) {
+                                        $d = $d . "-" . $MM;
+                                        if (isset($DD)) {
+                                                $d = $d . "-" . $DD;
+                                        } else {
+                                                $d = $d . "-01";
+                                        }
+                                } else {
+                                        $d = $d . "-01";
+                                }
+                                $this->set("d", $d);
+                        }
+                        echo $d;
+                        if (isset($count))
+                                $this->set("count", $count);
+                        if (isset($np))
+                                $this->set("np", $np);
+                        $this->render(null, "default-e14");
                 }
         }
 
@@ -64,7 +84,7 @@ class E14Controller extends AppController {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("p", $p);
-                $this->render(null, "default-e14");
+                $this->render(null, "admin_default-e14");
         }
 
         /**
@@ -124,14 +144,16 @@ class E14Controller extends AppController {
                 }
                 $this->render('content', "default-e14");
         }
+
         /**
          * @param String $p SITEMAP.PROPERTIES key in [activites]
          */
         public function admin_content($p = null) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
-                $this->set('pIndex','admin__activites');;
-                $this->set('pMethod',$p);
+                $this->set('pIndex', 'admin__activites');
+                ;
+                $this->set('pMethod', $p);
                 $this->render(null, "admin_default-e14");
         }
 

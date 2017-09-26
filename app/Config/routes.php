@@ -32,7 +32,19 @@
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
  */
-	Router::connect('/e14/:action/**', array('controller' => 'e14'));
+	Router::connect('/e14/:action/*', array('controller' => 'e14'));
+
+/**
+ * ...and connect the rest of 'Pages' controller's URLs.
+ */
+	Router::connect('/e14/index/at/:YYYY/:MM/:DD/*', array('controller' => 'e14', 'action' => 'index'),
+                array('YYYY'=> '[0-9]{4}', 'MM' => '[0-9]{2}','DD'=>'[0-9]{2}'));
+
+/**
+ * ...and connect the rest of 'Pages' controller's URLs.
+ */
+	Router::connect('/e14/index/:np/:count/*', array('controller' => 'e14', 'action' => 'index'),
+                array('count'=> '[0-9]+', 'np' => '[0-9]+'));
    
 /**
  * Load all plugin routes. See the CakePlugin documentation on
