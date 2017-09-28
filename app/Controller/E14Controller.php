@@ -60,17 +60,14 @@ class E14Controller extends AppController {
                 }
         }
 
-        public function etc($p = NULL, $locale = NULL) {
+        public function etc($p = NULL, $subp = NULL) {
                 //debug($this->request->params);                
-                if ($p === "locale") {
-                        $this->response->file($GLOBALS["etc"] . DS . $p . DS . $locale);
+                if ($p === "locale" || $p === "js") {
+                        $this->response->file($GLOBALS["etc"] . DS . $p . DS . $subp);
                         $this->response->send();
                 } else if (stristr($p, ".php")) {
-                        /** THE FOLOWING DOESNT WORK ??
-                          $this->render(null, "default-e14");
-                         */
                         $this->set("p", $p);
-                        $this->render();
+                        $this->render(null, "default-e14");
                 } else {
                         $this->response->file($GLOBALS["etc"] . DS . $p);
                         $this->response->send();
