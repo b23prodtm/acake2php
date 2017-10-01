@@ -58,7 +58,7 @@ class AppSchema extends CakeSchema {
 		'fk_id_mdp' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 32, 'key' => 'unique', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'nom' => array('type' => 'string', 'null' => false, 'length' => 30, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'prenom' => array('type' => 'string', 'null' => false, 'length' => 30, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'annee_de_naissance' => array('type' => 'text', 'null' => false, 'default' => '0000', 'length' => 4),
+		'annee_de_naissance' => array('type' => 'text', 'null' => false, 'length' => 4),
 		'adresse' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 30, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'ville' => array('type' => 'string', 'null' => false, 'length' => 20, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'pays' => array('type' => 'string', 'null' => false, 'length' => 20, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -73,7 +73,7 @@ class AppSchema extends CakeSchema {
 
 	public $commande = array(
 		'reference' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
-		'date_de_commande' => array('type' => 'date', 'null' => false, 'default' => '0000-00-00', 'key' => 'index'),
+		'date_de_commande' => array('type' => 'date', 'null' => false, 'default' => '00000000', 'key' => 'index'),
 		'fk_reference_produit' => array('type' => 'string', 'null' => false, 'length' => 20, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'fk_reference_promotion' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
 		'indexes' => array(
@@ -87,7 +87,7 @@ class AppSchema extends CakeSchema {
 		'fk_identifiant' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'nb_de_produits_achetes' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'key' => 'index'),
 		'montant_d_achat_total' => array('type' => 'decimal', 'null' => false, 'default' => '0.0', 'length' => '6,1', 'unsigned' => false),
-		'date_ouverture_du_compte' => array('type' => 'date', 'null' => false, 'default' => '0000-00-00'),
+		'date_ouverture_du_compte' => array('type' => 'date', 'null' => false, 'default' => '00000000'),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'fk_identifiant', 'unique' => 1),
 			'nb_de_produits_achetes' => array('column' => array('nb_de_produits_achetes', 'montant_d_achat_total', 'date_ouverture_du_compte'), 'unique' => 0)
@@ -126,7 +126,7 @@ class AppSchema extends CakeSchema {
 
 	public $exemplaire = array(
 		'code_reference' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'date_de_livraison' => array('type' => 'date', 'null' => false, 'default' => '0000-00-00'),
+		'date_de_livraison' => array('type' => 'date', 'null' => false, 'default' => '00000000'),
 		'fk_id_produit' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 5, 'unsigned' => false),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'code_reference', 'unique' => 1)
@@ -137,7 +137,7 @@ class AppSchema extends CakeSchema {
 	public $facture = array(
 		'reference' => array('type' => 'string', 'null' => false, 'length' => 32, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'montant_facture' => array('type' => 'decimal', 'null' => true, 'default' => null, 'length' => '6,1', 'unsigned' => false),
-		'date_de_facturation' => array('type' => 'date', 'null' => false, 'default' => '0000-00-00'),
+		'date_de_facturation' => array('type' => 'date', 'null' => false, 'default' => '00000000'),
 		'mode_de_paiement' => array('type' => 'string', 'null' => false, 'length' => 4, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'fk_identifiant' => array('type' => 'string', 'null' => false, 'length' => 20, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'indexes' => array(
@@ -180,8 +180,8 @@ class AppSchema extends CakeSchema {
 		'auteur' => array('type' => 'string', 'null' => false, 'length' => 250, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'contenu' => array('type' => 'text', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'langue' => array('type' => 'string', 'null' => false, 'length' => 32, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'date' => array('type' => 'date', 'null' => false, 'default' => '0000-00-00'),
-        'published' => array('type' => 'date', 'null' => false, 'default' => '0000-00-00'),
+		'date' => array('type' => 'date', 'null' => false, 'default' => '00000000'),
+        'published' => array('type' => 'date', 'null' => false, 'default' => '00000000'),
 		'images' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 35, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
