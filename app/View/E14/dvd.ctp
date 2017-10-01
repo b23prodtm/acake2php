@@ -27,7 +27,7 @@ if (stristr($p, ".php")) {
         } else {
                 $precedent = $courant;
         }
-        $tbl->setContenu_cellule(2, 0, HTML_lien($pageURL . "?nom=" . substr($liste[$precedent], 0, -4) . "&base=" . urlencode(filter_input(INPUT_GET, 'base')), "< enregistrement precedent") . " " . HTML_lien($pageURL . "?nom=" . substr($liste[$suivant], 0, -4) . "&base=" . urlencode(filter_input(INPUT_GET, 'base')), "enregistrement suivant >"));
+        $tbl->setContenu_cellule(2, 0, HTML_lien($pageURL . "?nom=" . substr($liste[$precedent], 0, -4) . "&base=" . urlencode(filter_input(INPUT_GET, 'base')), "< --") . " " . HTML_lien($pageURL . "?nom=" . substr($liste[$suivant], 0, -4) . "&base=" . urlencode(filter_input(INPUT_GET, 'base')), "-- >"));
 
         echo $tbl->fin();
 } else {
