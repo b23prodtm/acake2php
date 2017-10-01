@@ -52,7 +52,6 @@ class E14Controller extends AppController {
                                 }
                                 $this->set("d", $d);
                         }
-                        echo $np."/".$count."/at/".$d;
                         if (isset($count))
                                 $this->set("count", $count);
                         if (isset($np))
