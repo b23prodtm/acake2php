@@ -21,5 +21,5 @@ if [ ! -f app/Config/Schema/sessions.php ]; then
         ./lib/Cake/Console/cake schema create Sessions
 fi
 echo "Migrating database 'cake schema create' ..."
-./lib/Cake/Console/cake schema update --file schema.php
+./lib/Cake/Console/cake schema update --file myschema.php
 
