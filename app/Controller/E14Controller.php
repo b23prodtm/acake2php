@@ -29,7 +29,7 @@ class E14Controller extends AppController {
                 $this->set("i_sitemap", $this->r->sitemap);
         }
 
-        public function index($p = NULL) {
+        public function index($p = NULL, $np = 1, $count = 10, $YYYY = NULL, $MM = NULL, $DD = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 if ($p === "images") {
@@ -37,6 +37,7 @@ class E14Controller extends AppController {
                 } else {
                         $this->set("p", $p);
                         $d = "";
+                        /** date selection*/
                         if (isset($YYYY)) {
                                 $d = $YYYY;
                                 if (isset($MM)) {
@@ -44,14 +45,14 @@ class E14Controller extends AppController {
                                         if (isset($DD)) {
                                                 $d = $d . "-" . $DD;
                                         } else {
-                                                $d = $d . "-01";
+                                                $d = $d . "-*";
                                         }
                                 } else {
-                                        $d = $d . "-01";
+                                        $d = $d . "-*";
                                 }
                                 $this->set("d", $d);
                         }
-                        echo $d;
+                        echo $np."/".$count."/at/".$d;
                         if (isset($count))
                                 $this->set("count", $count);
                         if (isset($np))
