@@ -29,6 +29,13 @@ class E14Controller extends AppController {
                 $this->set("i_sitemap", $this->r->sitemap);
         }
 
+        /** @param string $p page filename.php
+                @param int $np paginate number
+                @param int $count count per page
+                @param int $YYYY 4-digit year
+                @param int $MM 2-digit month
+                @param int $DD 2-digit day
+                */
         public function index($p = NULL, $np = 1, $count = 10, $YYYY = NULL, $MM = NULL, $DD = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
@@ -60,6 +67,8 @@ class E14Controller extends AppController {
                 }
         }
 
+        /** @param string $p page name in etc/*.php, folder or NULL
+                &param string $subp file name if $p was a folder*/
         public function etc($p = NULL, $subp = NULL) {
                 //debug($this->request->params);                
                 if ($p === "locale" || $p === "js") {
@@ -112,6 +121,16 @@ class E14Controller extends AppController {
                 $this->set("p", $p);
                 $this->render(null, "default-e14");
         }
+        /**
+         * @param String $p method name (defined in view/admin_dvd.ctp)
+         */
+        public function admin_dvd($p = NULL) {
+                //debug($this->request->params);
+                //debug($GLOBALS);
+                $this->set('pIndex', 'admin__dvd');
+                $this->set('pMethod', $p);
+                $this->render(null, "admin_default-e14");
+        }
 
         /**
          * @param String $p SITEMAP.PROPERTIES key in [shop]
@@ -143,13 +162,12 @@ class E14Controller extends AppController {
         }
 
         /**
-         * @param String $p SITEMAP.PROPERTIES key in [activites]
+         * @param String $p method name (defined in view/admin_content.ctp template)
          */
         public function admin_content($p = null) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set('pIndex', 'admin__activites');
-                ;
                 $this->set('pMethod', $p);
                 $this->render(null, "admin_default-e14");
         }
