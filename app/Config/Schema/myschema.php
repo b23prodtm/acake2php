@@ -181,7 +181,7 @@ class AppSchema extends CakeSchema {
 		'contenu' => array('type' => 'text', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'langue' => array('type' => 'string', 'null' => false, 'length' => 32, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'date' => array('type' => 'date', 'null' => false, 'default' => '0000-00-00'),
-                'published' => array('type' => 'date', 'null' => false, 'default' => '0000-00-00'),
+        'published' => array('type' => 'date', 'null' => false, 'default' => '0000-00-00'),
 		'images' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 35, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)

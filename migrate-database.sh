@@ -22,6 +22,4 @@ if [ ! -f app/Config/Schema/sessions.php ]; then
 fi
 echo "Migrating database 'cake schema create' ..."
 ./lib/Cake/Console/cake schema update --file schema.php
-echo "Update default Sessions table..."
-./lib/Cake/Console/cake schema update --name Sessions
 
