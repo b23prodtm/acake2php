@@ -29,28 +29,45 @@ class E14Controller extends AppController {
                 $this->set("i_sitemap", $this->r->sitemap);
         }
 
-        public function index($p = NULL, $images = NULL) {
+        public function index($p = NULL, $np = 1, $count = 10, $YYYY = NULL, $MM = NULL, $DD = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 if ($p === "images") {
                         return $this->images($images);
                 } else {
                         $this->set("p", $p);
+                        $d = "";
+                        /** date selection*/
+                        if (isset($YYYY)) {
+                                $d = $YYYY;
+                                if (isset($MM)) {
+                                        $d = $d . "-" . $MM;
+                                        if (isset($DD)) {
+                                                $d = $d . "-" . $DD;
+                                        } else {
+                                                $d = $d . "-*";
+                                        }
+                                } else {
+                                        $d = $d . "-*";
+                                }
+                                $this->set("d", $d);
+                        }
+                        if (isset($count))
+                                $this->set("count", $count);
+                        if (isset($np))
+                                $this->set("np", $np);
                         $this->render(null, "default-e14");
                 }
         }
 
-        public function etc($p = NULL, $locale = NULL) {
+        public function etc($p = NULL, $subp = NULL) {
                 //debug($this->request->params);                
-                if ($p === "locale") {
-                        $this->response->file($GLOBALS["etc"] . DS . $p . DS . $locale);
+                if ($p === "locale" || $p === "js") {
+                        $this->response->file($GLOBALS["etc"] . DS . $p . DS . $subp);
                         $this->response->send();
                 } else if (stristr($p, ".php")) {
-                        /** THE FOLOWING DOESNT WORK ??
-                          $this->render(null, "default-e14");
-                         */
                         $this->set("p", $p);
-                        $this->render();
+                        $this->render(null, "default-e14");
                 } else {
                         $this->response->file($GLOBALS["etc"] . DS . $p);
                         $this->response->send();
@@ -64,7 +81,7 @@ class E14Controller extends AppController {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("p", $p);
-                $this->render(null, "default-e14");
+                $this->render(null, "admin_default-e14");
         }
 
         /**
@@ -123,6 +140,18 @@ class E14Controller extends AppController {
                         $this->set('pUrl', $GLOBALS['activites' . $p]);
                 }
                 $this->render('content', "default-e14");
+        }
+
+        /**
+         * @param String $p SITEMAP.PROPERTIES key in [activites]
+         */
+        public function admin_content($p = null) {
+                //debug($this->request->params);
+                //debug($GLOBALS);
+                $this->set('pIndex', 'admin__activites');
+                ;
+                $this->set('pMethod', $p);
+                $this->render(null, "admin_default-e14");
         }
 
 }

@@ -57,8 +57,9 @@ if (!defined('APP_DIR')) {
  * The following line differs from its sibling
  * /app/webroot/index.php
  */
-define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
-
+if (!defined('CAKE_CORE_INCLUDE_PATH')) {
+	define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
+}
 /**
  * This auto-detects CakePHP as a composer installed library.
  * You may remove this if you are not planning to use composer (not recommended, though).

@@ -24,16 +24,31 @@
  */
 	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
-    /**
-     * ...and connect the rest of 'Pages' controller's URLs.
-     */
+/**
+* ...and connect the rest of 'Pages' controller's URLs.
+*/
 	Router::connect('/e14/', array('controller' => 'e14', 'action' => 'index'));
 
 /**
- * ...and connect the rest of 'Pages' controller's URLs.
- */
-	Router::connect('/e14/:action/**', array('controller' => 'e14'));
-   
+* ...UNSUPPORTED as of current cake php version (2.x)
+*
+        Router::connect('/e14/index/:page/:n/:count/at/:YYYY/:MM/:DD/*', array('controller' => 'e14', 'action' => 'index'),
+        // order matters since this will simply map ":np" to
+                                // $np in your action
+                array(
+                        'pass' => array('page','n','count','YYYY','MM','DD'),
+                        'page'=>'.*','n' => '[0-9]+','count'=> '[0-9]+','YYYY'=> '[0-9]{4}', 'MM' => '[0-9]{2}','DD'=>'[0-9]{2}'));
+/**
+        * ...and connect the rest of 'Pages' controller's URLs.
+        *
+        Router::connect('/e14/index/:page/:n/:count/*', array('controller' => 'e14', 'action' => 'index'), array(
+                                'pass' => array('page','n','count'),
+                                'page'=>'.*','n' => '[0-9]+','count'=> '[0-9]+'));                       
+/**
+* ...and connect the rest of 'Pages' controller's URLs.
+*/
+        Router::connect('/e14/:action/*', array('controller' => 'e14'));
+
 /**
  * Load all plugin routes. See the CakePlugin documentation on
  * how to customize the loading of plugin routes.

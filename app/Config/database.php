@@ -70,22 +70,22 @@ class DATABASE_CONFIG {
         public $default = array(
             'datasource' => 'Database/Mysql',
             'persistent' => false,
-            'host' => '',
-            'port' => '',
-            'login' => '',
-            'password' => '',
-            'database' => '',
+            'host' => 'localhost',
+            'port' => '3306',
+            'login' => 'test',
+           'password' => 'mypassword',
+            'database' => 'phpcms',
             'prefix' => '',
             'encoding' => 'utf8',
         );
         public $test = array(
             'datasource' => 'Database/Mysql',
             'persistent' => false,
-            'host' => '',
-            'port' => '',
-            'login' => '',
-            'password' => '',
-            'database' => 'test_database',
+             'host' => 'localhost',
+            'port' => '3306',
+            'login' => 'test',
+           'password' => 'mypassword',
+            'database' => 'phpcms',
             'prefix' => '',
             'encoding' => 'utf8',
         );
@@ -96,26 +96,33 @@ class DATABASE_CONFIG {
 
                 
                 /** a different test/local configuration (shall not be the same as production)*/ 
-                $this->test['host'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
-                $this->test['port'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
-                $this->test['login'] = getenv('TEST_DATABASE_USER');
-                $this->test['password'] = getenv('TEST_DATABASE_PASSWORD');
-                $this->test['database'] = getenv('TEST_DATABASE_NAME');
-                $this->test['datasource'] = $datasource;
+                $test['host'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
+                $test['port'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
+                $test['login'] = getenv('TEST_DATABASE_USER');
+                $test['password'] = getenv('TEST_DATABASE_PASSWORD');
+                $test['database'] = getenv('TEST_DATABASE_NAME');
+                $test['datasource'] = $datasource;
                 
-                $this->default['host'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
-                $this->default['port'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
-                $this->default['login'] = getenv("DATABASE_USER");
-                $this->default['password'] = getenv("DATABASE_PASSWORD");
-                $this->default['database'] = getenv("DATABASE_NAME");
-                $this->default['datasource'] = $datasource;
+                $this->redirectIfNull($test, $this->test);
+                $this->test = $test;
+                
+                $default['host'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
+                $default['port'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
+                $default['login'] = getenv("DATABASE_USER");
+                $default['password'] = getenv("DATABASE_PASSWORD");
+                $default['database'] = getenv("DATABASE_NAME");
+                $default['datasource'] = $datasource;
 
-                /** rediriger les variables non enregistrees vers l'environment de test */
-                foreach ($this->default as $key => $val) {
+                $this->redirectIfNull($default, $this->default);
+                $this->default = $default;
+        }
+        function redirectIfNull(&$default, $test) {
+                foreach ($default as $key => $val) {
                         if (!$val || $val === "") {
-                                $this->default[$key] = $this->test[$key];
+                                $default[$key] = $test[$key];
                         }
                 }
         }
+        
 
 }
