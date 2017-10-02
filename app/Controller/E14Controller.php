@@ -38,6 +38,26 @@ class E14Controller extends AppController {
                         return $this->images($images);
                 } else {
                         $this->set("p", $p);
+                        $d = "";
+                        /** date selection*/
+                        if (isset($YYYY)) {
+                                $d = $YYYY;
+                                if (isset($MM)) {
+                                        $d = $d . "-" . $MM;
+                                        if (isset($DD)) {
+                                                $d = $d . "-" . $DD;
+                                        } else {
+                                                $d = $d . "-*";
+                                        }
+                                } else {
+                                        $d = $d . "-*";
+                                }
+                                $this->set("d", $d);
+                        }
+                        if (isset($count))
+                                $this->set("count", $count);
+                        if (isset($np))
+                                $this->set("np", $np);
                         $this->render(null, "default-e14");
                 }
         }
