@@ -4,8 +4,11 @@ if (isset($pIndex)) {
 		$r = new Index(null);
 		require $GLOBALS['include__php_page.class.inc'];
 		$page = new Page($r, $pIndex);
-		$page->entete();
+		$script = "<!-- Global Site Tag (gtag.js) - Google Analytics -->\n".
+		$this->Html->script('https://www.googletagmanager.com/gtag/js?id=UA-107378583-1')."\n".
+		$this->Html->script('gtag')."\n";
+		$page->entete($script);
 		$page->ajouterContenu($this->fetch('content'));
-		$page->fin();
+		echo $page->fin(0);
 }
 ?>

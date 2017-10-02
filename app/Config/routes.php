@@ -17,7 +17,7 @@
  * to use (in this case, /app/View/Pages/home.ctp)...
  *
 */
-	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home-redirect'));
+	Router::connect('/', array('controller' => 'e14', 'action' => 'index'));
 
 /**
  * ...and connect the rest of 'Pages' controller's URLs.

@@ -37,29 +37,11 @@ class E14Controller extends AppController {
                 //debug($GLOBALS);
                 if ($p === "images") {
                         return $this->images($images);
-                } else {
+                } else if($p){
                         $this->set("p", $p);
-                        $d = "";
-                        /** date selection*/
-                        if (isset($YYYY)) {
-                                $d = $YYYY;
-                                if (isset($MM)) {
-                                        $d = $d . "-" . $MM;
-                                        if (isset($DD)) {
-                                                $d = $d . "-" . $DD;
-                                        } else {
-                                                $d = $d . "-*";
-                                        }
-                                } else {
-                                        $d = $d . "-*";
-                                }
-                                $this->set("d", $d);
-                        }
-                        if (isset($count))
-                                $this->set("count", $count);
-                        if (isset($np))
-                                $this->set("np", $np);
                         $this->render(null, "default-e14");
+                } else {
+                        $this->infos();
                 }
         }
 
@@ -83,7 +65,7 @@ class E14Controller extends AppController {
         public function infos($np = 1, $count = 10, $YYYY = NULL, $MM = NULL, $DD = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
-                $this->set("pIndex", "e13__infos");
+                $this->set("pIndex", "infos__index");
                 $d = "";
                 /** date selection*/
                 if (isset($YYYY)) {
@@ -106,7 +88,7 @@ class E14Controller extends AppController {
                 if (isset($np)){
                         $this->set("np", $np);
                 }
-                $this->index($p);
+                $this->render("infos", "default-e14");
         }
 
         /**
@@ -132,9 +114,9 @@ class E14Controller extends AppController {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 if(isset($cat)){
-                                $this->set("cat",$cat);
+                        $this->set("cat", $cat);
                 }
-                $this->infos($np,$count,$YYYY,$MM,$DD);
+                $this->infos($np, $count, $YYYY, $MM, $DD);
         }
 
         /**
