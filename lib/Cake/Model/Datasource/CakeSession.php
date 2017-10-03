@@ -550,7 +550,7 @@ class CakeSession {
 		if (empty($_SESSION)) {
 			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
 				foreach ($sessionConfig['ini'] as $setting => $value) {
-					if (ini_set($setting, $value) === false) {
+					if (@ini_set($setting, $value) === false) {
 						throw new CakeSessionException(__d('cake_dev', 'Unable to configure the session, setting %s failed.', $setting));
 					}
 				}

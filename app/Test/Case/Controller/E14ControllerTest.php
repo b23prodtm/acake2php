@@ -19,7 +19,8 @@ class E14ControllerTest extends ControllerTestCase {
          * @return void
          */
         public function testIndex() {
-                $this->testAction('/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
+                $this->testAction('/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1))
+                );
                 $this->assertContains('<em>strong title</em>', $this->view);
         }
         /**
@@ -35,11 +36,11 @@ class E14ControllerTest extends ControllerTestCase {
          * testIndex method
          *
          * @return void
-         */
+         *
         public function testBlog() {
                 $result = $this->testAction('/e14/blog/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
                 $this->assertContains('Redirection', $this->view);
-        }
+        }*/
         /**
          * testIndex method
          *

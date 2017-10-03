@@ -12,10 +12,10 @@ class PagesControllerTest extends ControllerTestCase {
         }
 
         public function testHomePageContents() {
-                $result = $this->testAction('/', array('method' => 'get', 'return' => 'contents')
+                $result = $this->testAction('/', array('method' => 'get', 'return' => 'contents', 'named' => array('local' => 1))
                 );
-                /** Look AT app/View/Pages/home.ctp */ 
-                $this->assertContains('mailto:', $result);
+                /** Look Config/routes.php for routing to '/' */ 
+                $this->assertContains('<em>strong title</em>', $this->view);
         }
 
 }
