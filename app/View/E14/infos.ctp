@@ -27,6 +27,8 @@ if ($sql->connect_succes()) {
 	if ($sql->select_succes($infos)) {
 		for ($i = 0; $i < mysqli_num_rows($infos); $i++) {
 			$info_SQL = new Info($sql, $infos);
+			/** convertit le texte markdown en html */
+			$info_SQL->ajouterContenu($this->Markdown->transform($info_SQL->getContenu()));
 			echo $info_SQL->getTableauMultiLang($sql);
 		}
 		mysqli_free_result($infos);
@@ -36,9 +38,18 @@ if ($sql->connect_succes()) {
 	if (i_islocal()) {
 		$result = null;
 		$info = new Info($sql, $result, $r->lang("message", "infos"), "webmaster", "admin/update", date("Y-m-d"));
-		$info->ajouterImage($r->sitemap['images__wip'], "Testing locally...");
-		$info->ajouterContenu($this->Html->para("console","Local config enabled : ".SERVEUR.":".PORT."/".BASE.":".CLIENT." identified by ".CLIENT_MDP));
-
+		$info->ajouterImage($r->sitemap['images__wip'], "");
+		$info->ajouterContenu(
+			$this->Html->para("console","Local config enabled : ".SERVEUR.":".PORT."/".BASE.":".CLIENT." identified by ".CLIENT_MDP));
+		$info->ajouterContenu($this->Markdown->transform(
+		"# Testing Markdown #\n".
+		"* star \n".
+		"* link [to url](http://www.b23prodtm.info)\n".
+		"* _strong title_ *emphasis*\n".
+		"	``block of <tags> and (`)&codes;``\n".
+		"**************\n".
+		"<webmaster@b23prodtm.info>"
+		));
 		echo "<BR>" . $info->getTableauMultiLang($sql);
 	}
 	$sql->close();

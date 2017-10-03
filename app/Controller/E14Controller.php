@@ -20,7 +20,7 @@ class E14Controller extends AppController {
          * @var array
          */
         public $uses = array();
-        public $helpers = array('Js' => array('gTag'));
+        public $helpers = array('Markdown.Markdown');
         var $r;
 
         public function __construct($request = null, $response = null) {
