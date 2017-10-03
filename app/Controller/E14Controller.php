@@ -94,7 +94,7 @@ class E14Controller extends AppController {
         /**
          * @param String $p  method name (defined in view/admin_infos.ctp)
          */
-        public function admin_infos() {
+        public function admin_infos($p = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("pIndex", "admin__infos");
@@ -168,10 +168,12 @@ class E14Controller extends AppController {
         /**
          * @param String $p SITEMAP.PROPERTIES key in [library]
          */
-        public function dvd() {
+        public function dvd($nom = 'library') {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("pIndex", "library__index");
+                $this->set('nom',$nom);
+                $this->set('base', WWW_ROOT.DS.'php-cms'.DS.'e13'.DS.'dvd'.DS.'data'.DS);
                 $this->render(null, "default-e14");
         }
         /**
@@ -182,6 +184,8 @@ class E14Controller extends AppController {
                 //debug($GLOBALS);
                 $this->set('pIndex', 'admin__library');
                 $this->set('pMethod', $p);
+                $this->set('nom','library');
+                $this->set('base', WWW_ROOT.DS.'php-cms'.DS.'e13'.DS.'dvd'.DS.'data'.DS);
                 $this->render(null, "admin_default-e14");
         }
 

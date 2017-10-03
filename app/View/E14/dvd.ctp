@@ -3,20 +3,28 @@
 if (stristr($p, ".php")) {
         include $GLOBALS["library"] . DS . $p;
 } else if(isset($nom) && isset($base)){
-// recuperer les infos du dvd
+        
+        $r = new Index(null);
+        require $GLOBALS["include__php_page.class.inc"];
+        require $GLOBALS["include__php_module_html.inc"];
+        require $GLOBALS["include__php_module_DVD.inc"];
+
+        $clefPage = "library__index";
+        $pageUrl = $r->sitemap[$clefPage];
+        // recuperer les infos du dvd
         $dvd = lireFichier($nom, $base);
-        echo var_dump($dvd);
+        i_debug(var_dump($dvd));
         $liste = get_dir_files($base);
 
         $tbl = new Tableau(3, 1);
         $tbl->setOptionsArray(array("HTML" => array("class" => "info")));
         $tbl->setContenu_cellule(0, 0, $dvd[0], array(array("class" => "info_titre")));
-        $tbl->setContenu_cellule(1, 0, $dvd[1]);
+        $tbl->setContenu_cellule(1, 0, $this->Markdown->transform($dvd[1]));
 
         /* lier les entrees precedant et suivant le film courant */
         sort($liste);
-        $courant = array_search($dvd[0] . ".dat", $liste);
-        echo var_dump($liste);
+        $courant = array_search($dvd[0] . OBJET_ext, $liste);
+        i_debug(var_dump($liste));
         if ($courant < count($liste) - 1) {
                 $suivant = $courant + 1;
         } else {
@@ -27,10 +35,13 @@ if (stristr($p, ".php")) {
         } else {
                 $precedent = $courant;
         }
-        $tbl->setContenu_cellule(2, 0, HTML_lien($pageURL . "?nom=" . substr($liste[$precedent], 0, -4) . "&base=" . urlencode(filter_input(INPUT_GET, 'base')), "< --") . " " . HTML_lien($pageURL . "?nom=" . substr($liste[$suivant], 0, -4) . "&base=" . urlencode(filter_input(INPUT_GET, 'base')), "-- >"));
+        $tbl->setContenu_cellule(2, 0, HTML_lien($pageUrl . "/" . substr($liste[$precedent], 0, -4), "< --") . " " . HTML_lien($pageUrl . "/" . substr($liste[$suivant], 0, -4), "-- >"));
 
         echo $tbl->fin();
+} else if(isset($base)){
+        echo afficherListeDVD($base, $pageURL);
 } else {
-        echo afficherListeDVD($post_base, $pageURL);
+        echo "NO BASE FOLDER";
 }
+        
 ?>

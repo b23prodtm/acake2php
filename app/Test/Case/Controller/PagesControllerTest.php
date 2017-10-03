@@ -15,7 +15,7 @@ class PagesControllerTest extends ControllerTestCase {
                 $result = $this->testAction('/', array('method' => 'get', 'return' => 'contents')
                 );
                 /** Look AT app/View/Pages/home.ctp */ 
-                $this->assertContains('webmaster@b23prodtm.info', $result);
+                $this->assertContains('mailto:', $result);
         }
 
 }

@@ -19,8 +19,8 @@ class E14ControllerTest extends ControllerTestCase {
          * @return void
          */
         public function testIndex() {
-                $result = $this->testAction('/e14/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
-                $this->assertContains('webmaster@b23prodtm.info', $result);
+                $this->testAction('/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
+                $this->assertContains('<em>strong title</em>', $this->view);
         }
         /**
          * testIndex method
@@ -28,8 +28,8 @@ class E14ControllerTest extends ControllerTestCase {
          * @return void
          */
         public function testAdmin() {
-                $result = $this->testAction('/e13/admin/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
-                $this->assertContains('log_off.php', $result);
+                $result = $this->testAction('/admin/e14/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
+                $this->assertContains('log_off.php', $this->view);
         }
         /**
          * testIndex method
@@ -37,8 +37,8 @@ class E14ControllerTest extends ControllerTestCase {
          * @return void
          */
         public function testBlog() {
-                $result = $this->testAction('/e13/blog/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
-                $this->assertContains('Redirection', $result);
+                $result = $this->testAction('/e14/blog/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
+                $this->assertContains('Redirection', $this->view);
         }
         /**
          * testIndex method
@@ -46,8 +46,8 @@ class E14ControllerTest extends ControllerTestCase {
          * @return void
          */
         public function testShop() {
-                $result = $this->testAction('/e13/shop/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
-                $this->assertContains('<p>&nbsp;</p>', $result);
+                $result = $this->testAction('/e14/infos/1/10', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
+                $this->assertContains('Testing Markdown', $this->view);
         }
         
         /**
@@ -56,8 +56,8 @@ class E14ControllerTest extends ControllerTestCase {
          * @return void
          */
         public function testDvd() {
-                $result = $this->testAction('/e13/dvd/bible.php', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
-                $this->assertContains('info_titre', $result);
+                $result = $this->testAction('/e14/dvd/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
+                $this->assertContains('< --', $this->view);
         }
 
 }

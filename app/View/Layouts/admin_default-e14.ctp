@@ -5,6 +5,6 @@ if (isset($pIndex)) {
         require $GLOBALS['include__php_page.class.inc'];
         $page = new ADMIN_Page($r, $pIndex, session_id());
         $page->ajouterContenu($this->fetch('content'));
-        $page->fin();
+        echo $page->fin(0);
 }
 ?>
