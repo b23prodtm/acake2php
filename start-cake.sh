@@ -10,6 +10,7 @@ export FTP_SERVICE_HOST="local"
 export FTP_SERVICE_USER="test"
 export FTP_SERVICE_PASSWORD="mypassword"
 export GET_HASH_PASSWORD="saINNH2X5e87I"
+export CAKEPHP_DEBUG_LEVEL=2
 
 echo "WELCOME HOMEPAGE http://localhost:8080/pages/home-redirect?local=1"
 lib/Cake/Console/cake server -p 8080 $*
