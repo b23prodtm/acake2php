@@ -13,24 +13,27 @@ class E14ControllerTest extends ControllerTestCase {
                 $HomeView = new View($E14Controller);
         }
 
+        var $data = array('local' => 1
+                        );
         /**
          * testIndex method
          *
          * @return void
-         */
+         *
         public function testIndex() {
-                $this->testAction('/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1))
+                $result = $this->testAction('/', array('method' => 'get', 'return' => 'view', 'data' => $this->data)
                 );
-                $this->assertContains('<em>strong title</em>', $this->view);
-        }
+                $this->assertContains('mailto:', $result);
+        }*/
         /**
          * testIndex method
          *
          * @return void
          */
-        public function testAdmin() {
-                $result = $this->testAction('/admin/e14/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
-                $this->assertContains('log_off.php', $this->view);
+        public function testAdmin_index() {
+                $result = $this->testAction('/admin/e14/index', array('method' => 'get', 'return' => 'view', "data" => $this->data)
+                );
+                $this->assertContains('log_off.php', $result);
         }
         /**
          * testIndex method
@@ -46,9 +49,10 @@ class E14ControllerTest extends ControllerTestCase {
          *
          * @return void
          */
-        public function testShop() {
-                $result = $this->testAction('/e14/infos/1/10', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
-                $this->assertContains('Testing Markdown', $this->view);
+        public function testInfos() {
+                $result = $this->testAction('/e14/infos/1/10', array('method' => 'get', 'return' => 'view', 'data' => $this->data)
+                );
+                $this->assertContains('Testing Markdown', $result);
         }
         
         /**
@@ -57,8 +61,9 @@ class E14ControllerTest extends ControllerTestCase {
          * @return void
          */
         public function testDvd() {
-                $result = $this->testAction('/e14/dvd/', array('method' => 'get', 'return' => 'contents', "named" => array("local" => 1)));
-                $this->assertContains('< --', $this->view);
+                $result = $this->testAction('/e14/dvd/', array('method' => 'get', 'return' => 'view', 'data' => $this->data)
+                );
+                $this->assertContains('< --', $result);
         }
 
 }

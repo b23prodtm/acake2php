@@ -2,7 +2,7 @@
 
 if (isset($pIndex)) {
 		$r = new Index(null);
-		require $GLOBALS['include__php_page.class.inc'];
+		require_once $GLOBALS['include__php_page.class.inc'];
 		$page = new Page($r, $pIndex);
 		$script = "<!-- Global Site Tag (gtag.js) - Google Analytics -->\n".
 		$this->Html->script('https://www.googletagmanager.com/gtag/js?id=UA-107378583-1')."\n".

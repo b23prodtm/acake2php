@@ -1,15 +1,13 @@
 <?php
 
-if (stristr($p, ".php")) {
-        include $GLOBALS["library"] . DS . $p;
-} else if(isset($nom) && isset($base)){
+if($nom && $base && $pIndex){
         
         $r = new Index(null);
-        require $GLOBALS["include__php_page.class.inc"];
-        require $GLOBALS["include__php_module_html.inc"];
-        require $GLOBALS["include__php_module_DVD.inc"];
+        require_once $GLOBALS["include__php_page.class.inc"];
+        require_once $GLOBALS["include__php_module_html.inc"];
+        require_once $GLOBALS["include__php_module_DVD.inc"];
 
-        $clefPage = "library__index";
+        $clefPage = $pIndex;
         $pageUrl = $r->sitemap[$clefPage];
         // recuperer les infos du dvd
         $dvd = lireFichier($nom, $base);

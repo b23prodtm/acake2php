@@ -4,9 +4,9 @@ if (!$i_sitemap) {
 	require '../include/php_index.inc.php';
 }
 $r = new Index(null);
-require $GLOBALS["include__php_page.class.inc"];
-require $GLOBALS["include__php_module_html.inc"];
-require $GLOBALS["include__php_module_DVD.inc"];
+require_once $GLOBALS["include__php_page.class.inc"];
+require_once $GLOBALS["include__php_module_html.inc"];
+require_once $GLOBALS["include__php_module_DVD.inc"];
 
 $clefPage = "admin__";
 $ajouter = $r->sitemap[$clefPage.'ajouter'];

@@ -1,5 +1,5 @@
 <?php
-if(isset($pUrl)) {
+if($pUrl) {
         echo file_get_contents($pUrl);
 }
 ?>

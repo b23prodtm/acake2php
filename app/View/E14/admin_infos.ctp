@@ -2,12 +2,12 @@
 	
 	if (!$i_sitemap) { require '../include/php_index.inc.php'; }
 	$r = new Index(filter_input(INPUT_SERVER, 'PHP_SELF'));
-	require $GLOBALS['include__php_page.class.inc'];
-	require $GLOBALS['include__php_formulaire.class.inc'];
-	require $GLOBALS['include__php_SQL.class.inc'];
-	require $GLOBALS['include__php_constantes.inc'];
-	require $GLOBALS['include__php_info.class.inc'];
-	require $GLOBALS['include__php_image.class.inc'];
+	require_once $GLOBALS['include__php_page.class.inc'];
+	require_once $GLOBALS['include__php_formulaire.class.inc'];
+	require_once $GLOBALS['include__php_SQL.class.inc'];
+	require_once $GLOBALS['include__php_constantes.inc'];
+	require_once $GLOBALS['include__php_info.class.inc'];
+	require_once $GLOBALS['include__php_image.class.inc'];
 
 	echo "<br><center><b>" . $r->lang("admininfos") . "</b></center><br>";
 	$liste = HTML_listeDebut();

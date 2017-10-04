@@ -1,10 +1,10 @@
 <?php
 
 $r = new Index(filter_input(INPUT_SERVER, 'PHP_SELF'));
-require $GLOBALS['include__php_page.class.inc'];
-require $GLOBALS['include__php_info.class.inc'];
-require $GLOBALS['include__php_SQL.class.inc'];
-require $GLOBALS['include__php_constantes.inc'];
+require_once $GLOBALS['include__php_page.class.inc'];
+require_once $GLOBALS['include__php_info.class.inc'];
+require_once $GLOBALS['include__php_SQL.class.inc'];
+require_once $GLOBALS['include__php_constantes.inc'];
 	
 $contenu = $r->lang("contents", "infos");
 
@@ -21,7 +21,7 @@ if ($sql->connect_succes()) {
 	} else {
 		$dateSelect .= " AND published <= CURDATE() ";
 	}
-	i_debug($contenu . " ". $d);
+	i_debug($contenu . " ". (isset($d)?$d:""));
 	/** les posts sont selectionnes en fonction de leur date de publication */
 	$infos = $sql->query("SELECT * FROM info WHERE langue IN " . Info::findLangQuery() . "" . $dateSelect . "ORDER BY date DESC LIMIT " . ($np - 1) * $count . "," . $count);
 	if ($sql->select_succes($infos)) {
