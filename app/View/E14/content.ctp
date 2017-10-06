@@ -1,5 +1,5 @@
 <?php
 if($pUrl) {
-        echo file_get_contents($pUrl);
+        echo $this->Markdown->transform(file_get_contents($pUrl));
 }
 ?>
