@@ -13,18 +13,18 @@ class E14ControllerTest extends ControllerTestCase {
                 $HomeView = new View($E14Controller);
         }
 
-        var $data = array('local' => 1
+        var $data = array('local' => '1'
                         );
         /**
          * testIndex method
          *
          * @return void
-         *
+         **/
         public function testIndex() {
                 $result = $this->testAction('/', array('method' => 'get', 'return' => 'view', 'data' => $this->data)
                 );
                 $this->assertContains('mailto:', $result);
-        }*/
+        }
         /**
          * testIndex method
          *

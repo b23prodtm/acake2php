@@ -31,18 +31,16 @@ class E14Controller extends AppController {
         }
 
         /** @param string $p page filename.php
-                */
+         */
         public function index($p = NULL, $images = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 if ($p === "images") {
                         return $this->images($images);
-                } else if($p){
+                } else if ($p) {
                         $this->set("p", $p);
-                        $this->render("index", "default-e14");
-                } else {
-                        $this->infos();
                 }
+                $this->render("index", "default-e14");
         }
 
         /**
@@ -56,18 +54,18 @@ class E14Controller extends AppController {
         }
 
         /**
-                * @param int $np paginate number
-                * @param int $count count per page
-                * @param int $YYYY 4-digit year
-                * @param int $MM 2-digit month
-                * @param int $DD 2-digit day
+         * @param int $np paginate number
+         * @param int $count count per page
+         * @param int $YYYY 4-digit year
+         * @param int $MM 2-digit month
+         * @param int $DD 2-digit day
          */
         public function infos($np = 1, $count = 10, $YYYY = NULL, $MM = NULL, $DD = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("pIndex", "infos__index");
                 $d = "";
-                /** date selection*/
+                /** date selection */
                 if (isset($YYYY)) {
                         $d = $YYYY;
                         if (isset($MM)) {
@@ -82,12 +80,8 @@ class E14Controller extends AppController {
                         }
                         $this->set("d", $d);
                 }
-                if (isset($count)){
-                        $this->set("count", $count);
-                }
-                if (isset($np)){
-                        $this->set("np", $np);
-                }
+                $this->set("count", $count);
+                $this->set("np", $np);
                 $this->render("infos", "default-e14");
         }
 
@@ -101,7 +95,7 @@ class E14Controller extends AppController {
                 $this->set("pMethod", $p);
                 $this->render(null, "admin_default-e14");
         }
-        
+
         /**
          * @param int categorie
          * @param int $np paginate number
@@ -109,11 +103,11 @@ class E14Controller extends AppController {
          * @param int $YYYY 4-digit year
          * @param int $MM 2-digit month
          * @param int $DD 2-digit day
-        */
+         */
         public function cat($cat = NULL, $np = 1, $count = 10, $YYYY = NULL, $MM = NULL, $DD = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
-                if(isset($cat)){
+                if (isset($cat)) {
                         $this->set("cat", $cat);
                 }
                 $this->infos($np, $count, $YYYY, $MM, $DD);
@@ -131,7 +125,7 @@ class E14Controller extends AppController {
         }
 
         /** @param string $p page name in etc/*.php, folder or NULL
-                &param string $subp file name if $p was a folder*/
+          &param string $subp file name if $p was a folder */
         public function etc($p = NULL, $subp = NULL) {
                 //debug($this->request->params);                
                 if ($p === "locale" || $p === "js") {
@@ -177,10 +171,11 @@ class E14Controller extends AppController {
                 //echo $webdir . ' '. $file;
                 $this->render(null, "default-e14");
         }
+
         /**
          * @param String $p method name (defined in view/admin_dvd.ctp)
          */
-        public function admin_dvd($p = NULL,$webdir='data', $file = '') {
+        public function admin_dvd($p = NULL, $webdir = 'data', $file = '') {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set('pIndex', 'admin__library');
@@ -231,9 +226,11 @@ class E14Controller extends AppController {
         }
 
         /**/
+
         public function about() {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->index("index.php");
         }
+
 }

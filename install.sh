@@ -9,9 +9,11 @@ do
         # (2) handle the input we were given
         case $answer in
                 [yY]* ) 
-                        cp constantes_template.properties constantes.properties
-                        cp constantes_template.properties constantes_local.properties
-                        echo "Okay, just ran the shell script."
+                        cp -v constantes.properties constantes.properties.old
+                        cp -v constantes_template.properties constantes.properties
+                        cp -v constantes_template.properties constantes_local.properties.old
+                        cp -v constantes_template.properties constantes_local.properties
+                        echo "Okay, just ran the shell script. Please, review the files."
                         break;;
 
                 [nN]* ) exit;;
