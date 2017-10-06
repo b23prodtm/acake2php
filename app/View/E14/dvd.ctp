@@ -1,18 +1,14 @@
 <?php
+$r = new Index(null);
 
-if($nom && $base && $pIndex){
+require_once $GLOBALS["include__php_module_DVD.inc"];
+$pageUrl = $r->sitemap[$pIndex];
+if($nom && $base){
         
-        $r = new Index(null);
-        require_once $GLOBALS["include__php_page.class.inc"];
-        require_once $GLOBALS["include__php_module_html.inc"];
-        require_once $GLOBALS["include__php_module_DVD.inc"];
-
-        $clefPage = $pIndex;
-        $pageUrl = $r->sitemap[$clefPage];
         // recuperer les infos du dvd
-        $dvd = lireFichier($nom, $base);
+        $dvd = lireFichier($nom, $GLOBALS[$pIndex].DS.$base.DS);
         i_debug(var_dump($dvd));
-        $liste = get_dir_files($base);
+        $liste = get_dir_files($GLOBALS[$pIndex].DS.$base.DS);
 
         $tbl = new Tableau(3, 1);
         $tbl->setOptionsArray(array("HTML" => array("class" => "info")));
@@ -33,11 +29,11 @@ if($nom && $base && $pIndex){
         } else {
                 $precedent = $courant;
         }
-        $tbl->setContenu_cellule(2, 0, HTML_lien($pageUrl . "/" . substr($liste[$precedent], 0, -4), "< --") . " " . HTML_lien($pageUrl . "/" . substr($liste[$suivant], 0, -4), "-- >"));
+        $tbl->setContenu_cellule(2, 0, HTML_lien($pageUrl . "/" . $base . "/" . substr($liste[$precedent], 0, -4), "< --") . " " . HTML_lien($pageUrl . "/" . $base . "/" . substr($liste[$suivant], 0, -4), "-- >"));
 
         echo $tbl->fin();
 } else if(isset($base)){
-        echo afficherListeDVD($base, $pageURL);
+        echo afficherListeDVD($GLOBALS[$pIndex].DS, $base.DS, $pageUrl);
 } else {
         echo "NO BASE FOLDER";
 }

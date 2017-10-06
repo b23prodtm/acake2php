@@ -13,6 +13,8 @@ $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 if ($sql->connect_succes()) {
 	/* select de date /1/10/at/YYYY/MM/DD */
 	$dateSelect = "";
+	/** categorie select */
+	$catSelect = "";
 	/* pagination /np/count/*/
 	$count = isset($count) ? $count : 10;
 	$np = isset($np) ? $np : 1;
@@ -21,9 +23,12 @@ if ($sql->connect_succes()) {
 	} else {
 		$dateSelect .= " AND published <= CURDATE() ";
 	}
+	if(isset($cat)) {
+		$catSelect .= " AND categorie = '".$cat."' ";
+	}
 	i_debug($contenu . " ". (isset($d)?$d:""));
 	/** les posts sont selectionnes en fonction de leur date de publication */
-	$infos = $sql->query("SELECT * FROM info WHERE langue IN " . Info::findLangQuery() . "" . $dateSelect . "ORDER BY date DESC LIMIT " . ($np - 1) * $count . "," . $count);
+	$infos = $sql->query("SELECT * FROM info WHERE langue IN " . Info::findLangQuery() . "" . $dateSelect . $catSelect . "ORDER BY date DESC LIMIT " . ($np - 1) * $count . "," . $count);
 	if ($sql->select_succes($infos)) {
 		for ($i = 0; $i < mysqli_num_rows($infos); $i++) {
 			$info_SQL = new Info($sql, $infos);

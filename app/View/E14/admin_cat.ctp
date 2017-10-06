@@ -10,7 +10,7 @@
 
 	$sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 
-	echo "<center><b>" . $pCat->getTitre() . "</b></center><br>");
+	echo "<center><b>" . $pCat->getTitre() . "</b></center><br>";
 	$liste = HTML_listeDebut();
 	$liste .= HTML_listeElement(HTML_lien($r->sitemap['admin__cat'] . "/ajouter", $r->lang("ajouter","categories")));
 	$liste .= HTML_listeElement(HTML_lien($r->sitemap['admin__cat'] . "/supprimer", $r->lang("supprimer","categories")));
