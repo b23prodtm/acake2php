@@ -39,6 +39,8 @@ class E14Controller extends AppController {
                         return $this->images($images);
                 } else if ($p) {
                         $this->set("p", $p);
+                } else {
+                        $this->set("pIndex", "e13__index");
                 }
                 $this->render("index", "default-e14");
         }
