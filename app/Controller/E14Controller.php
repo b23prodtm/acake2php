@@ -49,8 +49,8 @@ class E14Controller extends AppController {
         public function admin_index($p = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
-                $this->set("p", $p);
-                $this->render(null, "admin_default-e14");
+                $this->set("pIndex", "admin__".$p);
+                $this->render("admin_index", "admin_default-e14");
         }
 
         /**

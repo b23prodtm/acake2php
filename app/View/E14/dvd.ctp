@@ -1,14 +1,17 @@
 <?php
+
 $r = new Index(null);
 
 require_once $GLOBALS["include__php_module_DVD.inc"];
 $pageUrl = $r->sitemap[$pIndex];
-if($nom && $base){
-        
+if ($nom && $base) {
+
         // recuperer les infos du dvd
-        $dvd = lireFichier($nom, $GLOBALS[$pIndex].DS.$base.DS);
-        i_debug(var_dump($dvd));
-        $liste = get_dir_files($GLOBALS[$pIndex].DS.$base.DS);
+        $dvd = lireFichier($nom, $GLOBALS[$pIndex] . DS . $base . DS);
+        if (i_isdebug()) {
+                print_array_r($dvd);
+        }
+        $liste = get_dir_files($GLOBALS[$pIndex] . DS . $base . DS);
 
         $tbl = new Tableau(3, 1);
         $tbl->setOptionsArray(array("HTML" => array("class" => "info")));
@@ -18,7 +21,9 @@ if($nom && $base){
         /* lier les entrees precedant et suivant le film courant */
         sort($liste);
         $courant = array_search($dvd[0] . OBJET_ext, $liste);
-        i_debug(var_dump($liste));
+        if (i_isdebug()) {
+                print_array_r($liste);
+        }
         if ($courant < count($liste) - 1) {
                 $suivant = $courant + 1;
         } else {
@@ -29,13 +34,15 @@ if($nom && $base){
         } else {
                 $precedent = $courant;
         }
-        $tbl->setContenu_cellule(2, 0, HTML_lien($pageUrl . "/" . $base . "/" . substr($liste[$precedent], 0, -4), "< --") . " " . HTML_lien($pageUrl . "/" . $base . "/" . substr($liste[$suivant], 0, -4), "-- >"));
+        $this->Html->addCrumb('<<',$pageUrl . "/" . $base . "/" . substr($liste[$precedent], 0, -4));
+        $this->Html->addCrumb('O',$pageUrl . "/" . $base . "/");
+        $this->Html->addCrumb('>>',$pageUrl . "/" . $base . "/" . substr($liste[$suivant], 0, -4));        
+        $tbl->setContenu_cellule(2, 0, $this->Html->getCrumbs(" * "), array("class" => 'breadcrumb'));
 
         echo $tbl->fin();
-} else if(isset($base)){
-        echo afficherListeDVD($GLOBALS[$pIndex].DS, $base.DS, $pageUrl);
+} else if (isset($base)) {
+        echo afficherListeDVD($GLOBALS[$pIndex] . DS, $base . DS, $pageUrl);
 } else {
         echo "NO BASE FOLDER";
 }
-        
 ?>
