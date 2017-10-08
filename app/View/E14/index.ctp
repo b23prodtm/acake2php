@@ -1,6 +1,6 @@
 <?php
 
-if ($p) {
+if (isset($p)) {
         if (stristr($p, ".php")) {
                 include($GLOBALS["e13"] . DS . $p);
         } else {
