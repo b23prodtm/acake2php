@@ -13,7 +13,9 @@ class E14ControllerTest extends ControllerTestCase {
                 $HomeView = new View($E14Controller);
         }
 
-        var $data = array('local' => '1'
+        var $data = array(
+            'debug' => 1, 
+            'local' => 1
                         );
         /**
          * testIndex method
