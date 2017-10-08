@@ -3,9 +3,6 @@
 <!-- toc -->
 
 - [CakePHP Sample App on OpenShift](#cakephp-sample-app-on-openshift)
-  * [OpenShift Considerations](#openshift-considerations)
-    + [Security](#security)
-    + [Installation:](#installation)
     + [Source repository layout](#source-repository-layout)
     + [Compatibility](#compatibility)
     + [License](#license)
@@ -36,4 +33,16 @@ However, if these files exist they will affect the behavior of the build process
 This repository is compatible with PHP 5.6 and higher, excluding any alpha or beta versions.
 
 ### License
-This code is dedicated to the public domain to the maximum extent permitted by applicable law, pursuant to [CC0](http://creativecommons.org/publicdomain/zero/1.0/).
+   Copyright 2016 b23production GNU
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       [](http://www.apache.org/licenses/LICENSE-2.0)
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
