@@ -4,16 +4,17 @@ copies=0
 while true
 do
         # (1) prompt user, and read command line argument
-        echo "It will overwrite constantes.properties."
+        echo "Step 1. Overwrite constantes.properties..."
         answer=$1
         case $answer in
-               -[yY]* )
+               -[yY]* ) echo "Yes.\n"
                         answer="Y";;
         
-               -[nN]* ) break;;
+               -[nN]* ) echo "No.\n"
+                        break;;
 
                * )
-                        read -p "Run the shell script now (Y/N) ? " answer;;
+                        read -p "Run the copy template script now (Y/N) ? " answer;;
         esac
         while [ -f constantes.properties.old-$copies ] || [ -f constantes_local.properties.old-$copies ]
         do
@@ -26,16 +27,17 @@ do
                         cp -v constantes_template.properties constantes.properties
                         cp -v constantes_template.properties constantes_local.properties.old-$copies
                         cp -v constantes_template.properties constantes_local.properties
-                        echo "Okay, just ran the shell script. Please, review the files."
+                        echo "Okay, just ran the shell script. Please, review the files.\n"
                         #quit while loop
                         break;;
 
                 [nN]* ) break;;
 
-                * )     echo "Dude, just enter Y or N, please.";;
+                * )     echo "Dude, just enter Y or N, please.\n";;
         esac
 done
 #; get hash password argv are -p password -s salt
+echo "Step 2. Get a hashed password with encryption, PHP encrypts.\n"
 pass=$2
 salt=$4
 #; read password if not set as $3 argv
@@ -50,7 +52,7 @@ case $pass in
                         if [ "$pass" == "$confirmpass" ]; then
                                 break
                         else
-                                echo "Passwords don't match."
+                                echo "Passwords don't match.\n"
                         fi
                 done;;
 esac
@@ -58,10 +60,10 @@ esac
 case $salt in
         -[sS]* ) salt=$5;;
 
-        *)
-                while [$salt == ""] 
+        * )
+                while [ "$salt" == "" ] 
                 do
-                let read -p "Please enter the 'salt' word :" salt 
+                read -p "Please enter the salt word :" salt 
                 done;;
 esac
                          
