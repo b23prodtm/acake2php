@@ -24,8 +24,10 @@ echo $message = "" .
  '<br>' .
  '<strong>' . __d('cake_dev', 'Line') . '</strong>' .
  '' . h($error->getLine()) . '';
-//add this
-$post_array = array('message' => $message, 'email' => 'webmaster@' . filter_input(INPUT_SERVER, 'SERVER_NAME'), 'subject' => "Fatal Error : " . $error->getFile());
+//add this report to a mailing
+$mail_address ='webmaster@' . filter_input(INPUT_SERVER, 'SERVER_NAME');
+$message .= "</p><p class='notice'>A mail with the report was sent to ".$mail_address.'.';
+$post_array = array('message' => $message, 'email' => $mail_address, 'subject' => "Fatal Error : " . $error->getFile());
 echo $this->requestAction(array("Controller" => 'Emails', 'action' => 'send', 'Email' => $post_array), array('return' => true));
 ?>
 </p>
