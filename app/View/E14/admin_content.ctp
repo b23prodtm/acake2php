@@ -1,21 +1,23 @@
 <?php
-if (!$i_sitemap) {
-        require_once '../include/php_index.inc.php';
-}
-$r = new Index(filter_input(INPUT_SERVER, 'PHP_SELF'));
+$r = new Index($this);
 require_once $GLOBALS['include__php_page.class.inc'];
 require_once $GLOBALS['include__php_formulaire.class.inc'];
 /* functions d'affichage  -----  privées */
 
+function getTypes() {
+        return $mtypes = array("jpeg", "png", 'gif');
+}
+
 function publierImages(Index $r) {
         $i = 0; //compteur
         foreach ($_FILES as $image) {
-                if (is_uploaded_file($image['tmp_name'])) {
-                        $path = $GLOBALS['R_SITEDIR'] . "activites" . ++$i . ".jpg";
-                        if (move_uploaded_file($image['tmp_name'], $path)) {
-                                echo "<div class='console'><b>Image " . $image['name'] . " " . $r->lang("actionsucces","admin") . "</b></div>";
+                /* controle final type de fichier */
+                if (is_uploaded_file($image['tmp_name']) && array_search(substr($image['type'], strlen("image/")), getTypes())) {
+                        $dest = WWW_ROOT . DS . "images" . DS . $images['name'];
+                        if (move_uploaded_file($image['tmp_name'], $dest)) {
+                                echo "<div class='console'><b>Image " . $image['name'] . " " . $r->lang("actionsucces", "admin") . "</b></div>";
                         } else {
-                                echo "<div class='console'><b>Image " . $image['name'] . " " . $r->lang("actionechec","admin") . "</b></div>";
+                                echo "<div class='console'><b>Image " . $image['name'] . " " . $r->lang("actionechec", "admin") . "</b></div>";
                         }
                 }
         }
@@ -37,25 +39,24 @@ function formImages($url, Index $r) {
         echo $f->fin();
 }
 
-function ftp(Index $r) {
+/*function ftp(Index $r) {
         $srv = SERVEUR_FTP;
         $usr = CLIENT_FTP;
         $psw = MDP_FTP;
         $ftpid = ftp_ssl_connect($srv);
         if (ftp_login($ftpid, $usr, $psw)) {
-                echo $r->lang("actionechec","admin") . " " . $srv . "\n";
+                echo $r->lang("actionsucces", "admin") . " " . $srv . "\n";
         } else {
-                trigger_error($r->lang("actionsucces","admin") . " " . $srv, E_USER_ERROR);
+                trigger_error($r->lang("actionechec", "admin") . " " . $srv, E_USER_ERROR);
         }
 
         return $ftpid;
-}
+}*/
 
 /* END fonctions  -----  privées 
   /* ----- les différentes fonctionnalités ------ */
 ?><center><b><?php echo $r->lang('gestionapropos', 'admin'); ?></b></center>
 <?php
-
 /* ----- (1) ------- */
 if ($pMethod === "image") {
         /* ---- reception puis chargement des images ----- */
@@ -66,20 +67,20 @@ if ($pMethod === "image") {
                 formImages($this->request->base, $r);
         }
 } else {
-  $liste = HTML_listeDebut();
-  /* ---- (1) --- */
-  $liste .= HTML_listeElement(HTML_lien($r->sitemap["admin__activites"]. "/image", $r->lang("insertimages","content")));
-  /* ---- (2) --- */
-  $liste .= HTML_listeElement(HTML_lien($r->sitemap["admin__activites"]. "/edit", $r->lang("changepage","content")));
-  $liste .= HTML_listeFin();
-  echo $liste;
+        $liste = HTML_listeDebut();
+        /* ---- (1) --- */
+        $liste .= HTML_listeElement(HTML_lien($r->sitemap["admin__activites"] . "/image", $r->lang("insertimages", "content")));
+        /* ---- (2) --- */
+        $liste .= HTML_listeElement(HTML_lien($r->sitemap["admin__activites"] . "/edit", $r->lang("changepage", "content")));
+        $liste .= HTML_listeFin();
+        echo $liste;
 }
 
 /* ----- (2) ------- */
 if ($pMethod === "edit") { // formulaire changer la page activites
         if (filter_input(INPUT_GET, "page")) { /* ------ script de reception de la page ----- */
                 $path = $GLOBALS['FTPDOCS'] . "activites_inc";
-                $ftpid = ftp($r);
+                /*$ftpid = ftp($r);*/
                 echo "<div class='console'>" . $r->lang('chargefichier', 'admin') . " $path :<br>";
                 $ret = ftp_nb_put($ftpid, $path, $_FILES['page']['tmp_name'], FTP_ASCII);
                 while ($ret == FTP_MOREDATA) {
@@ -99,15 +100,15 @@ if ($pMethod === "edit") { // formulaire changer la page activites
         }
         /* ------ formulaire chargement nouvelle page ----- */
         // Pour la mise en place d'une nouvelle page Activités, un formulaire.
-        $f = new Formulaire($r->lang("changerpage","content"), $r->sitemap["admin__activites"]."/edit/?page=1");
-        $pageHTML = new ChampFile("page", $r->lang("nouvellepage_lab","content"),$r->lang("nouvellepage_dsc","content"));
+        $f = new Formulaire($r->lang("changerpage", "content"), $r->sitemap["admin__activites"] . "/edit/?page=1");
+        $pageHTML = new ChampFile("page", $r->lang("nouvellepage_lab", "content"), $r->lang("nouvellepage_dsc", "content"));
         // array incrementé ->10
         $n = 10;
         for ($i = 0; $i < $n + 1; $i++) {
                 $choix["_" . $i . "_"] = $i;
         }
-        $nbImages = new ChampSelect("n_img", $r->lang("nombreimages","content"), "", $choix, 3, 0);
-        $valider = new ChampValider($r->lang("send","content"), "");
+        $nbImages = new ChampSelect("n_img", $r->lang("nombreimages", "content"), "", $choix, 3, 0);
+        $valider = new ChampValider($r->lang("send", "content"), "");
         $f->ajouterChamp($pageHTML);
         $f->ajouterChamp($nbImages);
         $f->ajouterChamp($valider);

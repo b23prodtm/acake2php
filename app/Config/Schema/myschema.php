@@ -31,7 +31,7 @@ class AppSchema extends CakeSchema {
 	);
 
 	public $categorie = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'autoIncrement' => true),
 		'nom' => array('type' => 'string', 'null' => false, 'length' => 15, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'parent' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 3, 'unsigned' => false, 'key' => 'index'),
 		'image' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
@@ -95,10 +95,10 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $description = array(
+	public $article = array(
 		'fk_reference_categorie' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'key' => 'primary'),
 		'fk_reference_produit' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'fk_reference_mot_cle' => array('type' => 'string', 'null' => false, 'length' => 4, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'description' => array('type' => 'text', 'null' => false, 'length' => 4, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'indexes' => array(
 			'PRIMARY' => array('column' => array('fk_reference_categorie', 'fk_reference_produit', 'fk_reference_mot_cle'), 'unique' => 1)
 		),

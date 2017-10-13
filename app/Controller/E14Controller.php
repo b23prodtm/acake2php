@@ -10,6 +10,7 @@ App::import('file', 'Index', false, array(WWW_ROOT . 'php-cms' . DS . 'e13' . DS
 
 /**
  * CakePHP E13
+ * les indexes de pages 'pIndex' se trouvent dans webroot/.../etc/menu.properties (menu deroulant) et sitemap.properties (plan de site general)
  * @author wwwb23prodtminfo <b23prodtm at sourceforge.net>
  */
 class E14Controller extends AppController {
@@ -25,8 +26,8 @@ class E14Controller extends AppController {
 
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
-                /** initalize $GLOBALS */
-                $this->r = new Index(ROOT . DS . 'index.php', false, WWW_ROOT . 'php-cms/');
+                /* initialise les $GLOBALS et le sitemap */
+                $this->r = new Index($this->View, ROOT . DS . 'index.php', false, WWW_ROOT . 'php-cms/');
                 $this->set("i_sitemap", $this->r->sitemap);
         }
 
@@ -38,8 +39,10 @@ class E14Controller extends AppController {
                 if ($p === "images") {
                         return $this->images($images);
                 } else if ($p) {
+                        /* parametre de nom de fichier c.f. index.ctp */
                         $this->set("p", $p);
                 } else {
+                        /* parametre sitemap c.f. index.ctp , page.Class */
                         $this->set("pIndex", "e13__index");
                 }
                 $this->render("index", "default-e14");
@@ -51,7 +54,7 @@ class E14Controller extends AppController {
         public function admin_index($p = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
-                $this->set("pIndex", "admin__".$p);
+                $this->set("pIndex", "admin__" . $p);
                 $this->render("admin_index", "admin_default-e14");
         }
 
@@ -111,8 +114,11 @@ class E14Controller extends AppController {
                 //debug($GLOBALS);
                 if (isset($cat)) {
                         $this->set("cat", $cat);
+                        $this->infos($np, $count, $YYYY, $MM, $DD);
+                } else {
+                        $this->set("pIndex", "cat__index");
+                        $this->render(null, "default-e14");
                 }
-                $this->infos($np, $count, $YYYY, $MM, $DD);
         }
 
         /**
