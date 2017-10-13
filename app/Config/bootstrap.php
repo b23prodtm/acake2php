@@ -98,3 +98,8 @@ CakeLog::config('error', array(
  * Load DebugKit plugin
  */
 CakePlugin::load('DebugKit');
+
+/**
+ * Load Markdown Plugin
+ */
+CakePlugin::load(array('Markdown' => array('bootstrap' => true)));

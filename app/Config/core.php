@@ -18,7 +18,9 @@ include(dirname(dirname(dirname(__FILE__))) . DS . 'lib' . DS . 'openshift.php')
 // Set the default keys to use
 $_default_keys = array(
     'Security.salt'       => getenv("CAKEPHP_SECURITY_SALT"),
-    'Security.cipherSeed' => getenv("CAKEPHP_SECURITY_CIPHER_SEED")
+    'Security.cipherSeed' => getenv("CAKEPHP_SECURITY_CIPHER_SEED"),
+    /* 0, 1, 2 the higher the more debug data */
+    'Debug.level' => getenv("CAKEPHP_DEBUG_LEVEL")
 );
 
 // This function gets called by openshift_secure and passes an array
@@ -65,7 +67,7 @@ $key_list = openshift_secure($_default_keys,'make_secure_key');
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
-	Configure::write('debug', 2);
+	Configure::write('debug', $_default_keys['Debug.level']);
 
 /**
  * Configure the Error handler used to handle errors for your application. By default
