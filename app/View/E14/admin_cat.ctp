@@ -27,10 +27,10 @@
 				$cp = "0";
 			}
 			if (!$sql->query("INSERT INTO categorie (nom, parent) VALUES ('" . filter_input(INPUT_POST, 'newcat') . "', '$cp')")) {
-				$pCat->ajouterMessage($r->lang("cat_sauve_echec", "categories"));
+				echo $r->lang("cat_sauve_echec", "categories");
 				$sql->afficheErreurs();
 			} else {
-				$pCat->ajouterMessage($r->lang("cat_sauve", "categories") . " (".filter_input(INPUT_POST, 'newcat') . ").");
+				echo $r->lang("cat_sauve", "categories") . " (".filter_input(INPUT_POST, 'newcat') . ").";
 			}
 			unset($_POST);
 		}
@@ -71,7 +71,7 @@
 				// suppression
 				$res = $sql->query("DELETE FROM categorie WHERE id IN($catQuery)");
 				if ($res) {
-					$pCat->ajouterMessage($r->lang("cat_effacees", "categories") . " (". $sql->lignesAffectees() . ")");
+					echo $r->lang("cat_effacees", "categories") . " (". $sql->lignesAffectees() . ")";
 				}
 			}
 		}
@@ -86,7 +86,7 @@
 		$e = new ChampEffacer($r->lang("annuler","form"));
 		$f->ajouterChamp($valid);
 		$f->ajouterChamp($e);
-		echo $f->fin(0);
+		echo $f->fin();
 	}
 
 	/* MODIFIER */
@@ -102,11 +102,11 @@
 			}
 			$id = $cat['id'];
 			if ($nom === NULL || !$nom) {
-				$pCat->ajouterMessage($r->lang("cat_incomplet","categories"));
+				echo $r->lang("cat_incomplet","categories");
 			} elseif (!$sql->query("UPDATE categorie SET nom = '" . $nom . "', parent = " . $parent . " WHERE id = " . $id)) {
-				$pCat->ajouterMessage($r->lang("cat_sauve_echec","categories"));
+				echo $r->lang("cat_sauve_echec","categories");
 			} else {
-				$pCat->ajouterMessage($r->lang("cat_sauve", "categories"));
+				echo $r->lang("cat_sauve", "categories");
 			}
 		}
 		// formulaire

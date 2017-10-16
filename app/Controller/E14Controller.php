@@ -10,6 +10,7 @@ App::import('file', 'Index', false, array(WWW_ROOT . 'php-cms' . DS . 'e13' . DS
 
 /**
  * CakePHP E13
+ * les indexes de pages 'pIndex' se trouvent dans webroot/.../etc/menu.properties (menu deroulant) et sitemap.properties (plan de site general)
  * @author wwwb23prodtminfo <b23prodtm at sourceforge.net>
  */
 class E14Controller extends AppController {
@@ -111,8 +112,11 @@ class E14Controller extends AppController {
                 //debug($GLOBALS);
                 if (isset($cat)) {
                         $this->set("cat", $cat);
+                        $this->infos($np, $count, $YYYY, $MM, $DD);
+                } else {
+                        $this->set("pIndex", "cat__index");
+                        $this->render(null, "default-e14");
                 }
-                $this->infos($np, $count, $YYYY, $MM, $DD);
         }
 
         /**

@@ -18,6 +18,7 @@ if ($sql->connect_succes()) {
 	/* pagination /np/count/*/
 	$count = isset($count) ? $count : 10;
 	$np = isset($np) ? $np : 1;
+	/** les parametres $this->set('d') $this->set('cat') */
 	if (isset($d)) {
 		$dateSelect .= " AND published = '" . $d . "' ";
 	} else {

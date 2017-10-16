@@ -31,7 +31,7 @@ class AppSchema extends CakeSchema {
 	);
 
 	public $categorie = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'autoIncrement' => true),
 		'nom' => array('type' => 'string', 'null' => false, 'length' => 15, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'parent' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 3, 'unsigned' => false, 'key' => 'index'),
 		'image' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
