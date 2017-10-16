@@ -123,6 +123,8 @@ class Mysql extends DboSource {
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
 		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
+		'longbinary' => array('name' => 'longblob'),
+		'mediumbinary' => array('name' => 'mediumblob'),
 		'binary' => array('name' => 'blob'),
 		'boolean' => array('name' => 'tinyint', 'limit' => '1')
 	);
@@ -791,6 +793,12 @@ class Mysql extends DboSource {
 		}
 		if (strpos($col, 'text') !== false) {
 			return 'text';
+		}
+		if (strpos($col, 'longblob') !== false || $col === 'longbinary') {
+			return 'longbinary';
+		}
+		if (strpos($col, 'mediumblob') !== false || $col === 'mediumbinary') {
+			return 'mediumbinary';
 		}
 		if (strpos($col, 'blob') !== false || $col === 'binary') {
 			return 'binary';
