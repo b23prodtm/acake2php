@@ -24,6 +24,7 @@ if (isset($p)) {
                 echo "<BR>" . $info->getTableauMultiLang($sql);
                 $sql->close();
         } else {
-                echo "Err code : " . ERROR_DB_CONNECT;
+                echo HTML_lien($r->sitemap["e13__index"]."?debug=1","Err code : " . ERROR_DB_CONNECT);
+
         }
 }

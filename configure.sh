@@ -1,4 +1,6 @@
 #!/bin/sh
+#; arguements are ./configure.sh -Y|-N [-p password -s salt -f filename] 
+#; if the full set of the arguments exists, there won't be any prompt in the shell
 cd app/webroot/php-cms/e13/etc/
 copies=0
 while true
@@ -36,7 +38,7 @@ do
                 * )     echo "Dude, just enter Y or N, please.\n";;
         esac
 done
-#; get hash password argv are -p password -s salt
+#; get hash password argv are -p password -s salt -f filename
 echo "Step 2. Get a hashed password with encryption, PHP encrypts.\n"
 pass=$2
 salt=$4
@@ -65,12 +67,17 @@ case $salt in
                 do
                 read -p "Please enter the salt word :" salt 
                 done;;
-esac
-                         
-php -f getHashPassword.php -- -p $pass -s $salt
+esac     
+
+hash_file="export_hash_password.sh"     
+php -f getHashPassword.php -- -p $pass -s $salt -f $hash_file
+#; so that the shell can execute export file
+chmod 777 $hash_file
+echo "Saved in $hash_file .\n"
 
 cd ../../../../../
 
-# Know-How : In Openshift 3, configure a CakePhp-Mysql-persistent docker image. Disable automatic image stream deployment.
+# Know-How : In Openshift 3, configure a CakePhp-Mysql-persistent docker image. Set automatic deployment with _100%_ unavailability
+# while deploying and _0_ surge pod in deployment advanced edit configuration tab. 
+# If it starts a build, it automatically scales deployments down to zero, and deploys and scales up when it's finished to build.
 # Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
-# Scale down to zero, start build and deploy when finished to build. Then scale up to your pod usage needs.

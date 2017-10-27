@@ -16,16 +16,27 @@ export FTP_SERVICE_USER="test"
 export FTP_SERVICE_PASSWORD="mypassword"
 #;
 #;
-#; this is generated for the development phase, don't use the same values for production !
-#;
-#;
-export GET_HASH_PASSWORD="saINNH2X5e87I"
-#;
-#;
-#; this development phase passwords, don't use the same values for production !
+#; this development phase, don't use the same values for production (no setting means no debugger)!
 #;
 #;
 export CAKEPHP_DEBUG_LEVEL=2
-
-echo "WELCOME HOMEPAGE http://localhost:8080/pages/home?local=1"
+#;
+#; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
+#;
+if [ ! -f app/webroot/php-cms/e13/etc/constantes_local.properties ]; then
+        echo "PLEASE RUN ./CONFIGURE.SH FIRST !"
+        exit
+fi
+#;
+#;
+#; this is generated for the development phase, don't use the same values for production !
+#;
+#;
+hash="app/webroot/php-cms/e13/etc/export_hash_password.sh"
+if [ ! -f $hash ]; then
+        echo "PLEASE RUN ./CONFIGURE.SH FIRST !"
+        exit
+fi
+$hash
+echo "WELCOME HOMEPAGE http://localhost:8080"
 lib/Cake/Console/cake server -p 8080 $*
