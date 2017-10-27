@@ -2,7 +2,7 @@
 if (!$i_sitemap) {
         require_once '../include/php_index.inc.php';
 }
-$r = new Index(filter_input(INPUT_SERVER, 'PHP_SELF'));
+$r = new Index($this);
 require_once $GLOBALS['include__php_page.class.inc'];
 require_once $GLOBALS['include__php_formulaire.class.inc'];
 /* functions d'affichage  -----  privées */

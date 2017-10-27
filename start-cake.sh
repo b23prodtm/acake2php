@@ -37,6 +37,9 @@ if [ ! -f $hash ]; then
         echo "PLEASE RUN ./CONFIGURE.SH FIRST !"
         exit
 fi
-$hash
-echo "WELCOME HOMEPAGE http://localhost:8080"
+source $hash
+echo "================================"
+echo "PASSWORD HASH $GET_HASH_PASSWORD"
+echo "WELCOME HOMEPAGE IS http://localhost:8080"
+echo "================================"
 lib/Cake/Console/cake server -p 8080 $*

@@ -1,7 +1,7 @@
 <?php
 
 if (isset($pIndex)) {
-        $r = new Index(null);
+        $r = new Index($this);
         require_once $GLOBALS['include__php_page.class.inc'];
         $page = new Page($r, $pIndex);
         $safe = array('safe' => false);

@@ -1,6 +1,6 @@
 <?php
 
-$r = new Index(filter_input(INPUT_SERVER, 'PHP_SELF'));
+$r = new Index($this);
 require_once $GLOBALS['include__php_page.class.inc'];
 require_once $GLOBALS['include__php_info.class.inc'];
 require_once $GLOBALS['include__php_SQL.class.inc'];
@@ -34,7 +34,7 @@ if ($sql->connect_succes()) {
 		for ($i = 0; $i < mysqli_num_rows($infos); $i++) {
 			$info_SQL = new Info($sql, $infos);
 			/** convertit le texte markdown en html */
-			$info_SQL->ajouterContenu($this->Markdown->transform($info_SQL->getContenu()));
+			$info_SQL->setContenu($this->Markdown->transform($info_SQL->getContenu()));
 			echo $info_SQL->getTableauMultiLang($sql);
 		}
 		mysqli_free_result($infos);

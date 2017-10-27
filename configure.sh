@@ -81,3 +81,6 @@ cd ../../../../../
 # while deploying and _0_ surge pod in deployment advanced edit configuration tab. 
 # If it starts a build, it automatically scales deployments down to zero, and deploys and scales up when it's finished to build.
 # Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
+
+echo "Step 3. migrate database"
+/bin/sh migrate-database.sh -y -y -y
