@@ -6,13 +6,13 @@ if (isset($pIndex)) {
         $page = new Page($r, $pIndex);
         $safe = array('safe' => false);
         $script = "<!-- Global Site Tag (gtag.js) - Google Analytics -->\n" .
-        "<script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script>
+                "<script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script>
         <script>
                 (adsbygoogle = window.adsbygoogle || []).push({
                         google_ad_client: \"ca-pub-3110663509052970\",
                         enable_page_level_ads: true
                 });
-        </script>". "\n";
+        </script>" . "\n";
         $page->entete($script);
         $page->ajouterContenu($this->fetch('content'));
         $page->fin();

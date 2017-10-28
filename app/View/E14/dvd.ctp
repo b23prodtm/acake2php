@@ -34,9 +34,9 @@ if ($nom && $base) {
         } else {
                 $precedent = $courant;
         }
-        $this->Html->addCrumb('<<',$pageUrl . "/" . $base . "/" . substr($liste[$precedent], 0, -4));
-        $this->Html->addCrumb('O',$pageUrl . "/" . $base . "/");
-        $this->Html->addCrumb('>>',$pageUrl . "/" . $base . "/" . substr($liste[$suivant], 0, -4));        
+        $this->Html->addCrumb('<<', $pageUrl . "/" . $base . "/" . substr($liste[$precedent], 0, -4));
+        $this->Html->addCrumb('O', $pageUrl . "/" . $base . "/");
+        $this->Html->addCrumb('>>', $pageUrl . "/" . $base . "/" . substr($liste[$suivant], 0, -4));
         $tbl->setContenu_cellule(2, 0, $this->Html->getCrumbs(" * "), array("class" => 'breadcrumb'));
 
         echo $tbl->fin();

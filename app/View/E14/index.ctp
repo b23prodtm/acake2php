@@ -22,10 +22,9 @@ if (isset($p) && $p !== "index") {
                 $info->ajouterImage($r->sitemap['images__wip'], "");
                 $info->ajouterContenu($this->Markdown->transform($r->lang("visitus", "infos") . " " . HTML_lien($r->sitemap["blog__index"], $r->lang("blog"))));
 
-                echo "<BR>65565" . $info->getTableauMultiLang($sql);
+                echo "<BR>" . $info->getTableauMultiLang($sql);
                 $sql->close();
         } else {
-                echo HTML_lien($r->sitemap["e13__index"]."?debug=1","Err code : " . ERROR_DB_CONNECT);
-
+                echo HTML_lien($r->sitemap["e13__index"] . "?debug=1", "Err code : " . ERROR_DB_CONNECT);
         }
 }

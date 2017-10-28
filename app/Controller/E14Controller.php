@@ -26,7 +26,7 @@ class E14Controller extends AppController {
 
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
-                /* initialise les $GLOBALS et le sitemap*/
+                /* initialise les $GLOBALS et le sitemap */
                 $this->r = new Index($this->View, ROOT . DS . 'index.php', false, WWW_ROOT . 'php-cms/');
                 $this->set("i_sitemap", $this->r->sitemap);
         }
@@ -39,10 +39,10 @@ class E14Controller extends AppController {
                 if ($p === "images") {
                         return $this->images($images);
                 } else if ($p) {
-                        /* parametre de nom de fichier c.f. index.ctp*/
+                        /* parametre de nom de fichier c.f. index.ctp */
                         $this->set("p", $p);
                 } else {
-                        /* parametre sitemap c.f. index.ctp , page.Class*/
+                        /* parametre sitemap c.f. index.ctp , page.Class */
                         $this->set("pIndex", "e13__index");
                 }
                 $this->render("index", "default-e14");
@@ -54,7 +54,7 @@ class E14Controller extends AppController {
         public function admin_index($p = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
-                $this->set("pIndex", "admin__".$p);
+                $this->set("pIndex", "admin__" . $p);
                 $this->render("admin_index", "admin_default-e14");
         }
 
