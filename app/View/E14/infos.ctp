@@ -29,7 +29,7 @@ if ($sql->connect_succes()) {
         }
         i_debug($contenu . " " . (isset($d) ? $d : ""));
         /** les posts sont selectionnes en fonction de leur date de publication */
-        $infos = $sql->query("SELECT * FROM info WHERE langue IN " . Info::findLangQuery() . "" . $dateSelect . $catSelect . "ORDER BY date DESC LIMIT " . ($np - 1) * $count . "," . $count);
+        $infos = $sql->query("SELECT * FROM info WHERE langue IN " . Info::findLangQuery() . "" . $dateSelect . $catSelect . "ORDER BY published DESC LIMIT " . ($np - 1) * $count . "," . $count);
         if ($sql->select_succes($infos)) {
                 for ($i = 0; $i < mysqli_num_rows($infos); $i++) {
                         $info_SQL = new Info($sql, $infos);

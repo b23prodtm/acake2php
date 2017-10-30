@@ -1,5 +1,5 @@
 <?php
-
+/* definir pIndex pour ce layout */
 if (isset($pIndex)) {
         $r = new Index($this);
         require_once $GLOBALS['include__php_page.class.inc'];
@@ -17,6 +17,7 @@ if (isset($pIndex)) {
         $page->ajouterContenu($this->fetch('content'));
         $page->fin();
 } else {
+/* les erreurs s'affiche ssi le parametre <URL>?debug=1 */
         trigger_error("no pIndex set ", E_USER_WARNING);
 }
 ?>
