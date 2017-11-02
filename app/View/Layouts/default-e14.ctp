@@ -1,26 +1,14 @@
 <?php
 
 if (isset($pIndex)) {
-        $r = new Index(null);
+        $r = new Index($this);
         require_once $GLOBALS['include__php_page.class.inc'];
         $page = new Page($r, $pIndex);
-        $safe = array('safe' => false);
-        $script = "<!-- Global Site Tag (gtag.js) - Google Analytics -->\n" .
-                $this->Html->script('https://www.googletagmanager.com/gtag/js?id=UA-107378583-1') . "\n" .
-                $this->Html->scriptBlock("window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments)};
-        gtag('js', new Date());
-
-        gtag('config', 'UA-107378583-1');", $safe) . "\n" .
-                $this->Html->script('//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js') . "\n" .
-                $this->Html->scriptBlock("(adsbygoogle = window.adsbygoogle || []).push({
-                google_ad_client: 'ca-pub-3110663509052970',
-                enable_page_level_ads: true
-        });", $safe) . "\n";
+        $script = $this->element("Adsense/analytics");
         $page->entete($script);
         $page->ajouterContenu($this->fetch('content'));
         $page->fin();
 } else {
-        trigger_error("no pIndex set ", E_USER_WARNING);
+        trigger_error("no pIndex set in default-e14.ctp", E_USER_WARNING);
 }
 ?>
