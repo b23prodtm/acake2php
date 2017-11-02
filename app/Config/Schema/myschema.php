@@ -166,7 +166,7 @@ class AppSchema extends CakeSchema {
 	public $image = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'nom' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 250, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'image' => array('type' => 'binary', 'null' => false, 'default' => null),
+		'image' => array('type' => 'mediumbinary', 'null' => false, 'default' => null),
 		'mime' => array('type' => 'string', 'null' => false, 'default' => 'image/png', 'length' => 250, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'description' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'indexes' => array(
