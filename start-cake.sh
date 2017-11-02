@@ -38,8 +38,9 @@ if [ ! -f $hash ]; then
         exit
 fi
 source $hash
-echo "================================"
+echo "==============================================="
 echo "PASSWORD HASH $GET_HASH_PASSWORD"
 echo "WELCOME HOMEPAGE IS http://localhost:8080"
-echo "================================"
+echo "TEST CONFIGURATION IS /index/index.php?local=1"
+echo "==============================================="
 lib/Cake/Console/cake server -p 8080 $*

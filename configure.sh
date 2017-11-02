@@ -18,7 +18,7 @@ do
                * )
                         read -p "Run the copy template script now (Y/N) ? " answer;;
         esac
-        while [ -f constantes.properties.old-$copies ] || [ -f constantes_local.properties.old-$copies ]
+        while [ -f constantes.properties.old-$copies ]
         do
         let copies++
         done
@@ -27,8 +27,6 @@ do
                 [yY]* )                         
                         cp -v constantes.properties constantes.properties.old-$copies
                         cp -v constantes_template.properties constantes.properties
-                        cp -v constantes_template.properties constantes_local.properties.old-$copies
-                        cp -v constantes_template.properties constantes_local.properties
                         echo "Okay, just ran the shell script. Please, review the files.\n"
                         #quit while loop
                         break;;
