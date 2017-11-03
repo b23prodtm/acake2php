@@ -23,7 +23,7 @@ export CAKEPHP_DEBUG_LEVEL=2
 #;
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;
-if [ ! -f app/webroot/php-cms/e13/etc/constantes_local.properties ]; then
+if [ ! -f app/webroot/php-cms/e13/etc/constantes.properties ]; then
         echo "PLEASE RUN ./CONFIGURE.SH FIRST !"
         exit
 fi

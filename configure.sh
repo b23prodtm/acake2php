@@ -6,7 +6,7 @@ copies=0
 while true
 do
         # (1) prompt user, and read command line argument
-        echo "Step 1. Overwrite constantes.properties..."
+        echo "Step 1. Overwrite constantes.properties...\n"
         answer=$1
         case $answer in
                -[yY]* ) echo "Yes.\n"
@@ -52,7 +52,7 @@ do
                         break;;
 
                 * )
-                        read -p "Run reset password script now (Y/N) ? " answer;;
+                        read -p "Run reset password script now (Y/N) ?" answer;;
         esac
          case $answer in
                 [yY]* )                         
@@ -62,8 +62,10 @@ do
                                * )
                                        while true 
                                        do
-                                               read -p "Please enter a password :" pass
-                                               read -p "Please re-enter the password :" confirmpass
+                                               read -sp "Please enter a password :" pass
+                                               echo "\n"
+                                               read -sp "Please re-enter the password :" confirmpass
+                                               echo "\n"
                                                if [ "$pass" == "$confirmpass" ]; then
                                                        break
                                                else
@@ -100,7 +102,7 @@ cd ../../../../../
 # If it starts a build, it automatically scales deployments down to zero, and deploys and scales up when it's finished to build.
 # Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
 
-echo "Step 3. migrate database"
+echo "Step 3. migrate database\n"
 while true
 do
         answer=$1
@@ -111,7 +113,7 @@ do
                         break;;
 
                * )
-                        read -p "Run migrate database script now (Y/N) ? " answer;;
+                        read -p "Run migrate database script now (Y/N) ?" answer;;
         esac
         
         case $answer in
