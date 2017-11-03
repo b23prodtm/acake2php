@@ -14,27 +14,19 @@ App::uses('AppController', 'Controller');
  */
 class E14Controller extends AppController {
 
-        public function __construct($request = null, $response = null) {
-                parent::__construct($request, $response);
-                /* initialise les $GLOBALS et le sitemap */
-                $this->r = new Index($this->View, ROOT . DS . 'index.php', false, WWW_ROOT . 'php-cms/');
-                $this->set("i_sitemap", $this->r->sitemap);
-        }
+        public $helpers = array('Info' => array('countPerPage' => '5'));
 
         /** @param string $p page filename.php
          */
         public function index($p = NULL, $images = NULL) {
-                //debug($this->request->params);
-                //debug($GLOBALS);
                 if ($p === "images") {
                         return $this->images($images);
                 } else if ($p) {
-                        /* parametre de nom de fichier c.f. index.ctp */
+                        /* parametre de page */
                         $this->set("p", $p);
-                } else {
-                        /* parametre sitemap c.f. index.ctp , page.Class */
-                        $this->set("pIndex", "e13__index");
-                }
+                }     
+                i_debug("p : " . $p);
+                $this->set("pIndex", "e13__index");
                 $this->render("index", "default-e14");
         }
 

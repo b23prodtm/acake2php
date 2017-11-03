@@ -34,7 +34,7 @@ Router::connect('/admin/e14/:action/*', array('controller' => 'e14', 'admin' => 
  */
 Router::connect('/article/:action/*', array('controller' => 'article'));
 /**
- * the two stars(**) wildcard is for many-to-one passed argument as a whole string
+ * the two stars(**) wildcard is for many-to-one  argument passed as a whole string
  */
 Router::connect('/article/**', array('controller' => 'article', 'action' => 'index'));
 /**
@@ -54,7 +54,7 @@ Router::connect('/:action/*', array('controller' => 'e14'));
 Router::connect('/', array('controller' => 'e14', 'action' => 'index'));
 
 
-
+/* all URLs /(somename).php parsed to (somename) as :action or passed argument e.g. index/image.php => e14/index/_image => _image.php as included script */
 Router::parseExtensions('php');
 /**
  * Load all plugin routes. See the CakePlugin documentation on

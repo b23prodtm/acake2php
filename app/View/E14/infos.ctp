@@ -28,7 +28,7 @@ if ($sql->connect_succes()) {
                 $catSelect .= " AND categorie = '" . $cat . "' ";
         }
         i_debug($contenu . " " . (isset($d) ? $d : ""));
-        /** les posts sont selectionnes en fonction de leur date de publication */
+        /** les posts sont selectionnes en fonction de leur date de publication (offset, limit) */
         $infos = $sql->query("SELECT * FROM info WHERE langue IN " . Info::findLangQuery() . "" . $dateSelect . $catSelect . "ORDER BY published DESC LIMIT " . ($np - 1) * $count . "," . $count);
         if ($sql->select_succes($infos)) {
                 for ($i = 0; $i < mysqli_num_rows($infos); $i++) {
