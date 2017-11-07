@@ -1,9 +1,8 @@
 /nbproject/private/
 /app/Vendor/
 /app/webroot/e13/nbproject/private/
-/app/tmp/tests/
-/app/tmp/sessions/
+/app/tmp/cache/
 /app/tmp/logs/
+/app/tmp/persistent/
 /app/webroot/php-cms/e13/nbproject/private/
-app/tmp/cache/*
-app/tmp/cache/persistent/*
+!*empty

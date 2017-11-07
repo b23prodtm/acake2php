@@ -1,5 +1,5 @@
 <?php
-
+/* definir pIndex pour ce layout */
 if (isset($pIndex)) {
         $r = new Index($this);
         require_once $GLOBALS['include__php_page.class.inc'];

@@ -39,19 +39,19 @@ function formImages($url, Index $r) {
         echo $f->fin();
 }
 
-function ftp(Index $r) {
+/*function ftp(Index $r) {
         $srv = SERVEUR_FTP;
         $usr = CLIENT_FTP;
         $psw = MDP_FTP;
         $ftpid = ftp_ssl_connect($srv);
         if (ftp_login($ftpid, $usr, $psw)) {
-                echo $r->lang("actionechec", "admin") . " " . $srv . "\n";
+                echo $r->lang("actionsucces", "admin") . " " . $srv . "\n";
         } else {
-                trigger_error($r->lang("actionsucces", "admin") . " " . $srv, E_USER_ERROR);
+                trigger_error($r->lang("actionechec", "admin") . " " . $srv, E_USER_ERROR);
         }
 
         return $ftpid;
-}
+}*/
 
 /* END fonctions  -----  privées 
   /* ----- les différentes fonctionnalités ------ */
@@ -80,7 +80,7 @@ if ($pMethod === "image") {
 if ($pMethod === "edit") { // formulaire changer la page activites
         if (filter_input(INPUT_GET, "page")) { /* ------ script de reception de la page ----- */
                 $path = $GLOBALS['FTPDOCS'] . "activites_inc";
-                $ftpid = ftp($r);
+                /*$ftpid = ftp($r);*/
                 echo "<div class='console'>" . $r->lang('chargefichier', 'admin') . " $path :<br>";
                 $ret = ftp_nb_put($ftpid, $path, $_FILES['page']['tmp_name'], FTP_ASCII);
                 while ($ret == FTP_MOREDATA) {

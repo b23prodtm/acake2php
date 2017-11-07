@@ -17,6 +17,7 @@
 Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
 /**
+ **************************************************        E14Controller routing
  * the one star(*) wildcard is for one-to-one passed arguments separated by the slash '/'
  */
 Router::connect('/e14/:action/*', array('controller' => 'e14'));
@@ -24,11 +25,23 @@ Router::connect('/e14/:action/*', array('controller' => 'e14'));
  * the two stars(**) wildcard is for many-to-one passed argument as a whole string
  */
 Router::connect('/e14/**', array('controller' => 'e14', 'action' => 'index'));
-
 /**
  */
 Router::connect('/admin/e14/:action/*', array('controller' => 'e14', 'admin' => true));
 /**
+ ***************************************************   ArticleController routing
+ * the one star(*) wildcard is for one-to-one passed arguments separated by the slash '/'
+ */
+Router::connect('/article/:action/*', array('controller' => 'article'));
+/**
+ * the two stars(**) wildcard is for many-to-one  argument passed as a whole string
+ */
+Router::connect('/article/**', array('controller' => 'article', 'action' => 'index'));
+/**
+ */
+Router::connect('/admin/article/:action/*', array('controller' => 'article', 'admin' => true));
+/**
+ ***************************************************             default routing 
  */
 Router::connect('/admin/*', array('controller' => 'e14', 'action' => 'index', 'admin' => true));
 /**
@@ -41,7 +54,7 @@ Router::connect('/:action/*', array('controller' => 'e14'));
 Router::connect('/', array('controller' => 'e14', 'action' => 'index'));
 
 
-
+/* all URLs /(somename).php parsed to (somename) as :action or passed argument e.g. index/image.php => e14/index/_image => _image.php as included script */
 Router::parseExtensions('php');
 /**
  * Load all plugin routes. See the CakePlugin documentation on
