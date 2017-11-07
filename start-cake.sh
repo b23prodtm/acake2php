@@ -23,7 +23,7 @@ export CAKEPHP_DEBUG_LEVEL=2
 #;
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;
-if [ ! -f app/webroot/php-cms/e13/etc/constantes_local.properties ]; then
+if [ ! -f app/webroot/php-cms/e13/etc/constantes.properties ]; then
         echo "PLEASE RUN ./CONFIGURE.SH FIRST !"
         exit
 fi
@@ -38,8 +38,9 @@ if [ ! -f $hash ]; then
         exit
 fi
 source $hash
-echo "================================"
+echo "==============================================="
 echo "PASSWORD HASH $GET_HASH_PASSWORD"
 echo "WELCOME HOMEPAGE IS http://localhost:8080"
-echo "================================"
+echo "TEST CONFIGURATION IS /index/index.php?local=1"
+echo "==============================================="
 lib/Cake/Console/cake server -p 8080 $*

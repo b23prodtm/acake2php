@@ -6,7 +6,6 @@
  */
 
 App::uses('AppController', 'Controller');
-App::import('file', 'Index', false, array(WWW_ROOT . 'php-cms' . DS . 'e13' . DS . 'include' . DS), 'php_index.inc.php');
 
 /**
  * CakePHP E13
@@ -15,36 +14,21 @@ App::import('file', 'Index', false, array(WWW_ROOT . 'php-cms' . DS . 'e13' . DS
  */
 class E14Controller extends AppController {
 
-        /**
-         * This controller does not use a model
-         *
-         * @var array
-         */
-        public $uses = array();
-        public $helpers = array('Markdown.Markdown');
-        var $r;
-
-        public function __construct($request = null, $response = null) {
-                parent::__construct($request, $response);
-                /* initialise les $GLOBALS et le sitemap */
-                $this->r = new Index($this->View, ROOT . DS . 'index.php', false, WWW_ROOT . 'php-cms/');
-                $this->set("i_sitemap", $this->r->sitemap);
-        }
+        public $helpers = array('Info' => array(
+                'countPerPage' => '10',
+                'Markdown' => true));
 
         /** @param string $p page filename.php
          */
         public function index($p = NULL, $images = NULL) {
-                //debug($this->request->params);
-                //debug($GLOBALS);
                 if ($p === "images") {
                         return $this->images($images);
                 } else if ($p) {
-                        /* parametre de nom de fichier c.f. index.ctp */
+                        /* parametre de page */
                         $this->set("p", $p);
-                } else {
-                        /* parametre sitemap c.f. index.ctp , page.Class */
-                        $this->set("pIndex", "e13__index");
-                }
+                }     
+                //i_debug("p : " . $p);
+                $this->set("pIndex", "e13__index");
                 $this->render("index", "default-e14");
         }
 
@@ -201,36 +185,6 @@ class E14Controller extends AppController {
                 //debug($GLOBALS);
                 $this->set("p", $p);
                 $this->render(null, "default-e14");
-        }
-
-        /**
-         * @param String $p SITEMAP.PROPERTIES key in [activites]
-         */
-        public function content($p = NULL) {
-                //debug($this->request->params);
-                //debug($GLOBALS);
-                if (stristr($p, "images")) {
-                        $this->response->file($GLOBALS['activites'] . DS . $p);
-                        $this->response->send();
-                } elseif (stristr($p, ".html")) {
-                        $this->set('pIndex', 'activites__index');
-                        $this->set('pUrl', $GLOBALS['activites'] . DS . $p);
-                } else {
-                        $this->set('pIndex', 'activites__' . $p);
-                        $this->set('pUrl', $GLOBALS['activites' . $p]);
-                }
-                $this->render('content', "default-e14");
-        }
-
-        /**
-         * @param String $p method name (defined in view/admin_content.ctp template)
-         */
-        public function admin_content($p = null) {
-                //debug($this->request->params);
-                //debug($GLOBALS);
-                $this->set('pIndex', 'admin__activites');
-                $this->set('pMethod', $p);
-                $this->render(null, "admin_default-e14");
         }
 
         /**/

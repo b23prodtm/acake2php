@@ -68,7 +68,7 @@ echo $this->Html->script("/js/jssor.slider-26.3.0.min.js", ["once" => true]);
 
 				var MAX_WIDTH = <?php echo $maxWidth; ?>;
 				var MAX_HEIGHT = <?php echo $maxHeight; ?>;
-				var MAX_BLEEDING = 0.128;
+				var MAX_BLEEDING = 1;
 
 				function ScaleSlider() {
 						var containerElement = jssor_1_slider.$Elmt.parentNode;
@@ -126,8 +126,8 @@ echo $this->Html->script("/js/jssor.slider-26.3.0.min.js", ["once" => true]);
 
 
 		.jssora105 {display:block;position:absolute;cursor:pointer;}
-		.jssora105 .c {fill:#000;opacity:.5;}
-		.jssora105 .a {fill:none;stroke:#fff;stroke-width:350;stroke-miterlimit:10;}
+		.jssora105 .c {fill:#fff;opacity:.5;}
+		.jssora105 .a {fill:none;stroke:#000;stroke-width:350;stroke-miterlimit:10;}
 		.jssora105:hover .c {opacity:.5;}
 		.jssora105:hover .a {opacity:.8;}
 		.jssora105.jssora105dn .c {opacity:.2;}
