@@ -14,7 +14,9 @@ App::uses('AppController', 'Controller');
  */
 class E14Controller extends AppController {
 
-        public $helpers = array('Info' => array('countPerPage' => '5'));
+        public $helpers = array('Info' => array(
+                'countPerPage' => '10',
+                'Markdown' => true));
 
         /** @param string $p page filename.php
          */
@@ -25,7 +27,7 @@ class E14Controller extends AppController {
                         /* parametre de page */
                         $this->set("p", $p);
                 }     
-                i_debug("p : " . $p);
+                //i_debug("p : " . $p);
                 $this->set("pIndex", "e13__index");
                 $this->render("index", "default-e14");
         }

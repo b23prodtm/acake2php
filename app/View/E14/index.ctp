@@ -13,14 +13,14 @@ if(isset($p) && array_key_exists("e13__" . $p, $GLOBALS)){
         /** test de la connexion */
         if ($sql->connect_succes()) {
                 $pageUrl = $r->sitemap[$pIndex];
-                /** infos flashs */
+                /** infos flashs pagination ($p : offset) */
                 $pages = array();
-                $page = isset($p) ? $p : 1;
-                echo $this->Info->getInfoFlashN($sql, $page, $pages);
-                foreach($pages as $p => $offset) {
-                        $this->Html->addCrumb($offset, $pageUrl . "/" . $p);
+                $page = isset($p) ? $p : 0;
+                echo $this->Info->getInfoFlashN($page, $pages);
+                foreach($pages as $n => $offset) {
+                        $this->Html->addCrumb($n, $pageUrl . "/" . $offset);
                 }
-                echo $this->Html->getCrumbs(" - ");
+                echo "[ " . $this->Html->getCrumbs(" - ") . " ]";
         } else {
                 echo HTML_lien($r->sitemap["e13__index"] . "?debug=1", "Err code : " . ERROR_DB_CONNECT);
         }
