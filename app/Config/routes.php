@@ -26,6 +26,7 @@ Router::connect('/e14/:action/*', array('controller' => 'e14'));
  */
 Router::connect('/e14/**', array('controller' => 'e14', 'action' => 'index'));
 /**
+ * views are prefixed with "admin/" => admin_action()
  */
 Router::connect('/admin/e14/:action/*', array('controller' => 'e14', 'admin' => true));
 /**
@@ -40,6 +41,18 @@ Router::connect('/article/**', array('controller' => 'article', 'action' => 'ind
 /**
  */
 Router::connect('/admin/article/:action/*', array('controller' => 'article', 'admin' => true));
+/**
+ ***************************************************   MessageController routing
+ * the one star(*) wildcard is for one-to-one passed arguments separated by the slash '/'
+ */
+Router::connect('/contactus/:action/*', array('controller' => 'message'));
+/**
+ * the two stars(**) wildcard is for many-to-one  argument passed as a whole string
+ */
+Router::connect('/contactus/**', array('controller' => 'message', 'action' => 'index'));
+/**
+ */
+Router::connect('/admin/contactus/:action/*', array('controller' => 'message', 'admin' => true));
 /**
  ***************************************************             default routing 
  */
