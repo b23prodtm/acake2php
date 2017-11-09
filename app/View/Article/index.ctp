@@ -1,10 +1,8 @@
+<!--vue Article index.ctp-->
 <?php
-
-//        echo $this->Markdown->transform(file_get_contents($pUrl));
-$r = new Index($this);
 require $GLOBALS['include__php_tbl.class.inc'];
-$t = new Tableau(count($articles) + 1, 3, $r->lang("page", "content"));
-$t->setContenu_Ligne(0, $r->lang(array("categorie", "article", "published"), "content"));
+$t = new Tableau(count($articles) + 1, 3, __d('article', 'db_articles'));
+$t->setContenu_Ligne(0, array(__d('article', "categorie"), __d('article', "article"), __d('article', "published")));
 
 /* On fait un tour des $articles array, et sortie des infos articl */
 
@@ -17,4 +15,10 @@ for ($i = 1; $i < count($articles) + 1; $i++) {
         );
         $t->setContenu_Cellule($i, 2, $article['Article']['published']);
 }
-$t->fin(1);
+echo $t->fin();
+?><hr/>
+<?php
+echo $this->Html->link(
+        __d('article', 'Add an article'), array('controller' => 'article', 'action' => 'add')
+);
+?>

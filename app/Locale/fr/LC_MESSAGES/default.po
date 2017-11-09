@@ -1,0 +1,20 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"PO-Revision-Date: 2017-11-09 11:13+0100\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"POT-Creation-Date: \n"
+"X-Generator: Poedit 2.0.4\n"
+"Last-Translator: \n"
+"Language: fr\n"
+
+#: Controller/ArticleController.php:39;44
+msgid "Invalid article"
+msgstr "Article invalide"

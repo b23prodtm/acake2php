@@ -27,8 +27,10 @@ class AppController extends Controller {
         /**
          * Add in the DebugKit toolbar
          */
-        public $components = array('DebugKit.Toolbar');
-        public $helpers = array('Markdown.Markdown');
+        public $components = array('DebugKit.Toolbar',
+            'Flash' => array(
+                'className' => 'MyFlash'));
+        public $helpers = array('Markdown.Markdown', 'Flash');
         var $r;
 
         public function __construct($request = null, $response = null) {
@@ -36,7 +38,22 @@ class AppController extends Controller {
 
                 /* initialise les $GLOBALS et le sitemap */
                 $this->r = new Index($this->View, ROOT . DS . 'index.php', false, WWW_ROOT . 'php-cms/');
+                /* map pIndex -> URL */
                 $this->set("i_sitemap", $this->r->sitemap);
+        }
+
+        public function beforeFilter() {
+                /* internationalisation (i18n) */
+                Configure::write('Config.language', $this->r->getLanguage());
+        }
+
+        /**
+         * @param String $page SITEMAP.PROPERTIES key in [images]
+         */
+        public function images($p = NULL) {
+                //debug($this->request->params);
+                $this->response->file($GLOBALS["images"] . DS . $p);
+                $this->response->send();
         }
 
 }

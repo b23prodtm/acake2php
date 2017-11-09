@@ -1,117 +1,56 @@
 <?php
+$this->Flash->render();
 $r = new Index($this);
-require_once $GLOBALS['include__php_page.class.inc'];
-require_once $GLOBALS['include__php_formulaire.class.inc'];
-/* functions d'affichage  -----  privées */
+require_once $GLOBALS['include__php_module_html.inc'];
 
-function getTypes() {
-        return $mtypes = array("jpeg", "png", 'gif');
-}
-
-function publierImages(Index $r) {
-        $i = 0; //compteur
-        foreach ($_FILES as $image) {
-                /* controle final type de fichier */
-                if (is_uploaded_file($image['tmp_name']) && array_search(substr($image['type'], strlen("image/")), getTypes())) {
-                        $dest = WWW_ROOT . DS . "images" . DS . $images['name'];
-                        if (move_uploaded_file($image['tmp_name'], $dest)) {
-                                echo "<div class='console'><b>Image " . $image['name'] . " " . $r->lang("actionsucces", "admin") . "</b></div>";
-                        } else {
-                                echo "<div class='console'><b>Image " . $image['name'] . " " . $r->lang("actionechec", "admin") . "</b></div>";
-                        }
-                }
-        }
-}
-
-function formImages($url, Index $r) {
-        if (!filter_input(INPUT_POST, 'n_img')) {
-                $n = 5;
-        } else {
-                $n = filter_input(INPUT_POST, 'n_img');
-        }
-        $f = new Formulaire($r->lang("insertimages", "content"), $url . "/image?images=publie");
-        for ($i = 0; $i < $n; $i++) {
-                $champ[] = new ChampFile("image_$i", "Image " . $i + 1, "format : image/jpeg. > activites" . $i . ".jpg");
-                $f->ajouterChamp($champ[$i]);
-        }
-        $valider = new ChampValider($r->lang("insertimages", "content"));
-        $f->ajouterChamp($valider);
-        echo $f->fin();
-}
-
-/*function ftp(Index $r) {
-        $srv = SERVEUR_FTP;
-        $usr = CLIENT_FTP;
-        $psw = MDP_FTP;
-        $ftpid = ftp_ssl_connect($srv);
-        if (ftp_login($ftpid, $usr, $psw)) {
-                echo $r->lang("actionsucces", "admin") . " " . $srv . "\n";
-        } else {
-                trigger_error($r->lang("actionechec", "admin") . " " . $srv, E_USER_ERROR);
-        }
-
-        return $ftpid;
-}*/
-
-/* END fonctions  -----  privées 
-  /* ----- les différentes fonctionnalités ------ */
-?><center><b><?php echo $r->lang('gestionapropos', 'admin'); ?></b></center>
+/* ----- les différentes fonctionnalités ------ */
+?><center><b><?php echo __d('admin', '"About us" zone'); ?></b></center>
 <?php
 /* ----- (1) ------- */
-if ($pMethod === "image") {
-        /* ---- reception puis chargement des images ----- */
-        if (filter_input(INPUT_GET, 'images') === 'publie') {
-                publierImages($r);
-                return;
-        } else {
-                formImages($this->request->base, $r);
-        }
-} else {
-        $liste = HTML_listeDebut();
-        /* ---- (1) --- */
-        $liste .= HTML_listeElement(HTML_lien($r->sitemap["admin__activites"] . "/image", $r->lang("insertimages", "content")));
-        /* ---- (2) --- */
-        $liste .= HTML_listeElement(HTML_lien($r->sitemap["admin__activites"] . "/edit", $r->lang("changepage", "content")));
-        $liste .= HTML_listeFin();
-        echo $liste;
-}
+$liste = HTML_listeDebut();
+/* ---- (1) --- */
+$liste .= HTML_listeElement(HTML_lien($r->sitemap["activites__write"], __d('article', 'Add an article')));
+/* ---- (2) --- */
+$liste .= HTML_listeElement(HTML_lien($r->sitemap["activites__write"] . "?images", __d('article', 'Upload some images')));
+/* ---- (3) --- */
+$liste .= HTML_listeElement(HTML_lien($r->sitemap["activites__edit"], __d('article', 'Edit an article')));
+/* ---- (4) --- */
+$liste .= HTML_listeElement(HTML_lien($r->sitemap["activites__edit"] . "?images", __d('article', 'Edit an image')));
+$liste .= HTML_listeFin();
+echo $liste;
+?>
+<hr/>
+<?php
+require $GLOBALS['include__php_tbl.class.inc'];
+$t = new Tableau(count($articles) + 1, 5, __d('article', 'db_articles'));
+$t->setContenu_Ligne(0, array(__d('article', 'category'),
+    __d('article', 'id'),
+    __d('article', 'created'),
+    __d('article', 'published'),
+    __d('article', 'edition')));
 
-/* ----- (2) ------- */
-if ($pMethod === "edit") { // formulaire changer la page activites
-        if (filter_input(INPUT_GET, "page")) { /* ------ script de reception de la page ----- */
-                $path = $GLOBALS['FTPDOCS'] . "activites_inc";
-                /*$ftpid = ftp($r);*/
-                echo "<div class='console'>" . $r->lang('chargefichier', 'admin') . " $path :<br>";
-                $ret = ftp_nb_put($ftpid, $path, $_FILES['page']['tmp_name'], FTP_ASCII);
-                while ($ret == FTP_MOREDATA) {
-                        echo ".";
-                        $ret = ftp_nb_continue($ftpid);
-                }
-                if ($ret == FTP_FINISHED) {
-                        echo "<br><b>" . $r->lang('actionsucces', 'admin') . "</b></div>";
-                } else {
-                        echo "<br><b>" . $r->lang('actionechec', 'admin') . "</b></div>";
-                }
+/* On fait un tour des $articles array, et extractuib des donnees articles */
 
-                /* ----- formulaire insertion d'images ----- */
-                if (filter_input(INPUT_POST, 'n_img') > 0) {
-                        formImages($this->request->base, $r);
-                }
-        }
-        /* ------ formulaire chargement nouvelle page ----- */
-        // Pour la mise en place d'une nouvelle page Activités, un formulaire.
-        $f = new Formulaire($r->lang("changerpage", "content"), $r->sitemap["admin__activites"] . "/edit/?page=1");
-        $pageHTML = new ChampFile("page", $r->lang("nouvellepage_lab", "content"), $r->lang("nouvellepage_dsc", "content"));
-        // array incrementé ->10
-        $n = 10;
-        for ($i = 0; $i < $n + 1; $i++) {
-                $choix["_" . $i . "_"] = $i;
-        }
-        $nbImages = new ChampSelect("n_img", $r->lang("nombreimages", "content"), "", $choix, 3, 0);
-        $valider = new ChampValider($r->lang("send", "content"), "");
-        $f->ajouterChamp($pageHTML);
-        $f->ajouterChamp($nbImages);
-        $f->ajouterChamp($valider);
-        echo $f->fin();
+for ($i = 1; $i < count($articles) + 1; $i++) {
+        $article = $articles[$i - 1];
+        $t->setContenu_Cellule($i, 0, $article['Article']['fk_reference_categorie']);
+        $t->setContenu_Cellule($i, 1, $this->Html->link($article['Article']['id'], array('controller' => 'article',
+                    'action' => 'view',
+                    array($article['Article']['id'])))
+        );
+        $t->setContenu_Cellule($i, 2, $article['Article']['date']);
+        $t->setContenu_Cellule($i, 3, $article['Article']['published']);
+        /*
+         * Utiliser postLink() permet de créer un lien qui utilise du Javascript pour supprimer notre post en faisant une requête POST. Autoriser la suppression par une requête GET est dangereux à cause des robots d’indexation qui peuvent tous les supprimer.
+         */
+        $t->setContenu_Cellule($i, 4, $this->Form->postLink(
+                        __d('article', 'Delete'), array('action' => 'delete',
+                    $post['Article']['id']), array('confirm' => __d('article', 'Are you sure to delete article with id: %s?', h($article['Article']['id'])))) . $this->Html->link(
+                        __d('article', 'Edit'), array('action' => 'edit',
+                    $article['Article']['id'])
+        ));
 }
+echo $t->fin();
+
+/** TODO : gestion des images chargees en cache */
 ?>
