@@ -47,11 +47,14 @@ class E14ControllerTest extends ControllerTestCase {
          * testIndex method
          *
          * @return void
-         *
-          public function testBlog() {
-          $result = $this->_testAction('/e14/blog/', array('method' => 'get', 'return' => 'contents', "'url'" => array("local" => 1)));
-          $this->assertContains('Redirection', $this->view);
-          }CONTAINS REDIRECTION CANNOT TEST RETURN */
+         */
+          public function testRoute() {
+                $result = $this->_testAction('/index/_image.php', array('method' => 'get', 'return' => 'contents', "'url'" => array(
+                "local" => 1,
+                "captcha" => 1,
+                "debug" => 0)));
+                $this->assertStringMatchesFormatFile('/img/test__image.php', $result);
+          }
 
         /**
          * testIndex method
@@ -78,7 +81,7 @@ class E14ControllerTest extends ControllerTestCase {
         public function testImage() {
                 $this->setUp();
                 $d = $this->controller->r->tempdir();
-                $this->assertTrue(is_writable($d), "Temp dir " . $d);
+                $this->assertFileIsWritable($d, "Temp folder doesn't exist or isn't writeable.");
         }
 
 }
