@@ -1,12 +1,20 @@
 #!/bin/sh
-#; arguements are ./configure.sh -Y|-N [-p password -s salt -f filename] 
+#;
+#; colorful shell
+nc='\033[0m'
+red="\033[0;31m"
+green="\033[0;32m"
+orange="\033[0;33m"
+cyan="\033[0;36m"
+
+#; arguments are ./configure.sh -Y|-N [-p password -s salt -f filename] 
 #; if the full set of the arguments exists, there won't be any prompt in the shell
 cd app/webroot/php-cms/e13/etc/
 copies=0
 while true
 do
         # (1) prompt user, and read command line argument
-        echo "Step 1. Overwrite constantes.properties...\n"
+        echo "${cyan}Step 1. Overwrite constantes.properties...\n${nc}"
         answer=$1
         case $answer in
                -[yY]* ) echo "Yes.\n"
@@ -33,11 +41,11 @@ do
 
                 [nN]* ) break;;
 
-                * )     echo "Dude, just enter Y or N, please.\n";;
+                * )     echo "${red}Dude, just enter Y or N, please.\n${nc}";;
         esac
 done
 #; get hash password argv are -p password -s salt -f filename
-echo "Step 2. Get a hashed password with encryption, PHP encrypts.\n"
+echo "${cyan}Step 2. Get a hashed password with encryption, PHP encrypts.\n${nc}"
 pass=$2
 salt=$4
 #; read password if not set as $3 argv
@@ -52,7 +60,7 @@ do
                         break;;
 
                 * )
-                        read -p "Run reset password script now (Y/N) ?" answer;;
+                        read -p "Run reset password script now (Y/N) ? " answer;;
         esac
          case $answer in
                 [yY]* )                         
@@ -69,7 +77,7 @@ do
                                                if [ "$pass" == "$confirmpass" ]; then
                                                        break
                                                else
-                                                       echo "Passwords don't match.\n"
+                                                       echo "${red}Passwords don't match.\n${nc}"
                                                fi
                                        done;;
                        esac 
@@ -92,7 +100,7 @@ do
                        break;;
                 [nN]* ) break;;
 
-                * )     echo "Dude, just enter Y or N, please.\n";;
+                * )     echo "${red}Dude, just enter Y or N, please.\n${nc}";;
                         esac
 done
 cd ../../../../../
@@ -102,7 +110,7 @@ cd ../../../../../
 # If it starts a build, it automatically scales deployments down to zero, and deploys and scales up when it's finished to build.
 # Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
 
-echo "Step 3. migrate database\n"
+echo "${cyan}Step 3. migrate database\n${nc}"
 while true
 do
         answer=$1
@@ -113,13 +121,13 @@ do
                         break;;
 
                * )
-                        read -p "Run migrate database script now (Y/N) ?" answer;;
+                        read -p "Run migrate database script now (Y/N) ? " answer;;
         esac
         
         case $answer in
                 [yY]* ) /bin/sh migrate-database.sh -y -y -y
                         break;;
                 [nN]* ) break;;
-                * )     echo "Dude, just enter Y or N, please.\n";;
+                * )     echo "${red}Dude, just enter Y or N, please.\n${nc}";;
         esac
 done;
