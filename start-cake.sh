@@ -41,6 +41,6 @@ source $hash
 echo "==============================================="
 echo "PASSWORD HASH $GET_HASH_PASSWORD"
 echo "WELCOME HOMEPAGE IS http://localhost:8080"
-echo "TEST CONFIGURATION IS /index/index.php?local=1"
+echo "DEBUG CONFIGURATION IS /admin/index.php?debug=1&verbose=1&local=1"
 echo "==============================================="
 lib/Cake/Console/cake server -p 8080 $*

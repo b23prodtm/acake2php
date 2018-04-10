@@ -311,7 +311,8 @@ $key_list = openshift_secure($_default_keys,'make_secure_key');
  * then the value of `Config.timezone` will be used. This feature allows you to set users' timezone just
  * once instead of passing it each time in function calls.
  */
-	//Configure::write('Config.timezone', 'Europe/Paris');
+	Configure::write('Config.timezone', 'Europe/Paris');
+  date_default_timezone_set('Europe/Paris');
 
 /**
  * Cache Engine Configuration
