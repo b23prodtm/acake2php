@@ -133,15 +133,6 @@ class E14Controller extends AppController {
         }
 
         /**
-         * @param String $page SITEMAP.PROPERTIES key in [images]
-         */
-        public function images($p = NULL) {
-                //debug($this->request->params);
-                $this->response->file($GLOBALS["images"] . DS . $p);
-                $this->response->send();
-        }
-
-        /**
          * @param String $p SITEMAP.PROPERTIES key in [blog]
          */
         public function blog($p = NULL) {
@@ -185,14 +176,6 @@ class E14Controller extends AppController {
                 //debug($GLOBALS);
                 $this->set("p", $p);
                 $this->render(null, "default-e14");
-        }
-
-        /**/
-
-        public function about() {
-                //debug($this->request->params);
-                //debug($GLOBALS);
-                $this->index("index.php");
         }
 
 }

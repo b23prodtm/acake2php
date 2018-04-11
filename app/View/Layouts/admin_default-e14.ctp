@@ -10,5 +10,7 @@ if (isset($pIndex)) {
         echo "<div id='console_js'></div>";
         echo $this->Html->script("media-query.js");
         $page->fin();
+} else {
+        throw new Exception('No pIndex was set.');
 }
 ?>

@@ -1,5 +1,5 @@
 #!/bin/bash
-# HOWTO: connect to the database, a mysql56+ server
+# HOWTO: connect to the database, a mysql56+ server (must match remote server version)
 # must be reachable locally. If it's the 1st time you use this connection,
 # Configure it by logging in with shell:$ mysql -u root
 # Then execute this SQL statements : create database DATABASE_NAME; # NO QUOTES ''
