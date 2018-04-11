@@ -69,21 +69,26 @@ echo `bin/composer.phar --version`
 #; The website must pass health checks in order to be deployed
 #;
 #;
-phpunit="vendor/bin/phpunit"
+phpunit="app/Vendor/bin/phpunit"
 if [ ! -f $phpunit ]; then
         echo "Composer will download the PHPUnit framework"
-        version=6
-        if [ `expr "\`php --version\`" : 'PHP\ 5\.[0-5]\.'` -gt 0 ]; then
-                version=4
-        fi
-        if [ `expr "\`php --version\`" : 'PHP\ 5\.[6-9]\.'` -gt 0 ]; then
-                version=5
-        fi   
-        if [ `expr "\`php --version\`" : 'PHP\ 7\.[0-9]\.'` -gt 0 ]; then
-                version=6
-        fi     
+        version=3
+#        CakePHP 2.9 compatible with PHPUnit 3. 
+#        PHPUnit 4+ needs CakePHP 2.10 (2.x).
+#        if [ `expr "\`php --version\`" : 'PHP\ 5\.[0-5]\.'` -gt 0 ]; then
+#                version="4"
+#        fi
+#        if [ `expr "\`php --version\`" : 'PHP\ 5\.[6-9]\.'` -gt 0 ]; then
+#                version="5"
+#        fi   
+#        if [ `expr "\`php --version\`" : 'PHP\ 7\.0\.'` -gt 0 ]; then
+#                version="6"
+#        fi     
+#        if [ `expr "\`php --version\`" : 'PHP\ 7\.[1-9]\.'` -gt 0 ]; then
+#                version="7"
+#        fi     
         echo " version $version...\n"
-        php bin/composer.phar require --dev phpunit/phpunit ^$version
+        php bin/composer.phar require --prefer-dist --update-with-dependencies --dev phpunit/phpunit ^$version 
 else
         echo "PHPUnit ${green}[OK]${nc}"
 fi
