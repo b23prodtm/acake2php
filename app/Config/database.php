@@ -68,9 +68,9 @@
 class DATABASE_CONFIG {
 
         public $default = array(
-            'datasource' => 'Database/Mysql',
+            'datasource' => 'Database/MyBinsql',
             'persistent' => false,
-            'host' => 'localhost',
+            'host' => '127.0.0.1',
             'port' => '3306',
             'login' => 'test',
            'password' => 'mypassword',
@@ -79,9 +79,9 @@ class DATABASE_CONFIG {
             'encoding' => 'utf8',
         );
         public $test = array(
-            'datasource' => 'Database/Mysql',
+            'datasource' => 'Database/MyBinsql',
             'persistent' => false,
-             'host' => 'localhost',
+             'host' => '127.0.0.1',
             'port' => '3306',
             'login' => 'test',
            'password' => 'mypassword',

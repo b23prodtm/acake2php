@@ -16,24 +16,24 @@ class MyFlashComponent extends FlashComponent {
 
         public $components = array();
 
-        public function initialize($controller) {
+        public function initialize(Controller $controller) {
                 parent::initialize($controller);
         }
 
-        public function startup($controller) {
+        public function startup(Controller $controller) {
                 parent::startup($controller);
         }
 
-        public function beforeRender($controller) {
+        public function beforeRender(Controller $controller) {
                 parent::beforeRender($controller);
         }
 
-        public function shutDown($controller) {
+        public function shutDown(Controller $controller) {
                 parent::shutdown($controller);
                 
         }
 
-        public function beforeRedirect($controller, $url, $status = null, $exit = true) {
+        public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {
                 parent::beforeRedirect($controller, $url, $status, $exit);
         }
         
