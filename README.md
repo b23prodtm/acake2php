@@ -22,6 +22,11 @@ It includes a link to [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) a
 
 You do not need to change anything in your existing PHP project's repository.
 However, if these files exist they will affect the behavior of the build process:
+* **submodules**
+  The myphpcms folder includes modules that need to be pulled in order to install locally.
+  After the first checkout browse to myphpcms folder and do 
+  ```git submodule update --init --recursive```
+  You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the myphpcms folder and start over.
 
 * **composer.json**
 
