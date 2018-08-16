@@ -129,7 +129,7 @@ else
 fi
 echo `bin/composer.phar --version`
 #; update plugins and dependencies
-echo `bin/composer.phar update`
+echo `bin/composer.phar update --with-dependencies`
 echo `bin/composer.phar update -d app/Plugin/Markdown`
 #;
 #;
