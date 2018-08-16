@@ -25,22 +25,22 @@ matrix:
   fast_finish: true
   include:
     - php: 5.3
-      env: DB=mysql PHPUNIT=4.8.35
+      env: DB=mysql PHPUNIT=3 VCS=1
 
     - php: 5.4
-      env: DB=pgsql
+      env: DB=pgsql PHPUNIT=3 VCS=1
 
     - php: 5.4
-      env: DB=sqlite
+      env: DB=sqlite PHPUNIT=3 VCS=1
 
     - php: 7.0
-      env: PHPCS=1
+      env: PHPCS=1 PHPUNIT=3 VCS=3
 
     - php: 7.1
-      env: DB=mysql PHPUNIT=5.7.19
+      env: DB=mysql PHPUNIT=3 VCS=3
 
     - php: 7.2
-      env: DB=mysql PHPUNIT=5.7.19
+      env: DB=mysql PHPUNIT=3 VCS=3
   exclude:
     - php: 7.2
       env: DB=mysql
@@ -48,7 +48,7 @@ matrix:
 
 before_script:
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] ; then pear config-set preferred_state snapshot && yes "" | pecl install mcrypt ; fi
-  - composer require "phpunit/phpunit=$PHPUNIT"
+  - composer require --prefer-dist --update-with-dependencies --dev phpunit/phpunit ^$PHPUNIT cakephp/cakephp-codesniffer ^$VCS
   - echo "require_once 'vendors/autoload.php';" >> app/Config/bootstrap.php
   - sudo locale-gen de_DE
   - sudo locale-gen es_ES
