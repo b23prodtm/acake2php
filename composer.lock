@@ -1,11 +1,57 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d2dff50a64854c04591fa0fdf79048f9",
+    "content-hash": "327dd3fd4d2ae72f79bda276f66ab16c",
     "packages": [
+        {
+            "name": "b23prodtm/markdown-plugin",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/b23prodtm/markdown-plugin.git",
+                "reference": "cc5f734ee3b0aa38407e8472e03e52ce3944f7bc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/b23prodtm/markdown-plugin/zipball/cc5f734ee3b0aa38407e8472e03e52ce3944f7bc",
+                "reference": "cc5f734ee3b0aa38407e8472e03e52ce3944f7bc",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "*",
+                "michelf/php-markdown": "^1.8",
+                "php": ">=5.3.0"
+            },
+            "type": "cakephp-plugin",
+            "extra": {
+                "installer-name": "Markdown"
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Maury M. Marques",
+                    "role": "Author"
+                },
+                {
+                    "name": "Tina Rakoto Arimanana",
+                    "role": "Contributor"
+                }
+            ],
+            "description": "A CakePHP plugin that facilitates the use of PHP Markdown with CakePHP",
+            "homepage": "https://github.com/b23prodtm/markdown-plugin",
+            "keywords": [
+                "cakephp",
+                "markdown",
+                "plugin"
+            ],
+            "time": "2018-08-16T14:39:54+00:00"
+        },
         {
             "name": "composer/installers",
             "version": "v1.5.0",
@@ -127,75 +173,74 @@
             "time": "2017-12-29T09:13:20+00:00"
         },
         {
-            "name": "maurymmarques/markdown-plugin",
-            "version": "dev-master",
+            "name": "michelf/php-markdown",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/maurymmarques/markdown-cakephp.git",
-                "reference": "378aecf64e0ac10f477f6a1abdeaea8ecb69f953"
+                "url": "https://github.com/michelf/php-markdown.git",
+                "reference": "01ab082b355bf188d907b9929cd99b2923053495"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maurymmarques/markdown-cakephp/zipball/378aecf64e0ac10f477f6a1abdeaea8ecb69f953",
-                "reference": "378aecf64e0ac10f477f6a1abdeaea8ecb69f953",
+                "url": "https://api.github.com/repos/michelf/php-markdown/zipball/01ab082b355bf188d907b9929cd99b2923053495",
+                "reference": "01ab082b355bf188d907b9929cd99b2923053495",
                 "shasum": ""
             },
             "require": {
-                "composer/installers": "*",
                 "php": ">=5.3.0"
             },
-            "type": "cakephp-plugin",
-            "extra": {
-                "installer-name": "Markdown"
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Michelf\\": "Michelf/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
-                    "name": "Maury M. Marques",
-                    "role": "Author"
+                    "name": "Michel Fortin",
+                    "email": "michel.fortin@michelf.ca",
+                    "homepage": "https://michelf.ca/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "John Gruber",
+                    "homepage": "https://daringfireball.net/"
                 }
             ],
-            "description": "A CakePHP plugin that facilitates the use of PHP Markdown with CakePHP",
-            "homepage": "https://github.com/maurymmarques/markdown-cakephp",
+            "description": "PHP Markdown",
+            "homepage": "https://michelf.ca/projects/php-markdown/",
             "keywords": [
-                "cakephp",
-                "markdown",
-                "plugin"
+                "markdown"
             ],
-            "time": "2015-02-10T05:02:57+00:00"
+            "time": "2018-01-15T00:49:33+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "cakephp/cakephp-codesniffer",
-            "version": "3.0.3",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp-codesniffer.git",
-                "reference": "d77ac81199f2f1e5a8d8ebf96a5d6d7cd4e0542b"
+                "reference": "0f3559af72fd9c2bba7310a7c4496fbb97502352"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp-codesniffer/zipball/d77ac81199f2f1e5a8d8ebf96a5d6d7cd4e0542b",
-                "reference": "d77ac81199f2f1e5a8d8ebf96a5d6d7cd4e0542b",
+                "url": "https://api.github.com/repos/cakephp/cakephp-codesniffer/zipball/0f3559af72fd9c2bba7310a7c4496fbb97502352",
+                "reference": "0f3559af72fd9c2bba7310a7c4496fbb97502352",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4",
-                "squizlabs/php_codesniffer": "^3.0.0"
+                "squizlabs/php_codesniffer": "^1.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "<6.0"
+                "phpunit/phpunit": "^4.1.0"
             },
-            "type": "phpcodesniffer-standard",
-            "autoload": {
-                "psr-4": {
-                    "CakePHP\\": "CakePHP"
-                }
-            },
+            "type": "library",
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
@@ -212,7 +257,7 @@
                 "codesniffer",
                 "framework"
             ],
-            "time": "2017-12-21T20:01:35+00:00"
+            "time": "2018-07-04T15:25:21+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -585,179 +630,61 @@
             "time": "2013-01-13T10:24:48+00:00"
         },
         {
-            "name": "phpunit/phpunit-skeleton-generator",
-            "version": "2.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sebastianbergmann/phpunit-skeleton-generator.git",
-                "reference": "c0eeb18f31893c2f0c387bce84f8a3816a0eacd1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-skeleton-generator/zipball/c0eeb18f31893c2f0c387bce84f8a3816a0eacd1",
-                "reference": "c0eeb18f31893c2f0c387bce84f8a3816a0eacd1",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3",
-                "phpunit/php-text-template": "~1.2",
-                "sebastian/version": "~1.0",
-                "symfony/console": "~2.4"
-            },
-            "require-dev": {
-                "mikey179/vfsstream": "~1.2",
-                "phpunit/phpunit": "~4.0"
-            },
-            "bin": [
-                "phpunit-skelgen"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                }
-            },
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
-                }
-            ],
-            "description": "Tool that can generate skeleton test classes from production code classes and vice versa",
-            "homepage": "https://github.com/sebastianbergmann/phpunit-skeleton-generator",
-            "keywords": [
-                "Skeleton",
-                "phpunit",
-                "testing",
-                "xunit"
-            ],
-            "abandoned": true,
-            "time": "2014-05-14T17:42:22+00:00"
-        },
-        {
-            "name": "psr/log",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/log.git",
-                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
-                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Log\\": "Psr/Log/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interface for logging libraries",
-            "homepage": "https://github.com/php-fig/log",
-            "keywords": [
-                "log",
-                "psr",
-                "psr-3"
-            ],
-            "time": "2016-10-10T12:19:37+00:00"
-        },
-        {
-            "name": "sebastian/version",
-            "version": "1.0.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sebastianbergmann/version.git",
-                "reference": "58b3a85e7999757d6ad81c787a1fbf5ff6c628c6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/version/zipball/58b3a85e7999757d6ad81c787a1fbf5ff6c628c6",
-                "reference": "58b3a85e7999757d6ad81c787a1fbf5ff6c628c6",
-                "shasum": ""
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Sebastian Bergmann",
-                    "email": "sebastian@phpunit.de",
-                    "role": "lead"
-                }
-            ],
-            "description": "Library that helps with managing the version number of Git-hosted PHP projects",
-            "homepage": "https://github.com/sebastianbergmann/version",
-            "time": "2015-06-21T13:59:46+00:00"
-        },
-        {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.2.3",
+            "version": "1.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "4842476c434e375f9d3182ff7b89059583aa8b27"
+                "reference": "6f3e42d311b882b25b4d409d23a289f4d3b803d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/4842476c434e375f9d3182ff7b89059583aa8b27",
-                "reference": "4842476c434e375f9d3182ff7b89059583aa8b27",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/6f3e42d311b882b25b4d409d23a289f4d3b803d5",
+                "reference": "6f3e42d311b882b25b4d409d23a289f4d3b803d5",
                 "shasum": ""
             },
             "require": {
-                "ext-simplexml": "*",
                 "ext-tokenizer": "*",
-                "ext-xmlwriter": "*",
-                "php": ">=5.4.0"
+                "php": ">=5.1.2"
             },
-            "require-dev": {
-                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0"
+            "suggest": {
+                "phpunit/php-timer": "dev-master"
             },
             "bin": [
-                "bin/phpcs",
-                "bin/phpcbf"
+                "scripts/phpcs"
             ],
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.x-dev"
+                    "dev-phpcs-fixer": "2.0.x-dev"
                 }
+            },
+            "autoload": {
+                "classmap": [
+                    "CodeSniffer.php",
+                    "CodeSniffer/CLI.php",
+                    "CodeSniffer/Exception.php",
+                    "CodeSniffer/File.php",
+                    "CodeSniffer/Report.php",
+                    "CodeSniffer/Reporting.php",
+                    "CodeSniffer/Sniff.php",
+                    "CodeSniffer/Tokens.php",
+                    "CodeSniffer/Reports/",
+                    "CodeSniffer/CommentParser/",
+                    "CodeSniffer/Tokenizers/",
+                    "CodeSniffer/DocGenerators/",
+                    "CodeSniffer/Standards/AbstractPatternSniff.php",
+                    "CodeSniffer/Standards/AbstractScopeSniff.php",
+                    "CodeSniffer/Standards/AbstractVariableSniff.php",
+                    "CodeSniffer/Standards/IncorrectPatternException.php",
+                    "CodeSniffer/Standards/Generic/Sniffs/",
+                    "CodeSniffer/Standards/MySource/Sniffs/",
+                    "CodeSniffer/Standards/PEAR/Sniffs/",
+                    "CodeSniffer/Standards/PSR1/Sniffs/",
+                    "CodeSniffer/Standards/PSR2/Sniffs/",
+                    "CodeSniffer/Standards/Squiz/Sniffs/",
+                    "CodeSniffer/Standards/Zend/Sniffs/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -769,161 +696,43 @@
                     "role": "lead"
                 }
             ],
-            "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
+            "description": "PHP_CodeSniffer tokenises PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
             "homepage": "http://www.squizlabs.com/php-codesniffer",
             "keywords": [
                 "phpcs",
                 "standards"
             ],
-            "time": "2018-02-20T21:35:23+00:00"
+            "time": "2014-12-04T22:32:15+00:00"
         },
         {
-            "name": "symfony/console",
-            "version": "v2.8.38",
+            "name": "symfony/polyfill-ctype",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/console.git",
-                "reference": "7f78892d900c72a40acd1fe793c856ef0c110f26"
+                "url": "https://github.com/symfony/polyfill-ctype.git",
+                "reference": "e3d826245268269cd66f8326bd8bc066687b4a19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/7f78892d900c72a40acd1fe793c856ef0c110f26",
-                "reference": "7f78892d900c72a40acd1fe793c856ef0c110f26",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.9",
-                "symfony/debug": "^2.7.2|~3.0.0",
-                "symfony/polyfill-mbstring": "~1.0"
-            },
-            "require-dev": {
-                "psr/log": "~1.0",
-                "symfony/event-dispatcher": "~2.1|~3.0.0",
-                "symfony/process": "~2.1|~3.0.0"
-            },
-            "suggest": {
-                "psr/log": "For using the console logger",
-                "symfony/event-dispatcher": "",
-                "symfony/process": ""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.8-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Console\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Console Component",
-            "homepage": "https://symfony.com",
-            "time": "2018-04-03T05:20:27+00:00"
-        },
-        {
-            "name": "symfony/debug",
-            "version": "v3.0.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/debug.git",
-                "reference": "697c527acd9ea1b2d3efac34d9806bf255278b0a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/debug/zipball/697c527acd9ea1b2d3efac34d9806bf255278b0a",
-                "reference": "697c527acd9ea1b2d3efac34d9806bf255278b0a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.5.9",
-                "psr/log": "~1.0"
-            },
-            "conflict": {
-                "symfony/http-kernel": ">=2.3,<2.3.24|~2.4.0|>=2.5,<2.5.9|>=2.6,<2.6.2"
-            },
-            "require-dev": {
-                "symfony/class-loader": "~2.8|~3.0",
-                "symfony/http-kernel": "~2.8|~3.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Debug\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Debug Component",
-            "homepage": "https://symfony.com",
-            "time": "2016-07-30T07:22:48+00:00"
-        },
-        {
-            "name": "symfony/polyfill-mbstring",
-            "version": "v1.7.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "78be803ce01e55d3491c1397cf1c64beb9c1b63b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/78be803ce01e55d3491c1397cf1c64beb9c1b63b",
-                "reference": "78be803ce01e55d3491c1397cf1c64beb9c1b63b",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/e3d826245268269cd66f8326bd8bc066687b4a19",
+                "reference": "e3d826245268269cd66f8326bd8bc066687b4a19",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "suggest": {
-                "ext-mbstring": "For best performance"
+                "ext-ctype": "For best performance"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.7-dev"
+                    "dev-master": "1.9-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Symfony\\Polyfill\\Mbstring\\": ""
+                    "Symfony\\Polyfill\\Ctype\\": ""
                 },
                 "files": [
                     "bootstrap.php"
@@ -935,41 +744,41 @@
             ],
             "authors": [
                 {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
                     "name": "Symfony Community",
                     "homepage": "https://symfony.com/contributors"
+                },
+                {
+                    "name": "Gert de Pagter",
+                    "email": "BackEndTea@gmail.com"
                 }
             ],
-            "description": "Symfony polyfill for the Mbstring extension",
+            "description": "Symfony polyfill for ctype functions",
             "homepage": "https://symfony.com",
             "keywords": [
                 "compatibility",
-                "mbstring",
+                "ctype",
                 "polyfill",
-                "portable",
-                "shim"
+                "portable"
             ],
-            "time": "2018-01-30T19:27:44+00:00"
+            "time": "2018-08-06T14:22:27+00:00"
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.38",
+            "version": "v2.8.44",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "be720fcfae4614df204190d57795351059946a77"
+                "reference": "fbf876678e29dc634430dcf0096e216eb0004467"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/be720fcfae4614df204190d57795351059946a77",
-                "reference": "be720fcfae4614df204190d57795351059946a77",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/fbf876678e29dc634430dcf0096e216eb0004467",
+                "reference": "fbf876678e29dc634430dcf0096e216eb0004467",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.9"
+                "php": ">=5.3.9",
+                "symfony/polyfill-ctype": "~1.8"
             },
             "type": "library",
             "extra": {
@@ -1001,18 +810,18 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2018-01-03T07:36:31+00:00"
+            "time": "2018-07-26T09:03:18+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "maurymmarques/markdown-plugin": 20
+        "b23prodtm/markdown-plugin": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4.0"
+        "php": ">=5.3.0"
     },
     "platform-dev": []
 }
