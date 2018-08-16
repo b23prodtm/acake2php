@@ -12,6 +12,21 @@ orange="\033[0;33m"
 cyan="\033[0;36m"
 #;
 #;
+#;
+#; Host name (unix) 'localhost' generally replaces '127.0.0.1' (macOS).
+#;
+export DATABASE_ENGINE="mysql"
+export DATABASE_SERVICE_NAME="mysql"
+export TEST_MYSQL_SERVICE_HOST="127.0.0.1"
+#;export TEST_MYSQL_SERVICE_HOST="localhost"
+export TEST_MYSQL_SERVICE_PORT="3306"
+export TEST_DATABASE_NAME="phpcms"
+export TEST_DATABASE_USER="test"
+export TEST_DATABASE_PASSWORD="mypassword"
+export FTP_SERVICE_HOST="localhost"
+export FTP_SERVICE_USER="test"
+export FTP_SERVICE_PASSWORD="mypassword"
+
 echo "
 
 ${red}                ///// MySQL HOWTO: connect to the database${nc}
@@ -19,33 +34,36 @@ ${red}                ///// MySQL HOWTO: connect to the database${nc}
  A MySQL@5.6 server (must match remote server version)
  must be reachable locally. If it's the 1st time you use this connection,
  Configure it as a service and log in with super or admin user shell:${green}mysql -u root${nc}
- These SQL statements initializes the database, replace with ${orange}environment variables${nc} : 
+ These SQL statements initializes the database, replaced with ${orange}environment variables${nc} :
 
-        create database ${orange}DATABASE_NAME${nc};
+        create database ${orange}${TEST_DATABASE_NAME}${nc};
         use mysql;
-        create user '${orange}DATABASE_USER${nc}'@'127.0.0.1';
-        alter user '${orange}DATABASE_USER${nc}'@'127.0.0.1' identified by '${orange}DATABASE_PASSWORD${nc}';
-        select * from user where user = '${orange}DATABASE_USER${nc}';
+        create user '${cyan}${TEST_DATABASE_USER}${nc}'@'${TEST_MYSQL_SERVICE_HOST}';
+        alter user '${cyan}${TEST_DATABASE_USER}${nc}'@'${TEST_MYSQL_SERVICE_HOST}' identified by '${orange}${TEST_DATABASE_PASSWORD}${nc}';
+        select * from user where user = '${cyan}${TEST_DATABASE_USER}${nc}';
+        ${orange}grant all${nc} on ${TEST_DATABASE_NAME}.* to '${cyan}${TEST_DATABASE_USER}${nc}'@'${TEST_MYSQL_SERVICE_HOST}';
+
 ${nc}
  The values of CakePHP DB VARIABLES available at ${cyan}app/Config/database.php${nc}.
  Don't forget to grant all privileges to ${cyan}'DATABASE_USER'@'127.0.0.1'${nc}.
- Type in shell $ mysql -u root, local test, create the ${cyan}TEST_DATABASE_USER${nc} e.g.:
-${orange} 
-        create database phpcms;
+ Type in shell to login ${green}mysqld ${nc}local daemon as above should give the following results :
+${orange}
+        mysql -u root
+        create database \$TEST_DATABASE_NAME;
         use mysql;
-        create user 'test'@'127.0.0.1';
+        create user '\$TEST_DATABASE_USER'@'\$TEST_MYSQL_SERVICE_HOST';
         ${green}
-        >  0 row affected, ...
+        > Query OK, 0 row affected, ...
         ${orange}
-        alter user 'test'@'127.0.0.1' identified by 'mypassword';
+        alter user '\$TEST_DATABASE_USER'@'127.0.0.1' identified by '\$TEST_DATABASE_PASSWORD';
         ${green}
-        >  0 row affected, ...
+        > Query OK, 0 row affected, ...
         ${orange}
-        grant all on phpcms.* to 'test'@'127.0.0.1';
+        grant all on \$TEST_DATABASE_NAME.* to '\$TEST_DATABASE_USER'@'\$TEST_MYSQL_SERVICE_HOST';
         ${green}
-        >  0 row affected, ...
+        > Query OK, 0 row affected, ...
         ${nc}
-        
+
 ${red}                        ///// FAQ${nc} :
 
                                         1.
@@ -63,25 +81,11 @@ ${nc}
 
                                         3.
 ${green}Whenever mysql server changes to another version${nc}, try an upgrade of phpcms database within a (secure)shell ${green}mysql_upgrade -u root${nc}
-                                        
+
                                         4.
-${green}Make changes to SQL database structure (table-models)${nc}, by modifying Config/Schema/myschema.php, as Config/database.php defines it. Run ${orange}./migrate-database.php${nc}, answer ${cyan}Y${nc}es when prompted, which may not display any ${red}SQLSTATE [error]${nc}.                                         
+${green}Make changes to SQL database structure (table-models)${nc}, by modifying Config/Schema/myschema.php, as Config/database.php defines it. Run ${orange}./migrate-database.php${nc}, answer ${cyan}Y${nc}es when prompted, which may not display any ${red}SQLSTATE [error]${nc}.
 
 "
-#; 
-#; Host name (unix) 'localhost' generally replaces '127.0.0.1' (macOS).
-#;
-export DATABASE_ENGINE="mysql"
-export DATABASE_SERVICE_NAME="mysql"
-export TEST_MYSQL_SERVICE_HOST="127.0.0.1"
-#;export TEST_MYSQL_SERVICE_HOST="localhost"
-export TEST_MYSQL_SERVICE_PORT="3306"
-export TEST_DATABASE_NAME="phpcms"
-export TEST_DATABASE_USER="test"
-export TEST_DATABASE_PASSWORD="mypassword"
-export FTP_SERVICE_HOST="localhost"
-export FTP_SERVICE_USER="test"
-export FTP_SERVICE_PASSWORD="mypassword"
 #;
 #;
 #; this development phase, don't use the same values for production (no setting means no debugger)!
@@ -111,7 +115,7 @@ echo "${nc}Password ${green}$GET_HASH_PASSWORD${nc}"
 #;
 #;
 #; Composer simplifies the process to add features like plugins
-#; 
+#;
 #;
 composer="bin/composer.phar"
 if [ ! -f $composer ]; then
@@ -124,6 +128,9 @@ else
         echo "Composer ${green}[OK]${nc}"
 fi
 echo `bin/composer.phar --version`
+#; update plugins and dependencies
+echo `bin/composer.phar update`
+echo `bin/composer.phar update -d app/Plugin/Markdown`
 #;
 #;
 #; PHPUnit performs unit tests
@@ -135,7 +142,7 @@ if [[ ! -f $phpunit ]] || [[ `expr "\`$phpunit --version\`" : 'PHPUnit\ 3\.'` -e
         echo "Composer will download the PHPUnit framework"
         version=3
         vcs=3
-#        CakePHP 2.X compatible with PHPUnit 3.7 
+#        CakePHP 2.X compatible with PHPUnit 3.7
 #        PHPUnit 4+ needs CakePHP 3+.
         if [ `expr "\`php --version\`" : 'PHP\ 5\.[0-3]\.'` -gt 0 ]; then
                 version=3
@@ -144,17 +151,17 @@ if [[ ! -f $phpunit ]] || [[ `expr "\`$phpunit --version\`" : 'PHPUnit\ 3\.'` -e
 #        if [ `expr "\`php --version\`" : 'PHP\ 5\.[4-9]\.'` -gt 0 ]; then
 #                version=3
 #                vcs=3
-#        fi   
+#        fi
 #        if [ `expr "\`php --version\`" : 'PHP\ 7\.0\.'` -gt 0 ]; then
 #                version=3
 #                vcs=3
-#        fi     
+#        fi
 #        if [ `expr "\`php --version\`" : 'PHP\ 7\.[1-9]\.'` -gt 0 ]; then
 #                version=3
 #                vcs=3
-#        fi     
+#        fi
         echo " version $version...\n"
-        php bin/composer.phar require --prefer-dist --update-with-dependencies --dev phpunit/phpunit ^$version cakephp/cakephp-codesniffer ^$vcs 
+        php bin/composer.phar require --prefer-dist --update-with-dependencies --dev phpunit/phpunit ^$version cakephp/cakephp-codesniffer ^$vcs
 else
         echo "PHPUnit ${green}[OK]${nc}"
 fi
