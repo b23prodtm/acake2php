@@ -1,6 +1,6 @@
 [submodule "app/webroot/php-cms"]
 	path = app/webroot/php-cms
-	url = git@bitbucket.org:b23prodtm/php-cms.git
+	url = https://bitbucket.org/b23prodtm/php-cms.git
 [submodule "app/Plugin/Markdown"]
 	path = app/Plugin/Markdown
-	url = git@github.com:b23prodtm/markdown-plugin.git
+	url = https://github.com/b23prodtm/markdown-plugin.git
