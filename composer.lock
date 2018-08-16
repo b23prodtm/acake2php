@@ -4,11 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "914448e39f67d80ede63b7050c42e717",
+    "content-hash": "3a7762b75377e853c1b485af7be16c90",
     "packages": [
         {
             "name": "b23prodtm/markdown-plugin",
-            "version": "dev-master",
+            "version": "0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/b23prodtm/markdown-plugin.git",
@@ -797,9 +797,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "b23prodtm/markdown-plugin": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

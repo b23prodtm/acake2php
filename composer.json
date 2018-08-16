@@ -1,5 +1,5 @@
 {
-	"name": "app",
+	"name": "b23prodtm/myphpcms",
 	"description": "CMS featuring CakePHP Framework",
 	"homepage": "https://www.sourceforge.net/projects/pohse",
 	"license": "MIT",
@@ -18,7 +18,7 @@
 	},
 	"require": {
 		"php": ">=5.3.0",
-		"b23prodtm/markdown-plugin": "dev-master"
+		"b23prodtm/markdown-plugin": ">=0.9"
 	},
 	"suggest": {
 		"ext-openssl": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption",
