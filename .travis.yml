@@ -8,8 +8,6 @@ php:
   - 5.5
   - 5.6
   - 7.0
-  - 7.1
-  - 7.2
 
 env:
   matrix:
@@ -29,18 +27,6 @@ matrix:
 
     - php: 5.4
       env: DB=sqlite
-
-    - php: 7.0
-
-    - php: 7.1
-      env: PHPCS=3
-
-    - php: 7.2
-      env: PHPCS=3
-  exclude:
-    - php: 7.2
-      env: DB=mysql
-
 
 before_script:
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] ; then pear config-set preferred_state snapshot && yes "" | pecl install mcrypt ; fi
