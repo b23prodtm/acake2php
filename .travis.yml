@@ -1,22 +1,20 @@
 language: php
 
 # We require precise here, as 5.3 doesn't exist on trusty.
-dist: precise
+dist: trusty
 
 php:
-  - 5.3
   - 5.4
   - 5.5
   - 5.6
   - 7.0
-  - 7.1
-  - 7.2
 
 env:
   matrix:
     - DB=mysql
   global:
-    - PHPUNIT=3.7.33
+    - PHPUNIT=3
+    - PHPCS=1
 
 services:
   - memcached
@@ -24,31 +22,15 @@ services:
 matrix:
   fast_finish: true
   include:
-    - php: 5.3
-      env: DB=mysql PHPUNIT=4.8.35
-
     - php: 5.4
       env: DB=pgsql
 
     - php: 5.4
       env: DB=sqlite
 
-    - php: 7.0
-      env: PHPCS=1
-
-    - php: 7.1
-      env: DB=mysql PHPUNIT=5.7.19
-
-    - php: 7.2
-      env: DB=mysql PHPUNIT=5.7.19
-  exclude:
-    - php: 7.2
-      env: DB=mysql
-
-
 before_script:
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] ; then pear config-set preferred_state snapshot && yes "" | pecl install mcrypt ; fi
-  - composer require "phpunit/phpunit=$PHPUNIT"
+  - composer require --prefer-dist --update-with-dependencies --dev phpunit/phpunit ^$PHPUNIT cakephp/cakephp-codesniffer ^$PHPCS
   - echo "require_once 'vendors/autoload.php';" >> app/Config/bootstrap.php
   - sudo locale-gen de_DE
   - sudo locale-gen es_ES
