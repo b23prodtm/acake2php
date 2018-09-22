@@ -9,6 +9,8 @@ php:
   - 5.6
   - 7.0
 
+cache:
+    - app/tmp/cache/
 env:
   matrix:
     - DB=mysql
@@ -21,8 +23,9 @@ env:
     - secure:  "4rmDT/vKTSi8AqI3afVUylayJ+SQbxblwlz/z81No4nLYWoy0dT61R/ZXq2Y29BE/HGEwx6r8Fl5RU6DxnmD7KhLC/3swHifzed690VDWyLii7cK8QkXVfLVVo8p+ozIwUrirnYFEkAcTfmkwJbmZN6DUuHJCl4x14NolR82VlJtFOVoWs63r+2NVJ5aM+63bkljkcW2U4xTt/8aOrCU/UapwqxC1GA0xPpwte6jPhzUjKXWbiknY+noUakM13x8SOkSRs3MTEf8J2va2T6DbVY3wy3x2Ytp4/KDwVNUrn/GKgBDRysP3jefO2d6XZJlb8OktJsrHdtWIZ+oYVwoy0PRV3vmdHs1NFUmYdQEe5UpiUKKyxWMsM+31to5ZUtJtn4kIlgzyo+xZu+LCgbOusJs33uPZODOON5fHcAoMp3AdAM0ResBfJdjzYEiewlcGYAcOoMX6DtopoJCoz+JxktdzXnjz89imNKMB2tjsRXuZMdE0WL3V2TSuOS5r8BwuuXXeul5vvE2EKHoIHgrP2nehz+q7dyC71m6jNrQX7x+xVg988vh0Fg8hyghLUzt9Myv4pvtQ/zQDbabKGtsakiHSvPTeHcb8mDhs62h5aIWUar8oXNuOWlk+hnyqZLmnbUPDcg54o567NursWYSWemAnPkPvSTfX0DQF1hDvSo="
 
 before_install:
-# Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
-- echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+  # Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+  - ./configure_tmp.sh
 
 addons:
   coverity_scan:
@@ -31,7 +34,7 @@ addons:
       description: "This PHP CMS is featuring well-known functionalities as cool as posting some web contents with pictures stored in a database."
     notification_email: b23prodtm@users.sourceforge.net
     build_command_prepend: .travis/configure
-    build_command: ./lib/Cake/Console/cake test core AllTests --stderr
+    build_command: if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;
     branch_pattern: coverity_scan
 services:
   - memcached
