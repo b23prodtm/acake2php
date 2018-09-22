@@ -118,4 +118,6 @@ CakePlugin::load('DebugKit');
 /**
  * Load Markdown Plugin
  */
-CakePlugin::load(array('Markdown' => array('bootstrap' => true)));
+CakePlugin::load(array('Markdown' => array('bootstrap' => true)));require_once 'vendors/autoload.php';
+require_once 'vendors/autoload.php';
+require_once 'vendors/autoload.php';

@@ -13,11 +13,26 @@ env:
   matrix:
     - DB=mysql
   global:
-    - PHPUNIT=3
-    - PHPCS=1
-  # OC_SECRET    
-  secure: "O+HejqZgXZFf0eD3GdvUwL2dsJsW+5biztfWYKHNfzv5u9j6Nn8JSoLdIp+Bg6Kct6kCJebM7oWHCh1fhyEm3AluusmqKHN8VKwQuINEZKAxPRFGl3NKkEU/Y95tHR3JIubZbZ0oZYmnl7z+YgVvM4LvmfvAwdpXzRt4SWOzGRWiL8uRaovOwW10HUB6qcO70Rn9XIHz4gUAoAEWQgSlJ4aNftu/lpuYs4P1r0+6fI/nfRRBMOogBQLEMqw6enPP+RrWx2pLwuxaQqChtk2td5PJdLiifW7C8SiAsljSgIRiaytAOgIs5KJsLGUdAPNXIMqUYFJ776J3L+ln8/nM/H8ARGB2P3smY5HM34/NrzUat2X/B6Uqg1F0Fs/794aomhaeqgh4b2MRI5srjQ/grNK61H1AftdR6JSLVjm6AUg743GQJF7sgNfK60n28EEZApAEzDS0v1PyU7U/HAZIalqWnttO0ycQyj2rf1XC++6BuTcRdmxx4dZoqZIn7xHzBQvi99ljv4JuwUgrNYXvcSEkXu6Y5GqMl2rtjxrdaGATpePuk1ju1kfB/7fQsR3ZZOaxULOSlQRcArsyseOtmEqQ1h5BVSmOGV+yoEboNm2FDZH/gD9ZZ7kTi+bk4bvHRZSD06JiDZ12W/JGsmU77phVIIWuUcXghEZf/WRjTe4="
+    # The next declaration is the encrypted OC_SECRET, created
+    # via the "travis encrypt" command using the project repo's public key
+    - secure:  "O+HejqZgXZFf0eD3GdvUwL2dsJsW+5biztfWYKHNfzv5u9j6Nn8JSoLdIp+Bg6Kct6kCJebM7oWHCh1fhyEm3AluusmqKHN8VKwQuINEZKAxPRFGl3NKkEU/Y95tHR3JIubZbZ0oZYmnl7z+YgVvM4LvmfvAwdpXzRt4SWOzGRWiL8uRaovOwW10HUB6qcO70Rn9XIHz4gUAoAEWQgSlJ4aNftu/lpuYs4P1r0+6fI/nfRRBMOogBQLEMqw6enPP+RrWx2pLwuxaQqChtk2td5PJdLiifW7C8SiAsljSgIRiaytAOgIs5KJsLGUdAPNXIMqUYFJ776J3L+ln8/nM/H8ARGB2P3smY5HM34/NrzUat2X/B6Uqg1F0Fs/794aomhaeqgh4b2MRI5srjQ/grNK61H1AftdR6JSLVjm6AUg743GQJF7sgNfK60n28EEZApAEzDS0v1PyU7U/HAZIalqWnttO0ycQyj2rf1XC++6BuTcRdmxx4dZoqZIn7xHzBQvi99ljv4JuwUgrNYXvcSEkXu6Y5GqMl2rtjxrdaGATpePuk1ju1kfB/7fQsR3ZZOaxULOSlQRcArsyseOtmEqQ1h5BVSmOGV+yoEboNm2FDZH/gD9ZZ7kTi+bk4bvHRZSD06JiDZ12W/JGsmU77phVIIWuUcXghEZf/WRjTe4="
+    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+    # via the "travis encrypt" command using the project repo's public key
+    - secure:  "4rmDT/vKTSi8AqI3afVUylayJ+SQbxblwlz/z81No4nLYWoy0dT61R/ZXq2Y29BE/HGEwx6r8Fl5RU6DxnmD7KhLC/3swHifzed690VDWyLii7cK8QkXVfLVVo8p+ozIwUrirnYFEkAcTfmkwJbmZN6DUuHJCl4x14NolR82VlJtFOVoWs63r+2NVJ5aM+63bkljkcW2U4xTt/8aOrCU/UapwqxC1GA0xPpwte6jPhzUjKXWbiknY+noUakM13x8SOkSRs3MTEf8J2va2T6DbVY3wy3x2Ytp4/KDwVNUrn/GKgBDRysP3jefO2d6XZJlb8OktJsrHdtWIZ+oYVwoy0PRV3vmdHs1NFUmYdQEe5UpiUKKyxWMsM+31to5ZUtJtn4kIlgzyo+xZu+LCgbOusJs33uPZODOON5fHcAoMp3AdAM0ResBfJdjzYEiewlcGYAcOoMX6DtopoJCoz+JxktdzXnjz89imNKMB2tjsRXuZMdE0WL3V2TSuOS5r8BwuuXXeul5vvE2EKHoIHgrP2nehz+q7dyC71m6jNrQX7x+xVg988vh0Fg8hyghLUzt9Myv4pvtQ/zQDbabKGtsakiHSvPTeHcb8mDhs62h5aIWUar8oXNuOWlk+hnyqZLmnbUPDcg54o567NursWYSWemAnPkPvSTfX0DQF1hDvSo="
 
+before_install:
+# Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
+- echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+addons:
+  coverity_scan:
+    project:
+      name: "b23prodtm/myphpcms"
+      description: "This PHP CMS is featuring well-known functionalities as cool as posting some web contents with pictures stored in a database."
+    notification_email: b23prodtm@users.sourceforge.net
+    build_command_prepend: sh --verbose .travis/configure
+    build_command: ./lib/Cake/Console/cake test core AllTests --stderr
+    branch_pattern: coverity_scan
 services:
   - memcached
 
@@ -31,110 +46,10 @@ matrix:
       env: DB=sqlite
 
 before_script:
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] ; then pear config-set preferred_state snapshot && yes "" | pecl install mcrypt ; fi
-  - composer require --prefer-dist --update-with-dependencies --dev phpunit/phpunit ^$PHPUNIT cakephp/cakephp-codesniffer ^$PHPCS
-  - echo "require_once 'vendors/autoload.php';" >> app/Config/bootstrap.php
-  - sudo locale-gen de_DE
-  - sudo locale-gen es_ES
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test2;'; fi"
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test3;'; fi"
-  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
-  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
-  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
-  - chmod -R 777 ./app/tmp
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.3" ]] ; then pecl install timezonedb ; fi
-  - sh -c "if [ '$PHPCS' = '1' ]; then composer require 'cakephp/cakephp-codesniffer:1.*'; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendors/bin/phpcs --config-set installed_paths vendors/cakephp/cakephp-codesniffer; fi"
-  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "7" ]] ; then echo "yes" | pecl install apcu-5.1.3 || true; fi
-  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "5" ]] ; then echo "yes" | pecl install apcu-4.0.11 || true; fi
-  - echo -e "extension = apcu.so\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - phpenv rehash
-  - set +H
-  - echo "<?php
-    class DATABASE_CONFIG {
-    private \$identities = array(
-      'mysql' => array(
-        'datasource' => 'Database/Mysql',
-        'host' => '127.0.0.1',
-        'login' => 'root'
-      ),
-      'pgsql' => array(
-        'datasource' => 'Database/Postgres',
-        'host' => '127.0.0.1',
-        'login' => 'postgres',
-        'database' => 'cakephp_test',
-        'schema' => array(
-          'default' => 'public',
-          'test' => 'public',
-          'test2' => 'test2',
-          'test_database_three' => 'test3'
-        )
-      ),
-      'sqlite' => array(
-        'datasource' => 'Database/Sqlite',
-        'database' => array(
-          'default' => ':memory:',
-          'test' => ':memory:',
-          'test2' => '/tmp/cakephp_test2.db',
-          'test_database_three' => '/tmp/cakephp_test3.db'
-        ),
-      )
-    );
-    public \$default = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test',
-      'prefix' => ''
-    );
-    public \$test = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test',
-      'prefix' => ''
-    );
-    public \$test2 = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test2',
-      'prefix' => ''
-    );
-    public \$test_database_three = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test3',
-      'prefix' => ''
-    );
-    public function __construct() {
-      \$db = 'mysql';
-      if (!empty(\$_SERVER['DB'])) {
-        \$db = \$_SERVER['DB'];
-      }
-      foreach (array('default', 'test', 'test2', 'test_database_three') as \$source) {
-        \$config = array_merge(\$this->{\$source}, \$this->identities[\$db]);
-        if (is_array(\$config['database'])) {
-          \$config['database'] = \$config['database'][\$source];
-        }
-        if (!empty(\$config['schema']) && is_array(\$config['schema'])) {
-          \$config['schema'] = \$config['schema'][\$source];
-        }
-        \$this->{\$source} = \$config;
-      }
-    }
-    }" > app/Config/database.php
+  - .travis/configure
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;"
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi; fi
 
 notifications:
   email: false
@@ -144,4 +59,4 @@ notifications:
       - https://webhook-proxy-e14.a3c1.starter-us-west-1.openshiftapps.com/travis-ci/api.starter-us-west-1.openshift.com:443/e14/cakephp-mysql-persistent/webhooks/$OC_SECRET/generic
     on_success: always
     on_failure: never
-    on_start: never# default: always
+    on_start: never # default: always
