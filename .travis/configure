@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 export PHPUNIT=3
 export PHPCS=1
 if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] ; then pear config-set preferred_state snapshot && yes "" | pecl install mcrypt ; fi
