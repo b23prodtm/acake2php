@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 ./configure.sh -Y -N -N
+./composer.sh
 if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] ; then pear config-set preferred_state snapshot && yes "" | pecl install mcrypt ; fi
 composer require --prefer-dist --update-with-dependencies --dev phpunit/phpunit ^${PHPUNIT} cakephp/cakephp-codesniffer ^${PHPCS}
 echo "require_once 'vendors/autoload.php';" >> app/Config/bootstrap.php
