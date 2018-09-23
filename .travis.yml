@@ -9,10 +9,14 @@ php:
   - 5.6
   - 7.0
 
+cache:
+    - app/tmp/cache/
 env:
   matrix:
     - DB=mysql
   global:
+    - PHPUNIT=3
+    - PHPCS=3
     # The next declaration is the encrypted OC_SECRET, created
     # via the "travis encrypt" command using the project repo's public key
     - secure:  "O+HejqZgXZFf0eD3GdvUwL2dsJsW+5biztfWYKHNfzv5u9j6Nn8JSoLdIp+Bg6Kct6kCJebM7oWHCh1fhyEm3AluusmqKHN8VKwQuINEZKAxPRFGl3NKkEU/Y95tHR3JIubZbZ0oZYmnl7z+YgVvM4LvmfvAwdpXzRt4SWOzGRWiL8uRaovOwW10HUB6qcO70Rn9XIHz4gUAoAEWQgSlJ4aNftu/lpuYs4P1r0+6fI/nfRRBMOogBQLEMqw6enPP+RrWx2pLwuxaQqChtk2td5PJdLiifW7C8SiAsljSgIRiaytAOgIs5KJsLGUdAPNXIMqUYFJ776J3L+ln8/nM/H8ARGB2P3smY5HM34/NrzUat2X/B6Uqg1F0Fs/794aomhaeqgh4b2MRI5srjQ/grNK61H1AftdR6JSLVjm6AUg743GQJF7sgNfK60n28EEZApAEzDS0v1PyU7U/HAZIalqWnttO0ycQyj2rf1XC++6BuTcRdmxx4dZoqZIn7xHzBQvi99ljv4JuwUgrNYXvcSEkXu6Y5GqMl2rtjxrdaGATpePuk1ju1kfB/7fQsR3ZZOaxULOSlQRcArsyseOtmEqQ1h5BVSmOGV+yoEboNm2FDZH/gD9ZZ7kTi+bk4bvHRZSD06JiDZ12W/JGsmU77phVIIWuUcXghEZf/WRjTe4="
@@ -21,8 +25,9 @@ env:
     - secure:  "4rmDT/vKTSi8AqI3afVUylayJ+SQbxblwlz/z81No4nLYWoy0dT61R/ZXq2Y29BE/HGEwx6r8Fl5RU6DxnmD7KhLC/3swHifzed690VDWyLii7cK8QkXVfLVVo8p+ozIwUrirnYFEkAcTfmkwJbmZN6DUuHJCl4x14NolR82VlJtFOVoWs63r+2NVJ5aM+63bkljkcW2U4xTt/8aOrCU/UapwqxC1GA0xPpwte6jPhzUjKXWbiknY+noUakM13x8SOkSRs3MTEf8J2va2T6DbVY3wy3x2Ytp4/KDwVNUrn/GKgBDRysP3jefO2d6XZJlb8OktJsrHdtWIZ+oYVwoy0PRV3vmdHs1NFUmYdQEe5UpiUKKyxWMsM+31to5ZUtJtn4kIlgzyo+xZu+LCgbOusJs33uPZODOON5fHcAoMp3AdAM0ResBfJdjzYEiewlcGYAcOoMX6DtopoJCoz+JxktdzXnjz89imNKMB2tjsRXuZMdE0WL3V2TSuOS5r8BwuuXXeul5vvE2EKHoIHgrP2nehz+q7dyC71m6jNrQX7x+xVg988vh0Fg8hyghLUzt9Myv4pvtQ/zQDbabKGtsakiHSvPTeHcb8mDhs62h5aIWUar8oXNuOWlk+hnyqZLmnbUPDcg54o567NursWYSWemAnPkPvSTfX0DQF1hDvSo="
 
 before_install:
-# Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
-- if ([[ "${TRAVIS_JOB_NUMBER##*.}" != "1" ]] && [[ "${TRAVIS_BRANCH}" == "coverity_scan" ]]); then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca- ; fi
+  # Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+  - ./configure_tmp.sh
 
 addons:
   coverity_scan:
@@ -31,7 +36,7 @@ addons:
       description: "This PHP CMS is featuring well-known functionalities as cool as posting some web contents with pictures stored in a database."
     notification_email: b23prodtm@users.sourceforge.net
     build_command_prepend: .travis/configure
-    build_command: ./lib/Cake/Console/cake test core AllTests --stderr
+    build_command: if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;
     branch_pattern: coverity_scan
 services:
   - memcached
@@ -49,10 +54,7 @@ before_script:
   - .travis/configure
 
 script:
-  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then
-  - sh -c "if [ '$PHPCS' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;"
-  - fi
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi; fi
 
 notifications:
   email: false

@@ -18,7 +18,7 @@
 	},
 	"require": {
 		"php": ">=5.3.0",
-		"b23prodtm/markdown-plugin": ">=0.9"
+		"b23prodtm/markdown-plugin": "master@dev"
 	},
 	"suggest": {
 		"ext-openssl": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption",
@@ -26,7 +26,7 @@
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^3",
-		"cakephp/cakephp-codesniffer": "^1"
+		"cakephp/cakephp-codesniffer": "^3"
 	},
 	"extra": {
 		"installer-paths": {

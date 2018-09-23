@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a7762b75377e853c1b485af7be16c90",
+    "content-hash": "04e9640d9cad3c92059819fc6b938ca4",
     "packages": [
         {
             "name": "b23prodtm/markdown-plugin",
-            "version": "0.9",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/b23prodtm/markdown-plugin.git",
-                "reference": "411862a013c380642e7a458940fa13a6dc7d0d6e"
+                "reference": "1bdffb9024bbcfbcb3e99397dedc1c7dbfa1ac26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/b23prodtm/markdown-plugin/zipball/411862a013c380642e7a458940fa13a6dc7d0d6e",
-                "reference": "411862a013c380642e7a458940fa13a6dc7d0d6e",
+                "url": "https://api.github.com/repos/b23prodtm/markdown-plugin/zipball/1bdffb9024bbcfbcb3e99397dedc1c7dbfa1ac26",
+                "reference": "1bdffb9024bbcfbcb3e99397dedc1c7dbfa1ac26",
                 "shasum": ""
             },
             "require": {
@@ -50,20 +50,20 @@
                 "markdown",
                 "plugin"
             ],
-            "time": "2018-08-16T16:54:29+00:00"
+            "time": "2018-09-23T18:28:49+00:00"
         },
         {
             "name": "composer/installers",
-            "version": "v1.5.0",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "049797d727261bf27f2690430d935067710049c2"
+                "reference": "cfcca6b1b60bc4974324efb5783c13dca6932b5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/049797d727261bf27f2690430d935067710049c2",
-                "reference": "049797d727261bf27f2690430d935067710049c2",
+                "url": "https://api.github.com/repos/composer/installers/zipball/cfcca6b1b60bc4974324efb5783c13dca6932b5b",
+                "reference": "cfcca6b1b60bc4974324efb5783c13dca6932b5b",
                 "shasum": ""
             },
             "require": {
@@ -170,7 +170,7 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2017-12-29T09:13:20+00:00"
+            "time": "2018-08-27T06:10:37+00:00"
         },
         {
             "name": "michelf/php-markdown",
@@ -746,7 +746,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.44",
+            "version": "v2.8.45",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
@@ -797,7 +797,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "b23prodtm/markdown-plugin": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

@@ -5,6 +5,7 @@
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
 /vendors
+!/vendors/autoload.php 
 /build
 /dist
 /tags
