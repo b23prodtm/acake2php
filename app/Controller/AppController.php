@@ -22,7 +22,7 @@
 App::uses('Controller', 'Controller');
 /*App::import('file', 'Index', false, array(WWW_ROOT . 'php-cms' . DS . 'e13' . DS . 'include' . DS), 'php_index.inc.php');
 TODO: autoloader plugin*/
-App::build(array('php_cms' => array(WWW_ROOT . DS .'php_cms')));
+App::build(array('php_cms/e13/include' => array(WWW_ROOT . DS .'php_cms' . DS . 'e13' . DS . 'include')));
 App::uses('Index', 'php_cms/e13/include');
 
 /**
