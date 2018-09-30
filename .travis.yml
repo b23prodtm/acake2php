@@ -10,7 +10,10 @@ php:
   - 7.0
 
 cache:
-    - app/tmp/cache/
+  directories:
+    - app/tmp/cache
+    - .autoconf
+    - $HOME/.composer/cache/files
 env:
   matrix:
     - DB=mysql
@@ -33,7 +36,6 @@ addons:
   coverity_scan:
     project:
       name: "b23prodtm/myphpcms"
-      description: "This PHP CMS is featuring well-known functionalities as cool as posting some web contents with pictures stored in a database."
     notification_email: b23prodtm@users.sourceforge.net
     build_command_prepend: .travis/configure
     build_command: if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;
