@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "04e9640d9cad3c92059819fc6b938ca4",
+    "content-hash": "2b710338006fae186df8272b3c3c6a02",
     "packages": [
         {
             "name": "b23prodtm/markdown-plugin",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/b23prodtm/markdown-plugin.git",
-                "reference": "1bdffb9024bbcfbcb3e99397dedc1c7dbfa1ac26"
+                "reference": "f7b89494fd5feea8a9c43d5caf91d306104e5262"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/b23prodtm/markdown-plugin/zipball/1bdffb9024bbcfbcb3e99397dedc1c7dbfa1ac26",
-                "reference": "1bdffb9024bbcfbcb3e99397dedc1c7dbfa1ac26",
+                "url": "https://api.github.com/repos/b23prodtm/markdown-plugin/zipball/f7b89494fd5feea8a9c43d5caf91d306104e5262",
+                "reference": "f7b89494fd5feea8a9c43d5caf91d306104e5262",
                 "shasum": ""
             },
             "require": {
@@ -27,7 +27,7 @@
             },
             "type": "cakephp-plugin",
             "extra": {
-                "installer-name": "Markdown"
+                "installer-name": "MarkdownExtra"
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -50,7 +50,7 @@
                 "markdown",
                 "plugin"
             ],
-            "time": "2018-09-23T18:28:49+00:00"
+            "time": "2018-09-30T16:34:43+00:00"
         },
         {
             "name": "composer/installers",
@@ -764,16 +764,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.45",
+            "version": "v2.8.46",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "fbf876678e29dc634430dcf0096e216eb0004467"
+                "reference": "5baf0f821b14eee8ca415e6a0361a9fa140c002c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/fbf876678e29dc634430dcf0096e216eb0004467",
-                "reference": "fbf876678e29dc634430dcf0096e216eb0004467",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/5baf0f821b14eee8ca415e6a0361a9fa140c002c",
+                "reference": "5baf0f821b14eee8ca415e6a0361a9fa140c002c",
                 "shasum": ""
             },
             "require": {
@@ -810,7 +810,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2018-07-26T09:03:18+00:00"
+            "time": "2018-08-29T13:11:53+00:00"
         }
     ],
     "aliases": [],

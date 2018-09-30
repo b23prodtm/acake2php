@@ -15,7 +15,7 @@ cyan="\033[0;36m"
 #;
 #; Host name (unix) 'localhost' generally replaces '127.0.0.1' (macOS).
 #;
-export DATABASE_ENGINE="mysql"
+export DATABASE_ENGINE="Mysql"
 export DATABASE_SERVICE_NAME="mysql"
 export TEST_MYSQL_SERVICE_HOST="127.0.0.1"
 #;export TEST_MYSQL_SERVICE_HOST="localhost"
@@ -26,7 +26,7 @@ export TEST_DATABASE_PASSWORD="mypassword"
 export FTP_SERVICE_HOST="localhost"
 export FTP_SERVICE_USER="test"
 export FTP_SERVICE_PASSWORD="mypassword"
-
+export PHP_CMS_DIR="./app/webroot/php_cms/"
 echo "
 
 ${red}                ///// MySQL HOWTO: connect to the database${nc}
@@ -45,7 +45,7 @@ ${red}                ///// MySQL HOWTO: connect to the database${nc}
 
 ${nc}
  The values of CakePHP DB VARIABLES available at ${cyan}app/Config/database.php${nc}.
- Don't forget to grant all privileges to ${cyan}'DATABASE_USER'@'127.0.0.1'${nc}.
+ Don't forget to grant all privileges.
  Type in shell to login ${green}mysqld ${nc}local daemon as above should give the following results :
 ${orange}
         mysql -u root
@@ -74,7 +74,7 @@ ${red}                        ///// FAQ${nc} :
 Run again ${green}./migrate_database.sh${nc}, to create or update database tables.
 
                                         2.
-If ACCESS DENIED appears, please verify the user name and localhost then
+If ACCESS DENIED appears, please verify the user name and localhost values then
 ${cyan}
         grant all on phpcms.* to this user as above.
 ${nc}
@@ -83,8 +83,12 @@ ${nc}
 ${green}Whenever mysql server changes to another version${nc}, try an upgrade of phpcms database within a (secure)shell ${green}mysql_upgrade -u root${nc}
 
                                         4.
-${green}Make changes to SQL database structure (table-models)${nc}, by modifying Config/Schema/myschema.php, as Config/database.php defines it. Run ${orange}./migrate-database.php${nc}, answer ${cyan}Y${nc}es when prompted, which may not display any ${red}SQLSTATE [error]${nc}.
+${green}Make changes to SQL database structure (table-models)${nc}, by modifying Config/Schema/myschema.php, as Config/database.php defines it.
+Run ${green}./migrate-database.sh${nc}, answer ${cyan}Y${nc}es when prompted, which may not display any ${red}SQLSTATE [error]${nc}.
 
+If the ${red}Error: 'Database connection \"Mysql\" is missing, or could not be created'${nc}
+ shows up, please check up your ${cyan}TEST_DATABASE_NAME=$TEST_DATABASE_NAME${nc} environment variable (set up is above in this shell script or in web node settings).
+ Log into the SQL shell (${green}mysql -u root${nc}) and check if you can do : ${green}use $TEST_DATABASE_NAME${nc}.
 "
 #;
 #;
@@ -95,8 +99,8 @@ export CAKEPHP_DEBUG_LEVEL=2
 #;
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;
-if [ ! -f app/webroot/php-cms/e13/etc/constantes.properties ]; then
-        echo "${red}PLEASE RUN ./CONFIGURE.SH FIRST !${nc}"
+if [ ! -f ${PHP_CMS_DIR}/e13/etc/constantes.properties ]; then
+        echo "${red}PLEASE RUN ./configure.sh -Y -N -N FIRST !${nc}"
         exit
 fi
 #;
@@ -105,9 +109,9 @@ fi
 #;
 #;
 echo "Configuration begins...${green}"
-hash="app/webroot/php-cms/e13/etc/export_hash_password.sh"
+hash="${PHP_CMS_DIR}/e13/etc/export_hash_password.sh"
 if [ ! -f $hash ]; then
-        echo "${red}PLEASE RUN ./CONFIGURE.SH FIRST !${nc}"
+        echo "${red}PLEASE RUN ./configure.sh -N -Y -N FIRST !${nc}"
         exit
 fi
 source $hash
@@ -144,6 +148,9 @@ if [ ! -f $phpunit ]; then
 #                vcs=3
 #        fi
         echo " version $version...\n"
+        if [ ! -f bin/composer.phar ]; then
+          composer.sh
+        fi
         php bin/composer.phar require --prefer-dist --update-with-dependencies --dev phpunit/phpunit ^$version cakephp/cakephp-codesniffer ^$vcs
 else
         echo "PHPUnit ${green}[OK]${nc}"
