@@ -11,7 +11,7 @@ echo "${green}Fixing some file permissions...${nc}"
 /bin/sh ./configure_tmp.sh
 #; arguments are ./configure.sh -Y|-N [-p password -s salt -f filename]
 #; if the full set of the arguments exists, there won't be any prompt in the shell
-cd app/webroot/php-cms/e13/etc/
+cd app/webroot/php_cms/e13/etc/
 copies=0
 while true
 do
@@ -51,9 +51,9 @@ echo "${cyan}Step 2. Get a hashed password with encryption, PHP encrypts.\n${nc}
 pass=$2
 salt=$4
 #; read password if not set as $3 argv
+answer=$2
 while true
 do
-        answer=$1
         case $answer in
                 -[yY]* ) echo "Yes.\n"
                         answer="Y";;
@@ -103,7 +103,8 @@ do
                 [nN]* ) break;;
 
                 * )     echo "${red}Dude, just enter Y or N, please.\n${nc}";;
-                        esac
+        esac
+        answer=$1
 done
 cd ../../../../../
 
@@ -113,9 +114,9 @@ cd ../../../../../
 # Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
 
 echo "${cyan}Step 3. migrate database\n${nc}"
+answer=$3
 while true
 do
-        answer=$1
         case $answer in
                -[yY]* ) echo "Yes.\n"
                         answer="Y";;
@@ -132,4 +133,5 @@ do
                 [nN]* ) break;;
                 * )     echo "${red}Dude, just enter Y or N, please.\n${nc}";;
         esac
+        answer=$1
 done;

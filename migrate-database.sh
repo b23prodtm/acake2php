@@ -4,7 +4,7 @@
 # Configure it by logging in with shell:$ mysql -u root
 # Then execute this SQL statements : create database DATABASE_NAME; # NO QUOTES ''
 # 				use database DATABASE_NAME;
-#				create user 'DATABASE_USER'@'localhost' 
+#				create user 'DATABASE_USER'@'localhost'
 #				identified by 'DATABASE_PASSWORD';
 # The values of CakePHP DB VARIABLES available at app/Config/database.php.
 # Don't forget to grant all privileges to 'DATABASE_USER'@'localhost' e.g.:
@@ -15,8 +15,12 @@
 #; see below commmands shema generate $1 | create Sessions $2 | update --file myschema.php $3
 #;
 #;
-set -e 
-
+set -e
+dbfile=database.cms.php
+if [ -f app/Config/$dbfile ]; then
+	echo "Reset to $dbfile settings..."
+	cp app/Config/$dbfile app/Config/database.php
+fi
 if [ ! -f app/Config/Schema/schema.php ]; then
 	echo "Generating database schema 'cake schema generate' ..."
 	./lib/Cake/Console/cake schema generate $1
@@ -27,4 +31,3 @@ if [ ! -f app/Config/Schema/sessions.php ]; then
 fi
 echo "Migrating database 'cake schema create' ..."
 ./lib/Cake/Console/cake schema update --file myschema.php $3
-
