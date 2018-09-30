@@ -110,6 +110,7 @@ CakeLog::config('error', array(
 	'file' => 'error',
 ));
 
+require_once ROOT . DS . "vendors/autoload.php";
 /**
  * Load DebugKit plugin
  */

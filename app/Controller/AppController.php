@@ -20,7 +20,10 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 App::uses('Controller', 'Controller');
-App::import('file', 'Index', false, array(WWW_ROOT . 'php-cms' . DS . 'e13' . DS . 'include' . DS), 'php_index.inc.php');
+/*App::import('file', 'Index', false, array(WWW_ROOT . 'php-cms' . DS . 'e13' . DS . 'include' . DS), 'php_index.inc.php');
+TODO: autoloader plugin*/
+App::build(array('php_cms' => array(WWW_ROOT . DS .'php_cms')));
+App::uses('Index', 'php_cms/e13/include');
 
 /**
  * Application Controller
