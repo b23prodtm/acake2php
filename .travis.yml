@@ -15,6 +15,8 @@ env:
   matrix:
     - DB=mysql
   global:
+    - PHPUNIT=3
+    - PHPCS=3
     # The next declaration is the encrypted OC_SECRET, created
     # via the "travis encrypt" command using the project repo's public key
     - secure:  "O+HejqZgXZFf0eD3GdvUwL2dsJsW+5biztfWYKHNfzv5u9j6Nn8JSoLdIp+Bg6Kct6kCJebM7oWHCh1fhyEm3AluusmqKHN8VKwQuINEZKAxPRFGl3NKkEU/Y95tHR3JIubZbZ0oZYmnl7z+YgVvM4LvmfvAwdpXzRt4SWOzGRWiL8uRaovOwW10HUB6qcO70Rn9XIHz4gUAoAEWQgSlJ4aNftu/lpuYs4P1r0+6fI/nfRRBMOogBQLEMqw6enPP+RrWx2pLwuxaQqChtk2td5PJdLiifW7C8SiAsljSgIRiaytAOgIs5KJsLGUdAPNXIMqUYFJ776J3L+ln8/nM/H8ARGB2P3smY5HM34/NrzUat2X/B6Uqg1F0Fs/794aomhaeqgh4b2MRI5srjQ/grNK61H1AftdR6JSLVjm6AUg743GQJF7sgNfK60n28EEZApAEzDS0v1PyU7U/HAZIalqWnttO0ycQyj2rf1XC++6BuTcRdmxx4dZoqZIn7xHzBQvi99ljv4JuwUgrNYXvcSEkXu6Y5GqMl2rtjxrdaGATpePuk1ju1kfB/7fQsR3ZZOaxULOSlQRcArsyseOtmEqQ1h5BVSmOGV+yoEboNm2FDZH/gD9ZZ7kTi+bk4bvHRZSD06JiDZ12W/JGsmU77phVIIWuUcXghEZf/WRjTe4="
