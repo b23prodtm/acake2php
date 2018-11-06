@@ -26,7 +26,7 @@
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^3",
-		"cakephp/cakephp-codesniffer": "^1"
+		"cakephp/cakephp-codesniffer": "^3"
 	},
 	"extra": {
 		"installer-paths": {
@@ -34,7 +34,7 @@
 		}
 	},
 	"config": {
-		"vendor-dir": "vendors/",
+		"vendor-dir": "Vendor/",
 		"process-timeout": 0
 	},
 	"bin": [
@@ -45,7 +45,7 @@
 			"@cs-check",
 			"@test"
 		],
-		"cs-check": "./vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake",
+		"cs-check": "./Vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake",
 		"test": "./lib/Cake/Console/cake test core AllTests --stderr"
 	}
 }
