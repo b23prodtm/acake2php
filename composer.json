@@ -34,7 +34,7 @@
 		}
 	},
 	"config": {
-		"vendor-dir": "Vendor/",
+		"vendor-dir": "app/Vendor/",
 		"process-timeout": 0
 	},
 	"bin": [
@@ -45,7 +45,7 @@
 			"@cs-check",
 			"@test"
 		],
-		"cs-check": "./Vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake",
+		"cs-check": "./app/Vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake",
 		"test": "./lib/Cake/Console/cake test core AllTests --stderr"
 	}
 }

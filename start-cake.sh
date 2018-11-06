@@ -100,24 +100,22 @@ export CAKEPHP_DEBUG_LEVEL=2
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;
 if [ ! -f ${PHP_CMS_DIR}/e13/etc/constantes.properties ]; then
-        echo "${red}PLEASE RUN ./configure.sh -Y -N -N FIRST !${nc}"
-        exit
+        sh ./Scripts/shell_prompt.sh "./configure.sh -Y -N -N" "configuration"
 fi
 #;
 #;
 #; hash file that is stored in webroot to allow administrator privileges
 #;
 #;
-echo "Configuration begins...${green}"
+echo "Configuration begins automatically...${green}"
 hash="${PHP_CMS_DIR}/e13/etc/export_hash_password.sh"
 if [ ! -f $hash ]; then
-        echo "${red}PLEASE RUN ./configure.sh -N -Y -N FIRST !${nc}"
-        exit
+        sh ./Scripts/shell_prompt.sh "./configure.sh -N -Y -N" "configuration"
 fi
 source $hash
 echo "${nc}Password ${green}$GET_HASH_PASSWORD${nc}"
 #; update plugins and dependencies
-sh ./composer.sh
+sh ./Scripts/composer.sh
 #;
 #;
 #; PHPUnit performs unit tests
@@ -149,7 +147,7 @@ if [ ! -f $phpunit ]; then
 #        fi
         echo " version $version...\n"
         if [ ! -f bin/composer.phar ]; then
-          composer.sh
+                sh ./Scripts/composer.sh
         fi
         php bin/composer.phar require --prefer-dist --update-with-dependencies --dev phpunit/phpunit ^$version cakephp/cakephp-codesniffer ^$vcs
 else

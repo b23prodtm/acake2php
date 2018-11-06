@@ -5,7 +5,6 @@
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
 /vendor
-!/vendor/autoload.php 
 /build
 /dist
 /tags
@@ -31,6 +30,7 @@ ehthumbs.db
 Thumbs.db
 /nbproject/private/
 /app/Vendor/
+!/app/Vendor/autoload.php
 /app/webroot/e13/nbproject/private/
 /app/tmp/cache/
 /app/tmp/logs/
