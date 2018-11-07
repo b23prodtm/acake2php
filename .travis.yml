@@ -30,7 +30,7 @@ env:
 before_install:
   # Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
   - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
-  - ./configure_tmp.sh
+  - ./Scripts/configure_tmp.sh
 
 addons:
   coverity_scan:
