@@ -90,18 +90,6 @@ if (!empty($failed)) {
 if (Configure::read('debug') < 1) {
 	throw new NotFoundException(__d('cake_dev', 'Debug setting does not allow access to this URL.'));
 }
-/* PHP AUTOLOAD (app/Vendor/autoload.php installed from composer)
-It is recommended to use only one extension for all classes.
-PHP (more exactly spl_autoload) does the rest for you
-and is even quicker than a semantically equal self-defined autoload function like this one
-*/
-function my_autoload ($pClassName) {
-		$file = WWW_ROOT . "php_cms" . DS . "e13" . DS . "include" . DS . "php_" . $pClassName . ".class.inc.php";
-		if(file_exists($file))
-				include_once($file);
-    }
-spl_autoload_register("my_autoload", true, false);
-/* -- PHP AUTOLOAD  */
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteDispatcher.php';
 
 CakeTestSuiteDispatcher::run();

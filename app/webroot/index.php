@@ -102,18 +102,6 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 if (!empty($failed)) {
 	trigger_error("CakePHP core could not be found. Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php. It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 }
-/* PHP AUTOLOAD (app/Vendor/autoload.php installed from composer)
-It is recommended to use only one extension for all classes.
-PHP (more exactly spl_autoload) does the rest for you
-and is even quicker than a semantically equal self-defined autoload function like this one
-*/
-function my_autoload ($pClassName) {
-		$file = WWW_ROOT . "php_cms" . DS . "e13" . DS . "include" . DS . "php_" . $pClassName . ".class.inc.php";
-		if(file_exists($file))
-				include_once($file);
-    }
-spl_autoload_register("my_autoload", true, false);
-/* -- PHP AUTOLOAD  */
 App::uses('Dispatcher', 'Routing');
 
 $Dispatcher = new Dispatcher();
