@@ -7,8 +7,9 @@ require_once $GLOBALS['include__php_SQL.class.inc'];
  *
  * @package       app.View.Helper
  */
+ App::uses('Index', 'Cms');
 class InfoHelper extends AppHelper {
-	
+
 	var $r;
 	var $pageCount;
 	var $md;
@@ -24,8 +25,8 @@ class InfoHelper extends AppHelper {
 		}
 		$this->sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 	}
-	
-	
+
+
 	/**
 	 * @return toutes les dimensions dans l'ordre des indices ['w'=>[..],'h'=>[..]]
 	 */
@@ -40,7 +41,7 @@ class InfoHelper extends AppHelper {
 	}
 
 	/**
-	* @return Info instance par defaut 
+	* @return Info instance par defaut
 	*/
 	private function __defInfo() {
 			return new Info($this->sql, $null, $this->r->lang("titre_dsc", "infos"), "staff", $this->r->lang("contenu_dsc", "infos"));
@@ -49,16 +50,16 @@ class InfoHelper extends AppHelper {
 	 * @return string derniers posts publie en langue locale
 	 *                  */
 	private function __getInfo($limit, $offset = 0, &$result = array()) {
-			$lastinfo = $this->__defInfo();						
+			$lastinfo = $this->__defInfo();
 			if ($this->sql->connect_succes()) {
 					$dateSelect = " AND published <= CURDATE() ";
 					if($offset < 0) {
 						throw new Exception("Wrong select offset !");
 					}
-					$infos = $this->sql->query("SELECT * FROM info WHERE langue ='" . getPrimaryLanguage() . "'" . $dateSelect . " ORDER BY published DESC LIMIT " . $offset . "," . $limit);	
-					if ($this->sql->select_succes($infos)) {	
+					$infos = $this->sql->query("SELECT * FROM info WHERE langue ='" . getPrimaryLanguage() . "'" . $dateSelect . " ORDER BY published DESC LIMIT " . $offset . "," . $limit);
+					if ($this->sql->select_succes($infos)) {
 							$n = mysqli_num_rows($infos);
-							/* recherche ordre inverse du tri */	
+							/* recherche ordre inverse du tri */
 							while($this->sql->selectLigne($infos, --$n)){
 								$lastinfo = new Info($this->sql, $infos);
 								$c = $lastinfo->getContenu();
@@ -73,7 +74,7 @@ class InfoHelper extends AppHelper {
 			}
 			return $lastinfo;
 	}
-	
+
 	/**
 	 * @param bool $slider active un slider photos
 	 * @return string balise de la premiere photo du dernier post  dernier post photo publie en langue locale
@@ -108,7 +109,7 @@ class InfoHelper extends AppHelper {
 					return $html;
 			}
 	}
-	
+
 	/**
 	 * affiche le post le plus recent avec son contenu ronque a 80 caracteres
 	 * @return string dernier post publie en langue locale sans photos
@@ -117,7 +118,7 @@ class InfoHelper extends AppHelper {
 	function getInfoFlash() {
 			return $this->__getInfo(1);
 	}
-	
+
 	/**
 	* @return int nombre de posts enregistres
 	*/
@@ -132,7 +133,7 @@ class InfoHelper extends AppHelper {
 	/**
 	* recherche par page, $settings => pageCount
 	* @param int $n numero de page a recuperer
-	* @param array $pages variable de retour, les numeros d'offset de pages 
+	* @param array $pages variable de retour, les numeros d'offset de pages
 	* @return chaine HTML */
 	function getInfoFlashN($offset = 0, &$pages = array()) {
 			$html = "";
