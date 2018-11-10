@@ -1,11 +1,8 @@
 #!/bin/sh
 cd app/Config
-copies=0
-while [ -f database.php.old-$copies ]
-do
-let copies++
-done
-cp -v database.php database.php.old-$copies
-cp -v database.cms.php database.php
-echo "Okay, just ran the shell script. Please, review the files.\n"
+cp -v database.php database.php.old
+cp -v $dbfile database.php
+echo "Okay, just run the shell script. Please, review the files.\n"
+sudo mkdir -p /var/mysql
+sudo ln -s /tmp/mysql.sock /var/mysql/mysql.sock
 cd ../../

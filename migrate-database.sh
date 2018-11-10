@@ -12,7 +12,7 @@
 #;
 #; Pass as arguments values "-y -y -y" to override user prompt, if you're in "nutshell".
 #; ./migrate_database.sh $1 $2 $3
-#; see below commmands shema generate $1 | create Sessions $2 | update --file myschema.php $3
+#; see below commmands schema generate $1 | create Sessions $2 | update --file myschema.php $3
 #;
 #;
 set -e
@@ -80,7 +80,6 @@ If the ${red}Error: 'Database connection \"Mysql\" is missing, or could not be c
  shows up, please check up your ${cyan}TEST_DATABASE_NAME=$TEST_DATABASE_NAME${nc} environment variable (set up is above in this shell script or in web node settings).
  Log into the SQL shell (${green}mysql -u root${nc}) and check if you can do : ${green}use $TEST_DATABASE_NAME${nc}.
 "
-./Scripts/config_app_database.sh
 if [ $(which mysql > /dev/null) ]; then
 	sqlversion="5.7"
 	echo "Missing MySQL ${sqlversion} database service."
@@ -89,21 +88,26 @@ if [ $(which mysql > /dev/null) ]; then
 	brew install mysql@${sqlversion}
 	echo "Starting the service thread..."
 	brew services start mysql@${sqlversion}
+	echo "Performing some checks..."
+	mysql_upgrade -u root &
+fi
+if [ ! -f /var/mysql/mysql.sock ]; then
+	echo "We must fix up : ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/mysql/mysql.sock' (2)"
+	echo "Run this script again with ./migrate_database.sh -N -N -N -Y"
 fi
 dbfile=database.cms.php
-echo "Performing some checks..."
-mysql_upgrade -u root &
+fix_db=$4
+if [ ! fix_db > /dev/null ]; then
+	fix_db='N'
+fi
 if [ -f app/Config/$dbfile ]; then
-	echo "Reset to $dbfile settings..."
-	cp app/Config/$dbfile app/Config/database.php
+	echo "Reset to $dbfile settings and default socket file..."
+	source ./Scripts/shell_prompt.sh "./Scripts/config_app_database.sh ${dbfile}" "${cyan}Setup connection and socket\n${nc}" $fix_db
 fi
 if [ ! -f app/Config/Schema/schema.php ]; then
-	echo "Generating database schema 'cake schema generate' ..."
-	./lib/Cake/Console/cake schema generate $1
+	source ./Scripts/shell_prompt.sh "./lib/Cake/Console/cake schema generate" "Generating database schema 'cake schema generate'" $1
 fi
 if [ ! -f app/Config/Schema/sessions.php ]; then
-        echo "Generating default Sessions table..."
-        ./lib/Cake/Console/cake schema create Sessions $2
+  source ./Scripts/shell_prompt.sh "./lib/Cake/Console/cake schema create Sessions" "Generating default Sessions table" $2
 fi
-echo "Migrating database 'cake schema create' ..."
-./lib/Cake/Console/cake schema update --file myschema.php $3
+source ./Scripts/shell_prompt.sh "./lib/Cake/Console/cake schema update --file myschema.php" "Migrating database 'cake schema create' ..." $3

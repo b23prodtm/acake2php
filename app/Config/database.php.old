@@ -70,7 +70,8 @@ class DATABASE_CONFIG {
         public $default = array(
             'datasource' => 'Database/Mysql',
             'persistent' => false,
-            'host' => 'localhost',
+            //'host' => 'localhost',
+            'host' => '127.0.0.1',
             'port' => '3306',
             'login' => 'test',
            'password' => 'mypassword',
@@ -81,7 +82,8 @@ class DATABASE_CONFIG {
         public $test = array(
             'datasource' => 'Database/Mysql',
             'persistent' => false,
-             'host' => 'localhost',
+            //'host' => 'localhost',
+            'host' => '127.0.0.1',
             'port' => '3306',
             'login' => 'test',
            'password' => 'mypassword',
