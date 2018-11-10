@@ -32,7 +32,7 @@ fi
 echo `bin/composer.phar --version`
 echo "\n
         If you see the message ${red}SHA1 signature could not be verified: broken signature${nc}\r
-        Do ${cyan}rm bin/composer.phar${nc} please, and again ${cyan}sh ./Scripts/composer.sh${nc}.\r\n"
+        Do ${cyan}rm bin/composer.phar${nc} please, and again ${cyan}./Scripts/composer.sh${nc}.\r\n"
 #; update plugins and dependencies
 echo `bin/composer.phar update --with-dependencies`
 echo `bin/composer.phar update -d app/Plugin/Markdown`

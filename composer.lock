@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/b23prodtm/markdown-plugin.git",
-                "reference": "f7b89494fd5feea8a9c43d5caf91d306104e5262"
+                "reference": "7a7033f52f0976940e11e3d12bba3c102b35b7bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/b23prodtm/markdown-plugin/zipball/f7b89494fd5feea8a9c43d5caf91d306104e5262",
-                "reference": "f7b89494fd5feea8a9c43d5caf91d306104e5262",
+                "url": "https://api.github.com/repos/b23prodtm/markdown-plugin/zipball/7a7033f52f0976940e11e3d12bba3c102b35b7bf",
+                "reference": "7a7033f52f0976940e11e3d12bba3c102b35b7bf",
                 "shasum": ""
             },
             "require": {
@@ -50,7 +50,7 @@
                 "markdown",
                 "plugin"
             ],
-            "time": "2018-09-30T16:34:43+00:00"
+            "time": "2018-11-10T16:27:54+00:00"
         },
         {
             "name": "composer/installers",

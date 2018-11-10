@@ -38,7 +38,7 @@ addons:
       name: "b23prodtm/myphpcms"
     notification_email: b23prodtm@users.sourceforge.net
     build_command_prepend: .travis/configure
-    build_command: if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;
+    build_command: if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else ./app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;
     branch_pattern: coverity_scan
 services:
   - memcached

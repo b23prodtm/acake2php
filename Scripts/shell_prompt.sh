@@ -1,11 +1,4 @@
 #!/bin/sh
-#; colorful shell
-nc='\033[0m'
-red="\033[0;31m"
-green="\033[0;32m"
-orange="\033[0;33m"
-cyan="\033[0;36m"
-script=$1
 title=$2
 while true
 do
@@ -24,7 +17,7 @@ do
         esac
         case $answer in
                [yY]* ) echo "Yes.\n"
-                        sh $script
+                        source $script
                         exit;;
 
                [nN]* ) echo "No.\n"
