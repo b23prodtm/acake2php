@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "04e9640d9cad3c92059819fc6b938ca4",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/b23prodtm/markdown-plugin.git",
-                "reference": "1bdffb9024bbcfbcb3e99397dedc1c7dbfa1ac26"
+                "reference": "7a7033f52f0976940e11e3d12bba3c102b35b7bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/b23prodtm/markdown-plugin/zipball/1bdffb9024bbcfbcb3e99397dedc1c7dbfa1ac26",
-                "reference": "1bdffb9024bbcfbcb3e99397dedc1c7dbfa1ac26",
+                "url": "https://api.github.com/repos/b23prodtm/markdown-plugin/zipball/7a7033f52f0976940e11e3d12bba3c102b35b7bf",
+                "reference": "7a7033f52f0976940e11e3d12bba3c102b35b7bf",
                 "shasum": ""
             },
             "require": {
@@ -27,7 +27,7 @@
             },
             "type": "cakephp-plugin",
             "extra": {
-                "installer-name": "Markdown"
+                "installer-name": "MarkdownExtra"
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -50,7 +50,7 @@
                 "markdown",
                 "plugin"
             ],
-            "time": "2018-09-23T18:28:49+00:00"
+            "time": "2018-11-10T16:27:54+00:00"
         },
         {
             "name": "composer/installers",
@@ -637,16 +637,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.3.1",
+            "version": "3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "628a481780561150481a9ec74709092b9759b3ec"
+                "reference": "6ad28354c04b364c3c71a34e4a18b629cc3b231e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/628a481780561150481a9ec74709092b9759b3ec",
-                "reference": "628a481780561150481a9ec74709092b9759b3ec",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/6ad28354c04b364c3c71a34e4a18b629cc3b231e",
+                "reference": "6ad28354c04b364c3c71a34e4a18b629cc3b231e",
                 "shasum": ""
             },
             "require": {
@@ -684,11 +684,11 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2018-07-26T23:47:18+00:00"
+            "time": "2018-09-23T23:08:17+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.9.0",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
@@ -746,16 +746,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.45",
+            "version": "v2.8.47",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "fbf876678e29dc634430dcf0096e216eb0004467"
+                "reference": "0e16589861f192dbffb19b06683ce3ef58f7f99d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/fbf876678e29dc634430dcf0096e216eb0004467",
-                "reference": "fbf876678e29dc634430dcf0096e216eb0004467",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/0e16589861f192dbffb19b06683ce3ef58f7f99d",
+                "reference": "0e16589861f192dbffb19b06683ce3ef58f7f99d",
                 "shasum": ""
             },
             "require": {
@@ -792,7 +792,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2018-07-26T09:03:18+00:00"
+            "time": "2018-10-02T16:27:16+00:00"
         }
     ],
     "aliases": [],
