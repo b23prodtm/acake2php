@@ -4,8 +4,7 @@
 /app/tmp
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
-/vendors
-!/vendors/autoload.php 
+/vendor
 /build
 /dist
 /tags
@@ -23,7 +22,6 @@
 # OS generated files #
 ######################
 .DS_Store
-.DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
@@ -32,6 +30,7 @@ ehthumbs.db
 Thumbs.db
 /nbproject/private/
 /app/Vendor/
+!/app/Vendor/autoload.php
 /app/webroot/e13/nbproject/private/
 /app/tmp/cache/
 /app/tmp/logs/
