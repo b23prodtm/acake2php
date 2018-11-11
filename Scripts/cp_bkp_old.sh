@@ -5,7 +5,7 @@ src=$2
 dst=$3
 pwd=`pwd`
 cd $wd
-if [[ ( -f $dst ) && ( -f $src ) ]]; then
+if [[ ( -f $dst ) && ( -f $src ) && ( $(which md5) > /dev/null ) ]]; then
 # read or operation to define $file1 & $file2 here ...
   val1=`md5 -q $src`
   val2=`md5 -q $dst`
@@ -15,7 +15,7 @@ if [[ ( -f $dst ) && ( -f $src ) ]]; then
     # files are not the same, do operation here ..
     cp -v $dst "${dst}.old"
   fi
-  cp -v $src $dst
 fi
+cp -v $src $dst
 cd $pwd
 echo -e "Okay, just run the shell script. Please, review the files.\n"

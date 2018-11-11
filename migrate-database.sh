@@ -81,7 +81,7 @@ If the ${red}Error: 'Database connection \"Mysql\" is missing, or could not be c
  Log into the SQL shell (${green}mysql -u root${nc}) and check if you can do : ${green}use $TEST_DATABASE_NAME${nc}.
  Run the socket fixup script with arguments ${green}./migrate-database.sh${nc} -n -n -n -y
 "
-if [ $(which mysql > /dev/null) ]; then
+if [ ! $(which mysql) > /dev/null ]; then
 	sqlversion="5.7"
 	echo -e "Missing MySQL ${sqlversion} database service."
 	brew outdated mysql@${sqlversion} | brew upgrade
@@ -93,8 +93,8 @@ if [ $(which mysql > /dev/null) ]; then
 	mysql_upgrade -u root &
 fi
 if [ ! -f /var/mysql/mysql.sock ]; then
-	echo -e "We must fix up : ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/mysql/mysql.sock' (2)"
-	echo -e "Run this script again with ./migrate_database.sh -N -N -N -Y"
+	echo -e "${orange}We must fix up : ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/mysql/mysql.sock' (2)${nc}"
+	echo -e "Run this script again with ./migrate-database.sh -N -N -N -Y"
 fi
 dbfile=database.cms.php
 fix_db=$4
