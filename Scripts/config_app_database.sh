@@ -1,8 +1,7 @@
-#!/bin/sh
-cd app/Config
-cp -v database.php database.php.old
-cp -v $dbfile database.php
-echo "Okay, just run the shell script. Please, review the files.\n"
+#!/bin/bash
+dbfile=$1
+wd="app/Config"
+source ./Scripts/cp_bkp_old.sh $wd $dbfile "database.php"
+#; symlink mysql socket with php
 sudo mkdir -p /var/mysql
-sudo ln -s /tmp/mysql.sock /var/mysql/mysql.sock
-cd ../../
+if [ -h /var/mysql/mysql.sock ]; then ls -al /var/mysql/mysql.sock; else sudo ln -vs /tmp/mysql.sock /var/mysql/mysql.sock; fi;

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 mkdir -p app/tmp/cache/persistent
 mkdir -p app/tmp/cache/models
 mkdir -p app/tmp/tests

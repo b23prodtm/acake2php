@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-#; colorful shell
+#; colorize shell script
 nc="\033[0m"
 red="\033[0;31m"
 green="\033[0;32m"

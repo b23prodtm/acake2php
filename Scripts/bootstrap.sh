@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 source ./Scripts/bootargs.sh
 #;
@@ -24,18 +24,14 @@ if [ ! -f $hash ]; then
         source ./Scripts/shell_prompt.sh "./configure.sh -N -Y -N" "configuration"
 fi
 source $hash
-echo "${nc}Password ${green}$GET_HASH_PASSWORD${nc}"
+echo -e "${nc}Password ${green}$GET_HASH_PASSWORD${nc}"
 #; update plugins and dependencies
 source ./Scripts/composer.sh
-#;
-#;
-#; PHPUnit performs unit tests
+#; Install PHPUnit, performs unit tests
 #; The website must pass health checks in order to be deployed
-#;
-#;
-phpunit="vendors/bin/phpunit"
+phpunit="app/vendor/bin/phpunit"
 if [ ! -f $phpunit ]; then
-        echo "Composer will download the PHPUnit framework"
+        echo -e "Composer will download the PHPUnit framework"
         version=3
         PHPCS=3
 #        CakePHP 2.X compatible with PHPUnit 3.7
@@ -56,12 +52,12 @@ if [ ! -f $phpunit ]; then
 #                version=3
 #                PHPCS=3
 #        fi
-        echo " version $version...\n"
+        echo -e " version $version...\n"
         if [ ! -f bin/composer.phar ]; then
                 source ./Scripts/composer.sh
         fi
         php bin/composer.phar require --prefer-dist --update-with-dependencies --dev phpunit/phpunit ^$version cakephp/cakephp-codesniffer ^$PHPCS
 else
-        echo "PHPUnit ${green}[OK]${nc}"
+        echo -e "PHPUnit ${green}[OK]${nc}"
 fi
 echo `$phpunit --version`
