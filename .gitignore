@@ -4,11 +4,12 @@
 /app/tmp
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
-/vendors
+/vendor
 /build
 /dist
 /tags
 *.mo
+/bin/composer.phar
 
 # IDE and editor specific files #
 #################################
@@ -21,7 +22,6 @@
 # OS generated files #
 ######################
 .DS_Store
-.DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
@@ -30,6 +30,7 @@ ehthumbs.db
 Thumbs.db
 /nbproject/private/
 /app/Vendor/
+!/app/Vendor/autoload.php
 /app/webroot/e13/nbproject/private/
 /app/tmp/cache/
 /app/tmp/logs/

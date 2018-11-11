@@ -50,7 +50,7 @@
  * database. Uses database default not specified.
  *
  * sslmode =>
- * For Postgres specifies whether to 'disable', 'allow', 'prefer', or 'require' SSL for the 
+ * For Postgres specifies whether to 'disable', 'allow', 'prefer', or 'require' SSL for the
  * connection. The default value is 'allow'.
  *
  * unix_socket =>
@@ -94,18 +94,18 @@ class DATABASE_CONFIG {
 
                 $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) : FALSE;
 
-                
-                /** a different test/local configuration (shall not be the same as production)*/ 
+
+                /** a different test/local configuration (shall not be the same as production)*/
                 $test['host'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
                 $test['port'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
                 $test['login'] = getenv('TEST_DATABASE_USER');
                 $test['password'] = getenv('TEST_DATABASE_PASSWORD');
                 $test['database'] = getenv('TEST_DATABASE_NAME');
                 $test['datasource'] = $datasource;
-                
+
                 $this->redirectIfNull($test, $this->test);
                 $this->test = $test;
-                
+
                 $default['host'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
                 $default['port'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
                 $default['login'] = getenv("DATABASE_USER");
@@ -123,6 +123,6 @@ class DATABASE_CONFIG {
                         }
                 }
         }
-        
+
 
 }

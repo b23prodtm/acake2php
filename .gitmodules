@@ -1,9 +1,9 @@
-[submodule "app/webroot/php-cms"]
-	path = app/webroot/php-cms
-	url = https://b23prodtm@bitbucket.org/b23prodtm/php-cms.git
-[submodule "markdown-cakephp"]
-	path = markdown-cakephp
-	url = https://github.com/maurymmarques/markdown-cakephp.git
 [submodule "app/Plugin/Markdown"]
 	path = app/Plugin/Markdown
-	url = https://github.com/maurymmarques/markdown-cakephp.git
+	url = https://github.com/b23prodtm/markdown-plugin.git
+[submodule "app/webroot/php_cms"]
+	path = app/webroot/php_cms
+	url = https://bitbucket.org/b23prodtm/php-cms.git
+[submodule ".travis/TravisCI-OSX-PHP"]
+	path = .travis/TravisCI-OSX-PHP
+	url = git@github.com:b23prodtm/TravisCI-OSX-PHP.git

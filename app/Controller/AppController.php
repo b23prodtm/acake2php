@@ -20,7 +20,12 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 App::uses('Controller', 'Controller');
-App::import('file', 'Index', false, array(WWW_ROOT . 'php-cms' . DS . 'e13' . DS . 'include' . DS), 'php_index.inc.php');
+/*App::import('file', 'Index',
+  array('file' =>
+    WWW_ROOT . DS .'php_cms' . DS . 'e13' . DS . 'include' . DS . 'php_index.class.inc.php'
+  )
+);*/
+App::uses('Index', 'Cms');
 
 /**
  * Application Controller
@@ -46,7 +51,7 @@ class AppController extends Controller {
                 parent::__construct($request, $response);
 
                 /* initialise les $GLOBALS et le sitemap */
-                $this->r = new Index($this->View, ROOT . DS . 'index.php', false, WWW_ROOT . 'php-cms/');
+                $this->r = new Index($this->View, ROOT . DS . 'index.php', false, WWW_ROOT . 'php_cms/');
                 /* map pIndex -> URL */
                 $this->set("i_sitemap", $this->r->sitemap);
         }

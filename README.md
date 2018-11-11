@@ -34,6 +34,8 @@ However, if these files exist they will affect the behavior of the build process
 
   List of dependencies to be installed with `composer`. The format is documented
   [here](https://getcomposer.org/doc/04-schema.md).
+  Plugins are registered in both _git submodule_ and _composer.json_. To allow a plugin to accept ```composer update```, edit _composer.json_ according to the available released tags. In the plugin's home repository (app/Plugin/<plugin-name>/), call```git tag``` or  ``git log``` for more information. 
+  >_DEVELOPER TIP:_ To push tags : ```git tag`<version> && git push --tags```.   
 
 ### Compatibility
 
