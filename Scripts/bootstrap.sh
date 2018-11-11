@@ -11,7 +11,7 @@ export CAKEPHP_DEBUG_LEVEL=2
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;
 if [ ! -f ${PHP_CMS_DIR}/e13/etc/constantes.properties ]; then
-        source ./Scripts/shell_prompt.sh "./configure.sh -Y -N -N" "configuration"
+        source ./Scripts/shell_prompt.sh "./configure.sh -c" "configuration"
 fi
 #;
 #;
@@ -21,7 +21,7 @@ fi
 echo "Configuration begins automatically...${green}"
 hash="${PHP_CMS_DIR}/e13/etc/export_hash_password.sh"
 if [ ! -f $hash ]; then
-        source ./Scripts/shell_prompt.sh "./configure.sh -N -Y -N" "configuration"
+        source ./Scripts/shell_prompt.sh "./configure.sh -c -h" "configuration"
 fi
 source $hash
 echo -e "${nc}Password ${green}$GET_HASH_PASSWORD${nc}"
@@ -31,28 +31,6 @@ source ./Scripts/composer.sh
 #; The website must pass health checks in order to be deployed
 phpunit="app/vendor/bin/phpunit"
 if [ ! -f $phpunit ]; then
-        echo -e "Composer will download the PHPUnit framework"
-        version=3
-        PHPCS=3
-#        CakePHP 2.X compatible with PHPUnit 3.7
-#        PHPUnit 4+ needs CakePHP 3+.
-        if [ `expr "\`php --version\`" : 'PHP\ 5\.[0-3]\.'` -gt 0 ]; then
-                version=3
-                PHPCS=1
-        fi
-#        if [ `expr "\`php --version\`" : 'PHP\ 5\.[4-9]\.'` -gt 0 ]; then
-#                version=3
-#                PHPCS=3
-#        fi
-#        if [ `expr "\`php --version\`" : 'PHP\ 7\.0\.'` -gt 0 ]; then
-#                version=3
-#                PHPCS=3
-#        fi
-#        if [ `expr "\`php --version\`" : 'PHP\ 7\.[1-9]\.'` -gt 0 ]; then
-#                version=3
-#                PHPCS=3
-#        fi
-        echo -e " version $version...\n"
         if [ ! -f bin/composer.phar ]; then
                 source ./Scripts/composer.sh
         fi

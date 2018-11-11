@@ -10,9 +10,7 @@
 # Don't forget to grant all privileges to 'DATABASE_USER'@'localhost' e.g.:
 # GRANT ALL ON phpcms.* to 'test'@'localhost' identified by 'mypassword';
 #;
-#; Pass as arguments values "-y -y -y [-y]" to override user prompt, if you're in "nutshell".
-#; ./migrate_database.sh $1 $2 $3 [$4]
-#; see below commmands schema generate $1 | create Sessions $2 | update --file myschema.php $3
+#; Pass as arguments values "[]-y]" to override user prompt, if you're in "nutshell".
 #;
 #;
 set -e
@@ -61,7 +59,7 @@ ${red}                        ///// FAQ${nc} :
         sqlstate : 42S02
         error : Table 'phpcms.info' doesn't exist
 
-Run again ${green}./migrate_database.sh${nc}, to create or update database tables.
+Run again ${green}./migrate-database.sh${nc}, to create or update database tables.
 
                                         2.
 If ACCESS DENIED appears, please verify the user name and localhost values then
@@ -75,14 +73,9 @@ ${green}Whenever mysql server changes to another version${nc}, try an upgrade of
                                         4.
 ${green}Make changes to SQL database structure (table-models)${nc}, by modifying Config/Schema/myschema.php, as Config/database.php defines it.
 Run ${green}./migrate-database.sh${nc}, answer ${cyan}Y${nc}es when prompted, which may not display any ${red}SQLSTATE [error]${nc}.
-
-If the ${red}Error: 'Database connection \"Mysql\" is missing, or could not be created'${nc}
- shows up, please check up your ${cyan}TEST_DATABASE_NAME=$TEST_DATABASE_NAME${nc} environment variable (set up is above in this shell script or in web node settings).
- Log into the SQL shell (${green}mysql -u root${nc}) and check if you can do : ${green}use $TEST_DATABASE_NAME${nc}.
- Run the socket fixup script with arguments ${green}./migrate-database.sh${nc} -n -n -n -y
 "
+sqlversion="5.7"
 if [ ! $(which mysql) > /dev/null ]; then
-	sqlversion="5.7"
 	echo -e "Missing MySQL ${sqlversion} database service."
 	brew outdated mysql@${sqlversion} | brew upgrade
 	echo -e "Installing with Homebrew..."
@@ -92,14 +85,21 @@ if [ ! $(which mysql) > /dev/null ]; then
 	echo -e "Performing some checks..."
 	mysql_upgrade -u root &
 fi
+echo -e "
+If the ${red}Error: 'Database connection \"Mysql\" is missing, or could not be created'${nc}
+ shows up, please check up your ${cyan}TEST_DATABASE_NAME=$TEST_DATABASE_NAME${nc} environment variable (set up is above in this shell script or in web node settings).
+     Log into the SQL shell ${green}mysql -u root${nc} and check if you can do : ${green}use $TEST_DATABASE_NAME${nc}.
+     Run the socket fixup script with arguments ${green}./migrate-database.sh -Y${nc}
+     ${green}brew services start mysql@${sqlversion}${nc}"
 if [ ! -f /var/mysql/mysql.sock ]; then
 	echo -e "${orange}We must fix up : ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/mysql/mysql.sock' (2)${nc}"
-	echo -e "Run this script again with ./migrate-database.sh -N -N -N -Y"
+	echo -e "Run this script again with ${green}./migrate-database.sh -Y${nc}"
 fi
 dbfile=database.cms.php
-fix_db=$4
-if [ ! fix_db > /dev/null ]; then
-	fix_db='-N'
+# set "-Y" to validate, anything else is equal to "-N"
+fix_db=$1
+if [ ! $fix_db > /dev/null ]; then
+	fix_db="-N"
 fi
 if [ -f app/Config/$dbfile ]; then
 	echo -e "Reset to ${dbfile} settings and default socket file..."
@@ -109,9 +109,14 @@ if [ ! -f app/Config/Schema/schema.php ]; then
   echo "Generating database schema 'cake schema generate'"
   ./lib/Cake/Console/cake schema generate
 fi
-if [ ! -f app/Config/Schema/sessions.php ]; then
-  echo "Generating default Sessions table"
-  ./lib/Cake/Console/cake schema create Sessions
-fi
-echo "Migrating database 'cake schema create' ..."
-./lib/Cake/Console/cake schema update --file myschema.php
+case $fix_db in
+  -[Yy]* )
+      if [ ! -f app/Config/Schema/sessions.php ]; then
+          echo "Generating default Sessions table"
+          ./lib/Cake/Console/cake schema create Sessions
+      fi
+      echo "Migrating database 'cake schema update' ..."
+      ./lib/Cake/Console/cake schema update --file myschema.php
+      ;;
+  *);;
+esac

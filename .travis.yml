@@ -74,13 +74,13 @@ matrix:
 before_install:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${TRAVIS_PHP_VERSION}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
   - if [[ "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh ; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh ; fi
   # Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
   - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
   - ./Scripts/configure_tmp.sh
 
 install:
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then .travis/TravisCI-OSX-PHP/build/handle_brew_pkg.sh "${_PHP}" ; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/handle_brew_pkg.sh "${_PHP}" ; fi
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install --dev --no-interaction
 
@@ -88,7 +88,7 @@ before_script:
   - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
   - mkdir -p build/logs
   - .travis/configure
-  - ./configure.sh -Y -Y -Y -N -p pass -s word
+  - ./configure.sh -c -d -n -h -p pass -s word
 
 script:
   - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi; fi
