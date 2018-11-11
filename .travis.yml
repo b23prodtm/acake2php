@@ -1,5 +1,3 @@
-language: php
-
 cache:
   directories:
     - app/tmp/cache
@@ -18,14 +16,6 @@ env:
     # via the "travis encrypt" command using the project repo's public key
     - secure:  "4rmDT/vKTSi8AqI3afVUylayJ+SQbxblwlz/z81No4nLYWoy0dT61R/ZXq2Y29BE/HGEwx6r8Fl5RU6DxnmD7KhLC/3swHifzed690VDWyLii7cK8QkXVfLVVo8p+ozIwUrirnYFEkAcTfmkwJbmZN6DUuHJCl4x14NolR82VlJtFOVoWs63r+2NVJ5aM+63bkljkcW2U4xTt/8aOrCU/UapwqxC1GA0xPpwte6jPhzUjKXWbiknY+noUakM13x8SOkSRs3MTEf8J2va2T6DbVY3wy3x2Ytp4/KDwVNUrn/GKgBDRysP3jefO2d6XZJlb8OktJsrHdtWIZ+oYVwoy0PRV3vmdHs1NFUmYdQEe5UpiUKKyxWMsM+31to5ZUtJtn4kIlgzyo+xZu+LCgbOusJs33uPZODOON5fHcAoMp3AdAM0ResBfJdjzYEiewlcGYAcOoMX6DtopoJCoz+JxktdzXnjz89imNKMB2tjsRXuZMdE0WL3V2TSuOS5r8BwuuXXeul5vvE2EKHoIHgrP2nehz+q7dyC71m6jNrQX7x+xVg988vh0Fg8hyghLUzt9Myv4pvtQ/zQDbabKGtsakiHSvPTeHcb8mDhs62h5aIWUar8oXNuOWlk+hnyqZLmnbUPDcg54o567NursWYSWemAnPkPvSTfX0DQF1hDvSo="
 
-before_install:
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh ; fi
-  # Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
-  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
-  - ./Scripts/configure_tmp.sh
-install:
-   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then .travis/TravisCI-OSX-PHP/build/handle_brew_pkg.sh "${_PHP}" ; fi
-
 addons:
   coverity_scan:
     project:
@@ -33,25 +23,16 @@ addons:
     notification_email: b23prodtm@users.sourceforge.net
     build_command_prepend: .travis/configure
     build_command: if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else ./app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;
-    branch_pattern: coverity_scan
+    branch_pattern: development
 services:
   - memcached
 
+language: generic
+
 matrix:
   fast_finish: true
+
   include:
-    - os: osx
-      env: _PHP=php@5.6
-
-    - os: osx
-      env: _PHP=php@7.0
-
-    - os: osx
-      env: _PHP=php@7.1
-
-    - os: osx
-      env: _PHP=php@7.2
-
     - os: linux
       php: 5.4
       env: DB=pgsql
@@ -66,12 +47,54 @@ matrix:
     - os: linux
       php: 7.0
 
+    - os: linux
+      php: 'nightly'
+
+    - os: linux
+      php: 'hhvm'
+
+    - os: osx
+      env: _PHP=php@5.6
+
+    - os: osx
+      env: _PHP=php@7.0
+
+    - os: osx
+      env: _PHP=php@7.1
+
+    - os: osx
+      env: _PHP=php@7.2
+
+  allow_failures:
+    - php: hhvm
+    - env: _PHP=php@7.1
+    - env: _PHP=php@7.2
+
+before_install:
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${TRAVIS_PHP_VERSION}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
+  - if [[ "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh ; fi
+  # Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+  - ./Scripts/configure_tmp.sh
+
+install:
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then .travis/TravisCI-OSX-PHP/build/handle_brew_pkg.sh "${_PHP}" ; fi
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar install --dev --no-interaction
+
 before_script:
+  - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
+  - mkdir -p build/logs
   - .travis/configure
   - ./configure.sh -Y -Y -Y
 
 script:
   - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi; fi
+  - php vendor/bin/phpunit --coverage-php .travis/TravisCI-OSX-PHP/build/cov/coverage-${component_name}.cov . | grep error
+
+after_script:
+  - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/coveralls -v ; fi
 
 notifications:
   email: false
