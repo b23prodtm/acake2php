@@ -9,7 +9,7 @@
 
 <!-- tocstop -->
 
-CakePHP for [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) on OpenShift
+CakePHP for [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) on OpenShift [![Build Status](https://travis-ci.org/b23prodtm/myphpcms.svg?branch=development)](https://travis-ci.org/b23prodtm/myphpcms)
 ===============================
 
 This is a quickstart CakePHP application for OpenShift v3 that you ''can'' use as a starting point to develop your own application and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
@@ -26,7 +26,7 @@ However, if these files exist they will affect the behavior of the build process
 * **submodules**
 
   The myphpcms folder includes modules that need to be pulled in order to install locally.
-  After the first checkout browse to myphpcms folder and do 
+  After the first checkout browse to myphpcms folder and do
   ```git submodule update --init --recursive```
   You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the myphpcms folder and start over.
 
@@ -34,7 +34,7 @@ However, if these files exist they will affect the behavior of the build process
 
   List of dependencies to be installed with `composer`. The format is documented
   [here](https://getcomposer.org/doc/04-schema.md).
-  Plugins are registered in both _git submodule_ and _composer.json_. To allow a plugin to accept ```composer update```, edit _composer.json_ according to the available released tags. In the plugin's home repository (app/Plugin/<plugin-name>/), call```git tag``` or  ``git log``` for more information. 
+  Plugins are registered in both _git submodule_ and _composer.json_. To allow a plugin to accept ```composer update```, edit _composer.json_ according to the available released tags. In the plugin's home repository (app/Plugin/<plugin-name>/), call```git tag``` or  ``git log``` for more information.
   >_DEVELOPER TIP:_ To push tags : ```git tag`<version> && git push --tags```.   
 
 ### Compatibility
