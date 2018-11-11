@@ -4,3 +4,6 @@
 [submodule "app/webroot/php_cms"]
 	path = app/webroot/php_cms
 	url = https://bitbucket.org/b23prodtm/php-cms.git
+[submodule ".travis/TravisCI-OSX-PHP"]
+	path = .travis/TravisCI-OSX-PHP
+	url = git@github.com:b23prodtm/TravisCI-OSX-PHP.git
