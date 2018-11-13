@@ -88,7 +88,7 @@ before_script:
   - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
   - mkdir -p build/logs
   - .travis/configure
-  - ./configure.sh -c -d -n -h -p pass -s word
+  - ./configure.sh -c -d -y -h -p pass -s word
 
 script:
   - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi; fi

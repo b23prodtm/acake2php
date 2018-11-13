@@ -25,8 +25,6 @@ if [ ! -f $hash ]; then
 fi
 source $hash
 echo -e "${nc}Password ${green}$GET_HASH_PASSWORD${nc}"
-#; update plugins and dependencies
-source ./Scripts/composer.sh
 #; Install PHPUnit, performs unit tests
 #; The website must pass health checks in order to be deployed
 phpunit="app/vendor/bin/phpunit"
