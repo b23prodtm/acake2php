@@ -26,5 +26,4 @@ while [[ "$#" > 0 ]]; do case $1 in
     -s|-p|-f)
         shift;;
     *) echo "Unknown parameter passed: $1"; exit 1;;
-      esac; shift;
-done
+esac; shift; done

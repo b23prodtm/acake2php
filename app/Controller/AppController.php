@@ -45,20 +45,20 @@ class AppController extends Controller {
             'Flash' => array(
                 'className' => 'MyFlash'));
         public $helpers = array('Markdown.Markdown', 'Flash');
-        var $r;
+        protected var $_r;
 
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
 
                 /* initialise les $GLOBALS et le sitemap */
-                $this->r = new Index($this->View, ROOT . DS . 'index.php', false, WWW_ROOT . 'php_cms/');
+                $this->_r = new Index($this->View, ROOT . DS . 'index.php', false, WWW_ROOT . 'php_cms/');
                 /* map pIndex -> URL */
-                $this->set("i_sitemap", $this->r->sitemap);
+                $this->set("i_sitemap", $this->_r->sitemap);
         }
 
         public function beforeFilter() {
                 /* internationalisation (i18n) */
-                Configure::write('Config.language', $this->r->getLanguage());
+                Configure::write('Config.language', $this->_r->getLanguage());
         }
 
         /**

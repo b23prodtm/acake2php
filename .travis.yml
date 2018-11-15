@@ -35,11 +35,11 @@ matrix:
 
   include:
     - os: linux
-      php: 5.4
+      php: 5.5
       env: DB=pgsql
 
     - os: linux
-      php: 5.4
+      php: 5.5
       env: DB=sqlite
 
     - os: linux
@@ -55,6 +55,9 @@ matrix:
       php: 'hhvm'
 
     - os: osx
+      env: _PHP=php@5.5
+
+    - os: osx
       env: _PHP=php@5.6
 
     - os: osx
@@ -63,13 +66,10 @@ matrix:
     - os: osx
       env: _PHP=php@7.1
 
-    - os: osx
-      env: _PHP=php@7.2
-
   allow_failures:
-    - php: hhvm
+    - os: linux
+    - env: _PHP=php@7.0
     - env: _PHP=php@7.1
-    - env: _PHP=php@7.2
 
 before_install:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${TRAVIS_PHP_VERSION}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
@@ -81,18 +81,18 @@ before_install:
 
 install:
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/handle_brew_pkg.sh "${_PHP}" ; fi
-  - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install --dev --no-interaction
+  - cd bin && curl -s http://getcomposer.org/installer | php
+  - cd .. && php bin/composer.phar install --dev --no-interaction
 
 before_script:
+  - ./configure.sh -c -d -y -h -p pass -s word
   - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
   - mkdir -p build/logs
   - .travis/configure
-  - ./configure.sh -c -d -y -h -p pass -s word
 
 script:
-  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi; fi
-  - php vendor/bin/phpunit --coverage-php .travis/TravisCI-OSX-PHP/build/cov/coverage-${component_name}.cov . | grep error
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi; fi
+  - php app/vendor/bin/phpunit --coverage-php .travis/TravisCI-OSX-PHP/build/cov/coverage-${component_name}.cov . | grep error
 
 after_script:
   - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/coveralls -v ; fi

@@ -10,8 +10,9 @@
 # Don't forget to grant all privileges to 'DATABASE_USER'@'localhost' e.g.:
 # GRANT ALL ON phpcms.* to 'test'@'localhost' identified by 'mypassword';
 #;
-#; Pass as arguments values "[]-y]" to override user prompt, if you're in "nutshell".
-#;
+#; Pass as arguments values "[-y|n|u]" to override user prompt, if you're in "nutshell".
+#; y fixup socket
+#; u fixup socket and update schema (must connect successsfully)
 #;
 set -e
 source ./Scripts/bootargs.sh
@@ -95,22 +96,12 @@ if [ ! -f /var/mysql/mysql.sock ]; then
 	echo -e "${orange}We must fix up : ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/mysql/mysql.sock' (2)${nc}"
 	echo -e "Run this script again with ${green}./migrate-database.sh -Y${nc}"
 fi
-dbfile=database.cms.php
-# set "-Y" to validate, anything else is equal to "-N"
-fix_db=$1
-if [ ! $fix_db > /dev/null ]; then
-	fix_db="-N"
-fi
-if [ -f app/Config/$dbfile ]; then
-	echo -e "Reset to ${dbfile} settings and default socket file..."
-	source ./Scripts/shell_prompt.sh "./Scripts/config_app_database.sh ${dbfile}" "${cyan}Setup connection and socket\n${nc}" $fix_db
-fi
-if [ ! -f app/Config/Schema/schema.php ]; then
-  echo "Generating database schema 'cake schema generate'"
-  ./lib/Cake/Console/cake schema generate
-fi
-case $fix_db in
-  -[Yy]* )
+while [[ "$#" > 0 ]]; do case $1 in
+  -[uU]* )
+      if [ ! -f app/Config/Schema/schema.php ]; then
+        echo "Generating database schema 'cake schema generate'"
+        ./lib/Cake/Console/cake schema generate
+      fi
       if [ ! -f app/Config/Schema/sessions.php ]; then
           echo "Generating default Sessions table"
           ./lib/Cake/Console/cake schema create Sessions
@@ -118,5 +109,14 @@ case $fix_db in
       echo "Migrating database 'cake schema update' ..."
       ./lib/Cake/Console/cake schema update --file myschema.php
       ;;
+  -[yYuU]* )
+      dbfile=database.cms.php
+      # set anything to validate, or none is equal to "-N"
+      fix_db="-Y"
+      if [ -f app/Config/$dbfile ]; then
+      	echo -e "Reset to ${dbfile} settings and default socket file..."
+      	source ./Scripts/shell_prompt.sh "./Scripts/config_app_database.sh ${dbfile}" "${cyan}Setup connection and socket\n${nc}" $fix_db
+      fi;;
+  -[nN]* );;
   *);;
-esac
+esac; shift; done

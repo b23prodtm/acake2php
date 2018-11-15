@@ -15,6 +15,7 @@ App::uses('AppController', 'Controller');
 class E14Controller extends AppController {
 
         public $helpers = array('Info' => array(
+                'index' => $this->_r,
                 'countPerPage' => '10',
                 'Markdown' => true));
 
@@ -26,7 +27,7 @@ class E14Controller extends AppController {
                 } else if ($p) {
                         /* parametre de page */
                         $this->set("p", $p);
-                }     
+                }
                 //i_debug("p : " . $p);
                 $this->set("pIndex", "e13__index");
                 $this->render("index", "default-e14");
@@ -116,10 +117,10 @@ class E14Controller extends AppController {
                 $this->render(null, "admin_default-e14");
         }
 
-        /** @param string $p page name in etc/*.php, folder or NULL
-          &param string $subp file name if $p was a folder */
+        /** @param string $p page name in etc/\*.php, folder or NULL
+          * @param string $subp file name if $p was a folder */
         public function etc($p = NULL, $subp = NULL) {
-                //debug($this->request->params);                
+                //debug($this->request->params);
                 if ($p === "locale" || $p === "js") {
                         $this->response->file($GLOBALS["etc"] . DS . $p . DS . $subp);
                         $this->response->send();
