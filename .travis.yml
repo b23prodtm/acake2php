@@ -35,11 +35,11 @@ matrix:
 
   include:
     - os: linux
-      php: 5.5
+      php: 5.6
       env: DB=pgsql
 
     - os: linux
-      php: 5.5
+      php: 5.6
       env: DB=sqlite
 
     - os: linux
@@ -53,9 +53,6 @@ matrix:
 
     - os: linux
       php: 'hhvm'
-
-    - os: osx
-      env: _PHP=php@5.5
 
     - os: osx
       env: _PHP=php@5.6
@@ -92,7 +89,7 @@ before_script:
 
 script:
   - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi; fi
-  - php app/vendor/bin/phpunit --coverage-php .travis/TravisCI-OSX-PHP/build/cov/coverage-${component_name}.cov . | grep error
+  - php app/vendor/bin/phpunit --coverage-php .travis/TravisCI-OSX-PHP/build/cov/coverage-${component_name}.cov app/Test/AllTestsTest.php | grep error
 
 after_script:
   - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/coveralls -v ; fi

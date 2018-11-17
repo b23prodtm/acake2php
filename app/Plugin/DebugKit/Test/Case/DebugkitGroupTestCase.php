@@ -13,11 +13,10 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
- **/
+ */
 
 /**
  * Class DebugKitGroupTestCase
- *
  */
 class DebugKitGroupTestCase extends PHPUnit_Framework_TestSuite {
 
@@ -32,8 +31,8 @@ class DebugKitGroupTestCase extends PHPUnit_Framework_TestSuite {
 /**
  * Get Test Files
  *
- * @param null $directory
- * @param null $excludes
+ * @param null|array|string $directory The test directories.
+ * @param null|array|string $excludes The excludes.
  * @return array
  */
 	public static function getTestFiles($directory = null, $excludes = null) {
@@ -49,7 +48,7 @@ class DebugKitGroupTestCase extends PHPUnit_Framework_TestSuite {
 			$excludes = self::getTestFiles((array)$excludes);
 		}
 		if ($directory === null || $directory !== realpath($directory)) {
-			$basePath = App::pluginPath('DebugKit') . 'Test' . DS . 'Case' . DS;
+			$basePath = CakePlugin::path('DebugKit') . 'Test' . DS . 'Case' . DS;
 			$directory = str_replace(DS . DS, DS, $basePath . $directory);
 		}
 

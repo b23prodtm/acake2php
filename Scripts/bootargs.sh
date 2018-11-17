@@ -23,3 +23,9 @@ export FTP_SERVICE_HOST="localhost"
 export FTP_SERVICE_USER="test"
 export FTP_SERVICE_PASSWORD="mypassword"
 export PHP_CMS_DIR="./app/webroot/php_cms/"
+#; More about default environment app/Config/core.php
+#; Openshift Online secure keys (default_keys)
+export CAKEPHP_SECURITY_SALT="Word"
+export CAKEPHP_SECURITY_CIPHER_SEED="01234"
+#; 0, 1, 2 the higher the more debug data
+export CAKEPHP_DEBUG_LEVEL=2
