@@ -9,7 +9,7 @@ env:
   global:
     - PHPUNIT=4
     - PHPCS=3
-    - COLLECT_COVERAGE=false
+    - COLLECT_COVERAGE=true
     # The next declaration is the encrypted OC_SECRET, created
     # via the "travis encrypt" command using the project repo's public key
     - secure:  "O+HejqZgXZFf0eD3GdvUwL2dsJsW+5biztfWYKHNfzv5u9j6Nn8JSoLdIp+Bg6Kct6kCJebM7oWHCh1fhyEm3AluusmqKHN8VKwQuINEZKAxPRFGl3NKkEU/Y95tHR3JIubZbZ0oZYmnl7z+YgVvM4LvmfvAwdpXzRt4SWOzGRWiL8uRaovOwW10HUB6qcO70Rn9XIHz4gUAoAEWQgSlJ4aNftu/lpuYs4P1r0+6fI/nfRRBMOogBQLEMqw6enPP+RrWx2pLwuxaQqChtk2td5PJdLiifW7C8SiAsljSgIRiaytAOgIs5KJsLGUdAPNXIMqUYFJ776J3L+ln8/nM/H8ARGB2P3smY5HM34/NrzUat2X/B6Uqg1F0Fs/794aomhaeqgh4b2MRI5srjQ/grNK61H1AftdR6JSLVjm6AUg743GQJF7sgNfK60n28EEZApAEzDS0v1PyU7U/HAZIalqWnttO0ycQyj2rf1XC++6BuTcRdmxx4dZoqZIn7xHzBQvi99ljv4JuwUgrNYXvcSEkXu6Y5GqMl2rtjxrdaGATpePuk1ju1kfB/7fQsR3ZZOaxULOSlQRcArsyseOtmEqQ1h5BVSmOGV+yoEboNm2FDZH/gD9ZZ7kTi+bk4bvHRZSD06JiDZ12W/JGsmU77phVIIWuUcXghEZf/WRjTe4="
@@ -89,11 +89,13 @@ before_script:
 
 script:
   - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi; fi
-  - php app/vendor/bin/phpunit --coverage-php .travis/TravisCI-OSX-PHP/build/cov/coverage-${component_name}.cov app/Test/AllTestsTest.php | grep error
+  - php app/vendor/bin/phpunit --coverage-clover build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/AllTestsTest.php
 
 after_script:
   - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/coveralls -v ; fi
 
+# Openshift webhook notifies that a new build version is available
+# $OC_SECRET is obtained from an Openshift Console and set secret environment variable
 notifications:
   email: false
   webhooks:
