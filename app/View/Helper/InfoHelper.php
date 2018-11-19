@@ -7,16 +7,15 @@ require_once $GLOBALS['include__php_SQL.class.inc'];
  *
  * @package       app.View.Helper
  */
- App::uses('Index', 'Cms');
 class InfoHelper extends AppHelper {
 
 	var $r;
 	var $pageCount;
 	var $md;
 	var $sql;
-	public function __construct(View $view, $settings = array("countPerPage" => "5", "Markdown" => true)) {
+	public function __construct(View $view, $settings = array("index" => $index, "countPerPage" => "5", "Markdown" => true)) {
 		parent::__construct($view, $settings);
-		$this->r = new Index($view);
+		$this->r = $index;
 		if(array_key_exists("countPerPage", $settings)) {
 				$this->pageCount = $settings["countPerPage"];
 		}

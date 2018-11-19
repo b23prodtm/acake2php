@@ -1,4 +1,12 @@
 #!/bin/bash
+while [[ "$#" > 0 ]]; do case $1 in
+  --help )
+    echo "./start-cake.sh [options]
+        All options are arguments passed to the command lib/Cake/Console/cake server -p 8080
+        "
+        exit 0;;
+  *);;
+esac; shift; done
 source ./Scripts/bootstrap.sh
 url="http://localhost:8080"
 echo -e "Welcome homepage ${cyan}${url}${nc}"

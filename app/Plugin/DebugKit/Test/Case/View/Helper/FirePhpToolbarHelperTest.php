@@ -95,7 +95,7 @@ class FirePhpToolbarHelperTestCase extends CakeTestCase {
  * @return void
  */
 	public function testMakeNeatArray() {
-		$this->Toolbar->makeNeatArray(array(1,2,3));
+		$this->Toolbar->makeNeatArray(array(1, 2, 3));
 		$result = $this->firecake->sentHeaders;
 		$this->assertTrue(isset($result['X-Wf-1-1-1-1']));
 		$this->assertRegexp('/\[1,2,3\]/', $result['X-Wf-1-1-1-1']);
@@ -136,7 +136,7 @@ class FirePhpToolbarHelperTestCase extends CakeTestCase {
 	public function testPanelStart() {
 		$this->Toolbar->panelStart('My Panel', 'my_panel');
 		$result = $this->firecake->sentHeaders;
-		$this->assertPattern('/GROUP_START.+My Panel/', $result['X-Wf-1-1-1-1']);
+		$this->assertRegexp('/GROUP_START.+My Panel/', $result['X-Wf-1-1-1-1']);
 	}
 
 /**
@@ -147,6 +147,6 @@ class FirePhpToolbarHelperTestCase extends CakeTestCase {
 	public function testPanelEnd() {
 		$this->Toolbar->panelEnd();
 		$result = $this->firecake->sentHeaders;
-		$this->assertPattern('/GROUP_END/', $result['X-Wf-1-1-1-1']);
+		$this->assertRegexp('/GROUP_END/', $result['X-Wf-1-1-1-1']);
 	}
 }
