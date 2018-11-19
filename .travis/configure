@@ -15,7 +15,7 @@ optional environment VARIABLES
   ADDITIONAL_PHP_INI='path to a php.ini settings file'
 ==========================
 ";
-php bin/composer.phar install --dev --no-interaction
+echo `bin/composer.phar install --dev --no-interaction`
 if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
 mkdir -p build/logs
 echo "Database Unit Tests... DB=${DB}"
