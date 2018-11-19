@@ -1,8 +1,40 @@
+# User specific & automatically generated files #
+#################################################
+/app/Config/database.php
+/app/tmp
+/lib/Cake/Console/Templates/skel/tmp/
+/plugins
+/vendor
+/build
+/dist
+/tags
+*.mo
+/bin/composer.phar
+
+# IDE and editor specific files #
+#################################
+/nbproject
+.idea
+/.project
+/.buildpath
+/.settings/
+
+# OS generated files #
+######################
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
 /nbproject/private/
 /app/Vendor/
+!/app/Vendor/autoload.php
 /app/webroot/e13/nbproject/private/
 /app/tmp/cache/
 /app/tmp/logs/
 /app/tmp/persistent/
+/app/tmp/sessions/
 /app/webroot/php-cms/e13/nbproject/private/
 !*empty

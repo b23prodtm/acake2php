@@ -22,6 +22,6 @@ if(isset($p) && array_key_exists("e13__" . $p, $GLOBALS)){
                 }
                 echo "[ " . $this->Html->getCrumbs(" - ") . " ]";
         } else {
-                echo HTML_lien($r->sitemap["e13__index"] . "?debug=1", "Err code : " . ERROR_DB_CONNECT);
+                echo HTML_lien($r->sitemap["e13__index"] . "?debug=1", "MySQL configuration error : " . ERROR_DB_CONNECT);
         }
 }

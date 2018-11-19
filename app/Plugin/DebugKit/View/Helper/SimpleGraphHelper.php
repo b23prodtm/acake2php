@@ -50,24 +50,24 @@ class SimpleGraphHelper extends AppHelper {
 	);
 
 /**
- * bar method
+ * Bar
  *
- * @param $value Value to be graphed
- * @param $offset how much indentation
- * @param array|\Graph $options Graph options
- * @return string Html graph
+ * @param mixed $value Value to be graphed.
+ * @param mixed $offset How much indentation.
+ * @param array|\Graph $options Graph options.
+ * @return string HTML graph.
  */
 	public function bar($value, $offset, $options = array()) {
 		$settings = array_merge($this->_defaultSettings, $options);
 		extract($settings);
 
-		$graphValue = ($value / $max) * $width;
+		$graphValue = ((float)$value / $max) * $width;
 		$graphValue = max(round($graphValue), 1);
 
 		if ($valueType === 'percentage') {
 			$graphOffset = 0;
 		} else {
-			$graphOffset = ($offset / $max) * $width;
+			$graphOffset = ((float)$offset / $max) * $width;
 			$graphOffset = round($graphOffset);
 		}
 		return $this->Html->div(

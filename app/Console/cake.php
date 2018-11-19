@@ -29,7 +29,7 @@ if (function_exists('ini_set')) {
 	$composerInstall = $root . DS . $appDir . DS . 'Vendor' . DS . 'cakephp' . DS . 'cakephp' . DS . 'lib';
 
 	// the following lines differ from its sibling
-	// /app/Console/cake.php
+	// /lib/Cake/Console/Templates/skel/Console/cake.php
 	if (file_exists($composerInstall . DS . $dispatcher)) {
 		$install = $composerInstall;
 	}

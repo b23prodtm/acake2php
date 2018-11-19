@@ -1,46 +1,18 @@
-#!/bin/sh
-#;
-#;
-#; this is configuration for development phase and runtime
-#;
-#;
-export DATABASE_ENGINE="mysql"
-export DATABASE_SERVICE_NAME="mysql"
-export TEST_MYSQL_SERVICE_HOST="localhost"
-export TEST_MYSQL_SERVICE_PORT="3306"
-export TEST_DATABASE_NAME="phpcms"
-export TEST_DATABASE_USER="test"
-export TEST_DATABASE_PASSWORD="mypassword"
-export FTP_SERVICE_HOST="local"
-export FTP_SERVICE_USER="test"
-export FTP_SERVICE_PASSWORD="mypassword"
-#;
-#;
-#; this development phase, don't use the same values for production (no setting means no debugger)!
-#;
-#;
-export CAKEPHP_DEBUG_LEVEL=2
-#;
-#; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
-#;
-if [ ! -f app/webroot/php-cms/e13/etc/constantes.properties ]; then
-        echo "PLEASE RUN ./CONFIGURE.SH FIRST !"
-        exit
-fi
-#;
-#;
-#; this is generated for the development phase, don't use the same values for production !
-#;
-#;
-hash="app/webroot/php-cms/e13/etc/export_hash_password.sh"
-if [ ! -f $hash ]; then
-        echo "PLEASE RUN ./CONFIGURE.SH FIRST !"
-        exit
-fi
-source $hash
-echo "==============================================="
-echo "PASSWORD HASH $GET_HASH_PASSWORD"
-echo "WELCOME HOMEPAGE IS http://localhost:8080"
-echo "TEST CONFIGURATION IS /index/index.php?local=1"
-echo "==============================================="
+#!/bin/bash
+while [[ "$#" > 0 ]]; do case $1 in
+  --help )
+    echo "./start-cake.sh [options]
+        All options are arguments passed to the command lib/Cake/Console/cake server -p 8080
+        "
+        exit 0;;
+  *);;
+esac; shift; done
+source ./Scripts/bootstrap.sh
+url="http://localhost:8080"
+echo -e "Welcome homepage ${cyan}${url}${nc}"
+echo -e "Debugging echoes ${cyan}${url}/admin/index.php${green}?debug=1&verbose=1${nc}"
+echo -e "Alternate local tests ${cyan}${url}/admin/index.php${green}?local=1${nc}"
+echo -e "Unit tests ${cyan}${url}/test.php${nc}"
+echo -e "Turnoff flags ${cyan}${url}/admin/logoff.php${nc}"
+echo -e "==============================================="
 lib/Cake/Console/cake server -p 8080 $*

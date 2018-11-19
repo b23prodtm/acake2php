@@ -32,7 +32,7 @@ class AppSchema extends CakeSchema {
 
 	public $categorie = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'autoIncrement' => true),
-		'nom' => array('type' => 'string', 'null' => false, 'length' => 15, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'nom' => array('type' => 'string', 'null' => false, 'length' => 30, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'parent' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 3, 'unsigned' => false, 'key' => 'index'),
 		'image' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 		'indexes' => array(
@@ -95,8 +95,9 @@ class AppSchema extends CakeSchema {
 
 	public $articles = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+                'entete' => array('type' => 'string', 'null' => false, 'length' => 250, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'fk_reference_categorie' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'description' => array('type' => 'text', 'null' => false, 'length' => 4, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'corps' => array('type' => 'text', 'null' => false, 'length' => 4, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'date' => array('type' => 'date', 'null' => false),
                 'published' => array('type' => 'date', 'null' => false),
                 'indexes' => array(

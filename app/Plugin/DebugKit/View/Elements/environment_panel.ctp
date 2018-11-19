@@ -16,6 +16,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+App::uses('Debugger', 'Utility');
 ?>
 <h2><?php echo __d('debug_kit', 'App Constants'); ?></h2>
 <?php
@@ -24,7 +25,7 @@
 		foreach ($content['app'] as $key => $val) {
 			$cakeRows[] = array(
 				$key,
-				$val
+				Debugger::exportVar($val)
 			);
 		}
 		$headers = array('Constant', 'Value');
@@ -39,8 +40,8 @@
 		$cakeRows = array();
 		foreach ($content['cake'] as $key => $val) {
 			$cakeRows[] = array(
-				$key,
-				$val
+				h($key),
+				Debugger::exportVar($val)
 			);
 		}
 		$headers = array('Constant', 'Value');
@@ -57,8 +58,8 @@
 		$phpRows = array();
 		foreach ($content['php'] as $key => $val) {
 			$phpRows[] = array(
-				Inflector::humanize(strtolower($key)),
-				$val
+				h(Inflector::humanize(strtolower($key))),
+				Debugger::exportVar($val)
 			);
 		}
 		echo $this->Toolbar->table($phpRows, $headers, array('title' => 'CakePHP Environment Vars'));
@@ -72,8 +73,8 @@
 			$cakeRows = array();
 			foreach ($content['hidef'] as $key => $val) {
 				$cakeRows[] = array(
-					$key,
-					$val
+					h($key),
+					h($val)
 				);
 			}
 			$headers = array('Constant', 'Value');
