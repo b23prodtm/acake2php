@@ -64,9 +64,8 @@ matrix:
       env: _PHP=php@7.1
 
   allow_failures:
-    - os: linux
-    - env: _PHP=php@7.0
-    - env: _PHP=php@7.1
+    - php: 'nightly'
+      php: 'hhvm'
 
 before_install:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${TRAVIS_PHP_VERSION}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
@@ -78,18 +77,14 @@ before_install:
 
 install:
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/handle_brew_pkg.sh "${_PHP}" ; fi
-  - cd bin && curl -s http://getcomposer.org/installer | php
-  - cd .. && php bin/composer.phar install --dev --no-interaction
 
+# Local Test (osx configuration and mysql engine) :
+# $ ./test-cake.sh --travis
 before_script:
-  - ./configure.sh -c -d -y -h -p pass -s word
-  - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
-  - mkdir -p build/logs
   - .travis/configure
 
 script:
-  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi; fi
-  - php app/vendor/bin/phpunit --coverage-clover build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/AllTestsTest.php
+  - ./test-cake.sh
 
 after_script:
   - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/coveralls -v ; fi

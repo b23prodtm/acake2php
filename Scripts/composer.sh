@@ -35,4 +35,3 @@ echo -e "\n
         Do ${cyan}rm bin/composer.phar${nc} please, and again ${cyan}./Scripts/composer.sh${nc}.\r\n"
 #; update plugins and dependencies
 echo `bin/composer.phar update --with-dependencies`
-echo `bin/composer.phar update -d app/Plugin/Markdown`

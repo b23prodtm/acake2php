@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bd876e787d7dcac7b22848e2fc0fb3b4",
+    "content-hash": "d8c592cd5beb142f706a5fcc16f0ee0a",
     "packages": [
         {
             "name": "b23prodtm/markdown-plugin",
@@ -2432,7 +2432,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^5.6"
+        "php": "^5.6 || ^7"
     },
     "platform-dev": []
 }

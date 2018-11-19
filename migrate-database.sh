@@ -118,5 +118,12 @@ while [[ "$#" > 0 ]]; do case $1 in
       	source ./Scripts/shell_prompt.sh "./Scripts/config_app_database.sh ${dbfile}" "${cyan}Setup connection and socket\n${nc}" $fix_db
       fi;;
   -[nN]* );;
+  -[hH]*|--help )
+    echo "./migrate-database.sh [-uy|n]
+        -u Update database in app/Config/Schema/
+        -y Reset settings and default socket file
+        -n Doesn't do anything
+        "
+        exit 0;;
   *);;
 esac; shift; done

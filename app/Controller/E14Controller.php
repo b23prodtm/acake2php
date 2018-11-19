@@ -8,17 +8,22 @@
 App::uses('AppController', 'Controller');
 
 /**
- * CakePHP E13
+ * CakePHP phpcms E13
  * les indexes de pages 'pIndex' se trouvent dans webroot/.../etc/menu.properties (menu deroulant) et sitemap.properties (plan de site general)
  * @author wwwb23prodtminfo <b23prodtm at sourceforge.net>
  */
 class E14Controller extends AppController {
 
         public $helpers = array('Info' => array(
-                'index' => $this->_r,
+                'index' => null,
                 'countPerPage' => '10',
                 'Markdown' => true));
 
+
+        public function __construct($request = null, $response = null) {
+                parent::__construct($request, $response);
+                $this->helpers['Info']['index'] = $this->_r;
+        }
         /** @param string $p page filename.php
          */
         public function index($p = NULL, $images = NULL) {

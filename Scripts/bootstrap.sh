@@ -13,12 +13,8 @@ export CAKEPHP_DEBUG_LEVEL=2
 if [ ! -f ${PHP_CMS_DIR}/e13/etc/constantes.properties ]; then
         source ./Scripts/shell_prompt.sh "./configure.sh -c" "configuration"
 fi
-#;
-#;
-#; hash file that is stored in webroot to allow administrator privileges
-#;
-#;
 echo "Configuration begins automatically...${green}"
+#; hash file that is stored in webroot to allow administrator privileges
 hash="${PHP_CMS_DIR}/e13/etc/export_hash_password.sh"
 if [ ! -f $hash ]; then
         source ./Scripts/shell_prompt.sh "./configure.sh -c -h" "configuration"
@@ -32,7 +28,7 @@ if [ ! -f $phpunit ]; then
         if [ ! -f bin/composer.phar ]; then
                 source ./Scripts/composer.sh
         fi
-        php bin/composer.phar require --prefer-dist --update-with-dependencies --dev phpunit/phpunit ^$version cakephp/cakephp-codesniffer ^$PHPCS
+        php bin/composer.phar update --prefer-dist --with-dependencies phpunit/phpunit cakephp/cakephp-codesniffer
 else
         echo -e "PHPUnit ${green}[OK]${nc}"
 fi
