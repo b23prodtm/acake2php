@@ -7,6 +7,8 @@ require_once $GLOBALS['include__php_SQL.class.inc'];
  *
  * @package       app.View.Helper
  */
+ App::uses('Info', 'Cms');
+ App::uses('SQL', 'Cms');
 class InfoHelper extends AppHelper {
 
 	var $r;
