@@ -13,9 +13,9 @@ class InfoHelper extends AppHelper {
 	var $pageCount;
 	var $md;
 	var $sql;
-	public function __construct(View $view, $settings = array("index" => $index, "countPerPage" => "5", "Markdown" => true)) {
+	public function __construct(View $view, $settings = array("index" => null, "countPerPage" => "5", "Markdown" => true)) {
 		parent::__construct($view, $settings);
-		$this->r = $index;
+		$this->r = $settings["index"];
 		if(array_key_exists("countPerPage", $settings)) {
 				$this->pageCount = $settings["countPerPage"];
 		}
