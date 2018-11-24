@@ -18,4 +18,4 @@ if [[ ( -f $dst ) && ( -f $src ) && ( $(which md5) > /dev/null ) ]]; then
 fi
 cp -v $src $dst
 cd $pwd
-echo -e "Okay, just run the shell script. Please, review the files.\n"
+echo -e "${dst} copied. Please, review the files.\n"

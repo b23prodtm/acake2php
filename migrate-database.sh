@@ -75,8 +75,10 @@ ${green}Whenever mysql server changes to another version${nc}, try an upgrade of
 ${green}Make changes to SQL database structure (table-models)${nc}, by modifying Config/Schema/myschema.php, as Config/database.php defines it.
 Run ${green}./migrate-database.sh${nc}, answer ${cyan}Y${nc}es when prompted, which may not display any ${red}SQLSTATE [error]${nc}.
 "
+# Got passed args so we have saved them before $ source <script> <nullIsPassedArgs>
 saved=("$@")
 source ./Scripts/config_app_database.sh
+# Reset passed args (shift reset)
 echo 'set -- ${saved}'
 set -- $saved
 fix_db=$1
@@ -97,7 +99,7 @@ while [[ "$#" > 0 ]]; do case $1 in
       # set anything to validate, or none is equal to "-N"
       fix_db="-Y"
       ;;
-  -[nN]* )      
+  -[nN]* )
       fix_db="-N"
       ;;
   -[hH]*|--help )
