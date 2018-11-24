@@ -45,7 +45,7 @@ class AppController extends Controller {
             'Flash' => array(
                 'className' => 'MyFlash'));
         public $helpers = array('Markdown.Markdown', 'Flash');
-        protected var $_r;
+        protected $_r;
 
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);

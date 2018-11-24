@@ -33,3 +33,4 @@ else
         echo -e "PHPUnit ${green}[OK]${nc}"
 fi
 echo `$phpunit --version`
+source ./Scripts/config_app_database.sh

@@ -113,7 +113,7 @@ CakeLog::config('error', array(
 /**
  * Load DebugKit plugin
  */
-CakePlugin::load('DebugKit', ['bootstrap' => true, 'routes' => true]);
+CakePlugin::load('DebugKit');
 
 /**
  * Load Markdown Plugin

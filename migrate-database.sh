@@ -75,27 +75,11 @@ ${green}Whenever mysql server changes to another version${nc}, try an upgrade of
 ${green}Make changes to SQL database structure (table-models)${nc}, by modifying Config/Schema/myschema.php, as Config/database.php defines it.
 Run ${green}./migrate-database.sh${nc}, answer ${cyan}Y${nc}es when prompted, which may not display any ${red}SQLSTATE [error]${nc}.
 "
-sqlversion="5.7"
-if [ ! $(which mysql) > /dev/null ]; then
-	echo -e "Missing MySQL ${sqlversion} database service."
-	brew outdated mysql@${sqlversion} | brew upgrade
-	echo -e "Installing with Homebrew..."
-	brew install mysql@${sqlversion}
-	echo -e "Starting the service thread..."
-	brew services start mysql@${sqlversion}
-	echo -e "Performing some checks..."
-	mysql_upgrade -u root &
-fi
-echo -e "
-If the ${red}Error: 'Database connection \"Mysql\" is missing, or could not be created'${nc}
- shows up, please check up your ${cyan}TEST_DATABASE_NAME=$TEST_DATABASE_NAME${nc} environment variable (set up is above in this shell script or in web node settings).
-     Log into the SQL shell ${green}mysql -u root${nc} and check if you can do : ${green}use $TEST_DATABASE_NAME${nc}.
-     Run the socket fixup script with arguments ${green}./migrate-database.sh -Y${nc}
-     ${green}brew services start mysql@${sqlversion}${nc}"
-if [ ! -f /var/mysql/mysql.sock ]; then
-	echo -e "${orange}We must fix up : ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/mysql/mysql.sock' (2)${nc}"
-	echo -e "Run this script again with ${green}./migrate-database.sh -Y${nc}"
-fi
+saved=("$@")
+source ./Scripts/config_app_database.sh
+echo 'set -- ${saved}'
+set -- $saved
+fix_db=$1
 while [[ "$#" > 0 ]]; do case $1 in
   -[uU]* )
       if [ ! -f app/Config/Schema/schema.php ]; then
@@ -110,14 +94,12 @@ while [[ "$#" > 0 ]]; do case $1 in
       ./lib/Cake/Console/cake schema update --file myschema.php
       ;;
   -[yYuU]* )
-      dbfile=database.cms.php
       # set anything to validate, or none is equal to "-N"
       fix_db="-Y"
-      if [ -f app/Config/$dbfile ]; then
-      	echo -e "Reset to ${dbfile} settings and default socket file..."
-      	source ./Scripts/shell_prompt.sh "./Scripts/config_app_database.sh ${dbfile}" "${cyan}Setup connection and socket\n${nc}" $fix_db
-      fi;;
-  -[nN]* );;
+      ;;
+  -[nN]* )      
+      fix_db="-N"
+      ;;
   -[hH]*|--help )
     echo "./migrate-database.sh [-uy|n]
         -u Update database in app/Config/Schema/
@@ -127,3 +109,8 @@ while [[ "$#" > 0 ]]; do case $1 in
         exit 0;;
   *);;
 esac; shift; done
+dbfile=database.cms.php
+if [ -f app/Config/$dbfile ]; then
+      	echo -e "Reset to ${dbfile} settings and default socket file..."
+      	source ./Scripts/shell_prompt.sh "./Scripts/config_app_database.sh ${dbfile}" "${cyan}Setup connection and socket\n${nc}" $fix_db
+fi

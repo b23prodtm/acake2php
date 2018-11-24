@@ -2,15 +2,14 @@
 set -e
 script=$1
 title=$2
-while true
-do
+while true; do
         # (1) prompt user, and read command line argument if no 3rd arg
         echo -e "${cyan}Run ${title} ?...\n${nc}"
         answer=$3
         case $answer in
                -[yY]* ) answer="Y";;
 
-               -[nN]* ) break;;
+               -[nN]* ) answer="N";;
 
                * )
                         read -p "Do ${script} now (Y/N) ? " answer;;
