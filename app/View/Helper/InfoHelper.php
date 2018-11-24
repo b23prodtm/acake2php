@@ -1,7 +1,7 @@
 <?php
-
-require_once $GLOBALS['include__php_info.class.inc'];
-require_once $GLOBALS['include__php_SQL.class.inc'];
+//
+// require_once $GLOBALS['include__php_info.class.inc'];
+// require_once $GLOBALS['include__php_SQL.class.inc'];
 /**
  * Info helper
  *
