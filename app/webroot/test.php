@@ -92,4 +92,6 @@ if (Configure::read('debug') < 1) {
 }
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteDispatcher.php';
 
+App::build(array('Cms' => array(WWW_ROOT . 'php_cms' . DS . 'e13' . DS . 'include' . DS)), App::REGISTER);
+
 CakeTestSuiteDispatcher::run();
