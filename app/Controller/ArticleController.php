@@ -1,4 +1,3 @@
-<?php
 
 /*
  * @copyrights www.b23prodtm.info - 2017 (all rights reserved to author)
@@ -107,7 +106,7 @@ class ArticleController extends AppController {
                         $this->Article->id = $id;
                         /* la sauvegarde est assuree par la classe parente AppModel */
                         if ($this->Article->save($this->request->data)) {
-                                $this->Flash->success(__d('article', 'Your article has been updated.'));                             
+                                $this->Flash->success(__d('article', 'Your article has been updated.'));
                                 /* seconde etape, charger les images */
                                 return $this->redirect(array('action' => 'edit', '?' => "images"));
                         }

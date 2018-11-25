@@ -9,6 +9,6 @@ if (isset($pIndex)) {
         $page->ajouterContenu($this->fetch('content'));
         $page->fin();
 } else {
-        trigger_error("no pIndex set in default-e14.ctp", E_USER_WARNING);
+        throw new Exception("no pIndex set for default-e14.ctp");
 }
 ?>
