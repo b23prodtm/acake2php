@@ -140,6 +140,30 @@ With the CLI, you may ctrl-X ctrl-C to exit server and migrate your database:
 
 Answer 'y' when prompted.
 
+8. I cannot upload any picture, why ?
+
+The Mysql.php Datasource must define binary and mediumbinary storage types. Please check the file  __lib/Cake/Model/Datasource/Mysql.php__, if you experienced the following error:
+
+    errno : 1054
+    sqlstate : 42S22
+    error : Unknown column 'image' in 'field list'
+
+Add the *__mediumbinary__* storage:
+
+>public $columns = array(...)
+
+    'mediumbinary' => array('name' => 'mediumblob'),
+
+>public function column($real){...}, at line 814:
+
+    if (strpos($col, 'mediumblob') !== false || $col === 'mediumbinary') {
+      return 'mediumbinary';
+    }
+
+Update database schema:
+
+    ./migrate-database.sh -U
+
 ### License
    Copyright 2016 b23production GNU
 
