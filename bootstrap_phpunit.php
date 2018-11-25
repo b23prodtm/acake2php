@@ -92,10 +92,6 @@ if (Configure::read('debug') < 1) {
 
 /** PHP autoloader shall detect applcation plugins from this profile */
 include_once APP . 'Config' . DS . 'boot_profile.cms.php';
-ini_set('register_globals', 1);
-global $$GLOBALS;
-App::uses('Index', 'Cms');
-$r = new Index(null, ROOT . DS . 'bootstrap_phpunit.php', false, WWW_ROOT . 'php_cms/');
 
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteDispatcher.php';
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteCommand.php';
