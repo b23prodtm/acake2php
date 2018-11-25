@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-source configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-i"
 echo -e "
 Set of default environment
 ==========================

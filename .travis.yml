@@ -82,6 +82,8 @@ install:
 # Local Test (osx configuration and mysql engine) :
 # $ ./test-cake.sh --travis
 before_script:
+  # remote servers CI doesn't need a root password import (-i) but the socket => -y
+  - ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y"
   - .travis/configure.sh
 
 script:

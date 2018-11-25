@@ -7,6 +7,8 @@ while [[ "$#" > 0 ]]; do case $1 in
     export TRAVIS_OS_NAME="osx"
     export TRAVIS_PHP_VERSION=$(php -v | grep -E "[5-7]\.\\d+\.\\d+" | cut -d " " -f 2 | cut -c 1-3
     )
+    # remote servers CI doesn't need a root password import (-i) but the socket => -y 
+    source configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-i"
     source .travis/configure.sh;;
   --cov )
     export COVERITY_SCAN_BRANCH=1;;
