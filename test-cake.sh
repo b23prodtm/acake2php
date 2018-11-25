@@ -7,14 +7,19 @@ while [[ "$#" > 0 ]]; do case $1 in
     export TRAVIS_OS_NAME="osx"
     export TRAVIS_PHP_VERSION=$(php -v | grep -E "[5-7]\.\\d+\.\\d+" | cut -d " " -f 2 | cut -c 1-3
     )
-    source .travis/configure;;
+    source .travis/configure.sh;;
   --cov )
     export COVERITY_SCAN_BRANCH=1;;
   -[hH]*|--help )
     echo "./test-cake.sh [-t, --travis [--cov]]
       -t Travis CI Test Workflow
-      --cov Coverity Scan tests"
+      --cov Coverity Scan tests
+      -p, --root-password TEST_DATABASE_PASSWORD"
       exit 0;;
+  -[pP]*|--sql-password )
+    echo "A mysql password was provided."
+    export SQL_PASSWORD=$2
+    ;;
   * ) ;;
 esac; shift; done
 source ./Scripts/bootstrap.sh

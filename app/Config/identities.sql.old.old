@@ -1,0 +1,7 @@
+
+          create database if not exists cakephp_test;
+          use mysql;
+          create user if not exists 'root'@'127.0.0.1';
+          alter user 'root'@'127.0.0.1' identified by '';
+          select * from user where user = 'root';
+          grant all on cakephp_test.* to 'root'@'127.0.0.1';

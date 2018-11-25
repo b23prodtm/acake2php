@@ -22,7 +22,10 @@ else
 fi
 php bin/composer.phar --version
 echo -e "\n
-        If you see the message ${red}SHA1 signature could not be verified: broken signature${nc}\r
-        Do ${cyan}rm bin/composer.phar${nc} please, and again ${cyan}./Scripts/composer.sh${nc}.\r\n"
+        //// FAQ:
+        1. When ${orange}SHA1 signature could not be verified: broken signature${nc} appears on terminal :\r
+            The composer binary wasn't downloaded on this machine or it must be updated :
+            Please copy and run :
+            ${cyan}rm bin/composer.phar && ./Scripts/composer.sh${nc}\n"
 #; update plugins and dependencies
-php bin/composer.phar update --with-dependencies
+php bin/composer.phar update --with-dependencies --apcu-autoloader

@@ -12,19 +12,6 @@ if [ ! $(which mysql) > /dev/null ]; then
 else
   mysql --version
 fi
-echo -e "
-${red}If the Error: 'Database connection \"Mysql\" is missing, or could not be created'${nc}
- shows up, please check up your ${cyan}TEST_DATABASE_NAME=$TEST_DATABASE_NAME${nc} environment variable (set up is above in this shell script or in web node settings).
-     Log into the SQL shell ${green}mysql -u root${nc} and check if you can do : ${green}use $TEST_DATABASE_NAME${nc}.
-     Run the socket fixup script with arguments
-${cyan}
-      ./migrate-database.sh -Y
-      brew services restart mysql@${sqlversion}
-${nc}"
-if [ ! -h /var/mysql/mysql.sock ]; then
-	echo -e "${orange}We must fix up : ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/mysql/mysql.sock' (2)${nc}"
-	echo -e "${blue}Run the command ${green}./migrate-database.sh -Y${nc}\n"
-fi
 while [[ "$#" > 0 ]]; do case $1 in
   *.php)
     dbfile=$1
@@ -35,8 +22,14 @@ while [[ "$#" > 0 ]]; do case $1 in
     #; symlink mysql socket with php
     echo "Please allow the super-user to link mysql socket to php ..."
     sudo mkdir -p /var/mysql
-    if [ -h /var/mysql/mysql.sock ]; then ls -al /var/mysql/mysql.sock; else sudo ln -vs /tmp/mysql.sock /var/mysql/mysql.sock; fi;
-    ;;
+    if [ -h /var/mysql/mysql.sock ]; then
+				ls -al /var/mysql/mysql.sock
+	 	else
+			 sudo ln -vs /tmp/mysql.sock /var/mysql/mysql.sock
+		fi;;
   *)
     ;;
 esac; shift; done
+if [ ! -h /var/mysql/mysql.sock ]; then
+	echo -e "${orange}Warning:${nc}/var/mysql/mysql.sock symlink not found."
+fi
