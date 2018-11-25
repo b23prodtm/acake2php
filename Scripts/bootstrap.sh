@@ -23,7 +23,7 @@ source $hash
 echo -e "${nc}Password ${green}$GET_HASH_PASSWORD${nc}"
 #; Install PHPUnit, performs unit tests
 #; The website must pass health checks in order to be deployed
-phpunit="./app/Vendor/bin/phpunit"
+phpunit="app/vendor/bin/phpunit"
 if [ ! -f $phpunit ]; then
         if [ ! -f bin/composer.phar ]; then
                 source ./Scripts/composer.sh
@@ -33,4 +33,3 @@ else
         echo -e "PHPUnit ${green}[OK]${nc}"
 fi
 echo `$phpunit --version`
-source ./Scripts/config_app_database.sh
