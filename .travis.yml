@@ -73,7 +73,6 @@ matrix:
       php: 'hhvm'
 
 before_install:
-  - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${TRAVIS_PHP_VERSION}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
   - if [[ "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh ; fi
   # Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
@@ -92,7 +91,7 @@ before_script:
 
 script:
   # tests with phpunit
-  - ./test-cake.sh
+  - ./test-cake.sh | grep Test
 
 after_script:
   - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/php-coveralls -v -r ./app/; fi
