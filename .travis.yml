@@ -71,6 +71,7 @@ matrix:
   allow_failures:
     - php: 'nightly'
       php: 'hhvm'
+      os: osx
 
 before_install:
   - if [[ "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
