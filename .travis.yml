@@ -5,13 +5,8 @@ cache:
     - $HOME/.composer/cache/files
 env:
   matrix:
-    - DB=Mysql
+    - DB=mysql
   global:
-    - TEST_MYSQL_SERVICE_HOST=127.0.0.1
-    - TEST_MYSQL_SERVICE_PORT=3306
-    - TEST_DATABASE_NAME=cakephp_test
-    - TEST_DATABASE_USER=root
-    - TEST_DATABASE_PASSWORD=
     - PHPUNIT=4
     - PHPCS=3
     - COLLECT_COVERAGE=true
@@ -27,7 +22,7 @@ addons:
     project:
       name: "b23prodtm/myphpcms"
     notification_email: b23prodtm@users.sourceforge.net
-    build_command_prepend: .travis/configure.sh
+    build_command_prepend: .travis/configure
     build_command: if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else ./app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;
     branch_pattern: development
 services:
@@ -41,11 +36,11 @@ matrix:
   include:
     - os: linux
       php: 5.6
-      env: DB=Pgsql
+      env: DB=pgsql
 
     - os: linux
       php: 5.6
-      env: DB=Sqlite
+      env: DB=sqlite
 
     - os: linux
       php: 5.6
@@ -86,16 +81,13 @@ install:
 # Local Test (osx configuration and mysql engine) :
 # $ ./test-cake.sh --travis
 before_script:
-  # remote servers CI doesn't need a root password import (-i) but the socket => -y
-  - ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y"
-  - .travis/configure.sh
+  - .travis/configure
 
 script:
-  # tests with phpunit
   - ./test-cake.sh
 
 after_script:
-  - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/php-coveralls -v -r ./app/; fi
+  - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/coveralls -v ; fi
 
 # Openshift webhook notifies that a new build version is available
 # $OC_SECRET is obtained from an Openshift Console and set secret environment variable

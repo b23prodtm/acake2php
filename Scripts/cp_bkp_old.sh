@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-if [[ "$#" < 3 ]]; then echo "Usage : ./Scripts/cp_bkp_old.sh <working-directory> <source-file> <target-file>"; exit 1; fi
 wd=$1
 src=$2
 dst=$3
@@ -19,4 +18,4 @@ if [[ ( -f $dst ) && ( -f $src ) && ( $(which md5) > /dev/null ) ]]; then
 fi
 cp -v $src $dst
 cd $pwd
-echo -e "${src} copied. Please, review the files.\n"
+echo -e "Okay, just run the shell script. Please, review the files.\n"
