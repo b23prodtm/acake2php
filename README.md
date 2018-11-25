@@ -131,6 +131,15 @@ Run the socket fixup script with arguments:
     ./migrate-database.sh -y
     brew services restart mysql@5.7
 
+7. I'm testing with ./start_cake.sh and I cannot add any new post on Updates section, what should I do ?
+
+With the CLI, you may ctrl-X ctrl-C to exit server and migrate your database:
+
+    ./migrate-database.sh -U
+    ./start_cake.sh
+
+Answer 'y' when prompted.
+
 ### License
    Copyright 2016 b23production GNU
 
