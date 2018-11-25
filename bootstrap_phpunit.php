@@ -90,5 +90,8 @@ if (Configure::read('debug') < 1) {
 	die(__d('cake_dev', 'Debug setting does not allow access to this url.'));
 }
 
+/** PHP autoloader shall detect applcation plugins from this profile */
+include_once APP . 'Config' . DS . 'boot_profile.cms.php';
+
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteDispatcher.php';
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteCommand.php';

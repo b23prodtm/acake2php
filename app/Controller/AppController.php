@@ -20,11 +20,6 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 App::uses('Controller', 'Controller');
-/*App::import('file', 'Index',
-  array('file' =>
-    WWW_ROOT . DS .'php_cms' . DS . 'e13' . DS . 'include' . DS . 'php_index.class.inc.php'
-  )
-);*/
 App::uses('Index', 'Cms');
 
 /**
@@ -45,7 +40,7 @@ class AppController extends Controller {
             'Flash' => array(
                 'className' => 'MyFlash'));
         public $helpers = array('Markdown.Markdown', 'Flash');
-        protected var $_r;
+        protected $_r;
 
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
