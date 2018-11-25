@@ -5,11 +5,16 @@ cache:
     - $HOME/.composer/cache/files
 env:
   matrix:
-    - DB=mysql
+    - DB=Mysql
   global:
+    - TEST_MYSQL_SERVICE_HOST=127.0.0.1
+    - TEST_MYSQL_SERVICE_PORT=3306
+    - TEST_DATABASE_NAME=cakephp_test
+    - TEST_DATABASE_USER=root
+    - TEST_DATABASE_PASSWORD=
     - PHPUNIT=4
     - PHPCS=3
-    - COLLECT_COVERAGE=true
+    - COLLECT_COVERAGE=false
     # The next declaration is the encrypted OC_SECRET, created
     # via the "travis encrypt" command using the project repo's public key
     - secure:  "O+HejqZgXZFf0eD3GdvUwL2dsJsW+5biztfWYKHNfzv5u9j6Nn8JSoLdIp+Bg6Kct6kCJebM7oWHCh1fhyEm3AluusmqKHN8VKwQuINEZKAxPRFGl3NKkEU/Y95tHR3JIubZbZ0oZYmnl7z+YgVvM4LvmfvAwdpXzRt4SWOzGRWiL8uRaovOwW10HUB6qcO70Rn9XIHz4gUAoAEWQgSlJ4aNftu/lpuYs4P1r0+6fI/nfRRBMOogBQLEMqw6enPP+RrWx2pLwuxaQqChtk2td5PJdLiifW7C8SiAsljSgIRiaytAOgIs5KJsLGUdAPNXIMqUYFJ776J3L+ln8/nM/H8ARGB2P3smY5HM34/NrzUat2X/B6Uqg1F0Fs/794aomhaeqgh4b2MRI5srjQ/grNK61H1AftdR6JSLVjm6AUg743GQJF7sgNfK60n28EEZApAEzDS0v1PyU7U/HAZIalqWnttO0ycQyj2rf1XC++6BuTcRdmxx4dZoqZIn7xHzBQvi99ljv4JuwUgrNYXvcSEkXu6Y5GqMl2rtjxrdaGATpePuk1ju1kfB/7fQsR3ZZOaxULOSlQRcArsyseOtmEqQ1h5BVSmOGV+yoEboNm2FDZH/gD9ZZ7kTi+bk4bvHRZSD06JiDZ12W/JGsmU77phVIIWuUcXghEZf/WRjTe4="
@@ -22,7 +27,7 @@ addons:
     project:
       name: "b23prodtm/myphpcms"
     notification_email: b23prodtm@users.sourceforge.net
-    build_command_prepend: .travis/configure
+    build_command_prepend: .travis/configure.sh
     build_command: if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else ./app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;
     branch_pattern: development
 services:
@@ -36,11 +41,11 @@ matrix:
   include:
     - os: linux
       php: 5.6
-      env: DB=pgsql
+      env: DB=Pgsql
 
     - os: linux
       php: 5.6
-      env: DB=sqlite
+      env: DB=Sqlite
 
     - os: linux
       php: 5.6
@@ -68,7 +73,6 @@ matrix:
       php: 'hhvm'
 
 before_install:
-  - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${TRAVIS_PHP_VERSION}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
   - if [[ "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
   - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh ; fi
   # Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
@@ -81,13 +85,16 @@ install:
 # Local Test (osx configuration and mysql engine) :
 # $ ./test-cake.sh --travis
 before_script:
-  - .travis/configure
+  # remote servers CI doesn't need a root password import (-i) but the socket => -y
+  - ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y"
+  - .travis/configure.sh
 
 script:
-  - ./test-cake.sh
+  # tests with phpunit
+  - ./test-cake.sh | grep Test
 
 after_script:
-  - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/coveralls -v ; fi
+  - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/php-coveralls -v -r ./app/; fi
 
 # Openshift webhook notifies that a new build version is available
 # $OC_SECRET is obtained from an Openshift Console and set secret environment variable

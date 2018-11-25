@@ -5,6 +5,9 @@
 - [CakePHP Sample App on OpenShift](#cakephp-sample-app-on-openshift)
     + [Source repository layout](#source-repository-layout)
     + [Compatibility](#compatibility)
+    + [Local Built-in Server](#local-built-in-server)
+    + [PHP Unit Test](#php-unit-test)
+    + [Common Issues](#common-issues)
     + [License](#license)
 
 <!-- tocstop -->
@@ -40,6 +43,126 @@ However, if these files exist they will affect the behavior of the build process
 ### Compatibility
 
 This repository is compatible with PHP 5.6 and higher, excluding any alpha or beta versions.
+
+### Local built-in server
+>for local test only
+
+Open a Terminal window:
+
+    ./start_cake.sh
+
+>Ctrl-click the URLs to open them in the browser.
+### PHP Unit Test
+
+Open a Terminal window:
+
+    ./test_cake.sh -p <sql-password>
+
+See [below](#common-issues) to allow access on the built-in local server.
+
+### Common Issues
+
+1. How to fix the following error?
+
+Index page displays:
+
+    errno : 1146
+    sqlstate : 42S02
+    error : Table 'phpcms.info' doesn't exist
+
+Try the following to migrate (update) all database tables, answer 'y' when prompted:
+
+    ./migrate-database.sh -u
+
+2. ACCESS DENIED to user appears with other information complaining about database connection, what does that mean ?
+
+You probably have modified user privileges on your server:
+
+    mysql -u root
+    use mysql;
+    grant all on $TEST_DATABASE_NAME.* to '$TEST_DATABASE_USER'@'$TEST_MYSQL_SERVICE_HOST';
+    exit
+    ./configure.sh -c
+
+This will reset the connection profile in ..etc/ properties file with the template.
+More about environment variables are located in the remote pod (OpenShift) settings and locally in ./Scripts/bootargs.sh.  
+
+3. ACCESS DENIED for root@'127.0.0.1' appears with other information complaining about database connection, what does that mean ?
+
+This looks like a first installation of mysql. You have to secure or reset your mysql root access:
+
+    sudo rm -rf /usr/local/var/mysql
+    mysqld --initialize
+
+[Note] A temporary password is generated for root@localhost. Now import identities.
+
+    brew services restart mysql@5.7
+    ./migrate-database.sh -Y -i
+    <temporary password>
+
+4. My mysql server's upgraded to another version, what should I do ?
+
+Upgrade your phpcms database within a (secure)shell:
+
+    mysql_upgrade -u root --password=<password>
+
+4. I've made changes to mysql database tables, I've made changes to Config/Schema/myschema.php, as Config/database.php defines it, what should I do ?
+
+Migrate all your tables:
+
+    ./migrate-database.sh -u
+
+Answer 'y' when prompted.
+
+5. How to fix up 'Database connection "Mysql" is missing, or could not be created' ?
+
+Check your environment variable (./Scripts/bootargs.sh or Docker/Pod settings)
+
+    TEST_DATABASE_NAME=cakephp_test
+
+Log in with authorized privileges from a shell prompt:
+
+    mysql -u root --password=<password> cakephp_test
+
+6. How to fix up ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/mysql/mysql.sock' (2) ?
+
+Run the socket fixup script with arguments:
+
+    ./migrate-database.sh -y
+    brew services restart mysql@5.7
+
+7. I'm testing with ./start_cake.sh and I cannot add any new post on Updates section, what should I do ?
+
+With the CLI, you may ctrl-X ctrl-C to exit server and migrate your database:
+
+    ./migrate-database.sh -U
+    ./start_cake.sh
+
+Answer 'y' when prompted.
+
+8. I cannot upload any picture, why ?
+
+The Mysql.php Datasource must define binary and mediumbinary storage types. Please check the file  __lib/Cake/Model/Datasource/Mysql.php__, if you experienced the following error:
+
+    errno : 1054
+    sqlstate : 42S22
+    error : Unknown column 'image' in 'field list'
+
+Add the *__mediumbinary__* storage:
+
+>public $columns = array(...)
+
+    'mediumbinary' => array('name' => 'mediumblob'),
+
+>public function column($real){...}, at line 814:
+
+    if (strpos($col, 'mediumblob') !== false || $col === 'mediumbinary') {
+      return 'mediumbinary';
+    }
+
+Update database schema:
+
+    ./migrate-database.sh -U
 
 ### License
    Copyright 2016 b23production GNU

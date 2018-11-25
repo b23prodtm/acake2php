@@ -20,11 +20,6 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 App::uses('Controller', 'Controller');
-/*App::import('file', 'Index',
-  array('file' =>
-    WWW_ROOT . DS .'php_cms' . DS . 'e13' . DS . 'include' . DS . 'php_index.class.inc.php'
-  )
-);*/
 App::uses('Index', 'Cms');
 
 /**
@@ -45,13 +40,13 @@ class AppController extends Controller {
             'Flash' => array(
                 'className' => 'MyFlash'));
         public $helpers = array('Markdown.Markdown', 'Flash');
-        protected var $_r;
+        protected $_r;
 
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
 
                 /* initialise les $GLOBALS et le sitemap */
-                $this->_r = new Index($this->View, ROOT . DS . 'index.php', false, WWW_ROOT . 'php_cms/');
+                $this->_r = new Index($this->View, APP . 'index.php', false, WWW_ROOT . 'php_cms/');
                 /* map pIndex -> URL */
                 $this->set("i_sitemap", $this->_r->sitemap);
         }
@@ -66,7 +61,7 @@ class AppController extends Controller {
          */
         public function images($p = NULL) {
                 //debug($this->request->params);
-                $this->response->file($GLOBALS["images"] . DS . $p);
+                $this->response->file($GLOBALS["images"] . $p);
                 $this->response->send();
         }
 

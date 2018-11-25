@@ -28,11 +28,8 @@ if [ -z $pass ]; then while true; do
 done; fi
 
 # read salt if not set
-if [ -z $salt ]; then while true; do
-   while [ "$salt" == "" ]
-   do
+if [ -z $salt ]; then while [ "$salt" == "" ]; do
    read -p "Please enter the salt word :" salt
-   done
 done; fi
 # read filename if not set
 if [ -z $hash_file ]; then
