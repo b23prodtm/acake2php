@@ -1,10 +1,10 @@
 
           create database if not exists phpcms;
           use mysql;
-          create user if not exists 'test'@'localhost';
-          alter user 'test'@'localhost' identified by 'mypassword';
+          create user if not exists 'test'@'127.0.0.1';
+          alter user 'test'@'127.0.0.1' identified by 'mypassword';
           select * from user where user = 'test';
-          grant all on phpcms.* to 'test'@'localhost';
+          grant all on phpcms.* to 'test'@'127.0.0.1';
 
           create database if not exists cakephp_test;
           use mysql;

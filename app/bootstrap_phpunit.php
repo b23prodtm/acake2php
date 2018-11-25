@@ -91,7 +91,7 @@ if (Configure::read('debug') < 1) {
 }
 
 /** PHP autoloader shall detect applcation plugins from this profile */
-include_once APP . DS . 'Config' . DS 'boot_profile.cms.php';
+include_once APP . 'Config' . DS 'boot_profile.cms.php';
 
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteDispatcher.php';
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteCommand.php';

@@ -10,7 +10,7 @@
 /tags
 *.mo
 /bin/composer.phar
-/app/Config/identities.sql
+/app/Config/identities.sql*
 
 # IDE and editor specific files #
 #################################

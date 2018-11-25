@@ -111,4 +111,4 @@ CakeLog::config('error', array(
 ));
 
 /** PHP autoloader shall detect applcation plugins from this profile */
-include_once APP . DS . 'config' . DS . 'boot_profile.cms.php';
+include_once APP . 'config' . DS . 'boot_profile.cms.php';

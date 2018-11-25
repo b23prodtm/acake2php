@@ -90,7 +90,7 @@ script:
   - ./test-cake.sh
 
 after_script:
-  - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/php-coveralls -v ; fi
+  - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/php-coveralls -v -r ./app/; fi
 
 # Openshift webhook notifies that a new build version is available
 # $OC_SECRET is obtained from an Openshift Console and set secret environment variable

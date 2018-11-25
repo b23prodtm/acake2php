@@ -8,7 +8,7 @@
     beStrictAboutChangesToGlobalState="true"
     beStrictAboutOutputDuringTests="true"
     beStrictAboutTestsThatDoNotTestAnything="true"
-    bootstrap="vendor/autoload.php"
+    bootstrap="bootstrap_phpunit.php"
     colors="true"
     columns="max"
     convertErrorsToExceptions="true"
