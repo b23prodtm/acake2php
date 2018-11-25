@@ -74,7 +74,7 @@ Try the following to migrate (update) all database tables, answer 'y' when promp
 
     ./migrate-database.sh -u
 
-2. ACCESS DENIED for user root appears with other information complaining about database connection, what does that mean ?
+2. ACCESS DENIED to user appears with other information complaining about database connection, what does that mean ?
 
 You probably have modified user privileges on your server:
 
@@ -84,7 +84,8 @@ You probably have modified user privileges on your server:
     exit
     ./configure.sh -c
 
-This will reset the connection profile in ..etc/ properties file.
+This will reset the connection profile in ..etc/ properties file with the template.
+More about environment variables are located in the remote pod (OpenShift) settings and locally in ./Scripts/bootargs.sh.  
 
 3. ACCESS DENIED for root@'127.0.0.1' appears with other information complaining about database connection, what does that mean ?
 
