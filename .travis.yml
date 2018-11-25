@@ -22,7 +22,7 @@ addons:
     project:
       name: "b23prodtm/myphpcms"
     notification_email: b23prodtm@users.sourceforge.net
-    build_command_prepend: .travis/configure
+    build_command_prepend: .travis/configure.sh
     build_command: if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else ./app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;
     branch_pattern: development
 services:
@@ -81,7 +81,7 @@ install:
 # Local Test (osx configuration and mysql engine) :
 # $ ./test-cake.sh --travis
 before_script:
-  - .travis/configure
+  - .travis/configure.sh
 
 script:
   - ./test-cake.sh

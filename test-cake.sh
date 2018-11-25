@@ -12,7 +12,7 @@ while [[ "$#" > 0 ]]; do case $1 in
     export COVERITY_SCAN_BRANCH=1;;
   -[hH]*|--help )
     echo "./test-cake.sh [-t, --travis [--cov]]
-      -t Travis CI local tests
+      -t Travis CI Test Workflow
       --cov Coverity Scan tests"
       exit 0;;
   * ) ;;
