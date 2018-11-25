@@ -47,9 +47,9 @@ if (!defined('APP_DIR')) {
  *
  * The following line differs from its sibling
  * /app/webroot/test.php
- */
+ *
 define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
-
+*/
 /**
  * This auto-detects CakePHP as a composer installed library.
  * You may remove this if you are not planning to use composer (not recommended, though).
@@ -92,7 +92,4 @@ if (Configure::read('debug') < 1) {
 }
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteDispatcher.php';
 
-App::uses('Index','Cms');
-App::uses('SQL', 'Cms')
-$r = new Index(null, WWW_ROOT . 'test.php', false, WWW_ROOT . 'php_cms' . DS, DS, false);
 CakeTestSuiteDispatcher::run();
