@@ -32,11 +32,11 @@ while [[ "$#" > 0 ]]; do case $1 in
 esac; shift; done
 source ./Scripts/bootstrap.sh
 if [[ "$COLLECT_COVERAGE" == "true" ]]; then
-  php app/vendor/bin/phpunit --coverage-clover app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/Case/AllTestsTest.php
+  ./app/Vendor/bin/phpunit --coverage-clover app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/Case/AllTestsTest.php
 else
   if [ '${PHPCS}' != '1' ]; then
     ./lib/Cake/Console/cake test core AllTests --stderr
   else
-    app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake
+    ./app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake
   fi
 fi
