@@ -61,7 +61,7 @@ class AppController extends Controller {
          */
         public function images($p = NULL) {
                 //debug($this->request->params);
-                $this->response->file($GLOBALS["images"] . DS . $p);
+                $this->response->file($GLOBALS["images"] . $p);
                 $this->response->send();
         }
 
