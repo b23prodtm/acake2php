@@ -11,16 +11,22 @@ while [[ "$#" > 0 ]]; do case $1 in
   --cov )
     export COVERITY_SCAN_BRANCH=1;;
   -[hH]*|--help )
-    echo "./test-cake.sh [-t, --travis [--cov]]
+    echo "./test-cake.sh [-p, --sql-password <password>] [-t, --travis [--cov]]
+      -p, --sql-password SQL_PASSWORD
       -t Travis CI Test Workflow
       --cov Coverity Scan tests
-      -p, --root-password TEST_DATABASE_PASSWORD"
+      "
       exit 0;;
   -[pP]*|--sql-password )
-    echo "A mysql password was provided."
-    export SQL_PASSWORD=$2
-    ;;
-  * ) ;;
+    answer=$2
+    if [[ ($2 == "-[tThHpP]*|--cov|--travis") || ($2 == /dev/null) ]]; then
+      read -p "Enter SQL password now: " answer;
+    else
+      echo "SQL password was provided."
+      shift
+    fi
+    export SQL_PASSWORD=$answer;;
+  *) echo "Unknown parameter passed: $1"; exit 1;;
 esac; shift; done
 source ./Scripts/bootstrap.sh
 if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then

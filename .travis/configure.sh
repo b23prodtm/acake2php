@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source configure.sh "-c" "-d" "-y" "-h" "-p" "pass" "-s" "word"
+source configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-i"
 echo -e "
 Set of default environment
 ==========================
@@ -26,9 +26,9 @@ if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
   sudo locale-gen de_DE
   sudo locale-gen es_ES
 fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -e 'CREATE DATABASE cakephp_test2;'; fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -e 'CREATE DATABASE cakephp_test3;'; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u $TEST_DATABASE_USER --password=$TEST_DATABASE_PASSWORD; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u $TEST_DATABASE_USER --password=$TEST_DATABASE_PASSWORD; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u $TEST_DATABASE_USER --password=$TEST_DATABASE_PASSWORD; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
@@ -49,7 +49,8 @@ echo "<?php
     'Mysql' => array(
       'datasource' => 'Database/Mysql',
       'host' => '127.0.0.1',
-      'login' => 'root'
+      'login' => 'root',
+      'password' => '${SQL_PASSWORD}'
     ),
     'Pgsql' => array(
       'datasource' => 'Database/Postgres',
