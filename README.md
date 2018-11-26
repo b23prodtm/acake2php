@@ -162,7 +162,13 @@ Add the *__mediumbinary__* storage:
 
 Update database schema:
 
-    ./migrate-database.sh -U
+    ./migrate-database.sh -u
+
+9. It looks like submodule folders have disappeared, why ?
+
+A recent `git checkout` made the submodule disappear from disk, that can happen on master/development branch.  Recall or add the shell configure script to your workflow:
+
+    ./configure.sh -m
 
 ### License
    Copyright 2016 b23production GNU

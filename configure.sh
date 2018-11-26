@@ -1,12 +1,6 @@
 #!/bin/bash
 source ./Scripts/bootargs.sh
 
-echo -e "${green}Fixing some file permissions...${nc}"
-source ./Scripts/configure_tmp.sh
-
-#; update plugins and dependencies
-source ./Scripts/composer.sh
-
 #; arguments are
 args=$*
 #; if the full set of the arguments exists, there won't be any prompt in the shell
@@ -28,13 +22,19 @@ while [[ "$#" > 0 ]]; do case $1 in
         ;;
     -[sS]*|-[pP]*|-[fF]*)
         shift;;
+    -[mM]*|--submodule)
+        git submodule update --init --recursive --force;;
     --help )
-          echo "./configure.sh [-c|--const] [-h|--hash [-p password -s salt [-f filename]]] [[-d|--mig-database] [-y]]
-              -c Reset to app/webroot/php_cms/etc/constantes-template.properties
-              -h Reset administrator password hash
+          echo "./configure.sh [-m] [-c] [-h [-p password -s salt [-f filename]]] [[-d|--mig-database] [-y]]
+              -c,--const Reset to app/webroot/php_cms/etc/constantes-template.properties
+              -h,--hash Reset administrator password hash
                   -p <password> -s <salt> [-f <save-filename>]
               -d Migrate Database (see ./migrate-database.sh --help)
-              "
+              -m,--submodule Update sub-modules from Git"
               exit 0;;
     *) echo "Unknown parameter passed: $1"; exit 1;;
 esac; shift; done
+#; update plugins and dependencies
+source ./Scripts/composer.sh
+echo -e "${green}Fixing some file permissions...${nc}"
+source ./Scripts/configure_tmp.sh
