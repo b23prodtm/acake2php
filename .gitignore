@@ -1,6 +1,6 @@
 # User specific & automatically generated files #
 #################################################
-/app/Config/database.php
+/app/Config/database.php*
 /app/tmp
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
@@ -10,6 +10,7 @@
 /tags
 *.mo
 /bin/composer.phar
+/app/Config/identities.sql*
 
 # IDE and editor specific files #
 #################################

@@ -13,25 +13,19 @@ cyan="\033[0;36m"
 composer="bin/composer.phar"
 if [ ! -f $composer ]; then
         echo -e "Composer setup...\n"
-        EXPECTED_SIGNATURE="$(curl -f https://composer.github.io/installer.sig)"
-        php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-        ACTUAL_SIGNATURE="$(php -r "echo hash_file('SHA384', 'composer-setup.php');")"
-
-        if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]
-        then
-            >&2 echo 'ERROR: Invalid installer signature'
-            rm composer-setup.php
-            exit 1
-        fi
-
-        php composer-setup.php --quiet --install-dir=bin
-        rm composer-setup.php
+        mkdir -p bin
+        cd bin
+        curl -sS https://getcomposer.org/installer | php
+        cd ..
 else
         echo -e "Composer ${green}[OK]${nc}"
 fi
-echo `bin/composer.phar --version`
+php bin/composer.phar --version
 echo -e "\n
-        If you see the message ${red}SHA1 signature could not be verified: broken signature${nc}\r
-        Do ${cyan}rm bin/composer.phar${nc} please, and again ${cyan}./Scripts/composer.sh${nc}.\r\n"
+        //// FAQ:
+        1. When ${orange}SHA1 signature could not be verified: broken signature${nc} appears on terminal :\r
+            The composer binary wasn't downloaded on this machine or it must be updated :
+            Please copy and run :
+            ${cyan}rm bin/composer.phar && ./Scripts/composer.sh${nc}\n"
 #; update plugins and dependencies
-echo `bin/composer.phar update --with-dependencies`
+php bin/composer.phar update --with-dependencies --apcu-autoloader

@@ -1,21 +1,24 @@
 <?php
-
-require_once $GLOBALS['include__php_info.class.inc'];
-require_once $GLOBALS['include__php_SQL.class.inc'];
+//
+// require_once $GLOBALS['include__php_info.class.inc'];
+// require_once $GLOBALS['include__php_SQL.class.inc'];
 /**
  * Info helper
  *
  * @package       app.View.Helper
  */
+ App::uses('Info', 'Cms');
+ App::uses('SQL', 'Cms');
 class InfoHelper extends AppHelper {
 
 	var $r;
 	var $pageCount;
 	var $md;
 	var $sql;
-	public function __construct(View $view, $settings = array("index" => $index, "countPerPage" => "5", "Markdown" => true)) {
+	public function __construct(View $view, $settings = array("index" => null, "countPerPage" => "5", "Markdown" => true)) {
 		parent::__construct($view, $settings);
-		$this->r = $index;
+		$this->r = $settings["index"];
+    $this->r->view = $view;
 		if(array_key_exists("countPerPage", $settings)) {
 				$this->pageCount = $settings["countPerPage"];
 		}
