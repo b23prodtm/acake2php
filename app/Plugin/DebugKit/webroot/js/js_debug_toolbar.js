@@ -5,7 +5,6 @@
  * and enhancing the Html toolbar. Includes library agnostic Event, Element,
  * Cookie and Request wrappers.
  *
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -56,20 +55,32 @@ var DEBUGKIT = function () {
 		return versionGTE(version, min) && versionGTE(max, version);
 	}
 
-	// Look for existing jQuery that matches the requirements.
-	if (window.jQuery && versionWithin(jQuery.fn.jquery, "1.8", "2.0")) {
-		DEBUGKIT.$ = window.jQuery;
-	} else {
-		// sync load the file. Using document.write() does not block
-		// in recent versions of chrome.
-		var req = new XMLHttpRequest();
-		req.onload = function () {
-			eval(this.responseText);
-			DEBUGKIT.$ = jQuery.noConflict(); // do not unset window.jQuery
-		};
-		req.open('get', window.DEBUGKIT_JQUERY_URL, false);
-		req.send();
+	function initOnReady() {
+		DEBUGKIT.$(document).ready(function () {
+			DEBUGKIT.registerModules(DEBUGKIT.$);
+			DEBUGKIT.loader.init();
+		});
 	}
+
+	// Push checking for jQuery at the end of the stack.
+	// This will catch JS included at the bottom of a page.
+	setTimeout(function() {
+		// Look for existing jQuery that matches the requirements.
+		if (window.jQuery && versionWithin(jQuery.fn.jquery, "1.8", "2.1")) {
+			DEBUGKIT.$ = window.jQuery;
+			initOnReady();
+		} else {
+			var req = new XMLHttpRequest();
+			req.onload = function () {
+				eval(this.responseText);
+				// Restore both $ and jQuery to the original values.
+				DEBUGKIT.$ = jQuery.noConflict(true);
+				initOnReady();
+			};
+			req.open('get', window.DEBUGKIT_JQUERY_URL, true);
+			req.send();
+		}
+	}, 0);
 })();
 
 DEBUGKIT.loader = function () {
@@ -90,13 +101,16 @@ DEBUGKIT.loader = function () {
 	};
 }();
 
+
+DEBUGKIT.registerModules = function($) {
+
+
 DEBUGKIT.module('sqlLog');
 DEBUGKIT.sqlLog = function () {
-	var $ = DEBUGKIT.$;
 
 	return {
 		init : function () {
-			var sqlPanel = $('#sqllog-tab');
+			var sqlPanel = $('#sql_log-tab');
 			var buttons = sqlPanel.find('input');
 
 			// Button handling code for explain links.
@@ -586,7 +600,6 @@ DEBUGKIT.Util.Request.prototype.serialize = function (data) {
 DEBUGKIT.toolbar = function () {
 	// Shortcuts
 	var Cookie = DEBUGKIT.Util.Cookie,
-		$ = DEBUGKIT.$,
 		toolbarHidden = false;
 
 	return {
@@ -734,7 +747,7 @@ DEBUGKIT.toolbar = function () {
 			if (this.panels[id] !== undefined && !this.panels[id].active) {
 				var panel = this.panels[id];
 				if (panel.content.length > 0) {
-					panel.content.css('display', 'block');
+					panel.content.show();
 				}
 
 				var contentHeight = panel.content.find('.panel-content-data').height() + 70;
@@ -786,7 +799,6 @@ DEBUGKIT.loader.register(DEBUGKIT.toolbar);
 DEBUGKIT.module('historyPanel');
 DEBUGKIT.historyPanel = function () {
 	var toolbar = DEBUGKIT.toolbar,
-		$ = DEBUGKIT.$,
 		historyLinks;
 
 	// Private methods to handle JSON response and insertion of
@@ -823,11 +835,9 @@ DEBUGKIT.historyPanel = function () {
 
 	// Private method to handle restoration to current request.
 	var restoreCurrentState = function () {
-		var id, i, panelContent, tag;
-
 		historyLinks.removeClass('loading');
 
-		$.each(toolbar.panels, function (panel, id) {
+		$.each(toolbar.panels, function (i, panel) {
 			if (panel.content === undefined) {
 				return;
 			}
@@ -879,7 +889,6 @@ DEBUGKIT.loader.register(DEBUGKIT.historyPanel);
 //Add events + behaviors for toolbar collapser.
 DEBUGKIT.toolbarToggle = function () {
 	var toolbar = DEBUGKIT.toolbar,
-		$ = DEBUGKIT.$,
 		Cookie = DEBUGKIT.Util.Cookie,
 		toolbarHidden = false;
 
@@ -920,6 +929,5 @@ DEBUGKIT.toolbarToggle = function () {
 }();
 DEBUGKIT.loader.register(DEBUGKIT.toolbarToggle);
 
-DEBUGKIT.$(document).ready(function () {
-	DEBUGKIT.loader.init();
-});
+
+}; // DEBUGKIT.registerModules

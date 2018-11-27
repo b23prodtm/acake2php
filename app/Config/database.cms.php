@@ -71,6 +71,7 @@ class DATABASE_CONFIG {
           # this is an extended Mysql database (providing blob-binary storage)
             'datasource' => 'Database/MyBinsql',
             'persistent' => false,
+            //'host' => 'localhost',
             'host' => '127.0.0.1',
             'port' => '3306',
             'login' => 'test',
@@ -82,7 +83,8 @@ class DATABASE_CONFIG {
         public $test = array(
             'datasource' => 'Database/MyBinsql',
             'persistent' => false,
-             'host' => '127.0.0.1',
+            //'host' => 'localhost',
+            'host' => '127.0.0.1',
             'port' => '3306',
             'login' => 'test',
            'password' => 'mypassword',

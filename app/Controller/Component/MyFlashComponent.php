@@ -8,6 +8,7 @@
 /**
  * CakePHP MyFlashComponent
  * @author wwwb23prodtminfo <b23prodtm at sourceforge.net>
+ * Flash is a message displayed with emphasized text
  */
 
 App::uses('FlashComponent', 'Controller/Component');

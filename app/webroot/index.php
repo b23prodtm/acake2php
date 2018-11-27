@@ -102,7 +102,6 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 if (!empty($failed)) {
 	trigger_error("CakePHP core could not be found. Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php. It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 }
-
 App::uses('Dispatcher', 'Routing');
 
 $Dispatcher = new Dispatcher();

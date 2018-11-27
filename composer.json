@@ -17,24 +17,28 @@
 		"source": "https://www.sourceforge.net/projects/pohse/support"
 	},
 	"require": {
-		"php": ">=5.3.0",
-		"b23prodtm/markdown-plugin": ">=0.9"
+		"php": "^5.6 || ^7",
+		"cakephp/debug_kit": "2.2.*",
+		"b23prodtm/markdown-plugin": "master@dev"
 	},
 	"suggest": {
 		"ext-openssl": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption",
 		"ext-mcrypt": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "^3",
-		"cakephp/cakephp-codesniffer": "^1"
+		"phpunit/phpunit": "^4",
+    "php-coveralls/php-coveralls": "^2.1",
+    "phpunit/phpcov": "^2.0",
+		"cakephp/cakephp-codesniffer": "^3"
 	},
 	"extra": {
 		"installer-paths": {
-			"app/Plugin/Markdown": ["b23prodtm/markdown-plugin"]
+			"app/Plugin/Markdown": ["b23prodtm/markdown-plugin"],
+			"app/Plugin/DebugKit": ["cakephp/debug_kit"]
 		}
 	},
 	"config": {
-		"vendor-dir": "vendors/",
+		"vendor-dir": "app/Vendor/",
 		"process-timeout": 0
 	},
 	"bin": [
@@ -45,7 +49,7 @@
 			"@cs-check",
 			"@test"
 		],
-		"cs-check": "./vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake",
+		"cs-check": "./app/Vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake",
 		"test": "./lib/Cake/Console/cake test core AllTests --stderr"
 	}
 }
