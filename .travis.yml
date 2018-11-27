@@ -27,8 +27,8 @@ addons:
     project:
       name: "b23prodtm/myphpcms"
     notification_email: b23prodtm@users.sourceforge.net
-    build_command_prepend: .travis/configure.sh
-    build_command: if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else ./app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;
+    build_command_prepend: ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y" && .travis/configure.sh
+    build_command: ./test-cake.sh | grep Test
     branch_pattern: development
 services:
   - memcached
