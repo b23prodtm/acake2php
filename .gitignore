@@ -39,3 +39,4 @@ Thumbs.db
 /app/tmp/sessions/
 /app/webroot/php-cms/e13/nbproject/private/
 !*empty
+bin/composer.phar
