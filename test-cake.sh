@@ -1,4 +1,5 @@
 #!/bin/bash
+bootargs=""
 while [[ "$#" > 0 ]]; do case $1 in
   -[tT]*|--travis )
     #; Test values
@@ -14,9 +15,10 @@ while [[ "$#" > 0 ]]; do case $1 in
     export COLLECT_COVERAGE=true;;
   -[hH]*|--help )
     echo "./test-cake.sh [-p, --sql-password <password>] [-t, --travis [--cov]]
-      -p, --sql-password SQL_PASSWORD
+      -p, --sql-password SQL_PASSWORD in ./Scripts/bootargs.sh
       -t Travis CI Local Test Workflow
-      --cov Coverity Scan tests
+      --cov Coverage All Tests
+      -o, --openshift use environment variables from real pod
       "
       exit 0;;
   -[pP]*|--sql-password )
@@ -28,9 +30,11 @@ while [[ "$#" > 0 ]]; do case $1 in
       shift
     fi
     export SQL_PASSWORD=$answer;;
+  -[oO]*|--openshift )
+    bootargs="--real";;
   *) echo "Unknown parameter passed: $1"; exit 1;;
 esac; shift; done
-source ./Scripts/bootstrap.sh
+source ./Scripts/bootstrap.sh $bootargs
 if [[ "$COLLECT_COVERAGE" == "true" ]]; then
   ./app/Vendor/bin/phpunit --coverage-clover app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/Case/AllTestsTest.php
 else
