@@ -46,24 +46,27 @@ echo -e "
 cat $identities
 # Got passed args so we have saved them before $ source <script> <nullIsPassedArgs>
 saved=("$*")
-source ./Scripts/config_app_database.sh
+dbfile=database.cms.php
+if [[ (-f app/Config/database.php) ]]; then
+        echo -e "Defaults to app/Config/database.php ..."
+fi
+source ./Scripts/config_app_database.sh ${dbfile}
 # Reset passed args (shift reset)
 echo "Saved params :  set -- ${saved}"
 set -- $saved
 fix_db=$1
-dbfile=database.cms.php
 while [[ "$#" > 0 ]]; do case $1 in
   -[uU]* )
       if [ ! -f app/Config/Schema/schema.php ]; then
         echo "Generating database schema 'cake schema generate'"
-        ./lib/Cake/Console/cake schema generate
+        ./lib/Cake/Console/cake schema generate -y
       fi
       if [ ! -f app/Config/Schema/sessions.php ]; then
           echo "Generating default Sessions table"
-          ./lib/Cake/Console/cake schema create Sessions
+          ./lib/Cake/Console/cake schema create Sessions -y
       fi
       echo "Migrating database 'cake schema update' ..."
-      ./lib/Cake/Console/cake schema update --file myschema.php
+      ./lib/Cake/Console/cake schema update --file myschema.php -y
       fix_db="-Y"
       ;;
   -[yY]* )

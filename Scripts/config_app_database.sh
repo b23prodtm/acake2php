@@ -1,6 +1,6 @@
 #!/bin/bash
 sqlversion="5.7"
-if [ ! $(which mysql) > /dev/null ]; then
+if [ ! $(which brew) > /dev/null ]; then echo "Missing homebrew... aborted mysql check."; else if [ ! $(which mysql) > /dev/null ]; then
 	echo -e "Missing MySQL ${sqlversion} database service."
 	brew outdated mysql@${sqlversion} | brew upgrade
 	echo -e "Installing with Homebrew..."
@@ -11,7 +11,7 @@ if [ ! $(which mysql) > /dev/null ]; then
 	mysql_upgrade -u root &
 else
   mysql --version
-fi
+fi; fi
 while [[ "$#" > 0 ]]; do case $1 in
   *.php)
     dbfile=$1
