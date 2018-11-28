@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
-source ./Scripts/bootargs.sh
+if [ $1 == "--real" ]; then
+  echo "Real environment bootargs..."
+else
+  echo "Provided local/test bootargs..."
+  source ./Scripts/bootargs.sh
+fi
 #;
 #;
 #; this development phase, don't use the same values for production (no setting means no debugger)!
