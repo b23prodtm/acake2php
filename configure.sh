@@ -1,6 +1,18 @@
 #!/bin/bash
-source ./Scripts/bootargs.sh
-
+set -e
+saved=("$*")
+openshift=0
+while [[ "$#" > 0 ]]; do case $1 in
+  -[oO]*|--openshift )
+    echo "Real environment bootargs..."
+    openshift=1;;
+  *);;
+esac; shift; done
+set -- $saved
+if [ $openshift != 1 ]; then
+  echo "Provided local/test bootargs..."
+  source ./Scripts/bootargs.sh
+fi
 #; arguments are
 args=$*
 #; if the full set of the arguments exists, there won't be any prompt in the shell
@@ -32,6 +44,8 @@ while [[ "$#" > 0 ]]; do case $1 in
               -d Migrate Database (see ./migrate-database.sh --help)
               -m,--submodule Update sub-modules from Git"
               exit 0;;
+    -[oO]*|--openshift )
+      echo "Called Openshift configuration..."
     *) echo "Unknown parameter passed: $1"; exit 1;;
 esac; shift; done
 #; update plugins and dependencies
