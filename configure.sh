@@ -45,7 +45,7 @@ while [[ "$#" > 0 ]]; do case $1 in
               -m,--submodule Update sub-modules from Git"
               exit 0;;
     -[oO]*|--openshift )
-      echo "Called Openshift configuration..."
+      echo "Called Openshift configuration...";;
     *) echo "Unknown parameter passed: $1"; exit 1;;
 esac; shift; done
 #; update plugins and dependencies
