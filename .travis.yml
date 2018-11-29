@@ -28,8 +28,8 @@ addons:
     project:
       name: "b23prodtm/myphpcms"
     notification_email: b23prodtm@users.sourceforge.net
-    build_command_prepend: .travis/configure.sh
-    build_command: if [ '${PHPCS}' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else ./app/vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;
+    build_command_prepend: ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y" && .travis/configure.sh
+    build_command: ./test-cake.sh --cov | grep Test
     branch_pattern: development
 services:
   - memcached
@@ -75,28 +75,28 @@ matrix:
     - os: osx
 
 before_install:
-  - if [[ "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh ; fi
+  - if [ "${COLLECT_COVERAGE}" != "true" ]; then phpenv config-rm xdebug.ini || true ; fi
+  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh ; fi
   # Coverity Scan certificate (global secure: COVERITY_SCAN_TOKEN)
   - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
   - ./Scripts/configure_tmp.sh
 
 install:
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/handle_brew_pkg.sh "${_PHP}" ; fi
+  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/handle_brew_pkg.sh "${_PHP}" ; fi
 
 # Local Test (osx configuration and mysql engine) :
 # $ ./test-cake.sh --travis
 before_script:
   # remote servers CI doesn't need a root password import (-i) but the socket => -y
-  - ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y"
-  - .travis/configure.sh
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y"; fi
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then .travis/configure.sh; fi
 
 script:
   # tests with phpunit
-  - ./test-cake.sh | grep Test
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh | grep Test; fi
 
 after_script:
-  - if [[ "$COLLECT_COVERAGE" == "true" ]]; then travis_retry php app/vendor/bin/php-coveralls -v -r ./app/; fi
+  - if [[ ("${COLLECT_COVERAGE}" == "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]]; then travis_retry php app/vendor/bin/php-coveralls -v -r ./app/; fi
 
 after_success:
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
