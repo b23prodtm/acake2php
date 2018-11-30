@@ -8,7 +8,7 @@ orange="\033[0;33m"
 cyan="\033[0;36m"
 #; Host name (unix) 'localhost' generally replaces '127.0.0.1' (macOS).
 export DATABASE_ENGINE="Mysql"
-export DATABASE_SERVICE_NAME="MYSQL"
+export DATABASE_SERVICE_NAME="mysql"
 export MYSQL_SERVICE_HOST="127.0.0.1"
 #;export MYSQL_SERVICE_HOST="localhost"
 export MYSQL_SERVICE_PORT="3306"

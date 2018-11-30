@@ -69,7 +69,7 @@ class DATABASE_CONFIG {
 
         public $default = array(
           # this is an extended Mysql database (providing blob-binary storage)
-            'datasource' => 'Database/MyBinsql',
+            'datasource' => 'Database/Mysql_cms',
             'persistent' => false,
             //'host' => 'localhost',
             'host' => '127.0.0.1',
@@ -81,7 +81,7 @@ class DATABASE_CONFIG {
             'encoding' => 'utf8',
         );
         public $test = array(
-            'datasource' => 'Database/MyBinsql',
+            'datasource' => 'Database/Mysql_cms',
             'persistent' => false,
             //'host' => 'localhost',
             'host' => '127.0.0.1',
@@ -95,7 +95,7 @@ class DATABASE_CONFIG {
 
         public function __construct() {
 
-                $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) : FALSE;
+                $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) . '_cms' : FALSE;
 
 
                 /** a different test/local configuration (shall not be the same as production)*/
@@ -106,7 +106,6 @@ class DATABASE_CONFIG {
                 $test['database'] = getenv('TEST_DATABASE_NAME');
                 $test['datasource'] = $datasource;
 
-                $this->redirectIfNull($test, $this->test);
                 $this->test = $test;
 
                 $default['host'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
@@ -116,13 +115,18 @@ class DATABASE_CONFIG {
                 $default['database'] = getenv("DATABASE_NAME");
                 $default['datasource'] = $datasource;
 
-                $this->redirectIfNull($default, $this->default);
                 $this->default = $default;
+                /* copy default to test if necessary */
+                $this->redirectIfNull($test, $this->default);
+                /* copy member variables if null detected */
+                $this->redirectIfNull($test, $this->test);
+                $this->redirectIfNull($default, $this->default);
+
         }
-        function redirectIfNull(&$default, $test) {
+        function redirectIfNull(&$default, $redirect) {
                 foreach ($default as $key => $val) {
-                        if (!$val || $val === "") {
-                                $default[$key] = $test[$key];
+                        if ((!$val || $val === "") && ($redirect[$key] && $redirect[$key] !== "")) {
+                                $default[$key] = $redirect[$key];
                         }
                 }
         }
