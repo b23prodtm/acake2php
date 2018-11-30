@@ -1,8 +1,15 @@
 #!/bin/bash
 set -e
-if [ $1 == "--real" ]; then
-  echo "Real environment bootargs..."
-else
+saved=("$*")
+openshift=0
+while [[ "$#" > 0 ]]; do case $1 in
+  -[oO]*|--openshift )
+    echo "Real environment bootargs..."
+    openshift=1;;
+  *);;
+esac; shift; done
+set -- $saved
+if [ $openshift != 1 ]; then
   echo "Provided local/test bootargs..."
   source ./Scripts/bootargs.sh
 fi

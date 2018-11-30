@@ -15,7 +15,19 @@
 #; u fixup socket and update schema (must connect successsfully)
 #;
 set -e
-source ./Scripts/bootargs.sh
+saved=("$*")
+openshift=0
+while [[ "$#" > 0 ]]; do case $1 in
+  -[oO]*|--openshift )
+    echo "Real environment bootargs..."
+    openshift=1;;
+  *);;
+esac; shift; done
+set -- $saved
+if [ $openshift != 1 ]; then
+  echo "Provided local/test bootargs..."
+  source ./Scripts/bootargs.sh
+fi
 echo -e "
 
 ${red}
@@ -90,11 +102,13 @@ while [[ "$#" > 0 ]]; do case $1 in
         -i Import identities
         "
         exit 0;;
+  -[oO]*|--openshift )
+    fix_db="-N";;
   *) echo "Unknown parameter passed: $1"; exit 1;;
   esac
-  if [[ (-f app/Config/$dbfile) ]]; then
-        	echo -e "Reset to ${dbfile} settings and default socket file..."
-  fi
-  source ./Scripts/shell_prompt.sh "./Scripts/config_app_database.sh ${dbfile} ${fix_db}" "${cyan}Setup connection and socket\n${nc}" $fix_db
-  fix_db="-N"
 shift; done
+if [[ (-f app/Config/$dbfile) ]]; then
+        echo -e "Reset to ${dbfile} settings and default socket file..."
+fi
+source ./Scripts/shell_prompt.sh "./Scripts/config_app_database.sh ${dbfile} ${fix_db}" "${cyan}Setup connection and socket\n${nc}" $fix_db
+fix_db="-N"
