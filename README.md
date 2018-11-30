@@ -116,9 +116,14 @@ Answer 'y' when prompted.
 
 5. How to fix up 'Database connection "Mysql" is missing, or could not be created' ?
 
-Check your environment variable (./Scripts/bootargs.sh or Docker/Pod settings)
+Check your environment variable (./Scripts/bootargs.sh or Docker/Pod settings), case-sensitive !:
 
     TEST_DATABASE_NAME=cakephp_test
+    TEST_DATABASE_USER=test
+    TEST_DATABASE_PASSWORD=<password>
+    TEST_DATABASE_SERVICE_NAME=Mysql
+    TEST_DATABASE_Mysql_HOST=localhost or mysql on OpenShift
+    TEST_DATABASE_Mysql_PORT=3306
 
 Log in with authorized privileges from a shell prompt:
 
@@ -135,7 +140,7 @@ Run the socket fixup script with arguments:
 
 With the CLI, you may ctrl-X ctrl-C to exit server and migrate your database:
 
-    ./migrate-database.sh -U
+    ./migrate-database.sh -u
     ./start_cake.sh
 
 Answer 'y' when prompted.
