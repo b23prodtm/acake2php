@@ -30,9 +30,12 @@ while [[ "$#" > 0 ]]; do case $1 in
         #; Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
         #; [[-d|--mig-database] [-uyiohn]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
         shift
-        source ./Scripts/shell_prompt.sh "migrate-database.sh $*" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
+        args=$*
+        if [[ $openshift == 1 ]]; then args="${args} --openshift"; fi
+        source ./Scripts/shell_prompt.sh "migrate-database.sh $args" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
         ;;
-    -[sS]*|-[pP]*|-[fF]*)
+    -[sS]*|-[pP]*|-[fF]|-[uU]*)
+        #; void source script known args
         shift;;
     -[mM]*|--submodule)
         git submodule update --init --recursive --force;;
