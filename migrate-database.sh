@@ -69,6 +69,9 @@ set -- $saved
 fix_db=$1
 while [[ "$#" > 0 ]]; do case $1 in
   -[uU]* )
+      #; update plugins and dependencies
+      source ./Scripts/composer.sh
+      #; cakephp shell
       if [ ! -f app/Config/Schema/schema.php ]; then
         echo "Generating database schema 'cake schema generate'"
         ./lib/Cake/Console/cake schema generate -y

@@ -25,10 +25,10 @@ while [[ "$#" > 0 ]]; do case $1 in
         source ./Scripts/shell_prompt.sh "./Scripts/config_etc_pass.sh ${args}" "${cyan}Step 2. Get a hashed password with encryption, PHP encrypts.\n${nc}" '-Y'
         ;;
     -[dD]*|--mig-database)
-#; Know-How : In Openshift 3, configure a CakePhp-Mysql-persistent docker image. Set automatic deployment with _100%_ unavailability
-#; If it starts a build, it automatically scales deployments down to zero, and deploys and scales up when it's finished to build.
-#; Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
-#; [[-d|--mig-database] [-y]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
+        #; Know-How : In Openshift 3, configure a CakePhp-Mysql-persistent docker image. Set automatic deployment with _100%_ unavailability
+        #; If it starts a build, it automatically scales deployments down to zero, and deploys and scales up when it's finished to build.
+        #; Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
+        #; [[-d|--mig-database] [-uyiohn]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
         shift
         source ./Scripts/shell_prompt.sh "migrate-database.sh $*" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
         ;;
