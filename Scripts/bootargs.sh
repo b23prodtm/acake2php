@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+source ./Scripts/lib/parsing.sh
 set -e
 #; colorize shell script
 nc="\033[0m"
@@ -13,15 +14,15 @@ export MYSQL_SERVICE_HOST="127.0.0.1"
 #;export MYSQL_SERVICE_HOST="localhost"
 export MYSQL_SERVICE_PORT="3306"
 export DATABASE_NAME="phpcms"
-export DATABASE_USER="test"
-export DATABASE_PASSWORD="mypassword"
+export DATABASE_USER="root"
+#;export DATABASE_PASSWORD=""
 #. Test configuration ?test=1
 export TEST_MYSQL_SERVICE_HOST="127.0.0.1"
 #;export TEST_MYSQL_SERVICE_HOST="localhost"
 export TEST_MYSQL_SERVICE_PORT="3306"
 export TEST_DATABASE_NAME="cakephp_test"
-export TEST_DATABASE_USER="root"
-export TEST_DATABASE_PASSWORD=${SQL_PASSWORD}
+export TEST_DATABASE_USER="test"
+#;export TEST_DATABASE_PASSWORD=""
 export FTP_SERVICE_HOST="localhost"
 export FTP_SERVICE_USER="test"
 export FTP_SERVICE_PASSWORD="mypassword"
@@ -32,3 +33,7 @@ export CAKEPHP_SECURITY_SALT="Word"
 export CAKEPHP_SECURITY_CIPHER_SEED="01234"
 #; 0, 1, 2 the higher the more debug data
 export CAKEPHP_DEBUG_LEVEL=2
+if [[ $(parse_arg_exists "-[vV]*|--verbose" $*) ]]; then
+  echo "DATABASE_PASSWORD=${DATABASE_PASSWORD}"
+  echo "TEST_DATABASE_PASSWORD=${TEST_DATABASE_PASSWORD}"
+fi;

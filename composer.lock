@@ -274,16 +274,16 @@
     "packages-dev": [
         {
             "name": "cakephp/cakephp-codesniffer",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp-codesniffer.git",
-                "reference": "3816e4946533aaaa8f29139e09bc6a0d69eb544e"
+                "reference": "682e79fda294c4383e094a2a881e16dcf1130750"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp-codesniffer/zipball/3816e4946533aaaa8f29139e09bc6a0d69eb544e",
-                "reference": "3816e4946533aaaa8f29139e09bc6a0d69eb544e",
+                "url": "https://api.github.com/repos/cakephp/cakephp-codesniffer/zipball/682e79fda294c4383e094a2a881e16dcf1130750",
+                "reference": "682e79fda294c4383e094a2a881e16dcf1130750",
                 "shasum": ""
             },
             "require": {
@@ -315,7 +315,7 @@
                 "codesniffer",
                 "framework"
             ],
-            "time": "2018-11-28T02:15:59+00:00"
+            "time": "2018-11-30T16:04:05+00:00"
         },
         {
             "name": "doctrine/instantiator",

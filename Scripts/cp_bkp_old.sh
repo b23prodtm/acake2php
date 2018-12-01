@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-if [[ "$#" < 3 ]]; then echo "Usage : ./Scripts/cp_bkp_old.sh <working-directory> <source-file> <target-file>"; exit 1; fi
+[ $# -lt 3 ] && echo "Usage : $0 <working-directory> <source-file> <target-file>" && exit 1
 wd=$1
 src=$2
 dst=$3

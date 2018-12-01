@@ -15,18 +15,14 @@
 #; u fixup socket and update schema (must connect successsfully)
 #;
 set -e
-saved=("$*")
-openshift=0
-while [[ "$#" > 0 ]]; do case $1 in
-  -[oO]*|--openshift )
-    echo "Real environment bootargs..."
-    openshift=1;;
-  *);;
-esac; shift; done
-set -- $saved
-if [ $openshift != 1 ]; then
+source ./Scripts/lib/shell_prompt.sh
+source ./Scripts/lib/parsing.sh
+openshift=$(parse_arg_exists "-[oO]*|--openshift" $*)
+if [[ $openshift -eq 1 ]]; then
+  echo "Real environment bootargs..."
+else
   echo "Provided local/test bootargs..."
-  source ./Scripts/bootargs.sh
+  source ./Scripts/bootargs.sh $*
 fi
 echo -e "
 
@@ -38,24 +34,6 @@ ${red}
         See common issues in README.md file.
         These SQL statements initializes the database, replaced with current ${orange}environment variables${nc} :
 "
-identities=app/Config/identities.sql
-if [[ -f $identities ]]; then ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
-echo -e "
-          create database if not exists ${DATABASE_NAME};\r
-          use mysql;\r
-          create user if not exists '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
-          alter user '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}' identified by '${DATABASE_PASSWORD}';\r
-          select * from user where user = '${DATABASE_USER}';\r
-          grant all on ${DATABASE_NAME}.* to '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
-
-          create database if not exists ${TEST_DATABASE_NAME};\r
-          use mysql;\r
-          create user if not exists '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
-          alter user '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}' identified by '${TEST_DATABASE_PASSWORD}';\r
-          select * from user where user = '${TEST_DATABASE_USER}';\r
-          grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
-" > $identities
-cat $identities
 # Got passed args so we have saved them before $ source <script> <nullIsPassedArgs>
 saved=("$*")
 dbfile=database.cms.php
@@ -66,22 +44,11 @@ source ./Scripts/config_app_database.sh ${dbfile}
 # Reset passed args (shift reset)
 echo "Saved params :  set -- ${saved}"
 set -- $saved
-fix_db=$1
+fix_db="-N"
+update_checked=0
 while [[ "$#" > 0 ]]; do case $1 in
   -[uU]* )
-      #; update plugins and dependencies
-      source ./Scripts/composer.sh
-      #; cakephp shell
-      if [ ! -f app/Config/Schema/schema.php ]; then
-        echo "Generating database schema 'cake schema generate'"
-        ./lib/Cake/Console/cake schema generate -y
-      fi
-      if [ ! -f app/Config/Schema/sessions.php ]; then
-          echo "Generating default Sessions table"
-          ./lib/Cake/Console/cake schema create Sessions -y
-      fi
-      echo "Migrating database 'cake schema update' ..."
-      ./lib/Cake/Console/cake schema update --file myschema.php -y
+      update_checked=1
       fix_db="-Y"
       ;;
   -[yY]* )
@@ -90,28 +57,78 @@ while [[ "$#" > 0 ]]; do case $1 in
       ;;
   -[nN]* )
       fix_db="-N"
-      ;;
-  -[iI]* )
-      echo "Please, enter the mysql password to import test/local identities..."
-      echo "source ${identities}" | mysql -u $TEST_DATABASE_USER --password=$TEST_DATABASE_PASSWORD
-      fix_db="-Y"
       dbfile=""
       ;;
+  -[iI]* )
+      fix_db="-Y"
+      identities=app/Config/identities.sql
+      if [[ -f $identities ]]; then ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
+      echo -e "
+                create database if not exists ${DATABASE_NAME};\r
+                use mysql;\r
+                create user if not exists '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
+                alter user '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}' identified by '\${DATABASE_PASSWORD}';\r
+                select * from user where user = '${DATABASE_USER}';\r
+                grant all on ${DATABASE_NAME}.* to '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
+
+                create database if not exists ${TEST_DATABASE_NAME};\r
+                use mysql;\r
+                create user if not exists '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
+                alter user '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}' identified by '\${TEST_DATABASE_PASSWORD}';\r
+                select * from user where user = '${TEST_DATABASE_USER}';\r
+                grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
+      " > $identities
+      cat $identities
+      ;;
   -[hH]*|--help )
-    echo "./migrate-database.sh [-uy|n]
-        -u Update database in app/Config/Schema/
-        -y Reset ${dbfile} and default socket file
-        -n Doesn't reset ${dbfile} and socket
-        -i Import identities
-        "
+    echo "Usage: $0 [-u] [-y|n] [-i] [-o] [-p|--sql-password=<password>] [--test-sql-password]
+        -u
+            Update the database in app/Config/Schema/
+        -y
+            Reset ${dbfile} and default socket file
+        -n
+            Doesn't reset ${dbfile} and socket
+        -i
+            Import SQL identities
+        -o, --openshift
+            Resets ${dbfile}, keep socket and update the database (should be used with -i)
+        -p, --sql-password=<password>
+            Exports DATABASE_PASSWORD
+        --test-sql-password=<password>
+            Exports TEST_DATABASE_PASSWORD
+        -h, --help
+            Displays this help"
         exit 0;;
   -[oO]*|--openshift )
-    fix_db="-N";;
+    fix_db="-N"
+    update_checked=1;;
+  -[pP]*|--sql-password*)
+    export DATABASE_PASSWORD=$(parse_sql_password "$1" "$DATABASE_USER");;
+  --test-sql-password*)
+    export TEST_DATABASE_PASSWORD=$(parse_sql_password "$1" "$TEST_DATABASE_USER");;
   *) echo "Unknown parameter passed: $1"; exit 1;;
   esac
 shift; done
-if [[ (-f app/Config/$dbfile) ]]; then
+if [ -f app/Config/$dbfile ]; then
         echo -e "Reset to ${dbfile} settings and default socket file..."
 fi
-source ./Scripts/shell_prompt.sh "./Scripts/config_app_database.sh ${dbfile} ${fix_db}" "${cyan}Setup connection and socket\n${nc}" $fix_db
-fix_db="-N"
+shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_db}" "${cyan}Setup connection and socket\n${nc}" $fix_db
+if [ -f $identities ]; then
+  echo -e "Importing the mysql ${cyan}${DATABASE_USER}${nc} and ${cyan}${TEST_DATABASE_USER}${nc} users SQL identities..."
+  echo "source ${identities}" | mysql -u $DATABASE_USER --password=$DATABASE_PASSWORD
+fi
+if [ $update_checked == 1 ]; then
+  #; update plugins and dependencies
+  source ./Scripts/composer.sh
+  #; cakephp shell
+  if [ ! -f app/Config/Schema/schema.php ]; then
+    echo "Generating database schema 'cake schema generate'"
+    ./lib/Cake/Console/cake schema generate -y
+  fi
+  if [ ! -f app/Config/Schema/sessions.php ]; then
+      echo "Generating default Sessions table"
+      ./lib/Cake/Console/cake schema create Sessions -y
+  fi
+  echo "Migrating database 'cake schema update' ..."
+  ./lib/Cake/Console/cake schema update --file myschema.php -y
+fi

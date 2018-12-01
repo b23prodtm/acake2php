@@ -1,17 +1,12 @@
 #!/bin/bash
 set -e
-saved=("$*")
-openshift=0
-while [[ "$#" > 0 ]]; do case $1 in
-  -[oO]*|--openshift )
+source ./Scripts/lib/shell_prompt.sh
+source ./Scripts/lib/parsing.sh
+if [ $(parse_arg_exists "-[oO]*|--openshift" $*) ]; then
     echo "Real environment bootargs..."
-    openshift=1;;
-  *);;
-esac; shift; done
-set -- $saved
-if [ $openshift != 1 ]; then
+else
   echo "Provided local/test bootargs..."
-  source ./Scripts/bootargs.sh
+  source ./Scripts/bootargs.sh $*
 fi
 #;
 #;
@@ -23,13 +18,13 @@ export CAKEPHP_DEBUG_LEVEL=2
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;
 if [ ! -f ${PHP_CMS_DIR}/e13/etc/constantes.properties ]; then
-        source ./Scripts/shell_prompt.sh "./configure.sh -c" "configuration"
+        shell_prompt "./configure.sh -c" "configuration"
 fi
 echo "Configuration begins automatically...${green}"
 #; hash file that is stored in webroot to allow administrator privileges
 hash="${PHP_CMS_DIR}/e13/etc/export_hash_password.sh"
 if [ ! -f $hash ]; then
-        source ./Scripts/shell_prompt.sh "./configure.sh -c -h" "configuration"
+        shell_prompt "./configure.sh -c -h" "configuration"
 fi
 source $hash
 echo -e "${nc}Password ${green}$GET_HASH_PASSWORD${nc}"
