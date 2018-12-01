@@ -125,7 +125,7 @@ class DATABASE_CONFIG {
         }
         function redirectIfNull(&$default, $redirect) {
                 foreach ($default as $key => $val) {
-                        if ((!$val || $val === "") && ($redirect[$key] && $redirect[$key] !== "")) {
+                        if ((!$val || $val === "") && ($redirect[$key] || $redirect[$key] !== "")) {
                                 $default[$key] = $redirect[$key];
                         }
                 }
