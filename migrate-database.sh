@@ -29,7 +29,7 @@ fix_socket="-Y"
 config_app_checked=""
 update_checked=0
 import_identities=0
-identities=app/Config/database.sql
+identities=app/Config/Schema/database.sql
 new_pass=""
 new_test_pass=""
 saved=("$*")
@@ -112,7 +112,7 @@ if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${ide
 # configure user application database and eventually alter user database access
 [ -z $dbfile ] && [ $fix_socket == "-N" ] && [ -f app/Config/database.php ] || config_app_checked="-Y"
 shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" $config_app_checked
-if [[ $import_identities ]]; then
+if [[ $import_identities -eq 1 ]]; then
   echo -e "Importing the mysql ${cyan}${DATABASE_USER}${nc} and ${cyan}${TEST_DATABASE_USER}${nc} users SQL identities..."
   echo -e "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}" &&
   parse_sql_password "$new_pass" "set_DATABASE_PASSWORD" "new ${DATABASE_USER}" &&
@@ -139,7 +139,7 @@ if [[ $import_identities ]]; then
   export DATABASE_PASSWORD=$set_DATABASE_PASSWORD
   export TEST_DATABASE_PASSWORD=$set_TEST_DATABASE_PASSWORD
 fi
-if [[ $update_checked ]]; then
+if [[ $update_checked -eq 1 ]]; then
   #; update plugins and dependencies
   source ./Scripts/composer.sh "-o"
   #; cakephp shell
