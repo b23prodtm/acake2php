@@ -63,6 +63,8 @@ while [[ "$#" > 0 ]]; do case $1 in
       ;;
   -[iI]* )
       fix_db="-Y"
+      [ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] || echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p && exit 0;
+      [ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] || echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p && exit 0;
       if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
       echo -e "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}" &&
       parse_sql_password "$2" "set_DATABASE_PASSWORD" "new ${DATABASE_USER}" &&
