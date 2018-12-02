@@ -3,7 +3,7 @@ set -e
 source ./Scripts/lib/shell_prompt.sh
 source ./Scripts/lib/parsing.sh
 openshift=$(parse_arg_exists "-[oO]*|--openshift" $*)
-if [[ $openshift -eq 1 ]]; then
+if [ $openshift > /dev/null ]; then
   echo "Real environment bootargs..."
 else
   echo "Provided local/test bootargs..."
@@ -25,9 +25,9 @@ while [[ "$#" > 0 ]]; do case $1 in
         #; Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
         #; [[-d|--mig-database] [-uyiohn]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
         shift
-        args="$*"
-        if [[ $openshift -eq 1 ]]; then args="${args} --openshift"; fi
-        shell_prompt "migrate-database.sh $args" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
+        args=("$*")
+        [[ $openshift ]] && args="${args} --openshift"
+        shell_prompt "./migrate-database.sh ${args}" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
         ;;
     -[sS]*|-[pP]*|-[fF]*|-[uU]*|-[iI]*)
         #; void source script known args
@@ -47,8 +47,7 @@ while [[ "$#" > 0 ]]; do case $1 in
               -m,--submodule
                   Update sub-modules from Git"
               exit 0;;
-    -[oO]*|--openshift )
-      echo "Called Openshift configuration...";;
+    -[oO]*|--openshift );;
     -[vV]*|--verbose )
       echo "Passed params :  $0 ${saved}";;
     *) echo "Unknown parameter passed: $0 $1"; exit 1;;

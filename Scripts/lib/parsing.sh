@@ -21,8 +21,8 @@ parse_arg_exists() {
   shift
   count=1
   while [[ "$#" > 0 ]]; do case $1 in
-    $arg1|$arg2 ) echo $count && break;;
+    $arg1|$arg2 ) echo $count; break;;
     *) ;;
-  esac; count=$count+1; shift; done
+  esac; ((count++)); shift; done
 }
 #; export -f parse_arg_exists()

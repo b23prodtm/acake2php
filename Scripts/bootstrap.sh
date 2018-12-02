@@ -2,8 +2,9 @@
 set -e
 source ./Scripts/lib/shell_prompt.sh
 source ./Scripts/lib/parsing.sh
-if [ $(parse_arg_exists "-[oO]*|--openshift" $*) ]; then
-    echo "Real environment bootargs..."
+openshift=$(parse_arg_exists "-[oO]*|--openshift" $*)
+if [ $openshift > /dev/null ]; then
+  echo "Real environment bootargs..."
 else
   echo "Provided local/test bootargs..."
   source ./Scripts/bootargs.sh $*
