@@ -21,13 +21,15 @@ export CAKEPHP_DEBUG_LEVEL=2
 if [ ! -f ${PHP_CMS_DIR}/e13/etc/constantes.properties ]; then
         shell_prompt "./configure.sh -c" "configuration"
 fi
-echo "Configuration begins automatically...${green}"
+echo "Configuration begins automatically..."
 #; hash file that is stored in webroot to allow administrator privileges
-hash="${PHP_CMS_DIR}/e13/etc/export_hash_password.sh"
-if [ ! -f $hash ]; then
-        shell_prompt "./configure.sh -c -h" "configuration"
+if [[ ! $GET_HASH_PASSWORD ]]; then
+  hash="${PHP_CMS_DIR}/e13/etc/export_hash_password.sh"
+  if [ ! -f $hash ]; then
+          shell_prompt "./configure.sh -c -h" "configuration"
+  fi
+  source $hash
 fi
-source $hash
 echo -e "${nc}Password ${green}$GET_HASH_PASSWORD${nc}"
 #; Install PHPUnit, performs unit tests
 #; The website must pass health checks in order to be deployed
