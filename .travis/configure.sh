@@ -57,13 +57,13 @@ echo "<?php
   class DATABASE_CONFIG {
   private \$identities = array(
     'Mysql' => array(
-      'datasource' => 'Database/Mysql',
+      'datasource' => 'Database/MysqlCms',
       'host' => '${TEST_MYSQL_SERVICE_HOST}',
       'login' => '${TEST_DATABASE_USER}',
       'password' => '${TEST_DATABASE_PASSWORD}'
     ),
     'Pgsql' => array(
-      'datasource' => 'Database/Postgres',
+      'datasource' => 'Database/PostgresCms',
       'host' => '${TEST_POSTGRES_SERVICE_HOST}',
       'login' => '${TEST_DATABASE_USER}',
       'database' => 'cakephp_test',
@@ -75,7 +75,7 @@ echo "<?php
       )
     ),
     'Sqlite' => array(
-      'datasource' => 'Database/Sqlite',
+      'datasource' => 'Database/SqliteCms',
       'database' => array(
         'default' => ':memory:',
         'test' => ':memory:',

@@ -69,7 +69,7 @@ class DATABASE_CONFIG {
 
         public $default = array(
         # this is an extended Mysql database (providing blob-binary storage)
-            'datasource' => 'Database/Mysql_cms',
+            'datasource' => 'Database/MysqlCms',
             'persistent' => false,
             //'host' => 'localhost',
             'host' => '127.0.0.1',
@@ -81,7 +81,7 @@ class DATABASE_CONFIG {
             'encoding' => 'utf8',
         );
         public $test = array(
-            'datasource' => 'Database/Mysql_cms',
+            'datasource' => 'Database/MysqlCms',
             'persistent' => false,
             //'host' => 'localhost',
             'host' => '127.0.0.1',

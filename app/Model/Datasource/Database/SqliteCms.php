@@ -1,11 +1,10 @@
 <?php
 App::uses('Postgresql', 'Model/Datasource/Database');
 
-class Sqlite_cms extends Sqlite
+class SqliteCms extends Sqlite
 {
-	public function __construct()
-	{
-		parent::__construct();
+	public function __construct($config = null, $autoConnect = true) {
+		parent::__construct($config, $autoConnect);
 		$this->columns['mediumbinary'] = array('name' => 'bytea');
 	}
 

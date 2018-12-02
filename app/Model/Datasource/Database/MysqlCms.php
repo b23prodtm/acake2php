@@ -1,11 +1,10 @@
 <?php
 App::uses('Mysql', 'Model/Datasource/Database');
 
-class Mysql_cms extends Mysql
+class MysqlCms extends Mysql
 {
-	public function __construct()
-	{
-		parent::__construct();
+	public function __construct($config = null, $autoConnect = true) {
+		parent::__construct($config, $autoConnect);
 		$this->columns['mediumbinary'] = array('name' => 'mediumblob');
 	}
 

@@ -11,7 +11,7 @@ while [[ "$#" > 0 ]]; do case $1 in
     export TRAVIS_PHP_VERSION=$(php -v | grep -E "[5-7]\.\\d+\.\\d+" | cut -d " " -f 2 | cut -c 1-3
     )
     # remote servers CI don't need (-i) identities but the socket: use configure.sh --mig-database --openshift
-    notice="\n${cyan}Notice:${nc}The test script is about to modify the root and test users password to, resp. ${orange}'proot'${nc} and ${cyan}'ptest'${nc}\n"
+    notice="\n${cyan}Notice:${nc}The test script is about to modify the root and test users password into resp. ${orange}'proot'${nc} and ${cyan}'ptest'${nc}\n"
     echo -e $notice
     source ./configure.sh "--mig-database" "-p" "-t" "-i" "-p=proot" "-t=ptest"
     echo -e $notice
