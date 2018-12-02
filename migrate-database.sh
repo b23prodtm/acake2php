@@ -29,7 +29,7 @@ fix_socket="-Y"
 config_app_checked=""
 update_checked=0
 import_identities=0
-identities=app/Config/Schema/database.sql
+identities=app/Config/database.sql
 new_pass=""
 new_test_pass=""
 saved=("$*")
@@ -45,8 +45,8 @@ while [[ "$#" > 0 ]]; do case $1 in
       ;;
   -[iI]* )
       import_identities=1
-      new_pass=$1
-      new_test_pass=$2
+      new_pass=$2
+      new_test_pass=$3
       shift;shift;;
   -[vV]*|--verbose )
     [ -f $identities ] && cat $identities

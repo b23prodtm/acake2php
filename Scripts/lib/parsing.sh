@@ -4,7 +4,7 @@ parse_sql_password() {
   [ $# -lt 2 ] && echo "Usage: $0 -p|-t|--*sql-password*|*=<password> <var-name> <name>" && return $FALSE
   pass=$(echo $1 | cut -f 2 -d '=')
   while true; do case "$pass" in
-    *sql-password|-[pPtT])
+    *sql-password*|-[pPtT]*)
       read -sp "
 Please, enter the $3 SQL password now:
 " pass;;
@@ -15,6 +15,7 @@ Please, enter the $3 SQL password now:
     *)
       break;;
   esac; done
+  #;echo $pass
   export $2=$pass
 }
 #; export -f parse_sql_password

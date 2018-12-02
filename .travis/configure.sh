@@ -133,4 +133,4 @@ echo "<?php
     }
   }
   }" > app/Config/database.php
-  echo -e "{green}Unit Test was set up in app/Config/database.php{nc}"
+  echo -e "${green}Unit Test was set up in app/Config/database.php${nc}"
