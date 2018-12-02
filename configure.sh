@@ -9,6 +9,7 @@ else
   echo "Provided local/test bootargs..."
   source ./Scripts/bootargs.sh $*
 fi
+saved=("$*")
 #; if the full set of the arguments exists, there won't be any prompt in the shell
 while [[ "$#" > 0 ]]; do case $1 in
     -[cC]*|--const)
@@ -48,8 +49,9 @@ while [[ "$#" > 0 ]]; do case $1 in
               exit 0;;
     -[oO]*|--openshift )
       echo "Called Openshift configuration...";;
-    -[vV]*|---verbose );;
-    *) echo "Unknown parameter passed: $1"; exit 1;;
+    -[vV]*|--verbose )
+      echo "Passed params :  $0 ${saved}";;
+    *) echo "Unknown parameter passed: $0 $1"; exit 1;;
 esac; shift; done
 #; update plugins and dependencies
 source ./Scripts/composer.sh "-o"

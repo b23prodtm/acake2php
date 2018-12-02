@@ -1,11 +1,11 @@
 #!/bin/bash
 source ./Scripts/lib/parsing.sh
-saved="$@"
 command="server -p 8080"
+saved=("$*")
 while [[ "$#" > 0 ]]; do case $1 in
   --help )
     echo "Usage: $0 [-p|--sql-password=<password>] [--test-sql-password=<password>] [-c <command>] [options]
-            All options are arguments passed to the command lib/Cake/Console/cake server -p 8080
+            Default command is lib/Cake/Console/cake server -p 8080
         -p, --sql-password=<password>
             Exports DATABASE_PASSWORD to bootargs.
         -t,--test-sql-password=<password>
@@ -32,5 +32,4 @@ echo -e "Another Test configuration ${cyan}${url}/admin/index.php${orange}?test=
 echo -e "Unit tests ${cyan}${url}/test.php${nc}"
 echo -e "Turnoff flags (fix captcha)${cyan}${url}/admin/logoff.php${nc}"
 echo -e "==============================================="
-echo $command $*
-lib/Cake/Console/cake $command $*
+lib/Cake/Console/cake $command

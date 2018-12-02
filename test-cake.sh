@@ -33,10 +33,11 @@ while [[ "$#" > 0 ]]; do case $1 in
   -[tT]*|--test-sql-password*)
     parse_sql_password "$1" "TEST_DATABASE_PASSWORD" "current ${TEST_DATABASE_USER}";;
   -[vV]*|--verbose )
-    bootargs="${bootargs} ${1}";;
+    echo "Passed params :  $0 ${saved}"
+    bootargs="${bootargs} $1";;
   -[oO]*|--openshift )
-    bootargs="${bootargs} --real";;
-  *) echo "Unknown parameter passed: $1"; exit 1;;
+    bootargs="${bootargs} $1";;
+  *) echo "Unknown parameter passed: $0 $1"; exit 1;;
 esac; shift; done
 source ./Scripts/bootstrap.sh $bootargs
 if [[ "$COLLECT_COVERAGE" == "true" ]]; then

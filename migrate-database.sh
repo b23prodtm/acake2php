@@ -24,13 +24,13 @@ else
   echo "Provided local/test bootargs..."
   source ./Scripts/bootargs.sh $*
 fi
-saved=("$*")
 dbfile=database.cms.php
 fix_socket="-N"
 config_app_checked="-N"
 update_checked=0
 import_identities=0
 identities=app/Config/database.sql
+saved=("$*")
 while [[ "$#" > 0 ]]; do case $1 in
   -[uU]* )
       update_checked=1
@@ -72,7 +72,7 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
       " > $identities
       import_identities=1
       ;;
-  -[vV]*|---verbose )
+  -[vV]*|--verbose )
     cat $identities
     echo -e "
     ${red}
@@ -89,7 +89,7 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
             These SQL statements initializes the database, replaced with current ${orange}environment variables${nc} :
     "
     # Reset passed args (shift reset)
-    echo "Passed params :  set -- ${saved}";;
+    echo "Passed params :  $0 ${saved}";;
   -[hH]*|--help )
     echo "Usage: $0 [-u] [-y|n] [-i] [-o] [-p|--sql-password=<password>] [--test-sql-password]
         -u
@@ -118,7 +118,7 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
     parse_sql_password "$1" "DATABASE_PASSWORD" "current ${DATABASE_USER}";;
   -[tT]*|--test-sql-password*)
     parse_sql_password "$1" "TEST_DATABASE_PASSWORD" "current ${TEST_DATABASE_USER}";;
-  *) echo "Unknown parameter passed: $1"; exit 1;;
+  *) echo "Unknown parameter passed: $0 $1"; exit 1;;
   esac
 shift; done
 # configure application database check
