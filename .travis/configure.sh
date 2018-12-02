@@ -34,9 +34,9 @@ if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
   sudo locale-gen de_DE
   sudo locale-gen es_ES
 fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u $TEST_DATABASE_USER --password=$TEST_DATABASE_PASSWORD; fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u $TEST_DATABASE_USER --password=$TEST_DATABASE_PASSWORD; fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u $TEST_DATABASE_USER --password=$TEST_DATABASE_PASSWORD; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u ${TEST_DATABASE_USER} --password=${TEST_DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u ${TEST_DATABASE_USER} --password=${TEST_DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u ${TEST_DATABASE_USER} --password=${TEST_DATABASE_PASSWORD}; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
@@ -56,14 +56,14 @@ echo "<?php
   private \$identities = array(
     'Mysql' => array(
       'datasource' => 'Database/Mysql',
-      'host' => '$TEST_MYSQL_SERVICE_HOST',
-      'login' => '$TEST_DATABASE_USER',
+      'host' => '${TEST_MYSQL_SERVICE_HOST}',
+      'login' => '${TEST_DATABASE_USER}',
       'password' => '${TEST_DATABASE_PASSWORD}'
     ),
     'Pgsql' => array(
       'datasource' => 'Database/Postgres',
-      'host' => '$TEST_POSTGRES_SERVICE_HOST',
-      'login' => '$TEST_DATABASE_USER',
+      'host' => '${TEST_POSTGRES_SERVICE_HOST}',
+      'login' => '${TEST_DATABASE_USER}',
       'database' => 'cakephp_test',
       'schema' => array(
         'default' => 'public',

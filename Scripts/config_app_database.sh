@@ -32,4 +32,8 @@ while [[ "$#" > 0 ]]; do case $1 in
 esac; shift; done
 if [ ! -h /var/mysql/mysql.sock ]; then
 	echo -e "${orange}Warning:${nc}/var/mysql/mysql.sock symlink not found."
+else
+	echo -e "${green}Notice: mysql.sock symlink was found.${nc}"
+	#export MYSQL_SERVICE_HOST="127.0.0.1"
+	#export TEST_MYSQL_SERVICE_HOST="127.0.0.1"
 fi

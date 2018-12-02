@@ -7,8 +7,7 @@ parse_sql_password() {
     *sql-password|-[pPtT]|"")
       read -sp "
 Please, enter the $3 SQL password now:
-" pass
-      ;;
+" pass;;
     *)
       break;;
   esac; done

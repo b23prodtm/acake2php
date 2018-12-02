@@ -46,8 +46,8 @@ while [[ "$#" > 0 ]]; do case $1 in
       ;;
   -[iI]* )
       fix_socket="-Y"
-      [ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] || echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p && exit 0;
-      [ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] || echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p && exit 0;
+      [ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p | grep "DATABASE\|MYSQL");
+      [ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p | grep "TEST_DATABASE\|MYSQL");
       if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
       echo -e "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}" &&
       parse_sql_password "$2" "set_DATABASE_PASSWORD" "new ${DATABASE_USER}" &&
@@ -91,7 +91,7 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
     # Reset passed args (shift reset)
     echo "Passed params :  $0 ${saved}";;
   -[hH]*|--help )
-    echo "Usage: $0 [-u] [-y|n] [-i] [-o] [-p|--sql-password=<password>] [--test-sql-password]
+    echo "Usage: $0 [-u] [-y|n] [-o] [-i] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>]
         -u
             Update the database in app/Config/Schema/
         -y
@@ -104,7 +104,7 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
             Resets ${dbfile}, keep socket and update the database (should be used with -i)
         -p, --sql-password=<password>
             Exports DATABASE_PASSWORD
-        --test-sql-password=<password>
+        -t,--test-sql-password=<password>
             Exports TEST_DATABASE_PASSWORD
         -v, --verbose
             Outputs more debug information
@@ -121,7 +121,7 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
   *) echo "Unknown parameter passed: $0 $1"; exit 1;;
   esac
 shift; done
-# configure application database check
+# configure user application database and eventually alter user database access
 [ -z $dbfile ] && [ $fix_socket == "-N" ] && [ -f app/Config/database.php ] || config_app_checked="-Y"
 shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" $config_app_checked
 if [[ (-f $identities) && ($import_identities -eq 1) ]]; then

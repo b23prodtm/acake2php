@@ -1,6 +1,7 @@
 #!/bin/bash
 source ./Scripts/lib/parsing.sh
 bootargs=""
+saved=("$*")
 while [[ "$#" > 0 ]]; do case $1 in
   --travis )
     #; Test values
@@ -9,8 +10,8 @@ while [[ "$#" > 0 ]]; do case $1 in
     export TRAVIS_OS_NAME="osx"
     export TRAVIS_PHP_VERSION=$(php -v | grep -E "[5-7]\.\\d+\.\\d+" | cut -d " " -f 2 | cut -c 1-3
     )
-    # remote servers CI don't need (-i) identities but the socket: use configure.sh --mig-database -y
-    source configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-i" "-p=root" "-t=test"
+    # remote servers CI don't need (-i) identities but the socket: use configure.sh --mig-database --openshift
+    source configure.sh "-p=root" "-t=test" "--mig-database" "-i" "-p=root" "-t=test"
     source .travis/configure.sh;;
   --cov )
     export COLLECT_COVERAGE=true;;
@@ -29,9 +30,9 @@ while [[ "$#" > 0 ]]; do case $1 in
       "
       exit 0;;
   -[pP]*|--sql-password*)
-    parse_sql_password "$1" "DATABASE_PASSWORD" "current ${DATABASE_USER}";;
+    parse_sql_password "$1" "DATABASE_PASSWORD" "user ${DATABASE_USER}";;
   -[tT]*|--test-sql-password*)
-    parse_sql_password "$1" "TEST_DATABASE_PASSWORD" "current ${TEST_DATABASE_USER}";;
+    parse_sql_password "$1" "TEST_DATABASE_PASSWORD" "test user ${TEST_DATABASE_USER}";;
   -[vV]*|--verbose )
     echo "Passed params :  $0 ${saved}"
     bootargs="${bootargs} $1";;
