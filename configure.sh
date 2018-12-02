@@ -26,8 +26,8 @@ while [[ "$#" > 0 ]]; do case $1 in
         #; [[-d|--mig-database] [-u]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
         shift
         args=""
-        [[ $openshift ]] && args="--openshift"
-        shell_prompt "./migrate-database.sh $* ${args}" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
+        if [ $openshift > /dev/null ]; then args="--openshift"; fi
+        shell_prompt "./migrate-database.sh ${args} $*" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
         break;;
     -[sS]*|-[pP]*|-[fF]*)
         #; void source script known args

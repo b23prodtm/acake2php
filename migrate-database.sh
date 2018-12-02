@@ -25,54 +25,29 @@ else
   source ./Scripts/bootargs.sh $*
 fi
 dbfile=database.cms.php
-fix_socket="-N"
+fix_socket="-Y"
 config_app_checked=""
 update_checked=0
 import_identities=0
 identities=app/Config/database.sql
+new_pass=""
+new_test_pass=""
 saved=("$*")
 while [[ "$#" > 0 ]]; do case $1 in
   -[uU]* )
       update_checked=1
-      [[ $openshift ]] || fix_socket="-Y"
       ;;
-  -[yY]* )
-      # set anything to validate, or none is equal to "-N"
-      fix_socket="-Y"
-      ;;
+  -[yY]* );;
   -[nN]* )
       fix_socket="-N"
       dbfile=""
       config_app_checked="-N"
       ;;
   -[iI]* )
-      [[ $openshift ]] || fix_socket="-Y"
-      [ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p | grep " DATABASE\| MYSQL");
-      [ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p | grep "TEST_DATABASE\|TEST_MYSQL");
-      if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
-      echo -e "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}" &&
-      parse_sql_password "$2" "set_DATABASE_PASSWORD" "new ${DATABASE_USER}" &&
-      echo -e "\r${red}WARNING: You will modify SQL ${TEST_DATABASE_USER} password !${nc}" &&
-      parse_sql_password "$3" "set_TEST_DATABASE_PASSWORD" "new ${TEST_DATABASE_USER}" &&
-      echo -e "# WARNING: You will alter SQL users access rights\r
-create database if not exists ${DATABASE_NAME};\r
-use mysql;\r
-create user if not exists '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
-# set_DATABASE_PASSWORD
-alter user '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}' identified by '${set_DATABASE_PASSWORD}';\r
-select * from user where user = '${DATABASE_USER}';\r
-grant all on ${DATABASE_NAME}.* to '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
-
-create database if not exists ${TEST_DATABASE_NAME};\r
-use mysql;\r
-create user if not exists '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
-# set_TEST_DATABASE_PASSWORD
-alter user '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}' identified by '${set_TEST_DATABASE_PASSWORD}';\r
-select * from user where user = '${TEST_DATABASE_USER}';\r
-grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
-      " > $identities
       import_identities=1
-      break;;
+      new_pass=$1
+      new_test_pass=$2
+      shift;shift;;
   -[vV]*|--verbose )
     [ -f $identities ] && cat $identities
     echo -e "
@@ -130,11 +105,36 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
   *) echo "Unknown parameter passed: $0 $1"; exit 1;;
   esac
 shift; done
+#; import identities
+[ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p | grep " DATABASE\| MYSQL");
+[ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p | grep "TEST_DATABASE\|TEST_MYSQL");
+if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
 # configure user application database and eventually alter user database access
 [ -z $dbfile ] && [ $fix_socket == "-N" ] && [ -f app/Config/database.php ] || config_app_checked="-Y"
 shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" $config_app_checked
-if [[ (-f $identities) && $import_identities ]]; then
+if [ $import_identities > /dev/null ]; then
   echo -e "Importing the mysql ${cyan}${DATABASE_USER}${nc} and ${cyan}${TEST_DATABASE_USER}${nc} users SQL identities..."
+  echo -e "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}" &&
+  parse_sql_password "$new_pass" "set_DATABASE_PASSWORD" "new ${DATABASE_USER}" &&
+  echo -e "\r${red}WARNING: You will modify SQL ${TEST_DATABASE_USER} password !${nc}" &&
+  parse_sql_password "$new_test_pass" "set_TEST_DATABASE_PASSWORD" "new ${TEST_DATABASE_USER}" &&
+  echo -e "# WARNING: You will alter SQL users access rights\r
+  create database if not exists ${DATABASE_NAME};\r
+  use mysql;\r
+  create user if not exists '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
+  # set_DATABASE_PASSWORD
+  alter user '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}' identified by '${set_DATABASE_PASSWORD}';\r
+  select * from user where user = '${DATABASE_USER}';\r
+  grant all on ${DATABASE_NAME}.* to '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
+
+  create database if not exists ${TEST_DATABASE_NAME};\r
+  use mysql;\r
+  create user if not exists '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
+  # set_TEST_DATABASE_PASSWORD
+  alter user '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}' identified by '${set_TEST_DATABASE_PASSWORD}';\r
+  select * from user where user = '${TEST_DATABASE_USER}';\r
+  grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
+  " > $identities
   echo "source ${identities}" | mysql -u $DATABASE_USER --password=$DATABASE_PASSWORD
   export DATABASE_PASSWORD=$set_DATABASE_PASSWORD
   export TEST_DATABASE_PASSWORD=$set_TEST_DATABASE_PASSWORD
