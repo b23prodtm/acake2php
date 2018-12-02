@@ -28,7 +28,7 @@ while [[ "$#" > 0 ]]; do case $1 in
         if [[ $openshift -eq 1 ]]; then args="${args} --openshift"; fi
         shell_prompt "migrate-database.sh $args" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
         ;;
-    -[sS]*|-[pP]*|-[fF]|-[uU]*)
+    -[sS]*|-[pP]*|-[fF]*|-[uU]*|-[iI]*)
         #; void source script known args
         shift;;
     -[mM]*|--submodule)
@@ -48,9 +48,10 @@ while [[ "$#" > 0 ]]; do case $1 in
               exit 0;;
     -[oO]*|--openshift )
       echo "Called Openshift configuration...";;
+    -[vV]*|---verbose );;
     *) echo "Unknown parameter passed: $1"; exit 1;;
 esac; shift; done
 #; update plugins and dependencies
-source ./Scripts/composer.sh
+source ./Scripts/composer.sh "-o"
 echo -e "${green}Fixing some file permissions...${nc}"
 source ./Scripts/configure_tmp.sh

@@ -10,15 +10,15 @@ cyan="\033[0;36m"
 #; Host name (unix) 'localhost' generally replaces '127.0.0.1' (macOS).
 export DATABASE_ENGINE="Mysql"
 export DATABASE_SERVICE_NAME="mysql"
-export MYSQL_SERVICE_HOST="127.0.0.1"
-#;export MYSQL_SERVICE_HOST="localhost"
+#;export MYSQL_SERVICE_HOST="127.0.0.1"
+export MYSQL_SERVICE_HOST="localhost"
 export MYSQL_SERVICE_PORT="3306"
 export DATABASE_NAME="phpcms"
 export DATABASE_USER="root"
 #;export DATABASE_PASSWORD=""
-#. Test configuration ?test=1
-export TEST_MYSQL_SERVICE_HOST="127.0.0.1"
-#;export TEST_MYSQL_SERVICE_HOST="localhost"
+#. Test configuration ?test=1, ./test_cake.sh
+#;export TEST_MYSQL_SERVICE_HOST="127.0.0.1"
+export TEST_MYSQL_SERVICE_HOST="localhost"
 export TEST_MYSQL_SERVICE_PORT="3306"
 export TEST_DATABASE_NAME="cakephp_test"
 export TEST_DATABASE_USER="test"
@@ -33,6 +33,8 @@ export CAKEPHP_SECURITY_SALT="Word"
 export CAKEPHP_SECURITY_CIPHER_SEED="01234"
 #; 0, 1, 2 the higher the more debug data
 export CAKEPHP_DEBUG_LEVEL=2
+#; Read -p pass -s word <- bootstrap.sh exports
+#; export GET_HASH_PASSWORD=wokUd0mccQD2s
 if [[ $(parse_arg_exists "-[vV]*|--verbose" $*) ]]; then
   echo "DATABASE_PASSWORD=${DATABASE_PASSWORD}"
   echo "TEST_DATABASE_PASSWORD=${TEST_DATABASE_PASSWORD}"

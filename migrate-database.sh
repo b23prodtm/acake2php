@@ -25,27 +25,29 @@ else
   source ./Scripts/bootargs.sh $*
 fi
 echo -e "
-
 ${red}
         ///// MySQL HOWTO: connect to the database${nc}
         A MySQL server (must match remote server version)
         must be reachable locally. If it's the 1st time you use this connection,
+
         Configure it as a service and log in with super or admin user shell:${green}mysql -u root -p${nc}
+
         See common issues in README.md file.
+
+        This command ${orange}will reset SQL root and test password : ${cyan}$0 -i -p --test-sql-password${nc}
+
         These SQL statements initializes the database, replaced with current ${orange}environment variables${nc} :
 "
 # Got passed args so we have saved them before $ source <script> <nullIsPassedArgs>
 saved=("$*")
-dbfile=database.cms.php
-if [[ (-f app/Config/database.php) ]]; then
-        echo -e "Defaults to app/Config/database.php ..."
-fi
-source ./Scripts/config_app_database.sh ${dbfile}
+dbfile="database.cms.php"
 # Reset passed args (shift reset)
 echo "Saved params :  set -- ${saved}"
 set -- $saved
 fix_db="-N"
 update_checked=0
+import_identities=0
+identities=app/Config/database.sql
 while [[ "$#" > 0 ]]; do case $1 in
   -[uU]* )
       update_checked=1
@@ -61,25 +63,32 @@ while [[ "$#" > 0 ]]; do case $1 in
       ;;
   -[iI]* )
       fix_db="-Y"
-      identities=app/Config/identities.sql
-      if [[ -f $identities ]]; then ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
-      echo -e "
-                create database if not exists ${DATABASE_NAME};\r
-                use mysql;\r
-                create user if not exists '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
-                alter user '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}' identified by '\${DATABASE_PASSWORD}';\r
-                select * from user where user = '${DATABASE_USER}';\r
-                grant all on ${DATABASE_NAME}.* to '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
+      if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
+      echo -e "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}" &&
+      parse_sql_password "$2" "set_DATABASE_PASSWORD" "new ${DATABASE_USER}" &&
+      echo -e "\r${red}WARNING: You will modify SQL ${TEST_DATABASE_USER} password !${nc}" &&
+      parse_sql_password "$3" "set_TEST_DATABASE_PASSWORD" "new ${TEST_DATABASE_USER}" &&
+      echo -e "# WARNING: You will alter SQL users access rights\r
+create database if not exists ${DATABASE_NAME};\r
+use mysql;\r
+create user if not exists '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
+# set_DATABASE_PASSWORD
+alter user '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}' identified by '${set_DATABASE_PASSWORD}';\r
+select * from user where user = '${DATABASE_USER}';\r
+grant all on ${DATABASE_NAME}.* to '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
 
-                create database if not exists ${TEST_DATABASE_NAME};\r
-                use mysql;\r
-                create user if not exists '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
-                alter user '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}' identified by '\${TEST_DATABASE_PASSWORD}';\r
-                select * from user where user = '${TEST_DATABASE_USER}';\r
-                grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
+create database if not exists ${TEST_DATABASE_NAME};\r
+use mysql;\r
+create user if not exists '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
+# set_TEST_DATABASE_PASSWORD
+alter user '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}' identified by '${set_TEST_DATABASE_PASSWORD}';\r
+select * from user where user = '${TEST_DATABASE_USER}';\r
+grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
       " > $identities
-      cat $identities
+      import_identities=1
       ;;
+  -[vV]*|---verbose )
+    cat $identities;;
   -[hH]*|--help )
     echo "Usage: $0 [-u] [-y|n] [-i] [-o] [-p|--sql-password=<password>] [--test-sql-password]
         -u
@@ -103,9 +112,9 @@ while [[ "$#" > 0 ]]; do case $1 in
     fix_db="-N"
     update_checked=1;;
   -[pP]*|--sql-password*)
-    export DATABASE_PASSWORD=$(parse_sql_password "$1" "$DATABASE_USER");;
-  --test-sql-password*)
-    export TEST_DATABASE_PASSWORD=$(parse_sql_password "$1" "$TEST_DATABASE_USER");;
+    parse_sql_password "$1" "DATABASE_PASSWORD" "current ${DATABASE_USER}";;
+  -[tT]*|--test-sql-password*)
+    parse_sql_password "$1" "TEST_DATABASE_PASSWORD" "current ${TEST_DATABASE_USER}";;
   *) echo "Unknown parameter passed: $1"; exit 1;;
   esac
 shift; done
@@ -113,17 +122,19 @@ if [ -f app/Config/$dbfile ]; then
         echo -e "Reset to ${dbfile} settings and default socket file..."
 fi
 shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_db}" "${cyan}Setup connection and socket\n${nc}" $fix_db
-if [ -f $identities ]; then
+if [[ (-f $identities) && ($import_identities -eq 1) ]]; then
   echo -e "Importing the mysql ${cyan}${DATABASE_USER}${nc} and ${cyan}${TEST_DATABASE_USER}${nc} users SQL identities..."
   echo "source ${identities}" | mysql -u $DATABASE_USER --password=$DATABASE_PASSWORD
+  export DATABASE_PASSWORD=$set_DATABASE_PASSWORD
+  export TEST_DATABASE_PASSWORD=$set_TEST_DATABASE_PASSWORD
 fi
 if [ $update_checked == 1 ]; then
   #; update plugins and dependencies
-  source ./Scripts/composer.sh
+  source ./Scripts/composer.sh "-o"
   #; cakephp shell
   if [ ! -f app/Config/Schema/schema.php ]; then
     echo "Generating database schema 'cake schema generate'"
-    ./lib/Cake/Console/cake schema generate -y
+    ./lib/Cake/Console/cake schema generate -f s
   fi
   if [ ! -f app/Config/Schema/sessions.php ]; then
       echo "Generating default Sessions table"

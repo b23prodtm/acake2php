@@ -47,14 +47,14 @@ echo "<?php
   private \$identities = array(
     'Mysql' => array(
       'datasource' => 'Database/Mysql',
-      'host' => '127.0.0.1',
-      'login' => 'root',
-      'password' => '${SQL_PASSWORD}'
+      'host' => '$TEST_MYSQL_SERVICE_HOST',
+      'login' => '$TEST_DATABASE_USER',
+      'password' => '${TEST_DATABASE_PASSWORD}'
     ),
     'Pgsql' => array(
       'datasource' => 'Database/Postgres',
-      'host' => '127.0.0.1',
-      'login' => 'postgres',
+      'host' => '$TEST_POSTGRES_SERVICE_HOST',
+      'login' => '$TEST_DATABASE_USER',
       'database' => 'cakephp_test',
       'schema' => array(
         'default' => 'public',

@@ -1,7 +1,7 @@
 <?php
-App::uses('Postgresql', 'Model/Datasource/Database');
+App::uses('Postgres', 'Model/Datasource/Database');
 
-class Postgresql_cms extends Postgresql
+class Postgres_cms extends Postgres
 {
 	public function __construct()
 	{

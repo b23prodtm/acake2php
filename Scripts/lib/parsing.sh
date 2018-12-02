@@ -1,15 +1,18 @@
 #!/bin/bash
 set -e
 parse_sql_password() {
-  [ $# -lt 2 ] && echo "Usage: $0 -p|--*sql-password*|* <name>" && return $FALSE
+  [ $# -lt 2 ] && echo "Usage: $0 -p|-t|--*sql-password*|*=<password> <var-name> <name>" && return $FALSE
   pass=$(echo $1 | cut -f 2 -d '=')
   while true; do case "$pass" in
-    *sql-password|-p|"")
-      read -sp "Please, enter $2 SQL password now: " pass;;
+    *sql-password|-[pPtT]|"")
+      read -sp "
+Please, enter the $3 SQL password now:
+" pass
+      ;;
     *)
       break;;
   esac; done
-  echo $pass
+  export $2=$pass
 }
 #; export -f parse_sql_password
 parse_arg_exists() {

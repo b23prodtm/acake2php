@@ -68,7 +68,7 @@
 class DATABASE_CONFIG {
 
         public $default = array(
-          # this is an extended Mysql database (providing blob-binary storage)
+        # this is an extended Mysql database (providing blob-binary storage)
             'datasource' => 'Database/Mysql_cms',
             'persistent' => false,
             //'host' => 'localhost',
