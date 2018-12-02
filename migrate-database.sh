@@ -112,7 +112,7 @@ if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${ide
 # configure user application database and eventually alter user database access
 [ -z $dbfile ] && [ $fix_socket == "-N" ] && [ -f app/Config/database.php ] || config_app_checked="-Y"
 shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" $config_app_checked
-if [ $import_identities > /dev/null ]; then
+if [[ $import_identities ]]; then
   echo -e "Importing the mysql ${cyan}${DATABASE_USER}${nc} and ${cyan}${TEST_DATABASE_USER}${nc} users SQL identities..."
   echo -e "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}" &&
   parse_sql_password "$new_pass" "set_DATABASE_PASSWORD" "new ${DATABASE_USER}" &&
