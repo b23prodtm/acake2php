@@ -14,6 +14,20 @@ Please, enter the $3 SQL password now:
   export $2=$pass
 }
 #; export -f parse_sql_password
+parse_arg_export() {
+  [ $# -lt 3 ] && echo "Usage: $0 -<arg>=<val> <-pattern*|-PATTERN*> <var-name> <name>" && return $FALSE
+  zval=$(echo $1 | cut -f 2 -d '=')
+  while true; do case "$zval" in
+    $2|"")
+      read -sp "
+Please, enter the $4 value now:
+" zval;;
+    *)
+      break;;
+  esac; done
+  export $3=$zval
+}
+#; export -f parse_arg_export
 parse_arg_exists() {
   [ $# -eq 0 ] && echo "Usage: $0 <argument-case> arguments-list"
   arg1=$(echo $1 | cut -f 1 -d '|')

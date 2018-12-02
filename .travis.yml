@@ -28,7 +28,7 @@ addons:
     project:
       name: "b23prodtm/myphpcms"
     notification_email: b23prodtm@users.sourceforge.net
-    build_command_prepend: ./configure.sh "-c" "--mig-database" "-y" && .travis/configure.sh
+    build_command_prepend: ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y" && .travis/configure.sh
     build_command: ./test-cake.sh --cov | grep Test
     branch_pattern: development
 services:
@@ -88,7 +88,7 @@ install:
 # $ ./test-cake.sh --travis
 before_script:
   # remote servers CI doesn't need a root password import (-i) but the socket => -y
-  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./configure.sh "-c" "--mig-database" "-y"; fi
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y"; fi
   - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then .travis/configure.sh; fi
 
 script:

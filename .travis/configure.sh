@@ -11,6 +11,8 @@ Documented VARIABLES in .travis.yml
   DB=['Mysql', 'Pgsql', 'Sqlite']
 
 Required VARIABLES  in .travis.yml or Pod environment
+  DATABASE_USER: <rw-user>
+  DATABASE_PASSWORD: <user-password>
   TEST_DATABASE_USER: <database-rw-user>
   TEST_DATABASE_PASSWORD: <user-password>
   if [ DB='Mysql' ]; then
@@ -34,9 +36,9 @@ if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
   sudo locale-gen de_DE
   sudo locale-gen es_ES
 fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u ${TEST_DATABASE_USER} --password=${TEST_DATABASE_PASSWORD}; fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u ${TEST_DATABASE_USER} --password=${TEST_DATABASE_PASSWORD}; fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u ${TEST_DATABASE_USER} --password=${TEST_DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi

@@ -28,24 +28,24 @@ while [[ "$#" > 0 ]]; do case $1 in
         args=("$*")
         [[ $openshift ]] && args="${args} --openshift"
         shell_prompt "./migrate-database.sh ${args}" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
-        ;;
-    -[sS]*|-[pP]*|-[fF]*|-[uU]*|-[iI]*)
+        break;;
+    -[sS]*|-[pP]*|-[fF]*)
         #; void source script known args
         shift;;
     -[mM]*|--submodule)
         git submodule update --init --recursive --force;;
     --help )
-          echo "Usage: $0 [-m] [-c] [-h [-p password -s salt [-f filename]]] [[-d|--mig-database] [-y]]
+          echo "Usage: $0 [-m] [-c] [-h [-p password -s salt [-f filename]]] [[-d|--mig-database] [options]]
               -c,--const
                   Reset to app/webroot/php_cms/etc/constantes-template.properties
               -h,--hash
                   Reset administrator password hash
               -p <password> -s <salt> [-f <save-filename>]
                   Set administrator <password> with md5 <salt>. Optional file to save a shell script export.
-              -d, --mig-database [options]
-                  Migrate Database (see ./migrate-database.sh --help)
               -m,--submodule
-                  Update sub-modules from Git"
+                  Update sub-modules from Git
+              -d, --mig-database [options]
+                  Migrate Database (see ./migrate-database.sh --help)"
               exit 0;;
     -[oO]*|--openshift );;
     -[vV]*|--verbose )

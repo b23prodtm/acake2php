@@ -46,8 +46,8 @@ while [[ "$#" > 0 ]]; do case $1 in
       ;;
   -[iI]* )
       fix_socket="-Y"
-      [ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p | grep "DATABASE\|MYSQL" && exit 1);
-      [ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p | grep "TEST_DATABASE\|MYSQL" && exit 1);
+      [ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p | grep "DATABASE\|MYSQL");
+      [ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p | grep "TEST_DATABASE\|MYSQL");
       if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
       echo -e "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}" &&
       parse_sql_password "$2" "set_DATABASE_PASSWORD" "new ${DATABASE_USER}" &&
@@ -91,14 +91,14 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
     # Reset passed args (shift reset)
     echo "Passed params :  $0 ${saved}";;
   -[hH]*|--help )
-    echo "Usage: $0 [-u] [-y|n] [-o] [-i] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>]
+    echo "Usage: $0 [-u] [-y|n] [-o] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [-i] [-p|--new-sql-password=<password>] [-t,--new-test-sql-password=<password>]
         -u
             Update the database in app/Config/Schema/
         -y
             Reset ${dbfile} and default socket file
         -n
             Doesn't reset ${dbfile} and socket
-        -i
+        -i -p=<new-password> -t=<new-password>
             Import SQL identities
         -o, --openshift
             Resets ${dbfile}, keep socket and update the database (should be used with -i)
@@ -106,6 +106,10 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
             Exports DATABASE_PASSWORD
         -t,--test-sql-password=<password>
             Exports TEST_DATABASE_PASSWORD
+        -dbase=<name>
+            Exports DATABASE_NAME
+        -tbase=<name>
+            Exports TEST_DATABASE_NAME
         -v, --verbose
             Outputs more debug information
         -h, --help
@@ -118,6 +122,10 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
     parse_sql_password "$1" "DATABASE_PASSWORD" "current ${DATABASE_USER}";;
   -[tT]*|--test-sql-password*)
     parse_sql_password "$1" "TEST_DATABASE_PASSWORD" "current ${TEST_DATABASE_USER}";;
+  -dbase*|-DBASE*)
+    parse_arg_export "$1" "-dbase*|-DBASE*" "DATABASE_NAME" "${DATABASE_USER} database";;
+  -tbase*|-TBASE*)
+    parse_arg_export "$1" "-tbase*|-TBASE*" "TEST_DATABASE_NAME" "${TEST_DATABASE_USER} database";;
   *) echo "Unknown parameter passed: $0 $1"; exit 1;;
   esac
 shift; done
