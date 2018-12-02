@@ -22,6 +22,7 @@ optional environment VARIABLES in .travis.yml
   ADDITIONAL_PHP_INI='path to a php.ini settings file'
 ==========================
 ";
+[ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [[ (! -z $TEST_MYSQL_SERVICE_HOST) || (! -z $TEST_POSTGRES_SERVICE_HOST) ]] || echo "Missing VARIABLES. Please review your settings !"
 php bin/composer.phar install --no-interaction
 if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
 mkdir -p build/logs
