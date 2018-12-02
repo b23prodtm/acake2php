@@ -7,11 +7,6 @@ env:
   matrix:
     - DB=Mysql
   global:
-    - TEST_MYSQL_SERVICE_HOST=127.0.0.1
-    - TEST_MYSQL_SERVICE_PORT=3306
-    - TEST_DATABASE_NAME=cakephp_test
-    - TEST_DATABASE_USER=root
-    - TEST_DATABASE_PASSWORD=
     - PHPUNIT=4
     - PHPCS=3
     - COLLECT_COVERAGE=false
