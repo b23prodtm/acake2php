@@ -2,15 +2,23 @@
 echo -e "
 Set of default environment
 ==========================
-  Find exports for local development phase only in './Scripts/bootargs.sh')
+  Find exports for local development phase (testing) only in './Scripts/bootargs.sh')
   ";
 echo -e "
-Documented VARIABLES
-  TRAVIS_OS_NAME: os: ['osx','linux'] in .travis.yml
-  TRAVIS_PHP_VERSION : php: <version> in .travis.yml
+Documented VARIABLES in .travis.yml
+  TRAVIS_OS_NAME: os: ['osx','linux']
+  TRAVIS_PHP_VERSION : php: <version>
   DB=['Mysql', 'Pgsql', 'Sqlite']
 
-optional environment VARIABLES
+Required VARIABLES  in .travis.yml or Pod environment
+  TEST_DATABASE_USER: <database-rw-user>
+  TEST_DATABASE_PASSWORD: <user-password>
+  if [ DB='Mysql' ]; then
+    TEST_MYSQL_SERVICE_HOST: <mysql-host>
+  else if [ DB='pgsql' ]; then
+    TEST_POSTGRES_SERVICE_HOST: <postgres-host>
+  fi
+optional environment VARIABLES in .travis.yml
   ADDITIONAL_PHP_INI='path to a php.ini settings file'
 ==========================
 ";
