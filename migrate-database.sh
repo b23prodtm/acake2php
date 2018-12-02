@@ -24,45 +24,28 @@ else
   echo "Provided local/test bootargs..."
   source ./Scripts/bootargs.sh $*
 fi
-echo -e "
-${red}
-        ///// MySQL HOWTO: connect to the database${nc}
-        A MySQL server (must match remote server version)
-        must be reachable locally. If it's the 1st time you use this connection,
-
-        Configure it as a service and log in with super or admin user shell:${green}mysql -u root -p${nc}
-
-        See common issues in README.md file.
-
-        This command ${orange}will reset SQL root and test password : ${cyan}$0 -i -p --test-sql-password${nc}
-
-        These SQL statements initializes the database, replaced with current ${orange}environment variables${nc} :
-"
-# Got passed args so we have saved them before $ source <script> <nullIsPassedArgs>
 saved=("$*")
-dbfile="database.cms.php"
-# Reset passed args (shift reset)
-echo "Saved params :  set -- ${saved}"
-set -- $saved
-fix_db="-N"
+dbfile=database.cms.php
+fix_socket="-N"
+config_app_checked="-N"
 update_checked=0
 import_identities=0
 identities=app/Config/database.sql
 while [[ "$#" > 0 ]]; do case $1 in
   -[uU]* )
       update_checked=1
-      fix_db="-Y"
+      fix_socket="-Y"
       ;;
   -[yY]* )
       # set anything to validate, or none is equal to "-N"
-      fix_db="-Y"
+      fix_socket="-Y"
       ;;
   -[nN]* )
-      fix_db="-N"
+      fix_socket="-N"
       dbfile=""
       ;;
   -[iI]* )
-      fix_db="-Y"
+      fix_socket="-Y"
       [ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] || echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p && exit 0;
       [ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] || echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p && exit 0;
       if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
@@ -90,7 +73,23 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
       import_identities=1
       ;;
   -[vV]*|---verbose )
-    cat $identities;;
+    cat $identities
+    echo -e "
+    ${red}
+            ///// MySQL HOWTO: connect to the database${nc}
+            A MySQL server (must match remote server version)
+            must be reachable locally. If it's the 1st time you use this connection,
+
+            Configure it as a service and log in with super or admin user shell:${green}mysql -u root -p${nc}
+
+            See common issues in README.md file.
+
+            This command ${orange}will reset SQL root and test password : ${cyan}$0 -i -p --test-sql-password${nc}
+
+            These SQL statements initializes the database, replaced with current ${orange}environment variables${nc} :
+    "
+    # Reset passed args (shift reset)
+    echo "Passed params :  set -- ${saved}";;
   -[hH]*|--help )
     echo "Usage: $0 [-u] [-y|n] [-i] [-o] [-p|--sql-password=<password>] [--test-sql-password]
         -u
@@ -107,11 +106,13 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
             Exports DATABASE_PASSWORD
         --test-sql-password=<password>
             Exports TEST_DATABASE_PASSWORD
+        -v, --verbose
+            Outputs more debug information
         -h, --help
             Displays this help"
         exit 0;;
   -[oO]*|--openshift )
-    fix_db="-N"
+    fix_socket="-N"
     update_checked=1;;
   -[pP]*|--sql-password*)
     parse_sql_password "$1" "DATABASE_PASSWORD" "current ${DATABASE_USER}";;
@@ -120,10 +121,9 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
   *) echo "Unknown parameter passed: $1"; exit 1;;
   esac
 shift; done
-if [ -f app/Config/$dbfile ]; then
-        echo -e "Reset to ${dbfile} settings and default socket file..."
-fi
-shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_db}" "${cyan}Setup connection and socket\n${nc}" $fix_db
+# configure application database check
+[ -z $dbfile ] && [ $fix_socket == "-N" ] && [ -f app/Config/database.php ] || config_app_checked="-Y"
+shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" $config_app_checked
 if [[ (-f $identities) && ($import_identities -eq 1) ]]; then
   echo -e "Importing the mysql ${cyan}${DATABASE_USER}${nc} and ${cyan}${TEST_DATABASE_USER}${nc} users SQL identities..."
   echo "source ${identities}" | mysql -u $DATABASE_USER --password=$DATABASE_PASSWORD
