@@ -26,7 +26,7 @@ else
 fi
 dbfile=database.cms.php
 fix_socket="-N"
-config_app_checked="-N"
+config_app_checked=""
 update_checked=0
 import_identities=0
 identities=app/Config/database.sql
@@ -34,7 +34,7 @@ saved=("$*")
 while [[ "$#" > 0 ]]; do case $1 in
   -[uU]* )
       update_checked=1
-      fix_socket="-Y"
+      [[ $openshift ]] || fix_socket="-Y"
       ;;
   -[yY]* )
       # set anything to validate, or none is equal to "-N"
@@ -43,11 +43,12 @@ while [[ "$#" > 0 ]]; do case $1 in
   -[nN]* )
       fix_socket="-N"
       dbfile=""
+      config_app_checked="-N"
       ;;
   -[iI]* )
-      fix_socket="-Y"
-      [ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p | grep "DATABASE\|MYSQL");
-      [ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p | grep "TEST_DATABASE\|MYSQL");
+      [[ $openshift ]] || fix_socket="-Y"
+      [ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p | grep " DATABASE\| MYSQL");
+      [ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p | grep "TEST_DATABASE\|TEST_MYSQL");
       if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
       echo -e "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}" &&
       parse_sql_password "$2" "set_DATABASE_PASSWORD" "new ${DATABASE_USER}" &&
@@ -71,9 +72,9 @@ select * from user where user = '${TEST_DATABASE_USER}';\r
 grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
       " > $identities
       import_identities=1
-      ;;
+      break;;
   -[vV]*|--verbose )
-    cat $identities
+    [ -f $identities ] && cat $identities
     echo -e "
     ${red}
             ///// MySQL HOWTO: connect to the database${nc}
@@ -89,7 +90,7 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
             These SQL statements initializes the database, replaced with current ${orange}environment variables${nc} :
     "
     # Reset passed args (shift reset)
-    echo "Passed params :  $0 ${saved}";;
+    echo "Passed params : $0 ${saved}";;
   -[hH]*|--help )
     echo "Usage: $0 [-u] [-y|n] [-o] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [-i] [-p|--new-sql-password=<password>] [-t,--new-test-sql-password=<password>]
         -u
@@ -101,7 +102,7 @@ grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SE
         -i -p=<new-password> -t=<new-password>
             Import SQL identities
         -o, --openshift
-            Resets ${dbfile}, keep socket and update the database (should be used with -i)
+            Resets ${dbfile}, keep socket and update the database
         -p, --sql-password=<password>
             Exports DATABASE_PASSWORD
         -t,--test-sql-password=<password>
@@ -132,13 +133,13 @@ shift; done
 # configure user application database and eventually alter user database access
 [ -z $dbfile ] && [ $fix_socket == "-N" ] && [ -f app/Config/database.php ] || config_app_checked="-Y"
 shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" $config_app_checked
-if [[ (-f $identities) && ($import_identities -eq 1) ]]; then
+if [[ (-f $identities) && $import_identities ]]; then
   echo -e "Importing the mysql ${cyan}${DATABASE_USER}${nc} and ${cyan}${TEST_DATABASE_USER}${nc} users SQL identities..."
   echo "source ${identities}" | mysql -u $DATABASE_USER --password=$DATABASE_PASSWORD
   export DATABASE_PASSWORD=$set_DATABASE_PASSWORD
   export TEST_DATABASE_PASSWORD=$set_TEST_DATABASE_PASSWORD
 fi
-if [ $update_checked == 1 ]; then
+if [[ $update_checked ]]; then
   #; update plugins and dependencies
   source ./Scripts/composer.sh "-o"
   #; cakephp shell
