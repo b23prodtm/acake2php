@@ -8,7 +8,6 @@ class SqliteCms extends Sqlite
 		$this->columns['mediumbinary'] = array('name' => 'bytea');
 	}
 
-
 	/**
 	 * Converts database-layer column types to basic types
 	 *
@@ -28,6 +27,13 @@ class SqliteCms extends Sqlite
 				}
 			}
 			return $s;
+		}
+
+		public function connect() {
+			if (Configure::read('debug') > 1) {
+				var_dump($this->config);
+			}
+			parent::connect();
 		}
 }
 ?>

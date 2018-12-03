@@ -20,9 +20,6 @@ if [ ! -f $composer ]; then
 else
         echo -e "Composer ${green}[OK]${nc}"
 fi
-php bin/composer.phar --version
+bin/composer.phar --version
 #; update plugins and dependencies
-if [ ! $(php bin/composer.phar update --with-dependencies --apcu-autoloader $*) > /dev/null ]; then
-  rm bin/composer.phar
-  source $0 $*
-fi
+bin/composer.phar update --with-dependencies --apcu-autoloader $*
