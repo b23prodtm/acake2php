@@ -239,7 +239,8 @@ The Mysql.php Datasource must define binary and mediumbinary storage types. Plea
 
 Add the *__mediumbinary__* storage, extending the original Datasource class:
 
-```<?php
+``
+<?php
 App::uses('Mysql', 'Model/Datasource/Database');
 
 class Mysql_cms extends Mysql
@@ -272,7 +273,7 @@ class Mysql_cms extends Mysql
 		}
 }
 ?>
-```
+``
 Ensure it is set as DATABASE_ENGINE in `app/Config/database.cms.php`,`./Scripts/bootargs.sh`, `.travis.yml` and update the database schema:
 
     ./migrate-database.sh -u
@@ -282,6 +283,18 @@ Ensure it is set as DATABASE_ENGINE in `app/Config/database.cms.php`,`./Scripts/
 A recent `git checkout` made the submodule disappear from disk, that can happen on master/development branch.  Recall or add the shell configure script to your workflow:
 
     ./configure.sh -m
+
+10. SHA1 signature couldn't be verified with the file composer.phar, how is that possible ?
+
+The composer binary hasn't been downloaded on this machine, and must be downloaded again. By default, git shouldn't keep track on this file. Delete it and launch composer installer again.
+
+    rm bin/composer.phar
+    ./composer.sh
+
+If you are working on a git remote tracked branch, it is recommended to remove from file tracking and add to `.gitignore`.
+
+    git rm bin/composer.phar
+    echo "/bin/composer.phar" >> .gitignore
 
 ### License
    Copyright 2016 b23production GNU
