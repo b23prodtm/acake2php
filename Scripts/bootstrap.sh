@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
-source ./Scripts/bootargs.sh
+source ./Scripts/lib/shell_prompt.sh
+source ./Scripts/lib/parsing.sh
+openshift=$(parse_arg_exists "-[oO]*|--openshift" $*)
+if [ $openshift > /dev/null ]; then
+  echo "Real environment bootargs..."
+else
+  echo "Provided local/test bootargs..."
+  source ./Scripts/bootargs.sh $*
+fi
 #;
 #;
 #; this development phase, don't use the same values for production (no setting means no debugger)!
@@ -11,15 +19,17 @@ export CAKEPHP_DEBUG_LEVEL=2
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;
 if [ ! -f ${PHP_CMS_DIR}/e13/etc/constantes.properties ]; then
-        source ./Scripts/shell_prompt.sh "./configure.sh -c" "configuration"
+        shell_prompt "./configure.sh -c" "configuration"
 fi
-echo "Configuration begins automatically...${green}"
+echo "Configuration begins automatically..."
 #; hash file that is stored in webroot to allow administrator privileges
-hash="${PHP_CMS_DIR}/e13/etc/export_hash_password.sh"
-if [ ! -f $hash ]; then
-        source ./Scripts/shell_prompt.sh "./configure.sh -c -h" "configuration"
+if [[ ! $GET_HASH_PASSWORD ]]; then
+  hash="${PHP_CMS_DIR}/e13/etc/export_hash_password.sh"
+  if [ ! -f $hash ]; then
+          shell_prompt "./configure.sh -c -h" "configuration"
+  fi
+  source $hash
 fi
-source $hash
 echo -e "${nc}Password ${green}$GET_HASH_PASSWORD${nc}"
 #; Install PHPUnit, performs unit tests
 #; The website must pass health checks in order to be deployed
