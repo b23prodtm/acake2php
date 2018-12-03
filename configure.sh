@@ -47,12 +47,13 @@ while [[ "$#" > 0 ]]; do case $1 in
               -d, --mig-database [options]
                   Migrate Database (see ./migrate-database.sh --help)"
               exit 0;;
-    -[oO]*|--openshift );;
+    -[oO]*|--openshift )
+      show_password_status $DATABASE_USER $DATABASE_PASSWORD "is configuring openshift...";;
     -[vV]*|--verbose )
       echo "Passed params :  $0 ${saved}";;
     *) echo "Unknown parameter passed: $0 $1"; exit 1;;
 esac; shift; done
+echo -e "${green}Fixing some file permissions...${nc}"
+[ $openshift > /dev/null ] && echo "None." || source ./Scripts/configure_tmp.sh
 #; update plugins and dependencies
 source ./Scripts/composer.sh "-o"
-echo -e "${green}Fixing some file permissions...${nc}"
-source ./Scripts/configure_tmp.sh
