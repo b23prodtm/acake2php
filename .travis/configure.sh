@@ -2,18 +2,29 @@
 echo -e "
 Set of default environment
 ==========================
-  Find exports for local development phase only in './Scripts/bootargs.sh')
+  Find exports for local development phase (testing) only in './Scripts/bootargs.sh')
   ";
 echo -e "
-Documented VARIABLES
-  TRAVIS_OS_NAME: os: ['osx','linux'] in .travis.yml
-  TRAVIS_PHP_VERSION : php: <version> in .travis.yml
+Documented VARIABLES in .travis.yml
+  TRAVIS_OS_NAME: os: ['osx','linux']
+  TRAVIS_PHP_VERSION : php: <version>
   DB=['Mysql', 'Pgsql', 'Sqlite']
 
-optional environment VARIABLES
+Required VARIABLES  in .travis.yml or Pod environment
+  DATABASE_USER: <rw-user>
+  DATABASE_PASSWORD: <user-password>
+  TEST_DATABASE_USER: <database-rw-user>
+  TEST_DATABASE_PASSWORD: <user-password>
+  if [ DB='Mysql' ]; then
+    TEST_MYSQL_SERVICE_HOST: <mysql-host>
+  else if [ DB='pgsql' ]; then
+    TEST_POSTGRES_SERVICE_HOST: <postgres-host>
+  fi
+optional environment VARIABLES in .travis.yml
   ADDITIONAL_PHP_INI='path to a php.ini settings file'
 ==========================
 ";
+[ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [[ (! -z $TEST_MYSQL_SERVICE_HOST) || (! -z $TEST_POSTGRES_SERVICE_HOST) ]] || echo "Missing VARIABLES. Please review your settings !"
 php bin/composer.phar install --no-interaction
 if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
 mkdir -p build/logs
@@ -25,9 +36,9 @@ if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
   sudo locale-gen de_DE
   sudo locale-gen es_ES
 fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u $TEST_DATABASE_USER --password=$TEST_DATABASE_PASSWORD; fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u $TEST_DATABASE_USER --password=$TEST_DATABASE_PASSWORD; fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u $TEST_DATABASE_USER --password=$TEST_DATABASE_PASSWORD; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
@@ -46,15 +57,15 @@ echo "<?php
   class DATABASE_CONFIG {
   private \$identities = array(
     'Mysql' => array(
-      'datasource' => 'Database/Mysql',
-      'host' => '127.0.0.1',
-      'login' => 'root',
-      'password' => '${SQL_PASSWORD}'
+      'datasource' => 'Database/MysqlCms',
+      'host' => '${TEST_MYSQL_SERVICE_HOST}',
+      'login' => '${TEST_DATABASE_USER}',
+      'password' => '${TEST_DATABASE_PASSWORD}'
     ),
     'Pgsql' => array(
-      'datasource' => 'Database/Postgres',
-      'host' => '127.0.0.1',
-      'login' => 'postgres',
+      'datasource' => 'Database/PostgresCms',
+      'host' => '${TEST_POSTGRES_SERVICE_HOST}',
+      'login' => '${TEST_DATABASE_USER}',
       'database' => 'cakephp_test',
       'schema' => array(
         'default' => 'public',
@@ -64,7 +75,7 @@ echo "<?php
       )
     ),
     'Sqlite' => array(
-      'datasource' => 'Database/Sqlite',
+      'datasource' => 'Database/SqliteCms',
       'database' => array(
         'default' => ':memory:',
         'test' => ':memory:',
@@ -122,4 +133,4 @@ echo "<?php
     }
   }
   }" > app/Config/database.php
-  echo -e "{green}Unit Test was set up in app/Config/database.php{nc}"
+  echo -e "${green}Unit Test was set up in app/Config/database.php${nc}"

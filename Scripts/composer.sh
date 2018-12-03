@@ -28,4 +28,4 @@ echo -e "\n
             Please copy and run :
             ${cyan}rm bin/composer.phar && ./Scripts/composer.sh${nc}\n"
 #; update plugins and dependencies
-php bin/composer.phar update --with-dependencies --apcu-autoloader
+php bin/composer.phar update --with-dependencies --apcu-autoloader $*

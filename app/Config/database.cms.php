@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -68,35 +67,33 @@
 class DATABASE_CONFIG {
 
         public $default = array(
-            'datasource' => 'Database/Mysql',
+        # this is an extended Mysql database (providing blob-binary storage)
+            'datasource' => 'Database/MysqlCms',
             'persistent' => false,
             //'host' => 'localhost',
             'host' => '127.0.0.1',
             'port' => '3306',
-            'login' => 'test',
-           'password' => 'mypassword',
+            'login' => 'root',
+            'password' => '',
             'database' => 'phpcms',
             'prefix' => '',
             'encoding' => 'utf8',
         );
         public $test = array(
-            'datasource' => 'Database/Mysql',
+            'datasource' => 'Database/MysqlCms',
             'persistent' => false,
             //'host' => 'localhost',
             'host' => '127.0.0.1',
             'port' => '3306',
             'login' => 'test',
-           'password' => 'mypassword',
+            'password' => '',
             'database' => 'phpcms',
             'prefix' => '',
             'encoding' => 'utf8',
         );
 
         public function __construct() {
-
-                $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) : FALSE;
-
-
+                $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) . '_cms' : FALSE;
                 /** a different test/local configuration (shall not be the same as production)*/
                 $test['host'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
                 $test['port'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
@@ -104,8 +101,6 @@ class DATABASE_CONFIG {
                 $test['password'] = getenv('TEST_DATABASE_PASSWORD');
                 $test['database'] = getenv('TEST_DATABASE_NAME');
                 $test['datasource'] = $datasource;
-
-                $this->redirectIfNull($test, $this->test);
                 $this->test = $test;
 
                 $default['host'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
@@ -114,17 +109,19 @@ class DATABASE_CONFIG {
                 $default['password'] = getenv("DATABASE_PASSWORD");
                 $default['database'] = getenv("DATABASE_NAME");
                 $default['datasource'] = $datasource;
-
-                $this->redirectIfNull($default, $this->default);
                 $this->default = $default;
+
+                /* copy default to test if necessary */
+                $this->redirectIfNull($test, $this->default);
+                /* copy member variables if null detected */
+                $this->redirectIfNull($test, $this->test);
+                $this->redirectIfNull($default, $this->default);
         }
-        function redirectIfNull(&$default, $test) {
+        function redirectIfNull(&$default, $redirect) {
                 foreach ($default as $key => $val) {
-                        if (!$val || $val === "") {
-                                $default[$key] = $test[$key];
+                        if ((!$val || $val === "") && ($redirect[$key] || $redirect[$key] !== "")) {
+                                $default[$key] = $redirect[$key];
                         }
                 }
         }
-
-
 }
