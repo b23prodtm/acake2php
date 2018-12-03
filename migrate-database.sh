@@ -35,20 +35,6 @@ while [[ "$#" > 0 ]]; do case $1 in
       shift;shift;;
   -[vV]*|--verbose )
     [ -f $identities ] && cat $identities
-    echo -e "
-    ${red}
-            ///// MySQL HOWTO: connect to the database${nc}
-            A MySQL server (must match remote server version)
-            must be reachable locally. If it's the 1st time you use this connection,
-
-            Configure it as a service and log in with super or admin user shell:${green}mysql -u root -p${nc}
-
-            See common issues in README.md file.
-
-            This command ${orange}will reset SQL root and test password : ${cyan}$0 -i -p --test-sql-password${nc}
-
-            These SQL statements initializes the database, replaced with current ${orange}environment variables${nc} :
-    "
     # Reset passed args (shift reset)
     echo "Passed params : $0 ${saved}
     and environment VARIABLES:"
