@@ -23,7 +23,7 @@ addons:
     notification_email: b23prodtm@users.sourceforge.net
     build_command_prepend: ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y" && .travis/configure.sh
     build_command: ./test-cake.sh --cov | grep Test
-    branch_pattern: development
+    branch_pattern: coverity_scan
 services:
   - memcached
 
