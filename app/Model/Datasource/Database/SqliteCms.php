@@ -1,5 +1,5 @@
 <?php
-App::uses('Postgresql', 'Model/Datasource/Database');
+App::uses('Sqlite', 'Model/Datasource/Database');
 
 class SqliteCms extends Sqlite
 {
@@ -28,5 +28,6 @@ class SqliteCms extends Sqlite
 				}
 			}
 			return $s;
+		}
 }
 ?>
