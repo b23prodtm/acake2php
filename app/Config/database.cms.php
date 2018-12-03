@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -75,7 +74,7 @@ class DATABASE_CONFIG {
             'host' => '127.0.0.1',
             'port' => '3306',
             'login' => 'root',
-           'password' => '',
+            'password' => '',
             'database' => 'phpcms',
             'prefix' => '',
             'encoding' => 'utf8',
@@ -87,17 +86,14 @@ class DATABASE_CONFIG {
             'host' => '127.0.0.1',
             'port' => '3306',
             'login' => 'test',
-           'password' => '',
+            'password' => '',
             'database' => 'phpcms',
             'prefix' => '',
             'encoding' => 'utf8',
         );
 
         public function __construct() {
-
                 $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) . '_cms' : FALSE;
-
-
                 /** a different test/local configuration (shall not be the same as production)*/
                 $test['host'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
                 $test['port'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
@@ -105,7 +101,6 @@ class DATABASE_CONFIG {
                 $test['password'] = getenv('TEST_DATABASE_PASSWORD');
                 $test['database'] = getenv('TEST_DATABASE_NAME');
                 $test['datasource'] = $datasource;
-
                 $this->test = $test;
 
                 $default['host'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
@@ -114,14 +109,13 @@ class DATABASE_CONFIG {
                 $default['password'] = getenv("DATABASE_PASSWORD");
                 $default['database'] = getenv("DATABASE_NAME");
                 $default['datasource'] = $datasource;
-
                 $this->default = $default;
+
                 /* copy default to test if necessary */
                 $this->redirectIfNull($test, $this->default);
                 /* copy member variables if null detected */
                 $this->redirectIfNull($test, $this->test);
                 $this->redirectIfNull($default, $this->default);
-
         }
         function redirectIfNull(&$default, $redirect) {
                 foreach ($default as $key => $val) {
@@ -130,6 +124,4 @@ class DATABASE_CONFIG {
                         }
                 }
         }
-
-
 }

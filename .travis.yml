@@ -11,17 +11,15 @@ env:
     - PHPCS=3
     - COLLECT_COVERAGE=false
     - WEBHOOK_URL=https://discordapp.com/api/webhooks/479745392880386058/YOO7Nnn1IFWUtXX0n0qAZYeMDeV-SLa0lSzjGpNnKGTzG-xA0T3dplVGzSM4ObKLeMWg
-    # The next declaration is the encrypted OC_SECRET, created
-    # via the "travis encrypt" command using the project repo's public key
-    - secure:  "O+HejqZgXZFf0eD3GdvUwL2dsJsW+5biztfWYKHNfzv5u9j6Nn8JSoLdIp+Bg6Kct6kCJebM7oWHCh1fhyEm3AluusmqKHN8VKwQuINEZKAxPRFGl3NKkEU/Y95tHR3JIubZbZ0oZYmnl7z+YgVvM4LvmfvAwdpXzRt4SWOzGRWiL8uRaovOwW10HUB6qcO70Rn9XIHz4gUAoAEWQgSlJ4aNftu/lpuYs4P1r0+6fI/nfRRBMOogBQLEMqw6enPP+RrWx2pLwuxaQqChtk2td5PJdLiifW7C8SiAsljSgIRiaytAOgIs5KJsLGUdAPNXIMqUYFJ776J3L+ln8/nM/H8ARGB2P3smY5HM34/NrzUat2X/B6Uqg1F0Fs/794aomhaeqgh4b2MRI5srjQ/grNK61H1AftdR6JSLVjm6AUg743GQJF7sgNfK60n28EEZApAEzDS0v1PyU7U/HAZIalqWnttO0ycQyj2rf1XC++6BuTcRdmxx4dZoqZIn7xHzBQvi99ljv4JuwUgrNYXvcSEkXu6Y5GqMl2rtjxrdaGATpePuk1ju1kfB/7fQsR3ZZOaxULOSlQRcArsyseOtmEqQ1h5BVSmOGV+yoEboNm2FDZH/gD9ZZ7kTi+bk4bvHRZSD06JiDZ12W/JGsmU77phVIIWuUcXghEZf/WRjTe4="
     # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
-    # via the "travis encrypt" command using the project repo's public key
-    - secure:  "4rmDT/vKTSi8AqI3afVUylayJ+SQbxblwlz/z81No4nLYWoy0dT61R/ZXq2Y29BE/HGEwx6r8Fl5RU6DxnmD7KhLC/3swHifzed690VDWyLii7cK8QkXVfLVVo8p+ozIwUrirnYFEkAcTfmkwJbmZN6DUuHJCl4x14NolR82VlJtFOVoWs63r+2NVJ5aM+63bkljkcW2U4xTt/8aOrCU/UapwqxC1GA0xPpwte6jPhzUjKXWbiknY+noUakM13x8SOkSRs3MTEf8J2va2T6DbVY3wy3x2Ytp4/KDwVNUrn/GKgBDRysP3jefO2d6XZJlb8OktJsrHdtWIZ+oYVwoy0PRV3vmdHs1NFUmYdQEe5UpiUKKyxWMsM+31to5ZUtJtn4kIlgzyo+xZu+LCgbOusJs33uPZODOON5fHcAoMp3AdAM0ResBfJdjzYEiewlcGYAcOoMX6DtopoJCoz+JxktdzXnjz89imNKMB2tjsRXuZMdE0WL3V2TSuOS5r8BwuuXXeul5vvE2EKHoIHgrP2nehz+q7dyC71m6jNrQX7x+xVg988vh0Fg8hyghLUzt9Myv4pvtQ/zQDbabKGtsakiHSvPTeHcb8mDhs62h5aIWUar8oXNuOWlk+hnyqZLmnbUPDcg54o567NursWYSWemAnPkPvSTfX0DQF1hDvSo="
+    #   via the "travis encrypt" command using the project repo's public key
+    - secure: "C39DQ1zYpSAOy33Sb8NP89o6k4HUnjHnQ+bQkgbo3WH7WtiN76dGeO9jm1DjMn5np6oKbDi41/fxonaTUIjb9YMksG2YB+NBDYXHyV1H7/xAeC6uTxwUObrLXh8aOUwiiuLPllMdtOLX8JSPxl1Ixc6KyeFywPiMvwuOe4QZW6sVG4sqhZC/UUycYKRSMaOthtuTDPYKjBLaDPiEzkUmdBIo9IhAsidEFAHj4jEmw9gBtac0B2x7GbvvoDivdH3KdNSoPt2SkD0RLX51Qf7AYeAV4fw65cuCp/Aat/uk55x3lN5g18Ww9khY/cFSwPC0JXGQnnJvdcDP2diZNkqE41Yc/Mw3xwfrvp3/v8js3VIBzsGINKiSdXZ/yXqI9iRzvzlfmXRHvd4sFXRzUpi8ZB4PXaboMndbNRoh4PcoRNFtXhyebQCEgZv2x3oiKXw38WT5cga03uMH4E5z5afS3n7NP1tsuiNWd499dJzAkW8OPeLDPqY3a/b5qLeZIK1bo23mvCjPtbm+B2g2QocKcd1oQ+XANCyuT3M/+AIypdMabGOSon2fDKrUUN+SqIX4FcYaHi1sG3qUp23870u9YcT4hK2LCKBcBPkFpxqEZLwdHbJmjHPo6uRyAKOD7r/k1DtIRqkcJ+5BpU4emo6rM9rdh5mWjLtK7vdY8Y/tvP8="
 
 addons:
   coverity_scan:
     project:
       name: "b23prodtm/myphpcms"
+      description: "This PHP CMS is featuring well-known functionalities as cool as posting some web contents with pictures stored in a database. Developer Note : This is the Cake PHP cartridge repository. A submodule is included in app/webroot."
     notification_email: b23prodtm@users.sourceforge.net
     build_command_prepend: ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y" && .travis/configure.sh
     build_command: ./test-cake.sh --cov | grep Test
