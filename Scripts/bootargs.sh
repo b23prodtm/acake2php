@@ -7,8 +7,9 @@ red="\033[0;31m"
 green="\033[0;32m"
 orange="\033[0;33m"
 cyan="\033[0;36m"
-export DATABASE_ENGINE="Mysql"
-export DATABASE_SERVICE_NAME="mysql"
+#; To change  Model/Datasource/Database
+export DATABASE_ENGINE="MysqlCms"
+export DATABASE_SERVICE_NAME="MYSQL"
 #; Host name (unix) 'localhost' generally replaces '127.0.0.1' (macOS).
 #;export MYSQL_SERVICE_HOST="127.0.0.1"
 export MYSQL_SERVICE_HOST="localhost"

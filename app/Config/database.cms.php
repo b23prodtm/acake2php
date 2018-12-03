@@ -68,7 +68,7 @@ class DATABASE_CONFIG {
 
         public $default = array(
         # this is an extended Mysql database (providing blob-binary storage)
-            'datasource' => 'Database/MysqlCms',
+            'datasource' => 'Database/Mysql',
             'persistent' => false,
             //'host' => 'localhost',
             'host' => '127.0.0.1',
@@ -80,7 +80,7 @@ class DATABASE_CONFIG {
             'encoding' => 'utf8',
         );
         public $test = array(
-            'datasource' => 'Database/MysqlCms',
+            'datasource' => 'Database/Mysql',
             'persistent' => false,
             //'host' => 'localhost',
             'host' => '127.0.0.1',
@@ -93,7 +93,7 @@ class DATABASE_CONFIG {
         );
 
         public function __construct() {
-                $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) . '_cms' : FALSE;
+                $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) : FALSE;
                 /** a different test/local configuration (shall not be the same as production)*/
                 $test['host'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
                 $test['port'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");

@@ -66,14 +66,17 @@ When deployment happens on server-side or is triggered by a git push event, 'sou
 
 The following variables must be set up as server environment, provided by your **database administrator**:
 
-    # Sqlite_cms, Postgres_cms
-    DATABASE_ENGINE:Mysql_cms
+    # SqliteCms, PostgresCms
+    DATABASE_ENGINE:MysqlCms
+
+>Note: DB Engine selects CakePhp Model/Datasource/Database DBOSource class to configure SQL connections.    
+
     DATABASE_NAME:default
-    DATABASE_SERVICE_NAME:mysql
+    DATABASE_SERVICE_NAME:MYSQL
     # a host alias or IP address
     MYSQL_SERVICE_HOST:mysql
 
->Note: Prefixed with *TEST_* they are used by the index.php?test=1 URLs and ./test-cake.sh (also in post git commit to test)
+>Note: Prefixed with *TEST_* they are used by the index.php?test=1 URLs and ./test-cake.sh (--travis)
 
 The following additional variables must be set up as server secrets environment, provided by your database administrator:
 

@@ -5,7 +5,7 @@ cache:
     - $HOME/.composer/cache/files
 env:
   matrix:
-    - DB=Mysql
+    - DB=MysqlCms
   global:
     - PHPUNIT=4
     - PHPCS=3

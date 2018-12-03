@@ -15,9 +15,9 @@ Required VARIABLES  in .travis.yml or Pod environment
   DATABASE_PASSWORD: <user-password>
   TEST_DATABASE_USER: <database-rw-user>
   TEST_DATABASE_PASSWORD: <user-password>
-  if [ DB='Mysql' ]; then
+  if [ DB='MysqlCms' ]; then
     TEST_MYSQL_SERVICE_HOST: <mysql-host>
-  else if [ DB='pgsql' ]; then
+  else if [ DB='PostgresCms' ]; then
     TEST_POSTGRES_SERVICE_HOST: <postgres-host>
   fi
 optional environment VARIABLES in .travis.yml
@@ -36,12 +36,12 @@ if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
   sudo locale-gen de_DE
   sudo locale-gen es_ES
 fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
-if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
-if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
-if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
+if [[ ${DB} == 'MysqlCms' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'MysqlCms' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'MysqlCms' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'PostgresCms' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
+if [[ ${DB} == 'PostgresCms' ]]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
+if [[ ${DB} == 'PostgresCms' ]]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
 chmod -R 777 ./app/tmp
 if [[ ("${TRAVIS_OS_NAME}" == "linux") && (${TRAVIS_PHP_VERSION:0:3} == "5.3") ]] ; then pecl install timezonedb ; fi
 if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
@@ -117,7 +117,7 @@ echo "<?php
     'prefix' => ''
   );
   public function __construct() {
-    \$db = 'Mysql';
+    \$db = 'MysqlCms';
     if (!empty(\$_SERVER['DB'])) {
       \$db = \$_SERVER['DB'];
     }
