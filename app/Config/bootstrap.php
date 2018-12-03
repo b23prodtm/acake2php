@@ -124,12 +124,5 @@ CakeLog::config('error', array(
 	'file' => 'error',
 ));
 
-/**
- * Load DebugKit plugin
- */
-CakePlugin::load('DebugKit');
-
-/**
- * Load Markdown Plugin
- */
-CakePlugin::load(array('Markdown' => array('bootstrap' => true)));
+/** PHP autoloader shall detect applcation plugins from this profile */
+include_once APP . 'Config' . DS . 'boot_profile.cms.php';

@@ -20,7 +20,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 App::uses('Controller', 'Controller');
-App::import('file', 'Index', false, array(WWW_ROOT . 'php-cms' . DS . 'e13' . DS . 'include' . DS), 'php_index.inc.php');
+App::uses('Index', 'Cms');
 
 /**
  * Application Controller
@@ -40,20 +40,20 @@ class AppController extends Controller {
             'Flash' => array(
                 'className' => 'MyFlash'));
         public $helpers = array('Markdown.Markdown', 'Flash');
-        var $r;
+        protected $_r;
 
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
 
                 /* initialise les $GLOBALS et le sitemap */
-                $this->r = new Index($this->View, ROOT . DS . 'index.php', false, WWW_ROOT . 'php-cms/');
+                $this->_r = new Index($this->View, APP . 'index.php', false, WWW_ROOT . 'php_cms/');
                 /* map pIndex -> URL */
-                $this->set("i_sitemap", $this->r->sitemap);
+                $this->set("i_sitemap", $this->_r->sitemap);
         }
 
         public function beforeFilter() {
                 /* internationalisation (i18n) */
-                Configure::write('Config.language', $this->r->getLanguage());
+                Configure::write('Config.language', $this->_r->getLanguage());
         }
 
         /**
@@ -61,7 +61,7 @@ class AppController extends Controller {
          */
         public function images($p = NULL) {
                 //debug($this->request->params);
-                $this->response->file($GLOBALS["images"] . DS . $p);
+                $this->response->file($GLOBALS["images"] . $p);
                 $this->response->send();
         }
 
