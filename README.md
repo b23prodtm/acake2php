@@ -23,6 +23,13 @@ It includes a link to [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) a
 You do not need to change anything in your existing PHP project's repository.
 However, if these files exist they will affect the behavior of the build process:
 
+* **submodules**
+
+  The myphpcms folder includes modules that need to be pulled in order to install locally.
+  After the first checkout browse to myphpcms folder and do 
+  ```git submodule update --init --recursive```
+  You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the myphpcms folder and start over.
+
 * **composer.json**
 
   List of dependencies to be installed with `composer`. The format is documented
@@ -39,7 +46,7 @@ This repository is compatible with PHP 5.6 and higher, excluding any alpha or be
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
 
-       [](http://www.apache.org/licenses/LICENSE-2.0)
+   * [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
