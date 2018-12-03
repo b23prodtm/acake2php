@@ -1,5 +1,8 @@
 #!/bin/bash
 pwd=`pwd`
+pass=""
+salt=""
+hash_file=""
 cd app/webroot/php_cms/e13/etc/
 # passed args from shell_prompt
 while [[ "$#" > 0 ]]; do case $1 in

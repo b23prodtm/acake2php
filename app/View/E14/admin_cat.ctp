@@ -29,11 +29,12 @@ if ($pMethod === 'ajouter') {
                 } else {
                         $cp = "0";
                 }
-                if (!$sql->query("INSERT INTO categorie (nom, parent) VALUES ('" . filter_input(INPUT_POST, 'newcat') . "', '$cp')")) {
+                $newcat_nom = htmlspecialchars(filter_input(INPUT_POST, 'newcat'), ENCODE_HTML, ENCODE_CS);
+                if (!$sql->query("INSERT INTO categorie (nom, parent) VALUES ('" . $newcat_nom . "', '$cp')")) {
                         echo $r->lang("cat_sauve_echec", "categories");
                         $sql->afficheErreurs();
                 } else {
-                        echo $r->lang("cat_sauve", "categories") . " (" . filter_input(INPUT_POST, 'newcat') . ").";
+                        echo $r->lang("cat_sauve", "categories") . " (" . $newcat_nom . ").";
                 }
                 unset($_POST);
         }
@@ -106,7 +107,7 @@ if ($pMethod === 'modifier') {
                 $id = $cat['id'];
                 if ($nom === NULL || !$nom) {
                         echo $r->lang("cat_incomplet", "categories");
-                } elseif (!$sql->query("UPDATE categorie SET nom = '" . $nom . "', parent = " . $parent . " WHERE id = " . $id)) {
+                } elseif (!$sql->query("UPDATE categorie SET nom = '" . htmlspecialchars($nom, ENCODE_HTML, ENCODE_CS) . "', parent = " . $parent . " WHERE id = " . $id)) {
                         echo $r->lang("cat_sauve_echec", "categories");
                 } else {
                         echo $r->lang("cat_sauve", "categories");
@@ -118,11 +119,11 @@ if ($pMethod === 'modifier') {
         if (filter_input(INPUT_POST, 'cat_mod')) {
                 $chSelect = new ChampCache("cat_mod", filter_input(INPUT_POST, 'cat_mod'));
                 $cat = CAT_getCat(filter_input(INPUT_POST, 'cat_mod'), $sql); // donnÈes de la categorie
-                $f->nom = $r->lang("modifier", "categories") . CAT_getNom($cat, $sql);
+                $f->nom = $r->lang("modifier", "categories") . htmlspecialchars_decode(CAT_getNom($cat, $sql), ENCODE_HTML);
 
                 $chNom = new ChampTexte("new_nom", $r->lang("newcat_lab", "categories"), $r->lang("newcat_dsc", "categories"), 10, NULL, $cat["nom"]);
                 $f->ajouterChamp($chNom);
-                $chParent = CAT_getSelect($sql, "new_parent", $r->lang("newcat_parent_lab", "categories"), $r->lang("newcat_parent_dsc", "categories") . " (" . $cat["parent"] . ")", $cat['parent'], $cat["nom"]);
+                $chParent = CAT_getSelect($sql, "new_parent", $r->lang("newcat_parent_lab", "categories"), $r->lang("newcat_parent_dsc", "categories") . " (" . $cat["parent"] . ")", $cat['parent'], htmlspecialchars_decode($cat["nom"], ENCODE_HTML));
                 $f->ajouterChamp($chParent);
         }
         $valid = new ChampValider($r->lang("valider", "form"));
