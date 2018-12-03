@@ -15,16 +15,16 @@ Required VARIABLES  in .travis.yml or Pod environment
   DATABASE_PASSWORD: <user-password>
   TEST_DATABASE_USER: <database-rw-user>
   TEST_DATABASE_PASSWORD: <user-password>
-  if [ DB='MysqlCms' ]; then
+  if [ DB='Mysql' ]; then
     TEST_MYSQL_SERVICE_HOST: <mysql-host>
-  else if [ DB='PostgresCms' ]; then
+  else if [ DB='Postgres' ]; then
     TEST_POSTGRES_SERVICE_HOST: <postgres-host>
   fi
 optional environment VARIABLES in .travis.yml
   ADDITIONAL_PHP_INI='path to a php.ini settings file'
 ==========================
 ";
-[ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [[ (! -z $TEST_MYSQL_SERVICE_HOST) || (! -z $TEST_POSTGRES_SERVICE_HOST) ]] || echo "Missing VARIABLES. Please review your settings !"
+[ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [[ (! -z $TEST_MYSQL_SERVICE_HOST) || (! -z $TEST_PGSQL_SERVICE_HOST) ]] || echo "Missing VARIABLES. Please review your settings !"
 php bin/composer.phar install --no-interaction
 if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
 mkdir -p build/logs
@@ -36,12 +36,12 @@ if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
   sudo locale-gen de_DE
   sudo locale-gen es_ES
 fi
-if [[ ${DB} == 'MysqlCms' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
-if [[ ${DB} == 'MysqlCms' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
-if [[ ${DB} == 'MysqlCms' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
-if [[ ${DB} == 'PostgresCms' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
-if [[ ${DB} == 'PostgresCms' ]]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
-if [[ ${DB} == 'PostgresCms' ]]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
+if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
+if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
 chmod -R 777 ./app/tmp
 if [[ ("${TRAVIS_OS_NAME}" == "linux") && (${TRAVIS_PHP_VERSION:0:3} == "5.3") ]] ; then pecl install timezonedb ; fi
 if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
@@ -64,7 +64,7 @@ echo "<?php
     ),
     'Pgsql' => array(
       'datasource' => 'Database/PostgresCms',
-      'host' => '${TEST_POSTGRES_SERVICE_HOST}',
+      'host' => '${TEST_PGSQL_SERVICE_HOST}',
       'login' => '${TEST_DATABASE_USER}',
       'database' => 'cakephp_test',
       'schema' => array(
@@ -117,7 +117,7 @@ echo "<?php
     'prefix' => ''
   );
   public function __construct() {
-    \$db = 'MysqlCms';
+    \$db = 'Mysql';
     if (!empty(\$_SERVER['DB'])) {
       \$db = \$_SERVER['DB'];
     }

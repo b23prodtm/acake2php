@@ -125,6 +125,7 @@ if [[ $import_identities -eq 1 ]]; then
   export TEST_DATABASE_PASSWORD=$set_TEST_DATABASE_PASSWORD
 fi
 if [[ $update_checked -eq 1 ]]; then
+  show_password_status "$DATABASE_USER" "$DATABASE_PASSWORD" "is updating cake schemas"
   #; update plugins and dependencies
   source ./Scripts/composer.sh "-o"
   #; cakephp shell
