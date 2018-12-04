@@ -1,10 +1,10 @@
 <?php
-if (!$i_sitemap) { require_once '../include/php_index.inc.php'; }
+if (!$i_sitemap) { require_once '../include/Index.php'; }
 $r = new Index($this);
 
-require_once $GLOBALS['include__php_SQL.class.inc'];
-require_once $GLOBALS['include__php_constantes.inc'];
-require_once $GLOBALS['include__php_module_cat.inc'];
+require $r->r['include__php_SQL.class.inc'];
+require $r->r['include__php_constantes.inc'];
+require $r->r['include__php_module_cat.inc'];
 
 $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 

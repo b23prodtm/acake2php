@@ -1,7 +1,7 @@
 <?php
 
 if (stristr($p, ".php")) {
-        include $GLOBALS["blog"] . DS . $p;
+        require $r->r["blog"] . DS . $p;
 } else {
-        include $GLOBALS["blog__index"];
+        require $r->r["blog__index"];
 }

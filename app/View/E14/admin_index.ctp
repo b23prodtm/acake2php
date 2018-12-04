@@ -1,6 +1,6 @@
 <?php
 if (!$i_sitemap) {
-        require '../include/php_index.inc.php';
+        require '../include/Index.php';
 }
 $r = new Index();
 if ($pIndex === "admin__log_off") :
@@ -24,4 +24,3 @@ else :
         echo $this->get('i_menu');
 endif;
 ?>
-

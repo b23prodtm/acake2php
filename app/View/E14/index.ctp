@@ -4,9 +4,9 @@ if(isset($p) && array_key_exists("e13__" . $p, $GLOBALS)){
         include($GLOBALS["e13__" . $p]);
 } else {
         $r = new Index($this);
-        require_once $GLOBALS['include__php_info.class.inc'];
-        require_once $GLOBALS['include__php_SQL.class.inc'];
-        require_once $GLOBALS['include__php_constantes.inc'];
+        require $r->r['include__php_info.class.inc'];
+        require $r->r['include__php_SQL.class.inc'];
+        require $r->r['include__php_constantes.inc'];
 
         $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 

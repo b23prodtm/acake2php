@@ -1,10 +1,10 @@
 <?php
 
 $r = new Index($this);
-require_once $GLOBALS['include__php_page.class.inc'];
-require_once $GLOBALS['include__php_info.class.inc'];
-require_once $GLOBALS['include__php_SQL.class.inc'];
-require_once $GLOBALS['include__php_constantes.inc'];
+require $r->r['include__php_page.class.inc'];
+require $r->r['include__php_info.class.inc'];
+require $r->r['include__php_SQL.class.inc'];
+require $r->r['include__php_constantes.inc'];
 
 $contenu = $r->lang("contents", "infos");
 

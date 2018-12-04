@@ -1,15 +1,15 @@
 <?php
 
 if (!$i_sitemap) {
-        require '../include/php_index.inc.php';
+        require '../include/Index.php';
 }
 $r = new Index($this);
-require_once $GLOBALS['include__php_page.class.inc'];
-require_once $GLOBALS['include__php_formulaire.class.inc'];
-require_once $GLOBALS['include__php_SQL.class.inc'];
-require_once $GLOBALS['include__php_constantes.inc'];
-require_once $GLOBALS['include__php_info.class.inc'];
-require_once $GLOBALS['include__php_image.class.inc'];
+require $r->r['include__php_page.class.inc'];
+require $r->r['include__php_formulaire.class.inc'];
+require $r->r['include__php_SQL.class.inc'];
+require $r->r['include__php_constantes.inc'];
+require $r->r['include__php_info.class.inc'];
+require $r->r['include__php_image.class.inc'];
 
 echo "<br><center><b>" . $r->lang("admininfos") . "</b></center><br>";
 $liste = HTML_listeDebut();

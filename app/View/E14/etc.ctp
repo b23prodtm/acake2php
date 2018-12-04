@@ -1,7 +1,7 @@
 <?php
 if ($p) {
-        include $GLOBALS['etc'] . DS . $p;
+        require $r->r['etc'] . DS . $p;
 } else {
-        include $GLOBALS['etc__index'];
+        require $r->r['etc__index'];
 }
 ?>
