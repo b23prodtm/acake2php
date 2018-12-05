@@ -1,7 +1,9 @@
 <?php
-if ($p) {
+if ($p && isset($r)) {
         require $r->r['etc'] . DS . $p;
-} else {
+} else if (isset($r)){
         require $r->r['etc__index'];
+} else {
+  // code...
 }
 ?>

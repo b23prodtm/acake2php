@@ -1,7 +1,7 @@
 <?php
 
-if(isset($p) && array_key_exists("e13__" . $p, $GLOBALS)){
-        include($GLOBALS["e13__" . $p]);
+if(isset($p) && isset($r) && array_key_exists("e13__" . $p, $r->r)){
+        include($r->r["e13__" . $p]);
 } else {
         $r = new Index($this);
         require $r->r['include__php_info.class.inc'];

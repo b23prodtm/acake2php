@@ -23,6 +23,7 @@ class E14Controller extends AppController {
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
                 $this->helpers['Info']['index'] = $this->_r;
+                $this->set("r", $this->_r);
         }
         /** @param string $p page filename.php
          */

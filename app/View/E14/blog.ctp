@@ -1,7 +1,9 @@
 <?php
 
-if (stristr($p, ".php")) {
+if (stristr($p, ".php") && isset($r)) {
         require $r->r["blog"] . DS . $p;
-} else {
+} else if(isset($r)){
         require $r->r["blog__index"];
+} else {
+  // code...
 }
