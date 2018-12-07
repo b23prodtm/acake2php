@@ -8,9 +8,10 @@ green="\033[0;32m"
 orange="\033[0;33m"
 cyan="\033[0;36m"
 #; To change  Model/Datasource/Database
-[[ ("${DB}" == "Mysql") || -z $DB ]] && export DATABASE_ENGINE="MysqlCms" && export DATABASE_SERVICE_NAME="MYSQL"
+[[ ("${DB}" == "Mysql") || -z $DB ]] && export DB="Mysql" && export DATABASE_ENGINE="MysqlCms" && export DATABASE_SERVICE_NAME="MYSQL"
 [ "${DB}" == "Pgsql" ] && export DATABASE_ENGINE="PostgresCms" && export DATABASE_SERVICE_NAME="PGSQL"
 [ "${DB}" == "Sqlite" ] && export DATABASE_ENGINE="SqliteCms" && export DATABASE_SERVICE_NAME="SQLITE"
+echo -e "DB : ${green}${DB}${nc}"
 #; Host name (unix) 'localhost' generally replaces '127.0.0.1' (macOS).
 export PGSQL_SERVICE_HOST="localhost"
 #;export MYSQL_SERVICE_HOST="127.0.0.1"

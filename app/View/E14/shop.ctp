@@ -1,7 +1,7 @@
 <?php
 
 if (stristr($p, ".php")) {
-        require $r->r["shop"] . DS . $p;
+        include $r->r["shop"] . DS . $p;
 } else {
-        require $r->r["shop__index"];
+        include $r->r["shop__index"];
 }

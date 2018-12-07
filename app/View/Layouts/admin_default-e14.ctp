@@ -1,8 +1,6 @@
 <?php
-
-if (isset($pIndex)) {
-        $r = new Index($this);
-        require $r->r['include__php_page.class.inc'];
+App::uses('Page', 'Cms');
+if (isset($pIndex) && isset($r)) {
         /** no header sent to allow header() redirections */
         $page = new ADMIN_Page($r, $pIndex, session_id(), array(), $pIndex === "admin__log_off");
         $page->ajouterContenu($this->fetch('content'));

@@ -25,7 +25,7 @@ class E14Controller extends AppController {
                 $this->helpers['Info']['index'] = $this->_r;
                 $this->set("r", $this->_r);
         }
-        /** @param string $p page filename.php
+        /** @param string $p page filename.php (optional)
          */
         public function index($p = NULL, $images = NULL) {
                 if ($p === "images") {
@@ -35,6 +35,7 @@ class E14Controller extends AppController {
                         $this->set("p", $p);
                 }
                 //i_debug("p : " . $p);
+                $this->set("offset", 1);
                 $this->set("pIndex", "e13__index");
                 $this->render("index", "default-e14");
         }
@@ -50,13 +51,13 @@ class E14Controller extends AppController {
         }
 
         /**
-         * @param int $np paginate number
+         * @param int $offset paginate number
          * @param int $count count per page
          * @param int $YYYY 4-digit year
          * @param int $MM 2-digit month
          * @param int $DD 2-digit day
          */
-        public function infos($np = 1, $count = 10, $YYYY = NULL, $MM = NULL, $DD = NULL) {
+        public function infos($offset = 1, $count = 10, $YYYY = NULL, $MM = NULL, $DD = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 $this->set("pIndex", "infos__index");
@@ -77,7 +78,7 @@ class E14Controller extends AppController {
                         $this->set("d", $d);
                 }
                 $this->set("count", $count);
-                $this->set("np", $np);
+                $this->set("offset", $offset);
                 $this->render("infos", "default-e14");
         }
 
@@ -94,18 +95,18 @@ class E14Controller extends AppController {
 
         /**
          * @param int categorie
-         * @param int $np paginate number
+         * @param int $offset paginate number
          * @param int $count count per page
          * @param int $YYYY 4-digit year
          * @param int $MM 2-digit month
          * @param int $DD 2-digit day
          */
-        public function cat($cat = NULL, $np = 1, $count = 10, $YYYY = NULL, $MM = NULL, $DD = NULL) {
+        public function cat($cat = NULL, $offset = 1, $count = 10, $YYYY = NULL, $MM = NULL, $DD = NULL) {
                 //debug($this->request->params);
                 //debug($GLOBALS);
                 if (isset($cat)) {
                         $this->set("cat", $cat);
-                        $this->infos($np, $count, $YYYY, $MM, $DD);
+                        $this->infos($offset, $count, $YYYY, $MM, $DD);
                 } else {
                         $this->set("pIndex", "cat__index");
                         $this->render(null, "default-e14");
