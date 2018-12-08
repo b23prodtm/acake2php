@@ -42,6 +42,30 @@ However, if these files exist they will affect the behavior of the build process
   Plugins are registered in both _git submodule_ and _composer.json_. To allow a plugin to accept ```composer update```, edit _composer.json_ according to the available released tags. In the plugin's home repository (app/Plugin/<plugin-name>/), call```git tag``` or  ``git log``` for more information.
   >_DEVELOPER TIP:_ To push tags : ```git tag`<version> && git push --tags```.   
 
+* **.htaccess**
+
+  To allow Apache server to browse directly to the app/webroot folder on server-side, use mod_rewrite rules, as provided by .htaccess files.
+
+  >/.htaccess
+
+      <IfModule mod_rewrite.c>
+        RewriteEngine on
+        # Uncomment if you have a .well-known directory in the root folder, e.g. for the Let's Encrypt challenge
+        # https://tools.ietf.org/html/rfc5785
+        #RewriteRule ^(\.well-known/.*)$ $1 [L]
+        RewriteRule ^$ app/webroot/ [L]
+        RewriteRule (.*) app/webroot/$1 [L]
+      </IfModule>
+
+  >/app/.htaccess
+
+      <IfModule mod_rewrite.c>
+         RewriteEngine on
+         RewriteBase /app/
+         RewriteRule    ^$    webroot/    [L]
+         RewriteRule    (.*) webroot/$1    [L]
+      </IfModule>
+
 ### Compatibility
 
 This repository is compatible with PHP 5.6 and higher, excluding any alpha or beta versions.
