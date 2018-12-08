@@ -11,8 +11,9 @@ while [[ "$#" > 0 ]]; do case $1 in
             Exports DATABASE_PASSWORD to bootargs.
         -t,--test-sql-password=<password>
             Exports TEST_DATABASE_PASSWORD
-        -c <command> <options>
+        -c <command> <options> [--help]
             lib/Cake/Console/cake <command> <options>
+            E.g. $0 -c server --help
         "
         exit 0;;
   -[pP]*|--sql-password*)

@@ -1,8 +1,6 @@
 <?php
 
-$r = new Index($this, __FILE__ , false, WWW_ROOT . 'php_cms' . DS);
-
-require $r->r["include__php_module_DVD.inc"];
+require APP . $r->r["include__php_module_DVD.inc"];
 $pageUrl = $r->sitemap[$pIndex];
 if ($nom && $base) {
 

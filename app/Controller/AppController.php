@@ -47,8 +47,6 @@ class AppController extends Controller {
 
                 /* initialise les $GLOBALS et le sitemap */
                 $this->_r = new Index($this->View, APP . 'index.php', true, WWW_ROOT . 'php_cms');
-                /* map pIndex -> URL */
-                $this->set("i_sitemap", $this->_r->sitemap);
         }
 
         public function beforeFilter() {
@@ -61,7 +59,7 @@ class AppController extends Controller {
          */
         public function images($p = NULL) {
                 //debug($this->request->params);
-                $this->response->file($GLOBALS["images"] . $p);
+                $this->response->file($this->_r->r["images"] . $p);
                 $this->response->send();
         }
 

@@ -1,7 +1,8 @@
 <?php
 if(isset($p) && isset($r) && array_key_exists("e13__" . $p, $r->r)){
-        include $r->r["e13__" . $p];
+        include APP . $r->r["e13__" . $p];
 } else if (isset($r) && isset($offset)) {
+        require APP . $r->r["include__php_constantes.inc"];
         $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
         /** test de la connexion */
         if ($sql->connect_succes()) {
@@ -10,7 +11,7 @@ if(isset($p) && isset($r) && array_key_exists("e13__" . $p, $r->r)){
                 $pages = array();
                 $np = isset($offset) ? $offset : 1;
                 echo $this->Info->getInfoFlashN($np, $pages);
-                foreach($pages as $n => $np) {
+                foreach($pages as $n => $offset) {
                         $this->Html->addCrumb($n, $pageUrl . "/" . $offset);
                 }
                 echo "[ " . $this->Html->getCrumbs(" - ") . " ]";

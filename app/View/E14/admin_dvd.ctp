@@ -1,13 +1,8 @@
 <?php
 
-/** TODO : pass cakephp tools */
-if (!$i_sitemap) {
-        require '../include/Index.php';
-}
-$r = new Index($this);
-require $r->r["include__php_page.class.inc"];
-require $r->r["include__php_module_html.inc"];
-require $r->r["include__php_module_DVD.inc"];
+App::uses('Page', 'Cms');
+require APP . $r->r["include__php_module_html.inc"];
+require APP . $r->r["include__php_module_DVD.inc"];
 
 $clefPage = "admin__";
 $ajouter = $r->sitemap[$clefPage . 'ajouter'];

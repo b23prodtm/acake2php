@@ -1,15 +1,6 @@
 <?php
-
-if (!$i_sitemap) {
-        require '../include/Index.php';
-}
-$r = new Index($this);
-require $r->r['include__php_page.class.inc'];
-require $r->r['include__php_formulaire.class.inc'];
-require $r->r['include__php_SQL.class.inc'];
-require $r->r['include__php_constantes.inc'];
-require $r->r['include__php_info.class.inc'];
-require $r->r['include__php_image.class.inc'];
+App::uses(array('SQL', 'Page', 'Formulaire', 'Info', 'Image'), 'Cms');
+require APP . $r->r['include__php_constantes.inc'];
 
 echo "<br><center><b>" . $r->lang("admininfos") . "</b></center><br>";
 $liste = HTML_listeDebut();
