@@ -39,14 +39,19 @@ class AppController extends Controller {
         public $components = array('DebugKit.Toolbar',
             'Flash' => array(
                 'className' => 'MyFlash'));
-        public $helpers = array('Markdown.Markdown', 'Flash');
+        public $helpers = array('Info' => array(
+                'index' => null,
+                'countPerPage' => '10',
+                'md' => true
+              ), 'Markdown.Markdown' => true, 'Form', 'Html', 'Js', 'Time', 'Flash');
         protected $_r;
 
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
-
                 /* initialise les $GLOBALS et le sitemap */
                 $this->_r = new Index($this->View, APP . 'index.php', true, WWW_ROOT . 'php_cms');
+                $this->helpers['Info']['index'] = $this->_r;
+                $this->set("r", $this->_r);
         }
 
         public function beforeFilter() {

@@ -14,17 +14,11 @@ App::uses('AppController', 'Controller');
  */
 class E14Controller extends AppController {
 
-        public $helpers = array('Info' => array(
-                'index' => null,
-                'countPerPage' => '10',
-                'Markdown' => true
-              ), 'HTML', 'Flash');
+        public $helpers = array();
 
 
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
-                $this->helpers['Info']['index'] = $this->_r;
-                $this->set("r", $this->_r);
         }
         /** @param string $p page filename.php (optional)
          */

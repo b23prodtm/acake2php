@@ -12,10 +12,10 @@ if(isset($p) && isset($r) && array_key_exists("e13__" . $p, $r->r)){
                 $pages = array();
                 $np = isset($offset) ? $offset : 1;
                 echo $this->Info->getInfoFlashN($np, $pages);
-                foreach($pages as $n => $offset) {
-                        $this->Html->addCrumb($n, $pageUrl . "/" . $offset);
+                foreach($pages as $text => $offset) {
+                        $this->Html->addCrumb($text, $pageUrl . "/" . $offset);
                 }
-                echo "[ " . $this->Html->getCrumbs(" - ") . " ]";
+                echo "[ " . $this->Html->getCrumbs(" - ", array('escape' => false)) . " ]";
         } else {
                 echo $this->Html->link("MySQL configuration error : " . ERROR_DB_CONNECT, $r->sitemap["e13__index"] . "?debug=1");
         }

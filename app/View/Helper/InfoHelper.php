@@ -15,15 +15,15 @@ class InfoHelper extends AppHelper {
 	var $pageCount;
 	var $md;
 	var $sql;
-	public function __construct(View $view, $settings = array("index" => null, "countPerPage" => "5", "Markdown" => true)) {
+	public function __construct(View $view, $settings = array("index" => null, "countPerPage" => "5", "md" => true)) {
 		parent::__construct($view, $settings);
 		$this->r = $settings["index"];
     $this->r->view = $view;
 		if(array_key_exists("countPerPage", $settings)) {
 				$this->pageCount = $settings["countPerPage"];
 		}
-		if(array_key_exists("Markdown", $settings)) {
-				$this->md = $settings["Markdown"];
+		if(array_key_exists("md", $settings)) {
+				$this->md = $settings["md"];
 		}
 		$this->sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 	}
