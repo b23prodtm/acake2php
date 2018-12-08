@@ -63,10 +63,7 @@ class InfoHelper extends AppHelper {
 							$n = mysqli_num_rows($infos);
 							/* recherche ordre inverse du tri */
 							while($this->sql->selectLigne($infos, --$n)){
-								$lastinfo = new Info($this->sql, $infos);
-								$c = $lastinfo->getContenu();
-								$lastinfo->setContenu($this->md ? $this->r->view->Markdown->transform($c) : $c);
-								$result[] = $lastinfo;
+								$result[] = new Info($this->sql, $infos);
 							}
 							mysqli_free_result($infos);
 					} else {
@@ -91,6 +88,9 @@ class InfoHelper extends AppHelper {
 			foreach($result as $ifo) {
 					$lastinfo->images = array_merge($lastinfo->images, $ifo->images);
 			}
+      $c = $lastinfo->getContenu();
+      $c = $this->md ? $this->r->view->Markdown->transform($c) : $c;
+      $lastinfo->setContenu($c);
 			/* restauration du tableau en HTML */
 			$html = $lastinfo->tableauImages($this->sql, TBL_DIV);
 			/* recuperer la taille de l'image la plus grande */
@@ -137,7 +137,7 @@ class InfoHelper extends AppHelper {
 	* @param int $n numero de page a recuperer
 	* @param array $pages variable de retour, les numeros d'offset de pages
 	* @return chaine HTML */
-	function getInfoFlashN($offset = 0, &$pages = array()) {
+	function getInfoFlashN($offset = 0, &$pages = array(), $characters = 160) {
 			$html = "";
 			$infos = array();
 			/* SQL offset d'une page */
@@ -149,9 +149,9 @@ class InfoHelper extends AppHelper {
 			$this->__getInfo($this->pageCount, $offset, $infos);
 			/* contenu de la page */
 			foreach($infos as $lastinfo) {
-						$c = $lastinfo->getContenu(null, true, true, 160);
+						$c = $lastinfo->getContenu(null, true, true, $characters);
 						$c = $this->md ? $this->r->view->Markdown->transform($c) : $c;
-						$html .= $this->r->view->HTML->para("info_flash", $lastinfo->getLien($lastinfo->getTitre()) . "<br>" . $c . "...\n");
+						$html .= $this->r->view->HTML->para("info_flash", $lastinfo->getLien($lastinfo->getTitre()) . "<p>" . $c . "...</p>\n");
 			}
 			return $html;
 	}

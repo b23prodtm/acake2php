@@ -17,7 +17,8 @@ class E14Controller extends AppController {
         public $helpers = array('Info' => array(
                 'index' => null,
                 'countPerPage' => '10',
-                'Markdown' => true));
+                'Markdown' => true
+              ), 'HTML', 'Flash');
 
 
         public function __construct($request = null, $response = null) {
