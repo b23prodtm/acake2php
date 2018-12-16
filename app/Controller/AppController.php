@@ -43,7 +43,7 @@ class AppController extends Controller {
                 'index' => null,
                 'countPerPage' => '10',
                 'md' => true
-              ), 'Markdown.Markdown' => true, 'Form', 'Html', 'Js', 'Time', 'Flash');
+              ), 'Markdown.Markdown' => true, 'Text', 'Form', 'Html', 'Js', 'Time', 'Flash');
         protected $_r;
 
         public function __construct($request = null, $response = null) {
