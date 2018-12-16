@@ -149,11 +149,23 @@ class InfoHelper extends AppHelper {
 			$this->__getInfo($this->pageCount, $offset, $infos);
 			/* contenu de la page */
 			foreach($infos as $lastinfo) {
-						$c = $lastinfo->getContenu(null, true, true, $characters);
+						$c = $this->clearTags($lastinfo->getContenu(null, true, true, $characters));
 						$c = $this->md ? $this->r->view->Markdown->transform($c) : $c;
+
 						$html .= $this->r->view->HTML->para("info_flash", $lastinfo->getLien($lastinfo->getTitre()) . "<p>" . $c . "...</p>\n");
 			}
 			return $html;
 	}
 
+  function clearTags($text, $pattern = "|<[^>]+>(.*)</[^>]+>|U") {
+      $sptn = "|<[^>]+>?(.*)|U";
+      if(preg_match_all($pattern, $text, $match, PREG_PATTERN_ORDER) > 0) {
+          return $this->clearTags(implode($match[1]), $pattern);
+      } else if($sptn !== $pattern) {
+          return $this->clearTags($text, $sptn);
+      } else {
+          $text = explode(" ", $text);
+          return implode(" ",array_slice($text, 0, count($text) - 1));
+      }
+  }
 }

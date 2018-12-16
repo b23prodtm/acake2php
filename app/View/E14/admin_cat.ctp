@@ -1,5 +1,5 @@
 <?php
-App:uses(array('SQL', 'Page', 'Formulaire'), 'Cms');
+App::uses(array('SQL', 'Page', 'Formulaire'), 'Cms');
 require APP . $r->r['include__php_constantes.inc'];
 require APP . $r->r['include__php_module_html.inc'];
 require APP . $r->r['include__php_module_cat.inc'];
