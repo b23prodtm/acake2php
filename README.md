@@ -75,14 +75,17 @@ This repository is compatible with PHP 5.6 and higher, excluding any alpha or be
 
 Open a Terminal window:
 
-    ./start_cake.sh <options>
+    ./start-cake.sh -p=<sql-root-password>
 
->Ctrl-click the URLs to open them in the browser.
+>Ctrl-click the URLs to open them in the browser. To get more help about the command line interface :
+
+    ./start-cake.sh --help
+
 ### PHP Unit Test
 
 Open a Terminal window:
 
-    ./test-cake.sh -p=<sql-password>
+    ./test-cake.sh -p=<sql-root-password> -t=<test-password>
 
 See [below](#common-issues) to allow access on the built-in local server.
 
@@ -148,7 +151,7 @@ Configure it as a service and configure the login ACL with the user shell.
 
 * The following command resets SQL users `${DATABASE_USER}` and `${TEST_DATABASE_USER}` password :
 
-    ./migrate-database.sh -i -p --test-sql-password
+    ./migrate-database.sh -p -i -p --test-sql-password
 
 
 ### Common Issues
@@ -180,7 +183,7 @@ More about environment variables are located in the remote pod (OpenShift) setti
 
 >Note:
 
-    ./configure.sh --mig-database -i -p -t
+    ./configure.sh --mig-database -p -i -p -t
 
 to do a reset with environment root and user password.
 
@@ -189,13 +192,17 @@ to do a reset with environment root and user password.
 This looks like a first installation of mysql. You have to secure or reset your mysql root access:
 
     sudo rm -rf /usr/local/var/mysql
-    mysqld --initialize
+    mysqld --initialize | grep "temporary password" | cut -f4  -d ":" | cut -c 2-  > app/tmp/nupwd
 
-[Note] A temporary password is generated for root@localhost. Now import identities.
+>Note: A temporary password is generated for root@localhost. Now import identities.
 
     brew services restart mysql@5.7
-    ./migrate-database.sh -y -i -p=<root-password>
-    ./test-cake.sh -t=<test-password>
+    ./configure.sh --mig-database -p=$(cat app/tmp/nupwd) -i -p -t
+>You have now configured a new SQL root password and a test password. Local SQL access and server is ready to run tests:
+
+    ./test-cake.sh -p -t=<test-password>
+
+Go on to development phase with the [Local Built-in server](#local-built-in-server).
 
 4. My mysql server's upgraded to another version, what should I do ?
 
