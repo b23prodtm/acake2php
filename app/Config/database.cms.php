@@ -91,7 +91,7 @@ class DATABASE_CONFIG {
                   'login' => getenv('TEST_DATABASE_USER'),
                   'password' => getenv('TEST_DATABASE_PASSWORD'),
                   'database' => getenv('TEST_DATABASE_NAME'),
-                  'datasource' => $datasource ? $this->test['datasource'] : $datasource
+                  'datasource' => !$datasource ? $this->test['datasource'] : $datasource
                 );
                 $default = array(
                   'host' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST"),
@@ -99,7 +99,7 @@ class DATABASE_CONFIG {
                   'login' => getenv("DATABASE_USER"),
                   'password' => getenv("DATABASE_PASSWORD"),
                   'database' => getenv("DATABASE_NAME"),
-                  'datasource' => $datasource ? $this->default['datasource'] : $datasource
+                  'datasource' => !$datasource ? $this->default['datasource'] : $datasource
                 );
 
                 /* override member variables */

@@ -7,6 +7,6 @@
 	));
 	$t->setContenu_Cellule(0, 1, $message['Message']['date']);
 	$t->setContenu_Cellule(1, 1, $message['Message']['titre']);
-	$t->setContenu_Cellule(2, 1, $this->Text->autoLink($message['Message']['texte']));
+	$t->setContenu_Cellule(2, 1, $this->Markdown->transform($this->Text->autoLink($message['Message']['texte'])));
 	echo $t->fin(4);
 ?>

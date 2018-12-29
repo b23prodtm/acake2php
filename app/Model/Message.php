@@ -17,15 +17,15 @@ class Message extends AppModel {
      'titre' => array(
          'rule2' => array(
            'rule' => 'notags',
-           'message' => 'Ne peut pas contenir de HTML tags.',
-           'last' => false),
+           'message' => 'Ne peut pas contenir de tags HTML.',
+           'last' => true),
       'Requis' => array('rule' => 'notBlank')
       ),
      'texte' => array(
         'rule3' => array(
            'rule' => 'notags',
-           'message'=>'Ne peut pas contenir de HTML tags.',
-           'last' => false),
+           'message'=>'Ne peut pas contenir de tags HTML tags.',
+           'last' => true),
        'Requis' => array('rule' => 'notBlank')
       ),
      'fk_identifiant' => array(
@@ -36,11 +36,11 @@ class Message extends AppModel {
 
     public function alphaNumericDashUnderscore($check) {
         $valeur = array_values($check);
-        return preg_match('|^[0-9a-zA-Z_-]*$|', $valeur[0]);
+        return !preg_match('/^[0-9a-zA-Z_-\@\.]*$/', $valeur[0]);
     }
 
     public function notags($check) {
         $texte = array_values($check);
-        return preg_match('|<[^>]+>?(.*)|', $texte[0]);
+        return !preg_match('/<[^>]+>?(.*)/', $texte[0]);
     }
 }
