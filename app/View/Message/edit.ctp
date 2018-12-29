@@ -3,7 +3,8 @@ echo __('Éditer un message');
 echo $this->Form->create('Message');
 echo $this->Form->input('titre', array('label' => __('Entête'),
     'required' => true));
-echo $this->Form->input('texte', array('label' => __('Description'),
+echo $this->Form->input('texte', array(
+    'label' => __('Description'),
       'required' => true));
 echo $this->Form->input('fk_identifiant', array('label' => __('Pseudonyme'),
       'required' => true));

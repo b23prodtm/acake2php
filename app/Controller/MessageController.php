@@ -88,6 +88,7 @@ class MessageController extends AppController {
 	    }
 	}
 	public function delete($id) {
+			/* devier les requetes delete?id=<id> */ 
 	    if ($this->request->is('get')) {
 	        throw new MethodNotAllowedException();
 	    }
