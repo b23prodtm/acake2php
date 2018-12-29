@@ -19,7 +19,9 @@
 	"require": {
 		"php": "^5.6 || ^7",
 		"cakephp/debug_kit": "2.2.*",
-		"b23prodtm/markdown-plugin": "master@dev"
+		"b23prodtm/markdown-plugin": "master@dev",
+		"facebook/graph-sdk": "^5.7",
+		"google/apiclient": "^2.2"
 	},
 	"suggest": {
 		"ext-openssl": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption",

@@ -9,6 +9,7 @@
     + [PHP Unit Test](#php-unit-test)
     + [Server-side environment](#server-side-environment)
     + [Database configuration](#database-configuration)
+    + [Update my databases for the new release](#update-my-databases-for-the-new-release)
     + [Common Issues](#common-issues)
     + [License](#license)
 
@@ -153,6 +154,15 @@ Configure it as a service and configure the login ACL with the user shell.
 
     ./migrate-database.sh -p -i -p --test-sql-password
 
+### Update my databases for the new release
+
+When a new functionality is deployed on the development branch, the local databases should be updated with new application models. CakePhp schema migration is invoked by the command line interface:
+
+    ./migrate-database.sh -p=<root-sql-password> -u
+
+This will alter databases and permanently update the application. A snapshot is made to *schema_<snapshot-number>.php*. To rollback changes simply run:
+
+    ./start_cake.sh -p=<root-sql-password> -c schema update -s <snaphost-number>
 
 ### Common Issues
 
@@ -166,7 +176,7 @@ Index page displays:
 
 Try the following to migrate (update) all database tables, answer 'y' when prompted:
 
-    ./migrate-database.sh -u
+    ./migrate-database.sh -p=<root-sql-password> -u
 
 2. ACCESS DENIED appears with other information complaining about database connection, what does that mean ?
 

@@ -119,10 +119,8 @@ if [[ $update_checked -eq 1 ]]; then
   #; update plugins and dependencies
   source ./Scripts/composer.sh "-o"
   #; cakephp shell
-  if [ ! -f app/Config/Schema/schema.php ]; then
-    echo "Generating database schema 'cake schema generate'"
-    ./lib/Cake/Console/cake schema generate -f s
-  fi
+  echo "Generating database schema 'cake schema generate snapshot'"
+  ./lib/Cake/Console/cake schema generate snapshot
   if [ ! -f app/Config/Schema/sessions.php ]; then
       echo "Generating default Sessions table"
       ./lib/Cake/Console/cake schema create Sessions -y

@@ -66,7 +66,8 @@ class MessageController extends AppController {
 
 	public function edit($id = null) {
 	    if (!$id) {
-	        throw new NotFoundException(__('Message invalide'));
+/*	        throw new NotFoundException(__('Message invalide'));*/
+			return $this->redirect(array('action' => 'add'));
 	    }
 
 	    $post = $this->Message->findById($id);
@@ -86,9 +87,11 @@ class MessageController extends AppController {
 	    if (!$this->request->data) {
 	        $this->request->data = $post;
 	    }
-	}
+			$this->set("pIndex","contactus__edit");
+			$this->render(null, "default-e14");
+}
 	public function delete($id) {
-			/* devier les requetes delete?id=<id> */ 
+			/* devier les requetes delete?id=<id> */
 	    if ($this->request->is('get')) {
 	        throw new MethodNotAllowedException();
 	    }

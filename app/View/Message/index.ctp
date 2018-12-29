@@ -17,7 +17,7 @@ for ($i = 1; $i < count($messages) + 1; $i++) {
 			'action' => 'view', $message['Message']['id']))
 		);
 		$t->setContenu_Cellule($i, 2, $message['Message']['date']);
-		$t->setContenu_Cellule($i, 3, $this->Html->link(__('Edit'), array(
+		$t->setContenu_Cellule($i, 3, $this->Html->link(__('Modifier un message'), array(
 			'action' => 'edit', $message['Message']['id']))
 		);
 		$t->setContenu_Cellule($i, 4, $this->Form->postLink(
