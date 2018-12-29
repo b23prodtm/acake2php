@@ -1,10 +1,10 @@
 <?php
-echo __('Éditer un message');
+echo __('Modifier un message');
 echo $this->Form->create('Message');
-echo $this->Form->input('titre', array('label' => __('Entête'),
+echo $this->Form->input('titre', array('label' => __('Sujet de votre message'),
     'required' => true));
 echo $this->Form->input('texte', array(
-    'label' => __('Description'),
+    'label' => __('Contenu du message'),
       'required' => true));
 echo $this->Form->input('fk_identifiant', array('label' => __('Pseudonyme'),
       'required' => true));

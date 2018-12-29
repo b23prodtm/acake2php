@@ -1,5 +1,5 @@
 {
-	"name": "betothreeprod/acake2php",
+	"name": "b23prodtm/myphpcms",
 	"description": "CMS featuring CakePHP Framework",
 	"homepage": "https://www.sourceforge.net/projects/pohse",
 	"license": "MIT",
@@ -21,24 +21,24 @@
 		"cakephp/debug_kit": "2.2.*",
 		"betothreeprod/markdown-plugin": "dev-master",
 		"betothreeprod/updateshell": "dev-development",
-		"cakephp/datasources": "2.3.x-dev"
+		"cakephp/datasources": "2.3.x-dev",
+		"facebook/graph-sdk": "^5.7",
+		"google/apiclient": "^2.2"
 	},
 	"suggest": {
 		"ext-openssl": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption",
 		"ext-mcrypt": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "^5 || ^8",
-    "phpunit/phpcov": "^3",
-		"cakephp/cakephp-codesniffer": "^3 || ^4",
-		"php-coveralls/php-coveralls": "^2.2"
+		"phpunit/phpunit": "^3 || ^4",
+    "php-coveralls/php-coveralls": "^1 || ^2.1",
+    "phpunit/phpcov": "^1 || ^2.0",
+		"cakephp/cakephp-codesniffer": "^1 || ^3"
 	},
 	"extra": {
 		"installer-paths": {
-			"app/Plugin/Markdown": ["betothreeprod/markdown-plugin"],
-			"app/Plugin/DebugKit": ["cakephp/debug_kit"],
-			"app/Plugin/UpdateShell": ["betothreeprod/updateshell"],
-			"app/Plugin/Datasources": ["cakephp/datasources"]
+			"app/Plugin/Markdown": ["b23prodtm/markdown-plugin"],
+			"app/Plugin/DebugKit": ["cakephp/debug_kit"]
 		}
 	},
 	"config": {
@@ -46,14 +46,14 @@
 		"process-timeout": 0
 	},
 	"bin": [
-		"app/Console/cake"
+		"lib/Cake/Console/cake"
 	],
 	"scripts": {
 		"check": [
 			"@cs-check",
 			"@test"
 		],
-		"cs-check": "PHP_CS=1 ./test-cake.sh",
-		"test": "./test-cake.sh"
+		"cs-check": "./app/Vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake",
+		"test": "./lib/Cake/Console/cake test core AllTests --stderr"
 	}
 }
