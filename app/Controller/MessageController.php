@@ -109,7 +109,7 @@ class MessageController extends AppController {
 
 	    return $this->redirect(array('action' => 'index'));
 	}
-
+	
 	public function isAuthorized($client) {
     /* Tous les users inscrits peuvent ajouter les posts */
     if ($this->action === 'add') {

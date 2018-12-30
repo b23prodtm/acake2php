@@ -1,5 +1,7 @@
 <?php
 App::uses('AppModel', 'Model');
+App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
+
 /**
  * Motdepasse Model
  *
@@ -48,6 +50,15 @@ class Motdepasse extends AppModel {
 			),
 		),
 	);
+    public function alphaNumericDashUnderscore($check) {
+            $valeur = array_values($check);
+            return !preg_match('/^[0-9a-zA-Z_-\@\.]*$/', $valeur[0]);
+    }
+
+  public function fieldIsConfirmed($check) {
+    $valeur = array_values($check);
+    return $this->data[$this->alias]['password'] === $valeur[0];
+  }
 
   public function beforeSave($options = array()) {
         foreach (array_keys($this->data[$this->alias]) as $key) {
@@ -60,10 +71,5 @@ class Motdepasse extends AppModel {
         }
         return true;
     }
-
-  public function fieldIsConfirmed($check) {
-    $valeur = array_values($check);
-    return $this->field('motdepasse', array('motdepasse' => $valeur)) !== false;
-  }
 
 }

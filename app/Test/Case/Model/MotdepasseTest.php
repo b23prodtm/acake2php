@@ -1,10 +1,10 @@
 <?php
-App::uses('Motdepasse', 'Model');
+App::uses('MotDePasse', 'Model');
 
 /**
- * Motdepasse Test Case
+ * MotDePasse Test Case
  */
-class MotdepasseTest extends CakeTestCase {
+class MotDePasseTest extends CakeTestCase {
 
 /**
  * Fixtures
@@ -22,7 +22,7 @@ class MotdepasseTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Motdepasse = ClassRegistry::init('Motdepasse');
+		$this->MotDePasse = ClassRegistry::init('MotDePasse');
 	}
 
 /**
@@ -31,7 +31,7 @@ class MotdepasseTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		unset($this->Motdepasse);
+		unset($this->MotDePasse);
 
 		parent::tearDown();
 	}

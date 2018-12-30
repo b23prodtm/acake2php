@@ -5,7 +5,7 @@
  */
 App::uses('AppController', 'Controller');
 
-class ClientsController extends AppController {
+class ClientController extends AppController {
     public function __construct($request = null, $response = null) {
   		  parent::__construct($request, $response);
   	}
@@ -24,6 +24,8 @@ class ClientsController extends AppController {
                 $this->Flash->error(__("Nom d'user ou mot de passe invalide, réessayer"));
             }
         }
+        $this->set('pIndex', 'users__login');
+        $this->render(null, 'default-e14');
     }
 
     public function logout() {
@@ -33,6 +35,8 @@ class ClientsController extends AppController {
       /* TODO : affichage page profile courant */
         $this->Client->recursive = 0;
         $this->set('Clients', $this->paginate());
+        $this->set('pIndex', 'users__index');
+        $this->render(null, 'default-e14');
     }
 
     public function view($id = null) {
@@ -40,6 +44,8 @@ class ClientsController extends AppController {
             throw new NotFoundException(__('Client invalide'));
         }
         $this->set('client', $this->Client->findById($id));
+        $this->set('pIndex', 'users__view');
+        $this->render(null, 'default-e14');
     }
 
     public function add() {
@@ -47,17 +53,22 @@ class ClientsController extends AppController {
             $this->Client->create();
             if ($this->Client->save($this->request->data)) {
                 $this->Flash->success(__('Le client a été sauvegardé'));
-                return $this->redirect(array('controller' => 'Motdepasse', 'action' => 'add', $client['identifiant']));
+                return $this->redirect(array('controller' => 'MotDePasse', 'action' => 'add', $this->Client->identifiant));
             } else {
                 $this->Flash->error(__('Le client n\'a pas été sauvegardé. Merci de réessayer.'));
             }
         }
+        $this->set('pIndex', 'users__add');
+        $this->render(null, 'default-e14');
     }
 
-    public function edit($id = null) {
+    public function edit($id = null, $passwordId = null) {
         $this->Client->id = $id;
         if (!$this->Client->exists()) {
             throw new NotFoundException(__('Client Invalide'));
+        }
+        if(isset($passwordId)) {
+            $this->Client->fk_motdepasse = $passwordId;
         }
         if ($this->request->is('post') || $this->request->is('put')) {
             if ($this->Client->save($this->request->data)) {
@@ -70,6 +81,8 @@ class ClientsController extends AppController {
             $this->request->data = $this->Client->findById($id);
             unset($this->request->data['Client']['password']);
         }
+        $this->set('pIndex', 'users__edit');
+        $this->render(null, 'default-e14');
     }
 
     public function delete($id = null) {

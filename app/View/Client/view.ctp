@@ -13,7 +13,7 @@
 		</dd>
 		<dt><?php echo __('Mot de passe'); ?></dt>
 		<dd>
-			<?php echo $this->Html->link($client['Motdepasse']['id'], array('controller' => 'motdepasses', 'action' => 'view', $client['Motdepasse']['id'])); ?>
+			<?php echo $this->Html->link($client['Motdepasse']['id'], array('controller' => 'motdepasse', 'action' => 'view', $client['Motdepasse']['id'])); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Nom'); ?></dt>
@@ -76,10 +76,13 @@
 <div class="actions">
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
-		<li><?php echo $this->Html->link(__('Edit Client'), array('action' => 'edit', $client['Client']['id'])); ?> </li>
-		<li><?php echo $this->Form->postLink(__('Delete Client'), array('action' => 'delete', $client['Client']['id']), array('confirm' => __('Are you sure you want to delete # %s?', $client['Client']['id']))); ?> </li>
-		<li><?php echo $this->Html->link(__('List Clients'), array('action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Client'), array('action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Motdepasses'), array('controller' => 'motdepasses', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('Modifier le profil'), array('action' => 'edit', $client['Client']['id'])); ?> </li>
+		<li><?php echo $this->Form->postLink(__('Supprimer le profil'), array(
+			'action' => 'delete', $client['Client']['id']),
+			array(
+				'confirm' => __('Êtes-vous certain de supprimer le profil # %s?', $client['Client']['id'])
+			)
+		); ?> </li>
+		<li><?php echo $this->Html->link(__('Modifier mon mot de passe'), array('controller' => 'motdepasse', 'action' => 'index')); ?> </li>
 	</ul>
 </div>

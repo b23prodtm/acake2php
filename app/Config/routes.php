@@ -33,6 +33,30 @@ Router::connect('/admin/e14/:action/*', array('controller' => 'e14', 'admin' => 
  ***************************************************   ArticleController routing
  * the one star(*) wildcard is for one-to-one passed arguments separated by the slash '/'
  */
+Router::connect('/users/psd/:action/*', array('controller' => 'MotDePasse'));
+/**
+ * the two stars(**) wildcard is for many-to-one  argument passed as a whole string
+ */
+Router::connect('/users/psd/**', array('controller' => 'MotDePasse', 'action' => 'index'));
+/**
+ */
+Router::connect('/admin/users/psd/:action/*', array('controller' => 'MotDePasse', 'admin' => true));
+/**
+ ***************************************************   ArticleController routing
+ * the one star(*) wildcard is for one-to-one passed arguments separated by the slash '/'
+ */
+Router::connect('/users/:action/*', array('controller' => 'client'));
+/**
+ * the two stars(**) wildcard is for many-to-one  argument passed as a whole string
+ */
+Router::connect('/users/**', array('controller' => 'client', 'action' => 'index'));
+/**
+ */
+Router::connect('/admin/users/:action/*', array('controller' => 'client', 'admin' => true));
+/**
+ ***************************************************   ArticleController routing
+ * the one star(*) wildcard is for one-to-one passed arguments separated by the slash '/'
+ */
 Router::connect('/article/:action/*', array('controller' => 'article'));
 /**
  * the two stars(**) wildcard is for many-to-one  argument passed as a whole string

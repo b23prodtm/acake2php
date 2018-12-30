@@ -10,17 +10,17 @@
 		echo $this->Form->input('prenom', array('label' => __('Votre prénom')));
 		echo $this->Form->input('annee_de_naissance', array('label' => __('Votre date de naissance')));
 		echo $this->Form->input('adresse', array('label' => __('N°, Nom de la voie')));
-		echo $this->Form->input('codepostal', array('label' => __('Code postal'));
-		echo $this->Form->input('ville', array('label' => __('Localité'));
+		echo $this->Form->input('codepostal', array('label' => __('Code postal')));
+		echo $this->Form->input('ville', array('label' => __('Localité')));
 		echo $this->Form->input('pays', array('label' => __('Pays')));
-		echo $this->Form->input('telephone', array('label' => 'Un numéro de téléphone');
+		echo $this->Form->input('telephone', array('label' => 'Un numéro de téléphone'));
 		echo $this->Form->input('role', array(
 				'label' => 'Séléctionner votre rôle',
         'options' => array('admin' => 'Admin', 'visiteur' => 'Visiteur')
         )
 		);
-		echo $this->Form->input('cree', array('label' => 'Date de création du profil');
-		echo $this->Form->input('modifie', array('label' => 'Date de modification du profil');
+		echo $this->Form->input('cree', array('label' => 'Date de création du profil'));
+		echo $this->Form->input('modifie', array('label' => 'Date de modification du profil'));
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Soumettre')); ?>
