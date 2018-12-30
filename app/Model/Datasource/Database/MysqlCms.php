@@ -52,8 +52,8 @@ class MysqlCms extends MysqlLog
 		 * @throws MissingConnectionException
 		 */
 			public function connect() {
-				if (Configure::read('debug') > 1) {
-					var_dump($this->config);
+				if (Configure::read('debug') > 2) {
+					debug($this->config);
 				}
 				try {
 						parent::connect();

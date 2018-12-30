@@ -6,7 +6,7 @@
             <?php echo __("Veuillez entrer un identifiant et un mot de passe s'il-vous-plaît."); ?>
         </legend>
         <?php echo $this->Form->input('identifiant');
-        echo $this->Form->input('motdepasse');
+        echo $this->Form->input('motdepasse', array('type' => 'password'));
     ?>
     </fieldset>
     <?php echo $this->Form->end(__('Connexion')); ?>

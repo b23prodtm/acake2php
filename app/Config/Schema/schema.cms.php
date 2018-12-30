@@ -62,7 +62,7 @@ class AppSchema extends CakeSchema {
 	public $clients = array(
 		'identifiant' => array('type' => 'string', 'null' => false, 'length' => 50, 'key' => 'primary'),
 		'email' => array('type' => 'string', 'null' => false, 'length' => 255),
-		'fk_motdepasse' => array('type' => 'string', 'null' => false, 'length' => 255),
+		'fk_motdepasse' => array('type' => 'string', 'null' => true, 'length' => 255),
 		'nom' => array('type' => 'string', 'null' => false, 'length' => 30),
 		'prenom' => array('type' => 'string', 'null' => false, 'length' => 30),
 		'annee_de_naissance' => array('type' => 'text', 'null' => false, 'length' => 4),
@@ -207,7 +207,7 @@ class AppSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'titre' => array('type' => 'string', 'null' => false, 'length' => 250),
 		'texte' => array('type' => 'text', 'null' => false, 'default' => null),
-		'fk_identifiant' => array('type' => 'string', 'null' => false, 'length' => 255),
+		'fk_client' => array('type' => 'string', 'null' => false, 'length' => 255),
 		'date' => array('type' => 'date', 'null' => false),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),

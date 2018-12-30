@@ -4,7 +4,7 @@
         <div class="row">
                 <?php
                 if (!empty($this->request->data)) {
-                        $this->Html->link('Continue...', array("Controller" => 'E13', 'action' => 'index'));
+                        $this->Html->link('Continue...', array("Controller" => 'e14', 'action' => 'index'));
                         echo $this->Form->create('Email', array('type' => 'post', 'url' => '/emails/send'));
                 } else {
                         echo $this->Form->input('email', array('class' => 'email_form', 'label' => 'To: ', 'value' => $email));
@@ -16,4 +16,3 @@
 
         </div>
 </div>
-

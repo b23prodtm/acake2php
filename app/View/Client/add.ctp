@@ -28,7 +28,6 @@
 <div class="actions">
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
-
-		<li><?php echo $this->Html->link(__('Liste des profils clients'), array('action' => 'index')); ?></li>
+		<li><?php echo $this->Html->link(__('Mon profil'), array('action' => 'index')); ?></li>
 	</ul>
 </div>
