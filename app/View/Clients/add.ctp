@@ -5,7 +5,7 @@
 	<?php
 		echo $this->Form->input('identifiant', array('label' => __('Votre identifiant')));
 		echo $this->Form->input('email', array('label' => __('Une adresse email')));
-		echo $this->Form->input('fk_id_mdp', array('hidden' => true));
+		echo $this->Form->hidden('fk_motdepasse');
 		echo $this->Form->input('nom', array('label' => __('Votre nom')));
 		echo $this->Form->input('prenom', array('label' => __('Votre prénom')));
 		echo $this->Form->input('annee_de_naissance', array('label' => __('Votre date de naissance')));

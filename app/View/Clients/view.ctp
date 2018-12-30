@@ -11,9 +11,9 @@
 			<?php echo h($client['Client']['email']); ?>
 			&nbsp;
 		</dd>
-		<dt><?php echo __('Fk Id Mdp'); ?></dt>
+		<dt><?php echo __('Mot de passe'); ?></dt>
 		<dd>
-			<?php echo h($client['Client']['fk_id_mdp']); ?>
+			<?php echo $this->Html->link($client['Motdepasse']['id'], array('controller' => 'motdepasses', 'action' => 'view', $client['Motdepasse']['id'])); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Nom'); ?></dt>
@@ -36,7 +36,7 @@
 			<?php echo h($client['Client']['adresse']); ?>
 			&nbsp;
 		</dd>
-		<dt><?php echo __('Codepostal'); ?></dt>
+		<dt><?php echo __('Code Postal'); ?></dt>
 		<dd>
 			<?php echo h($client['Client']['codepostal']); ?>
 			&nbsp;
@@ -61,12 +61,12 @@
 			<?php echo h($client['Client']['role']); ?>
 			&nbsp;
 		</dd>
-		<dt><?php echo __('Cree'); ?></dt>
+		<dt><?php echo __('Crée le'); ?></dt>
 		<dd>
 			<?php echo h($client['Client']['cree']); ?>
 			&nbsp;
 		</dd>
-		<dt><?php echo __('Modifie'); ?></dt>
+		<dt><?php echo __('Modifié le'); ?></dt>
 		<dd>
 			<?php echo h($client['Client']['modifie']); ?>
 			&nbsp;
@@ -80,5 +80,6 @@
 		<li><?php echo $this->Form->postLink(__('Delete Client'), array('action' => 'delete', $client['Client']['id']), array('confirm' => __('Are you sure you want to delete # %s?', $client['Client']['id']))); ?> </li>
 		<li><?php echo $this->Html->link(__('List Clients'), array('action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Client'), array('action' => 'add')); ?> </li>
+		<li><?php echo $this->Html->link(__('List Motdepasses'), array('controller' => 'motdepasses', 'action' => 'index')); ?> </li>
 	</ul>
 </div>

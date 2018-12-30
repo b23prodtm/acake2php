@@ -4,9 +4,16 @@
  * @author T. Arimanana
  */
 App::uses('AppModel', 'Model');
+App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
 
 class Client extends AppModel {
     public $name = 'Client';
+    public $belongsTo = array(
+       'Motdepasse' => array(
+           'foreignKey' => 'fk_motdepasse'
+       )
+   );
+    public $displayField = 'email';
     public $validate = array(
         'identifiant' => array(
             'required' => array(

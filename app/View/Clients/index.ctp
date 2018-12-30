@@ -5,7 +5,7 @@
 	<tr>
 			<th><?php echo $this->Paginator->sort('identifiant'); ?></th>
 			<th><?php echo $this->Paginator->sort('email'); ?></th>
-			<th><?php echo $this->Paginator->sort('fk_id_mdp'); ?></th>
+			<th><?php echo $this->Paginator->sort('fk_motdepasse'); ?></th>
 			<th><?php echo $this->Paginator->sort('nom'); ?></th>
 			<th><?php echo $this->Paginator->sort('prenom'); ?></th>
 			<th><?php echo $this->Paginator->sort('annee_de_naissance'); ?></th>
@@ -25,7 +25,9 @@
 	<tr>
 		<td><?php echo h($client['Client']['identifiant']); ?>&nbsp;</td>
 		<td><?php echo h($client['Client']['email']); ?>&nbsp;</td>
-		<td><?php echo h($client['Client']['fk_id_mdp']); ?>&nbsp;</td>
+		<td>
+			<?php echo $this->Html->link($client['Motdepasse']['id'], array('controller' => 'motdepasses', 'action' => 'view', $client['Motdepasse']['id'])); ?>
+		</td>
 		<td><?php echo h($client['Client']['nom']); ?>&nbsp;</td>
 		<td><?php echo h($client['Client']['prenom']); ?>&nbsp;</td>
 		<td><?php echo h($client['Client']['annee_de_naissance']); ?>&nbsp;</td>

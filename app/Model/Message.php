@@ -28,7 +28,7 @@ class Message extends AppModel {
            'last' => true),
        'Requis' => array('rule' => 'notBlank')
       ),
-     'fk_identifiant' => array(
+     'identifiant_id' => array(
         'rule' => 'alphaNumericDashUnderscore',
         'message' => "L'identifiant ne peut contenir que des lettres, des nombres, des tirets ou des underscores."
         )
@@ -42,5 +42,9 @@ class Message extends AppModel {
     public function notags($check) {
         $texte = array_values($check);
         return !preg_match('/<[^>]+>?(.*)/', $texte[0]);
+    }
+
+    public function isOwnedBy($message, $client) {
+        return $this->field('id', array('id' => $message, 'fk_identifiant' => $client)) !== false;
     }
 }
