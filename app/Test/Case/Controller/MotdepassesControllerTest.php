@@ -12,7 +12,7 @@ class MotdepassesControllerTest extends ControllerTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.motdepass'
+		'app.motdepasse'
 	);
 
 }

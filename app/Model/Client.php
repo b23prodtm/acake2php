@@ -4,7 +4,6 @@
  * @author T. Arimanana
  */
 App::uses('AppModel', 'Model');
-App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
 
 class Client extends AppModel {
     public $name = 'Client';
@@ -20,6 +19,10 @@ class Client extends AppModel {
                 'rule' => 'alphaNumericDashUnderscore',
                 'message' => "Un nom d'utilisateur est requis",
                 'allowEmpty' => false
+            ),
+            'unique' => array(
+              'rule' => 'isUnique',
+              'message' => "Le nom existe déjà et n'est pas disponible."
             )
         ),
         'role' => array(

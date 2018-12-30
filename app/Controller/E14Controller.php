@@ -20,6 +20,9 @@ class E14Controller extends AppController {
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
         }
+        public function beforeFilter() {
+          $this->Auth->allow();
+        }
         /** @param string $p page filename.php (optional)
          */
         public function index($p = NULL, $images = NULL) {

@@ -1,9 +1,9 @@
-Motdepasse<?php
+<?php
 App::uses('AppController', 'Controller');
 /**
- * Motdepasses Controller
+ * MotDePasse Controller
  */
-class MotdepassesController extends AppController {
+class MotDePasseController extends AppController {
 
 /**
  * Scaffold
@@ -22,34 +22,45 @@ class MotdepassesController extends AppController {
 			$this->Auth->allow('add');
 	}
 
-	public function add() {
-			if ($this->request->is('post')) {
-					$this->Motdepasse->create();
-					if ($this->Motdepasse->save($this->request->data)) {
+	public function index() {
+			$this->set('pIndex', 'users__index');
+			$this->render(null, 'default-e14');
+	}
+	public function add($clientId = null) {
+		if ($this->request->is('post')) {
+					$this->MotDePasse->create();
+					if ($this->MotDePasse->save($this->request->data)) {
 							$this->Flash->success(__('Le mot de passe a été sauvegardé'));
-							return $this->redirect(array('controller' => 'Motdepasse', 'action' => 'index'));
+							$client = isset($clientId) ? Client::findById($clientId) : false;
+							if($client)
+										return $this->redirect(array('controller' => 'Client', 'action' => 'edit', $clientId, $this->MotDePasse->id));
+							return $this->redirect(array('controller' => 'MotDePasse', 'action' => 'index'));
 					} else {
 							$this->Flash->error(__('Le mot de passe n\'a pas été sauvegardé. Merci de réessayer.'));
 					}
 			}
+			$this->set('pIndex', 'users__add');
+			$this->render(null, 'default-e14');
 	}
 
 	public function edit($id = null) {
-			$this->Motdepasse->id = $id;
-			if (!$this->Motdepasse->exists()) {
+			$this->MotDePasse->id = $id;
+			if (!$this->MotDePasse->exists()) {
 					throw new NotFoundException(__('Mot de passe Invalide'));
 			}
 			if ($this->request->is('post') || $this->request->is('put')) {
-					if ($this->Motdepasse->save($this->request->data)) {
+					if ($this->MotDePasse->save($this->request->data)) {
 							$this->Flash->success(__('Le mot de passe a été sauvegardé'));
 							return $this->redirect(array('action' => 'index'));
 					} else {
 							$this->Flash->error(__('Le mot de passe n\'a pas été sauvegardé. Merci de réessayer.'));
 					}
 			} else {
-					$this->request->data = $this->Motdepasse->findById($id);
-					unset($this->request->data['Motdepasse']['password']);
+					$this->request->data = $this->MotDePasse->findById($id);
+					unset($this->request->data['MotDePasse']['password']);
 			}
+			$this->set('pIndex', 'users__edit');
+			$this->render(null, 'default-e14');
 	}
 
 	public function delete($id = null) {
@@ -58,11 +69,11 @@ class MotdepassesController extends AppController {
 
 			$this->request->allowMethod('post');
 
-			$this->Motdepasse->id = $id;
-			if (!$this->Motdepasse->exists()) {
+			$this->MotDePasse->id = $id;
+			if (!$this->MotDePasse->exists()) {
 					throw new NotFoundException(__('Mot de passe invalide'));
 			}
-			if ($this->Motdepasse->delete()) {
+			if ($this->MotDePasse->delete()) {
 					$this->Flash->success(__('Mot de passe supprimé'));
 					return $this->redirect(array('action' => 'add'));
 			}

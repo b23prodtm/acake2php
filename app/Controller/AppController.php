@@ -84,10 +84,17 @@ class AppController extends Controller {
         }
 
         public function beforeFilter() {
+                parent::beforeFilter();
                 /* internationalisation (i18n) */
                 Configure::write('Config.language', $this->_r->getLanguage());
                 /* AuthComponent de ne pas exiger un login pour toutes les actions index et view*/
-                $this->Auth->allow('index', 'view', 'infos', 'cat', 'blog', 'etc');
+                $this->Auth->allow(
+                  'index',
+                  'view',
+                  'infos',
+                  'cat',
+                  'blog',
+                  'etc');
         }
 
         /**
