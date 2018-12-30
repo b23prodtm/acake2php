@@ -13,6 +13,11 @@ App::uses('AppModel', 'Model');
  */
 class Message extends AppModel {
   public $validationDomain = 'formulaire';
+  public $belongsTo = array(
+     'Client' => array(
+         'foreignKey' => 'fk_client'
+     )
+ );
   public $validate = array(
      'titre' => array(
          'rule2' => array(
@@ -28,7 +33,7 @@ class Message extends AppModel {
            'last' => true),
        'Requis' => array('rule' => 'notBlank')
       ),
-     'identifiant_id' => array(
+     'fk_client' => array(
         'rule' => 'alphaNumericDashUnderscore',
         'message' => "L'identifiant ne peut contenir que des lettres, des nombres, des tirets ou des underscores."
         )
@@ -45,6 +50,6 @@ class Message extends AppModel {
     }
 
     public function isOwnedBy($message, $client) {
-        return $this->field('id', array('id' => $message, 'fk_identifiant' => $client)) !== false;
+        return $this->field('id', array('id' => $message, 'fk_client' => $client)) !== false;
     }
 }

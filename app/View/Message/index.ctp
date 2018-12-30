@@ -12,11 +12,11 @@ $t->setContenu_Ligne(0, array(__('date'), __('titre'), __('identifiant')));
 
 for ($i = 1; $i < count($messages) + 1; $i++) {
 		$message = $messages[$i - 1];
-		$t->setContenu_Cellule($i, 0, $this->Text->autoLinkEmails($message['Message']['fk_identifiant']));
+		$t->setContenu_Cellule($i, 0, $message['Message']['date']);
 		$t->setContenu_Cellule($i, 1, $this->Html->link($message['Message']['titre'], array(
 			'action' => 'view', $message['Message']['id']))
 		);
-		$t->setContenu_Cellule($i, 2, $message['Message']['date']);
+		$t->setContenu_Cellule($i, 2, $this->Text->autoLinkEmails($message['Message']['fk_identifiant']));
 		$t->setContenu_Cellule($i, 3, $this->Html->link(__('Modifier un message'), array(
 			'action' => 'edit', $message['Message']['id']))
 		);

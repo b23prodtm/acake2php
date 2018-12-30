@@ -43,7 +43,7 @@ class AppController extends Controller {
             'Auth' => array(
                   'loginRedirect' => array('controller' => 'clients', 'action' => 'index'),
                   'logoutRedirect' => array('controller' => 'e14', 'action' => 'index'),
-                  'authError' => 'Pensiez-vous réellement que vous étiez autorisés à voir cela ?',
+                  'authError' => "Veuillez vous authentifier, s'il-vous-plaît.",
                   'authenticate' => array(
                       AuthComponent::ALL => array(
                         'userModel' => 'Client',
@@ -59,6 +59,9 @@ class AppController extends Controller {
             )
         );
 
+        /** Gestion simple des acces controlés par role. Un 'controller' dépendant de cette méthode pour
+          * définir l'autorisation Client pour une action donnée
+          */
         public function isAuthorized($user) {
             /* Admin peut accéder à toute action */
             if (isset($user['role']) && $user['role'] === 'admin') {
@@ -90,11 +93,7 @@ class AppController extends Controller {
                 /* AuthComponent de ne pas exiger un login pour toutes les actions index et view*/
                 $this->Auth->allow(
                   'index',
-                  'view',
-                  'infos',
-                  'cat',
-                  'blog',
-                  'etc');
+                  'view');
         }
 
         /**

@@ -1,6 +1,7 @@
 # User specific & automatically generated files #
 #################################################
 myphpcms*.zip
+/app/Config/Schema/schema*.php
 /app/Config/database.php*
 /app/Config/database.sql*
 /app/tmp
