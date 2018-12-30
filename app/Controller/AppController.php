@@ -21,7 +21,7 @@
  */
 App::uses('Controller', 'Controller');
 App::uses('Index', 'Cms');
-
+App::uses('AuthComponent', 'Controller/Component/');
 /**
  * Application Controller
  *
@@ -38,7 +38,36 @@ class AppController extends Controller {
          */
         public $components = array('DebugKit.Toolbar',
             'Flash' => array(
-                'className' => 'MyFlash'));
+                'className' => 'MyFlash'
+              ),
+            'Auth' => array(
+                  'loginRedirect' => array('controller' => 'clients', 'action' => 'index'),
+                  'logoutRedirect' => array('controller' => 'e14', 'action' => 'index'),
+                  'authError' => 'Pensiez-vous réellement que vous étiez autorisés à voir cela ?',
+                  'authenticate' => array(
+                      AuthComponent::ALL => array(
+                        'userModel' => 'Client',
+                        'fields' => array(
+                            'username' => 'identifiant', // 'username' par défaut
+                            'password' => 'fk_motdepasse'  // 'password' par défaut
+                        )
+                      ),
+                      'Basic',
+                      'Form'
+                  ),
+                  'authorize' => array('Controller')
+            )
+        );
+
+        public function isAuthorized($user) {
+            /* Admin peut accéder à toute action */
+            if (isset($user['role']) && $user['role'] === 'admin') {
+                return true;
+            }
+
+            /* Refus par défaut */
+            return false;
+        }
         public $helpers = array('Info' => array(
                 'index' => null,
                 'countPerPage' => '10',
@@ -57,6 +86,8 @@ class AppController extends Controller {
         public function beforeFilter() {
                 /* internationalisation (i18n) */
                 Configure::write('Config.language', $this->_r->getLanguage());
+                /* AuthComponent de ne pas exiger un login pour toutes les actions index et view*/
+                $this->Auth->allow('index', 'view', 'infos', 'cat', 'blog', 'etc');
         }
 
         /**

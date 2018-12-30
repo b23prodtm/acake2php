@@ -62,7 +62,7 @@ class AppSchema extends CakeSchema {
 	public $clients = array(
 		'identifiant' => array('type' => 'string', 'null' => false, 'length' => 50, 'key' => 'primary'),
 		'email' => array('type' => 'string', 'null' => false, 'length' => 255),
-		'fk_id_mdp' => array('type' => 'integer', 'null' => true, 'default' => null, 'key' => 'unique'),
+		'fk_motdepasse' => array('type' => 'string', 'null' => false, 'length' => 255),
 		'nom' => array('type' => 'string', 'null' => false, 'length' => 30),
 		'prenom' => array('type' => 'string', 'null' => false, 'length' => 30),
 		'annee_de_naissance' => array('type' => 'text', 'null' => false, 'length' => 4),
@@ -205,7 +205,7 @@ class AppSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'titre' => array('type' => 'string', 'null' => false, 'length' => 250),
 		'texte' => array('type' => 'text', 'null' => false, 'default' => null),
-		'fk_identifiant' => array('type' => 'string', 'null' => false, 'length' => 250),
+		'fk_identifiant' => array('type' => 'string', 'null' => false, 'length' => 255),
 		'date' => array('type' => 'date', 'null' => false),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
@@ -213,13 +213,14 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $motdepasses = array(
-		'id_mdp' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'autoIncrement' => true),
+	public $motDePasses = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'autoIncrement' => true),
 		'password' => array('type' => 'string', 'null' => false, 'length' => 255),
+		'password_confirm' => array('type' => 'string', 'null' => false, 'length' => 255),
 		'cree' => array('type' => 'date', 'null' => false),
 		'modifie' => array('type' => 'date', 'null' => false),
 		'indexes' => array(
-			'PRIMARY' => array('column' => 'id_mdp', 'unique' => 1)
+			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);

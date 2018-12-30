@@ -7,15 +7,30 @@ App::uses('AppController', 'Controller');
 
 class ClientsController extends AppController {
     public function __construct($request = null, $response = null) {
-  		parent::__construct($request, $response);
+  		  parent::__construct($request, $response);
   	}
 
     public function beforeFilter() {
         parent::beforeFilter();
+        /* Permet aux utilisateurs de s'enregistrer et de se déconnecter */
         $this->Auth->allow('add', 'logout');
     }
 
+    public function login() {
+        if ($this->request->is('post')) {
+            if ($this->Auth->login()) {
+                return $this->redirect($this->Auth->redirectUrl());
+            } else {
+                $this->Flash->error(__("Nom d'user ou mot de passe invalide, réessayer"));
+            }
+        }
+    }
+
+    public function logout() {
+        return $this->redirect($this->Auth->logout());
+    }
     public function index() {
+      /* TODO : affichage page profile courant */
         $this->Client->recursive = 0;
         $this->set('Clients', $this->paginate());
     }
@@ -32,7 +47,7 @@ class ClientsController extends AppController {
             $this->Client->create();
             if ($this->Client->save($this->request->data)) {
                 $this->Flash->success(__('Le client a été sauvegardé'));
-                return $this->redirect(array('action' => 'index'));
+                return $this->redirect(array('controller' => 'Motdepasse', 'action' => 'add', $client['identifiant']));
             } else {
                 $this->Flash->error(__('Le client n\'a pas été sauvegardé. Merci de réessayer.'));
             }
