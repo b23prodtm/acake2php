@@ -5,7 +5,12 @@ cache:
   - "$HOME/.composer/cache/files"
 env:
   matrix:
-  - DB=Mysql
+  - DB=Mysql _PHP=hhvm
+  - DB=Mysql _PHP=5.6 _PKG=php
+  - DB=Mysql _PHP=7.1 _PKG=php
+  - DB=Mysql _PHP=7.2 _PKG=php
+  - DB=Pgsql _PHP=5.6 _PKG=php
+  - DB=Sqlite _PHP=5.6 _PKG=php
   global:
   - PHPUNIT=4
   - PHPCS=3
@@ -27,45 +32,34 @@ addons:
 services:
 - memcached
 language: generic
+
+os:
+    - linux
+    - osx
+
+dist: trusty
+
 matrix:
   fast_finish: true
-  include:
-  - os: linux
-    php: 5.6
-    env: DB=Pgsql
-  - os: linux
-    php: 5.6
-    env: DB=Sqlite
-  - os: linux
-    php: 5.6
-  - os: linux
-    php: 7.0
-  - os: linux
-    php: nightly
-  - os: linux
-    php: hhvm
-  - os: osx
-    env: _PHP=php@5.6
-  - os: osx
-    env: _PHP=php@7.0
-  - os: osx
-    env: _PHP=php@7.1
   allow_failures:
-  - php: nightly
-  - php: hhvm
-  - os: osx
+    - env: _PHP=hhvm
+    - os: linux
+      env: _PHP=7.2 _PKG=php
+
 before_install:
-- if [ "${COLLECT_COVERAGE}" != "true" ]; then phpenv config-rm xdebug.ini || true
-  ; fi
-- if [ "${TRAVIS_OS_NAME}" == "osx" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh
-  ; fi
+- if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then phpenv global ${_PHP} && composer self-update; fi
+- if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then phpenv --version && composer --version; fi
+- if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
+- if [[ "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then /usr/bin/env bash build/prepare_osx_env.sh ; fi
 - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN
   CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 - "./Scripts/configure_tmp.sh"
 install:
 - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/handle_brew_pkg.sh
-  "${_PHP}" ; fi
+  "${_PKG}" "${_PHP}" ; fi
 before_script:
+- if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == "hhvm" ]]; then curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar; fi
 - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./configure.sh "-c" "-h" "-p" "pass"
   "-s" "word" "--mig-database" "-y"; fi
 - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then .travis/configure.sh; fi
