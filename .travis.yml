@@ -6,11 +6,11 @@ cache:
 env:
   matrix:
   - DB=Mysql _PHP=hhvm
-  - DB=Mysql _PHP=5.6 _PKG=php
-  - DB=Mysql _PHP=7.1 _PKG=php
-  - DB=Mysql _PHP=7.2 _PKG=php
-  - DB=Pgsql _PHP=5.6 _PKG=php
-  - DB=Sqlite _PHP=5.6 _PKG=php
+  - DB=Mysql _PHP=5.6 _PKG=php@
+  - DB=Mysql _PHP=7.1 _PKG=php@
+  - DB=Mysql _PHP=7.2 _PKG=php@
+  - DB=Pgsql _PHP=5.6 _PKG=php@
+  - DB=Sqlite _PHP=5.6 _PKG=php@
   global:
   - PHPUNIT=4
   - PHPCS=3
@@ -40,14 +40,14 @@ matrix:
   fast_finish: true
   allow_failures:
     - env: DB=Mysql _PHP=hhvm
-    - env: DB=Mysql _PHP=7.2 _PKG=php
+    - env: DB=Mysql _PHP=7.2 _PKG=php@
 
 before_install:
 - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then phpenv global ${_PHP} && composer self-update; fi
 - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then phpenv --version && composer --version; fi
 - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
 - if [[ "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then /usr/bin/env bash build/prepare_osx_env.sh ; fi
+- if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then /usr/bin/env bash build/prepare_osx_env.sh ; fi
 - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN
   CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 - "./Scripts/configure_tmp.sh"
