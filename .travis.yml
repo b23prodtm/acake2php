@@ -32,19 +32,15 @@ addons:
 services:
 - memcached
 language: generic
-
 os:
     - linux
     - osx
-
 dist: trusty
-
 matrix:
   fast_finish: true
   allow_failures:
-    - env: _PHP=hhvm
-    - os: linux
-      env: _PHP=7.2 _PKG=php
+    - env: DB=Mysql _PHP=hhvm
+    - env: DB=Mysql _PHP=7.2 _PKG=php
 
 before_install:
 - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then phpenv global ${_PHP} && composer self-update; fi
