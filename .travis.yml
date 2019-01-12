@@ -3,22 +3,63 @@ cache:
   - app/tmp/cache
   - ".autoconf"
   - "$HOME/.composer/cache/files"
+# language: php # linux only
+language: bash # cross-platform
+
+os:
+    - linux
+    - osx
+    - windows
+
+dist: xenial
+
 env:
   matrix:
   - DB=Mysql _PHP=hhvm
-  - DB=Mysql _PHP=5.6 _PKG=php@
-  - DB=Mysql _PHP=7.0 _PKG=php@
-  - DB=Mysql _PHP=7.1 _PKG=php@
-  - DB=Mysql _PHP=7.2 _PKG=php@
-  - DB=Mysql _PHP=7.3 _PKG=php@
-  - DB=Pgsql _PHP=5.6 _PKG=php@
-  - DB=Sqlite _PHP=5.6 _PKG=php@
+  - DB=Mysql _PHP=5.6 _PKG=php
+  - DB=Mysql _PHP=7.0 _PKG=php
+  - DB=Mysql _PHP=7.1 _PKG=php
+  - DB=Mysql _PHP=7.2 _PKG=php
+  - DB=Mysql _PHP=7.3 _PKG=php
+  - DB=Pgsql _PHP=5.6 _PKG=php
+  - DB=Sqlite _PHP=5.6 _PKG=php
   global:
   - PHPUNIT=4
   - PHPCS=3
   - COLLECT_COVERAGE=false
+  - PHPENV_ROOT=/usr/local/bin/phpenv
   - WEBHOOK_URL=https://discordapp.com/api/webhooks/479745392880386058/YOO7Nnn1IFWUtXX0n0qAZYeMDeV-SLa0lSzjGpNnKGTzG-xA0T3dplVGzSM4ObKLeMWg
   - secure: C39DQ1zYpSAOy33Sb8NP89o6k4HUnjHnQ+bQkgbo3WH7WtiN76dGeO9jm1DjMn5np6oKbDi41/fxonaTUIjb9YMksG2YB+NBDYXHyV1H7/xAeC6uTxwUObrLXh8aOUwiiuLPllMdtOLX8JSPxl1Ixc6KyeFywPiMvwuOe4QZW6sVG4sqhZC/UUycYKRSMaOthtuTDPYKjBLaDPiEzkUmdBIo9IhAsidEFAHj4jEmw9gBtac0B2x7GbvvoDivdH3KdNSoPt2SkD0RLX51Qf7AYeAV4fw65cuCp/Aat/uk55x3lN5g18Ww9khY/cFSwPC0JXGQnnJvdcDP2diZNkqE41Yc/Mw3xwfrvp3/v8js3VIBzsGINKiSdXZ/yXqI9iRzvzlfmXRHvd4sFXRzUpi8ZB4PXaboMndbNRoh4PcoRNFtXhyebQCEgZv2x3oiKXw38WT5cga03uMH4E5z5afS3n7NP1tsuiNWd499dJzAkW8OPeLDPqY3a/b5qLeZIK1bo23mvCjPtbm+B2g2QocKcd1oQ+XANCyuT3M/+AIypdMabGOSon2fDKrUUN+SqIX4FcYaHi1sG3qUp23870u9YcT4hK2LCKBcBPkFpxqEZLwdHbJmjHPo6uRyAKOD7r/k1DtIRqkcJ+5BpU4emo6rM9rdh5mWjLtK7vdY8Y/tvP8=
+
+matrix:
+  fast_finish: true
+  exclude:
+    - os: osx
+      env: DB=Mysql _PHP=7.0 _PKG=php
+    - os: windows
+    - os: linux
+  include:
+    - os: linux
+      language: php
+      php: '7.0'
+      env: DB=Mysql _PHP=7.0 _PKG=php PHPENV_ROOT=~/.phpenv
+    - os: linux
+      language: php
+      php: 'hhvm'
+      env: DB=Mysql _PHP=hhvm PHPENV_ROOT=~/.phpenv
+    - os: osx
+    - os: windows
+      env: DB=Mysql _PHP=7.3 _PKG=php
+    - os: windows
+      env: DB=Mysql _PHP=hhvm
+  allow_failures:
+    - os: windows
+    - env: DB=Mysql _PHP=hhvm
+    - env: DB=Mysql _PHP=7.3 _PKG=php
+    - env: DB=Mysql _PHP=5.6 _PKG=php
+    - env: DB=Pgsql _PHP=5.6 _PKG=php
+    - env: DB=Sqlite _PHP=5.6 _PKG=php
+
 addons:
   coverity_scan:
     project:
@@ -41,45 +82,6 @@ addons:
 services:
 - memcached
 
-# language: php # linux only
-language: bash # cross-platform
-
-os:
-    - linux
-    - osx
-    - windows
-
-dist: xenial
-
-matrix:
-  fast_finish: true
-  exclude:
-    - os: osx
-      env: DB=Mysql _PHP=7.0 _PKG=php@
-    - os: windows
-    - os: linux
-  include:
-    - os: linux
-      language: php
-      php: '7.0'
-      env: DB=Mysql _PHP=7.0 _PKG=php@ PHPENV_ROOT=~/.phpenv
-    - os: linux
-      language: php
-      php: 'hhvm'
-      env: DB=Mysql _PHP=hhvm PHPENV_ROOT=~/.phpenv
-    - os: osx
-    - os: windows
-      env: DB=Mysql _PHP=7.3 _PKG=php@
-    - os: windows
-      env: DB=Mysql _PHP=hhvm
-  allow_failures:
-    - os: windows
-    - env: DB=Mysql _PHP=hhvm
-    - env: DB=Mysql _PHP=7.3 _PKG=php@
-    - env: DB=Mysql _PHP=5.6 _PKG=php@
-    - env: DB=Pgsql _PHP=5.6 _PKG=php@
-    - env: DB=Sqlite _PHP=5.6 _PKG=php@
-
 before_install:
   - source .travis/TravisCI-OSX-PHP/build/phpenv_install.sh
   - source .travis/TravisCI-OSX-PHP/build/prepare_${TRAVIS_OS_NAME}_env.sh #; source exports
@@ -89,13 +91,13 @@ before_install:
   - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
   - "./Scripts/configure_tmp.sh"
 install:
-  - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then .travis/TravisCI-OSX-PHP/build/handle_brew_pkg.sh "${_PKG}" "${_PHP}" ; fi
+  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then .travis/TravisCI-OSX-PHP/build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-openssl"; fi
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install --dev --no-interaction
 before_script:
 - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == "hhvm" ]]; then curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar; fi
-- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./configure.sh "-c" "-h" "-p" "pass"
-  "-s" "word" "--mig-database" "-y"; fi
+- mkdir -p build/logs
+- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y"; fi
 - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then .travis/configure.sh; fi
 script:
 - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh | grep Test; fi
