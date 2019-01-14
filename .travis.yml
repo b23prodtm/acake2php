@@ -87,7 +87,8 @@ before_install:
   - source .travis/TravisCI-OSX-PHP/build/prepare_${TRAVIS_OS_NAME}_env.sh #; source exports
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
-  - echo 'openssl.cafile = $(locate cacert.pem)' >> .travis/TravisCI-OSX-PHP/build/.travis_${TRAVIS_OS_NAME}_php.ini 
+  - echo 'openssl.cafile=$(locate cacert.pem)' >> .travis/TravisCI-OSX-PHP/build/.travis_${TRAVIS_OS_NAME}_php.ini 
+  - export ADDITIONAL_PHP_INI=.travis/TravisCI-OSX-PHP/build/.travis_${TRAVIS_OS_NAME}_php.ini
   - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
   - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
   - "./Scripts/configure_tmp.sh"
