@@ -92,6 +92,7 @@ before_install:
   - "./Scripts/configure_tmp.sh"
 install:
   - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then .travis/TravisCI-OSX-PHP/build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-openssl"; fi
+  - echo 'openssl.cafile = $(locate cacert.pem)' >> .travis/TravisCI-OSX-PHP/build/.travis_${TRAVIS_OS_NAME}_php.ini
   - curl -s http://getcomposer.org/installer | php
   - php composer.phar install --dev --no-interaction
 before_script:
