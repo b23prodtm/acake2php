@@ -37,10 +37,9 @@ while [[ "$#" > 0 ]]; do case $1 in
   -[tT]*|--test-sql-password*)
     parse_sql_password "$1" "TEST_DATABASE_PASSWORD" "test user ${TEST_DATABASE_USER}";;
   -[vV]*|--verbose )
-    echo "Passed params :  $0 ${saved}"
-    bootargs="${bootargs} $1";;
+    echo "Passed params :  $0 ${saved}";;
   -[oO]*|--openshift )
-    bootargs="${bootargs} $1";;
+    bootargs="${saved}";;
   *) echo "Unknown parameter passed: $0 $1"; exit 1;;
 esac; shift; done
 source ./Scripts/bootstrap.sh $bootargs

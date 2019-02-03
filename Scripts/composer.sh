@@ -5,6 +5,7 @@
 #;
 #;
 #; colorful shell
+source ./Scripts/lib/parsing.sh
 nc='\033[0m'
 red="\033[0;31m"
 green="\033[0;32m"
@@ -22,4 +23,4 @@ else
 fi
 bin/composer.phar --version
 #; update plugins and dependencies
-bin/composer.phar update --with-dependencies --apcu-autoloader $*
+if [[ $(parse_arg_exists "-[oO]|--openshift" $*) ]]; then bin/composer.phar update --with-dependencies --apcu-autoloader $*; fi

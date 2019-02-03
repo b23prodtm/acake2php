@@ -1,4 +1,4 @@
-FROM php:7.2-apache
+FROM php:7.0-apache
 
 RUN apt-get update -yqq \
   && apt-get install -yqq --no-install-recommends \
