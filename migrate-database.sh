@@ -3,7 +3,7 @@ set -e
 source ./Scripts/lib/shell_prompt.sh
 source ./Scripts/lib/parsing.sh
 openshift=$(parse_arg_exists "-[oO]*|--openshift" $*)
-if [ $openshift > /dev/null ]; then
+if [ $openshift 2> /dev/null ]; then
   echo "Real environment bootargs..."
 else
   echo "Provided local/test bootargs..."

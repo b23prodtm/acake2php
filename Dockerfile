@@ -18,13 +18,13 @@ ENV PATH="${PATH}:/var/www/html/lib/Cake/Console"
 ENV PATH="${PATH}:/var/www/html/app/Vendor/bin"
 
 # COPY apache site.conf file
-COPY ./docker/apache/site.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/apache/site.conf /etc/apache2/sites-available/000-default.conf
 
 # Copy the source code into /var/www/html/ inside the image
-COPY . .
+COPY . /var/www/html/
 
 # Set default working directory
-WORKDIR ./app
+WORKDIR /var/www/html/app
 
 # Create tmp directory and make it writable by the web server
 RUN mkdir -p \

@@ -3,6 +3,8 @@ source ./Scripts/lib/parsing.sh
 bootargs=""
 docker=""
 saved=("$*")
+usage="[-dns=<domainname>] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [other-args]"
+[ $# -eq 0 ] && echo "Usage: $0 ${usage}" && exit 1
 while [[ "$#" > 0 ]]; do case $1 in
     -[pP]*|--sql-password*)
       parse_sql_password "$1" "DATABASE_PASSWORD" "user ${DATABASE_USER}";;
@@ -14,9 +16,13 @@ while [[ "$#" > 0 ]]; do case $1 in
       bootargs=$saved;;
     -[S]*|-submodule )
       git submodule update --init --recursive;;
+    -dns*|-DNS*)
+      parse_dns_host "$1" "SERVER_NAME" "Domain Server Name";;
     -[hH]*|--help )
-      echo "Usage: $0 [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [other-args]
-        -p, --sql-password=<password>
+      echo "Usage: $0 ${usage}
+        -dns=<domainname>
+	    Apache ServerName global directive
+	-p, --sql-password=<password>
             Exports DATABASE_PASSWORD
         -t, --test-sql-password=<password>
             Exports TEST_DATABASE_PASSWORD
@@ -38,6 +44,12 @@ export _PKG=php
 export PHPENV_ROOT=~/.phpenv
 source .travis/TravisCI-OSX-PHP/build/phpenv_install.sh
 source .travis/TravisCI-OSX-PHP/build/prepare_linux_env.sh
-source ./Scripts/bootstrap.sh $bootargs
-if [[ ! $(which docker-compose) > /dev/null ]]; then Scripts/install-docker-compose.sh; fi
+source Scripts/bootstrap.sh $bootargs
+if [ ! $(which docker-compose) 2> /dev/null ]; then Scripts/install-docker-compose.sh; fi
+if [ ! -z $SERVER_NAME ]; then
+    source Scripts/docker_site_conf.sh $SERVER_NAME
+else
+    cp -v docker/apache/site-default.conf docker/apache/site.conf
+fi
 docker-compose $docker
+sudo cp index-redirect-8000.php /var/www/html/index.php
