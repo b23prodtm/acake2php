@@ -91,9 +91,12 @@ before_install:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
   - source ./Scripts/configure_tmp.sh
 install:
+  - if [[ "${TRAVIS_OS_NAME}" == "windows" ]]; then .travis/TravisCI-OSX-PHP/build/handle_${TRAVIS_OS_NAME}_pkg.sh "openssl.light"; fi
   - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then .travis/TravisCI-OSX-PHP/build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-openssl"; fi
-  - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install --dev --no-interaction
+  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then .travis/TravisCI-OSX-PHP/build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer"; fi
+  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then composer install --dev --no-interaction; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then curl -s http://getcomposer.org/installer | php && php composer.phar install --dev --no-interaction; fi
+
 before_script:
 - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == "hhvm" ]]; then curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar; fi
 - mkdir -p build/logs
