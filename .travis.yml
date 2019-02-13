@@ -41,11 +41,11 @@ matrix:
   include:
     - os: linux
       language: php
-      php: '7.0'
+      php: 7.0
       env: DB=Mysql _PHP=7.0 _PKG=php PHPENV_ROOT=~/.phpenv
     - os: linux
       language: php
-      php: 'hhvm'
+      php: hhvm
       env: DB=Mysql _PHP=hhvm PHPENV_ROOT=~/.phpenv
     - os: osx
     - os: windows
@@ -53,6 +53,7 @@ matrix:
     - os: windows
       env: DB=Mysql _PHP=hhvm
   allow_failures:
+    - php: hhvm
     - os: windows
     - env: DB=Mysql _PHP=hhvm
     - env: DB=Mysql _PHP=7.3 _PKG=php
