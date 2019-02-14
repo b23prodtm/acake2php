@@ -16,13 +16,12 @@ dist: xenial
 env:
   matrix:
   - DB=Mysql _PHP=hhvm
-  - DB=Mysql _PHP=5.6 _PKG=php
   - DB=Mysql _PHP=7.0 _PKG=php
   - DB=Mysql _PHP=7.1 _PKG=php
   - DB=Mysql _PHP=7.2 _PKG=php
   - DB=Mysql _PHP=7.3 _PKG=php
-  - DB=Pgsql _PHP=5.6 _PKG=php
-  - DB=Sqlite _PHP=5.6 _PKG=php
+  - DB=Sqlite _PHP=7.0 _PKG=php
+
   global:
   - PHPUNIT=4
   - PHPCS=3
@@ -55,11 +54,9 @@ matrix:
   allow_failures:
     - php: hhvm
     - os: windows
+    - os: osx
     - env: DB=Mysql _PHP=hhvm
     - env: DB=Mysql _PHP=7.3 _PKG=php
-    - env: DB=Mysql _PHP=5.6 _PKG=php
-    - env: DB=Pgsql _PHP=5.6 _PKG=php
-    - env: DB=Sqlite _PHP=5.6 _PKG=php
 
 addons:
   coverity_scan:
@@ -88,7 +85,7 @@ before_install:
   - source .travis/TravisCI-OSX-PHP/build/prepare_${TRAVIS_OS_NAME}_env.sh #; source exports
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
-  - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then cd .travis/TravisCI-OSX-PHP; source build/custom_php_ini.sh; cd ../..; fi
+  - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then cd .travis/TravisCI-OSX-PHP; source build/custom_php_ini.sh; cd ../..; php --ini; fi
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
   - source ./Scripts/configure_tmp.sh
 install:
