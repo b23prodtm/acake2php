@@ -15,7 +15,7 @@ dist: xenial
 
 env:
   matrix:
-  - _PHP=hhvm
+  - _PHP=latest _PKG=hhvm
   - _PHP=7.1 _PKG=php
   - _PHP=7.2 _PKG=php
   - _PHP=7.3 _PKG=php
@@ -42,15 +42,15 @@ matrix:
     - os: linux
       language: php
       php: 'hhvm'
-      env: _PHP=hhvm PHPENV_ROOT=~/.phpenv
+      env: _PHP=latest _PKG=hhvm PHPENV_ROOT=~/.phpenv
     - os: osx
     - os: windows
       env: _PHP=7.3 _PKG=php _SSL=openssl.light
     - os: windows
-      env: _PHP=hhvm _SSL=openssl.light
+      env: _PHP=latest _PKG=hhvm _SSL=openssl.light
   allow_failures:
     - php: 'hhvm'
-    - env: _PHP=hhvm
+    - env: _PHP=latest _PKG=hhvm
     - env: _PHP=7.3 _PKG=php
     - os: windows
 
