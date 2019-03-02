@@ -12,15 +12,16 @@ green="\033[0;32m"
 orange="\033[0;33m"
 cyan="\033[0;36m"
 composer="bin/composer.phar"
-if [ ! -f $composer ]; then
+if [ $(which composer) 2> /dev/null ]; then
+        composer="composer"
+else if [ ! -f $composer ]; then
         echo -e "Composer setup...\n"
         mkdir -p bin
         cd bin
         curl -sS https://getcomposer.org/installer | php
         cd ..
-else
-        echo -e "Composer ${green}[OK]${nc}"
-fi
-bin/composer.phar --version
-#; update plugins and dependencies
-if [[ $(parse_arg_exists "-[oO]|--openshift" $*) ]]; then bin/composer.phar update --with-dependencies --apcu-autoloader $*; fi
+fi;fi
+echo -e "Composer ${green}[OK]${nc}"
+bash -c "${composer} --version"
+#; update plugins and dependencies (composer install is good enough to check for updates)
+bash -c "${composer} install $*"

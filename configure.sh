@@ -56,4 +56,4 @@ esac; shift; done
 echo -e "${green}Fixing some file permissions...${nc}"
 [ $openshift 2> /dev/null ] && echo "None." || source ./Scripts/configure_tmp.sh
 #; update plugins and dependencies
-source ./Scripts/composer.sh "-o"
+source ./Scripts/composer.sh "--dev --no-interaction"
