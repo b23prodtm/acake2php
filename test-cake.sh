@@ -21,7 +21,7 @@ while [[ "$#" > 0 ]]; do case $1 in
     export COLLECT_COVERAGE="false"
     notice="\n${cyan}Notice:${nc}The test script is about to modify the root and test users password into resp. ${orange}'proot'${nc} and ${cyan}'ptest'${nc}\n"
     echo -e $notice
-    source ./configure.sh "--mig-database" "-p" "-t" "-i" "-p=proot" "-t=ptest"
+    source ./configure.sh "--mig-database" "-p=pdocker" "-t=ptest" "-i" "-p=pdocker" "-t=ptest"
     echo -e $notice
     source docker/configure.sh;;
   --cov )
