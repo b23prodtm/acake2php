@@ -29,7 +29,7 @@ services:
       # overrides docker-compose-alias.sh -p=<password>
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       # Just add TEST_DATABASE_USER and TEST_DATABASE_PASSWORD
-      TEST_DATABASE_USER: pi
+      TEST_DATABASE_USER: ubuntu
       # overrides docker-compose-alias.sh -t=<password>
       #TEST_DATABASE_PASSWORD: <test-password>
       # CakePHP generated
@@ -45,7 +45,7 @@ services:
     environment:
       MYSQL_DATABASE: ${DATABASE_NAME}
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-      MYSQL_USER: pi
+      MYSQL_USER: ubuntu
       MYSQL_PASSWORD: ${TEST_DATABASE_PASSWORD}
 
 volumes:

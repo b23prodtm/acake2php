@@ -39,11 +39,6 @@ while [[ "$#" > 0 ]]; do case $1 in
     *) docker="${docker} $1";;
 esac; shift; done
 export DB=Mysql
-export _PHP=7.0
-export _PKG=php
-export PHPENV_ROOT=~/.phpenv
-source .travis/TravisCI-OSX-PHP/build/phpenv_install.sh
-source .travis/TravisCI-OSX-PHP/build/prepare_linux_env.sh
 source Scripts/bootstrap.sh $bootargs
 if [ ! $(which docker-compose) 2> /dev/null ]; then Scripts/install-docker-compose.sh; fi
 if [ ! -z $SERVER_NAME ]; then

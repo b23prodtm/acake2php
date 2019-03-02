@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+export DB=Mysql
+source Scripts/bootstrap.sh $*
+cp -v docker/apache/site-default.conf docker/apache/site.conf
 echo -e "
 Set of default Test environment
 ==========================
