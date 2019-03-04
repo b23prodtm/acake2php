@@ -97,8 +97,7 @@ install:
 before_script:
 - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == "hhvm" ]]; then curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar; fi
 - mkdir -p build/logs
-- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y"; fi
-- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then .travis/configure.sh; fi
+
 script:
 - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis | grep Test; fi
 after_script:
