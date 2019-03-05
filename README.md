@@ -271,7 +271,7 @@ The Mysql.php Datasource must define binary and mediumbinary storage types. Plea
 
 Add the *__mediumbinary__* storage, extending the original Datasource class:
 
-``
+```
 <?php
 App::uses('Mysql', 'Model/Datasource/Database');
 
@@ -305,7 +305,7 @@ class Mysql_cms extends Mysql
 		}
 }
 ?>
-``
+```
 Ensure it is set as DATABASE_ENGINE in `app/Config/database.cms.php`,`./Scripts/bootargs.sh`, `.travis.yml` and update the database schema:
 
     ./migrate-database.sh -u
