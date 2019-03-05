@@ -71,7 +71,7 @@ jobs:
           paths:
             - ./app/Vendor/
 
-      - run: ./test-cake.sh --docker -p=$DATABASE_PASSWORD -t=$TEST_DATABASE_PASSWORD | grep Test
+      - run: ./test-cake.sh -v --docker -p=$DATABASE_PASSWORD -t=$TEST_DATABASE_PASSWORD #| grep Test
       # Installing and Using docker-compose
       - run:
           name: Install Docker Compose
