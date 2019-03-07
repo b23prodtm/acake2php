@@ -18,7 +18,10 @@ identities=app/Config/database.sql
 new_pass=""
 new_test_pass=""
 saved=("$*")
+sql_source=""
 while [[ "$#" > 0 ]]; do case $1 in
+  --docker )
+      sql_source="docker exec mysql ";;
   -[uU]* )
       update_checked=1
       ;;
@@ -110,7 +113,7 @@ if [[ $import_identities -eq 1 ]]; then
   grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
   create database if not exists ${TEST_DATABASE_NAME};\r
   " > $identities
-  echo "source ${identities}" | mysql -u $DATABASE_USER --password=$DATABASE_PASSWORD  --connect-expired-password
+  ${sql_source} sh -c "echo \"source ${identities}\" | mysql -u $DATABASE_USER --password=$DATABASE_PASSWORD  --connect-expired-password"
   export DATABASE_PASSWORD=$set_DATABASE_PASSWORD
   export TEST_DATABASE_PASSWORD=$set_TEST_DATABASE_PASSWORD
 fi

@@ -8,9 +8,9 @@ jobs:
     environment:
       DB: Mysql
       # a host alias or IP address
-      MYSQL_SERVICE_HOST: db
+      MYSQL_SERVICE_HOST: 192.168.99.100
       MYSQL_SERVICE_PORT: 3306
-      TEST_MYSQL_SERVICE_HOST: db
+      TEST_MYSQL_SERVICE_HOST: 192.168.99.100
       TEST_MYSQL_SERVICE_PORT: 3306
       DATABASE_NAME: phpcms
       DATABASE_SERVICE_NAME: MYSQL
@@ -44,6 +44,7 @@ jobs:
       # for database intensive operations.
       # - image: circleci/mysql:5.7-ram
       - image: circleci/mysql:5.7
+        container_name: mysql
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_ROOT_PASSWORD: 'pdocker'

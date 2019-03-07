@@ -28,13 +28,17 @@ It includes a link to [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) a
 You do not need to change anything in your existing PHP project's repository.
 However, if these files exist they will affect the behavior of the build process:
 
+* **download from git**
+
+  Use a git client to download the project. It will stay in the myphpcms/ folder :
+  ```git checkout https://github.com/b23prodtm/myphpcms.git```
+
 * **submodules**
 
   The myphpcms folder includes modules that need to be pulled in order to install locally.
   After the first checkout browse to myphpcms folder and do
   ```git submodule update --init --recursive```
   You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the myphpcms folder and start over.
-  > After a sucessful ```git checkout```each time, run once ```git submodule update --init --recursive``` to ensure submodules are downloaded from git. Otherwise your build may fail.
 
 * **composer.json**
 
@@ -312,7 +316,7 @@ Ensure it is set as DATABASE_ENGINE in `app/Config/database.cms.php`,`./Scripts/
 
 9. It looks like submodule folders have disappeared, why ?
 
-A recent `git checkout` made the submodule disappear from disk, that can happen on master/development branch.  Recall or add the shell configure script to your workflow:
+A recent `git checkout ` made the submodule disappear from disk, that can happen on master/development branch.  Recall or add the shell configure script to your workflow:
 
     ./configure.sh -m
 
@@ -329,7 +333,7 @@ If you are working on a git remote tracked branch, it is recommended to remove f
     echo "/bin/composer.phar" >> .gitignore
 
 ### License
-   Copyright 2016 b23production GNU
+   Copyright 2016 www.b23prodtm.info
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
