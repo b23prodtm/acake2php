@@ -1,10 +1,21 @@
 # User specific & automatically generated files #
 #################################################
-/app/Config/database.php
+myphpcms*.zip
+/app/Config/database.php*
+/app/Config/database.sql*
 /app/tmp
+/app/Vendor/
+!/app/Vendor/autoload.php
+/app/webroot/e13/nbproject/private/
+/app/tmp/cache/
+/app/tmp/logs/
+/app/tmp/persistent/
+/app/tmp/sessions/
+/app/webroot/php-cms/e13/nbproject/private/
+!*empty
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
-/vendors
+/vendor
 /build
 /dist
 /tags
@@ -22,7 +33,6 @@
 # OS generated files #
 ######################
 .DS_Store
-.DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
@@ -30,11 +40,3 @@ Icon?
 ehthumbs.db
 Thumbs.db
 /nbproject/private/
-/app/Vendor/
-/app/webroot/e13/nbproject/private/
-/app/tmp/cache/
-/app/tmp/logs/
-/app/tmp/persistent/
-/app/tmp/sessions/
-/app/webroot/php-cms/e13/nbproject/private/
-!*empty

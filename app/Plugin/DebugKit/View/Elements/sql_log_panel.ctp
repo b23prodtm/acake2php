@@ -34,21 +34,45 @@ if (isset($debugKitInHistoryMode)) {
 			else:
 				$queryLog = $content[$dbName];
 			endif;
-			echo '<h5>';
-			echo __d(
-				'debug_kit',
-				'Total Time: %s ms <br />Total Queries: %s queries',
-				$queryLog['time'],
-				$queryLog['count']
-			);
-			echo '</h5>';
-			echo $this->Toolbar->table($queryLog['queries'], $headers, array('title' => 'SQL Log ' . $dbName));
+			if (empty($queryLog['queries'])):
+				if (Configure::read('debug') < 2):
+					echo ' ' . __d('debug_kit', 'No query logs when debug < 2.');
+				else:
+					echo ' ' . __d('debug_kit', 'No query logs.');
+				endif;
+			else:
+				$hashes = array();
+				$duplicate = 0;
+				foreach ($queryLog['queries'] as $key => $val) {
+					$hash = sha1($val['query']);
+					if (!isset($hashes[$hash]) || $hashes[$hash] !== $val['affected']) {
+						$hashes[$hash] = $val['affected'];
+						continue;
+					}
+					$duplicate++;
+
+					$queryLog['queries'][$key]['query'] = '<span class="alert-duplicate">' . $val['query'] . '</span>';
+				}
+
+				echo '<h5>';
+				echo __d(
+					'debug_kit',
+					'Total Time: %s ms <br />Total Queries: %s queries',
+					$queryLog['time'],
+					$queryLog['count']
+				);
+				echo '</h5>';
+				echo $this->Toolbar->table($queryLog['queries'], $headers, array('title' => 'SQL Log ' . $dbName));
+				if ($duplicate) {
+					echo '<p class="alert alert-warning">' . __d('debug_kit', '%s duplicate queries run.', $duplicate) . '</p>';
+				}
 			?>
 		<h4><?php echo __d('debug_kit', 'Query Explain:'); ?></h4>
 		<div id="sql-log-explain-<?php echo $dbName ?>">
 			<a id="debug-kit-explain-<?php echo $dbName ?>"> </a>
 			<p><?php echo __d('debug_kit', 'Click an "Explain" link above, to see the query explanation.'); ?></p>
 		</div>
+		<?php endif; ?>
 	</div>
 	<?php endforeach; ?>
 <?php else:

@@ -1,156 +1,119 @@
-language: php
+cache:
+  directories:
+  - app/tmp/cache
+  - ".autoconf"
+  - "$HOME/.composer/cache/files"
+# language: php # linux only
+language: bash # cross-platform
 
-# We require precise here, as 5.3 doesn't exist on trusty.
-dist: precise
+os:
+    - linux
+    - osx
+    - windows
 
-php:
-  - 5.3
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
-  - 7.1
-  - 7.2
+dist: xenial
 
 env:
   matrix:
-    - DB=mysql
+  - _PHP=latest _PKG=hhvm
+  - _PHP=7.1 _PKG=php
+  - _PHP=7.2 _PKG=php
+  - _PHP=7.3 _PKG=php
   global:
-    - PHPUNIT=3.7.33
-
-services:
-  - memcached
+  - _SSL=openssl
+  - DB=Mysql
+  - PHPUNIT=4
+  - PHPCS=3
+  - COLLECT_COVERAGE=false
+  - PHPENV_ROOT=/usr/local/bin/phpenv
+  - WEBHOOK_URL=https://discordapp.com/api/webhooks/479745392880386058/YOO7Nnn1IFWUtXX0n0qAZYeMDeV-SLa0lSzjGpNnKGTzG-xA0T3dplVGzSM4ObKLeMWg
+  - secure: C39DQ1zYpSAOy33Sb8NP89o6k4HUnjHnQ+bQkgbo3WH7WtiN76dGeO9jm1DjMn5np6oKbDi41/fxonaTUIjb9YMksG2YB+NBDYXHyV1H7/xAeC6uTxwUObrLXh8aOUwiiuLPllMdtOLX8JSPxl1Ixc6KyeFywPiMvwuOe4QZW6sVG4sqhZC/UUycYKRSMaOthtuTDPYKjBLaDPiEzkUmdBIo9IhAsidEFAHj4jEmw9gBtac0B2x7GbvvoDivdH3KdNSoPt2SkD0RLX51Qf7AYeAV4fw65cuCp/Aat/uk55x3lN5g18Ww9khY/cFSwPC0JXGQnnJvdcDP2diZNkqE41Yc/Mw3xwfrvp3/v8js3VIBzsGINKiSdXZ/yXqI9iRzvzlfmXRHvd4sFXRzUpi8ZB4PXaboMndbNRoh4PcoRNFtXhyebQCEgZv2x3oiKXw38WT5cga03uMH4E5z5afS3n7NP1tsuiNWd499dJzAkW8OPeLDPqY3a/b5qLeZIK1bo23mvCjPtbm+B2g2QocKcd1oQ+XANCyuT3M/+AIypdMabGOSon2fDKrUUN+SqIX4FcYaHi1sG3qUp23870u9YcT4hK2LCKBcBPkFpxqEZLwdHbJmjHPo6uRyAKOD7r/k1DtIRqkcJ+5BpU4emo6rM9rdh5mWjLtK7vdY8Y/tvP8=
 
 matrix:
   fast_finish: true
-  include:
-    - php: 5.3
-      env: DB=mysql PHPUNIT=4.8.35
-
-    - php: 5.4
-      env: DB=pgsql
-
-    - php: 5.4
-      env: DB=sqlite
-
-    - php: 7.0
-      env: PHPCS=1
-
-    - php: 7.1
-      env: DB=mysql PHPUNIT=5.7.19
-
-    - php: 7.2
-      env: DB=mysql PHPUNIT=5.7.19
   exclude:
-    - php: 7.2
-      env: DB=mysql
+    - os: windows
+    - os: linux
+  include:
+    - os: linux
+      language: php
+      php: 7.1
+      env: _PHP=7.1 _PKG=php PHPENV_ROOT=~/.phpenv
+    - os: linux
+      language: php
+      php: 'hhvm'
+      env: _PHP=latest _PKG=hhvm PHPENV_ROOT=~/.phpenv
+    - os: osx
+    - os: windows
+      env: _PHP=7.3 _PKG=php _SSL=openssl.light
+    - os: windows
+      env: _PHP=latest _PKG=hhvm _SSL=openssl.light
+  allow_failures:
+    - php: 'hhvm'
+    - env: _PHP=latest _PKG=hhvm
+    - env: _PHP=7.3 _PKG=php
+    - os: windows
 
+addons:
+  coverity_scan:
+    project:
+      name: b23prodtm/myphpcms
+      description: 'This PHP CMS is featuring well-known functionalities as cool as
+        posting some web contents with pictures stored in a database. Developer Note
+        : This is the Cake PHP cartridge repository. A submodule is included in app/webroot.'
+    notification_email: b23prodtm@users.sourceforge.net
+    build_command_prepend: ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database"
+      "-y" && .travis/configure.sh
+    build_command: "./test-cake.sh --cov | grep Test"
+    branch_pattern: coverity_scan
+  apt:
+    packages:
+      - php7.0
+      - php7.0-xml
+      - hhvm
+    update: true
+
+services:
+- memcached
+
+before_install:
+  - cd .travis/TravisCI-OSX-PHP
+  - source build/phpenv_install.sh
+  - source build/prepare_${TRAVIS_OS_NAME}_env.sh #; source exports
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
+  - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then source build/custom_php_ini.sh; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
+  - cd ../..
+  - source ./Scripts/configure_tmp.sh
+install:
+  - cd .travis/TravisCI-OSX-PHP
+  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_SSL}"; /usr/local/opt/openssl/bin/c_rehash; fi
+  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-openssl"; fi
+  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer"; bash -c 'composer install --dev --no-interaction'; fi
+  - cd ../..
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then curl -s http://getcomposer.org/installer | php && php composer.phar install --dev --no-interaction; fi
 
 before_script:
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] ; then pear config-set preferred_state snapshot && yes "" | pecl install mcrypt ; fi
-  - composer require "phpunit/phpunit=$PHPUNIT"
-  - echo "require_once 'vendors/autoload.php';" >> app/Config/bootstrap.php
-  - sudo locale-gen de_DE
-  - sudo locale-gen es_ES
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test2;'; fi"
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test3;'; fi"
-  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
-  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
-  - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
-  - chmod -R 777 ./app/tmp
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.3" ]] ; then pecl install timezonedb ; fi
-  - sh -c "if [ '$PHPCS' = '1' ]; then composer require 'cakephp/cakephp-codesniffer:1.*'; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendors/bin/phpcs --config-set installed_paths vendors/cakephp/cakephp-codesniffer; fi"
-  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "7" ]] ; then echo "yes" | pecl install apcu-5.1.3 || true; fi
-  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "5" ]] ; then echo "yes" | pecl install apcu-4.0.11 || true; fi
-  - echo -e "extension = apcu.so\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - phpenv rehash
-  - set +H
-  - echo "<?php
-    class DATABASE_CONFIG {
-    private \$identities = array(
-      'mysql' => array(
-        'datasource' => 'Database/Mysql',
-        'host' => '127.0.0.1',
-        'login' => 'root'
-      ),
-      'pgsql' => array(
-        'datasource' => 'Database/Postgres',
-        'host' => '127.0.0.1',
-        'login' => 'postgres',
-        'database' => 'cakephp_test',
-        'schema' => array(
-          'default' => 'public',
-          'test' => 'public',
-          'test2' => 'test2',
-          'test_database_three' => 'test3'
-        )
-      ),
-      'sqlite' => array(
-        'datasource' => 'Database/Sqlite',
-        'database' => array(
-          'default' => ':memory:',
-          'test' => ':memory:',
-          'test2' => '/tmp/cakephp_test2.db',
-          'test_database_three' => '/tmp/cakephp_test3.db'
-        ),
-      )
-    );
-    public \$default = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test',
-      'prefix' => ''
-    );
-    public \$test = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test',
-      'prefix' => ''
-    );
-    public \$test2 = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test2',
-      'prefix' => ''
-    );
-    public \$test_database_three = array(
-      'persistent' => false,
-      'host' => '',
-      'login' => '',
-      'password' => '',
-      'database' => 'cakephp_test3',
-      'prefix' => ''
-    );
-    public function __construct() {
-      \$db = 'mysql';
-      if (!empty(\$_SERVER['DB'])) {
-        \$db = \$_SERVER['DB'];
-      }
-      foreach (array('default', 'test', 'test2', 'test_database_three') as \$source) {
-        \$config = array_merge(\$this->{\$source}, \$this->identities[\$db]);
-        if (is_array(\$config['database'])) {
-          \$config['database'] = \$config['database'][\$source];
-        }
-        if (!empty(\$config['schema']) && is_array(\$config['schema'])) {
-          \$config['schema'] = \$config['schema'][\$source];
-        }
-        \$this->{\$source} = \$config;
-      }
-    }
-    }" > app/Config/database.php
+- if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == "hhvm" ]]; then curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar; fi
+- mkdir -p build/logs
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; fi"
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi;"
-
-notifications:
-  email: false
+- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis | grep Test; fi
+after_script:
+- if [[ ("${COLLECT_COVERAGE}" == "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]];
+  then travis_retry php app/vendor/bin/php-coveralls -v -r ./app/; fi
+after_success:
+- wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+- chmod +x send.sh
+- "./send.sh success $WEBHOOK_URL"
+- zip -r myphpcms.zip *
+- git tag --force "v${GIT_RELEASE_VERSION}.${TRAVIS_BUILD_NUMBER}"
+deploy:
+  provider: releases
+  api_key:
+    secure: UmXoq0sFQQixpMH12MG1Q3+pQhw05SuN919FgnKCru3X3RTCpXnZB8hgXvQHZn5Hhunq5eBPZ7C/bvk5wkzPXrwpAXyA7wj7PhGn6QbksU6xtkNOQVera/pMoTJW2VtNA2GcWvUvCnht3m73Tp2lguaI3Q6Yt8qq1vHJlDO5hbgvC0LdDrRFLIAA95jA9DWZRCWanHV5aepVNkX0qjQm25BIAwvQtfxkj/DipDYy2eIMh8brh6aZamE3cBv8sXP8b2b89GB670E35Otfseu58a6HxqmLD4dI5kIEzhSFjuelPJne0tmebFKww+mPn7v2SKJZR9xVfQM+mZHAp7SiozEvi1nqhUN31Z64mpDQDPnAB6eO36rGSdxDyYN7Ab24lJuLTcNkRbNOaJzn88q9d5DqGGQRJl6875cJmPFOjUwNteJIvLhDmPX3oHSPvWx3AtpEUtWeCrVt1yc7tyG0kdW8MmzoWvgDhbyvqAefKO3bEzVZeQQy/7LKy1i42+B/7N57oR6sgFX2N/zvdckFKjwHNiydds67Wj++EuJRXr2AhxdraW3iwDBTmkrZ3TjOsxcySbMBJHCOwHF9yAmLklbk4h1haCohkQrQxBp6Rhm3vKJGDOR3rOkjqIzqgHgo3pcXDdBULMpfB3/IbDeh3/RMuTEOXvv7FUNRjb4JIdI=
+  file: myphpcms.zip
+  on:
+    repo: b23prodtm/myphpcms
+    branch: feature/gh-releases

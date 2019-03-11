@@ -24,7 +24,21 @@
 
 // Setup a 'default' cache configuration for use in the application.
 Cache::config('default', array('engine' => 'File'));
+// Cache configuration for data that can be cached for a short time only.
+Cache::config('short', array(
+	'engine' => 'File',
+	'duration' => '+1 hours',
+	'path' => CACHE,
+	'prefix' => 'cake_short_'
+));
 
+// Cache configuration for data that can be cached for a long time.
+Cache::config('long', array(
+	'engine' => 'File',
+	'duration' => '+1 week',
+	'probability' => 100,
+	'path' => CACHE . 'long' . DS,
+));
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
  *
@@ -110,12 +124,5 @@ CakeLog::config('error', array(
 	'file' => 'error',
 ));
 
-/**
- * Load DebugKit plugin
- */
-CakePlugin::load('DebugKit');
-
-/**
- * Load Markdown Plugin
- */
-CakePlugin::load(array('Markdown' => array('bootstrap' => true)));
+/** PHP autoloader shall detect applcation plugins from this profile */
+include_once APP . 'Config' . DS . 'boot_profile.cms.php';

@@ -1,133 +1,59 @@
-#!/bin/sh
-#;
-#; colorful shell
-nc='\033[0m'
-red="\033[0;31m"
-green="\033[0;32m"
-orange="\033[0;33m"
-cyan="\033[0;36m"
-
-#; arguments are ./configure.sh -Y|-N [-p password -s salt -f filename] 
+#!/bin/bash
+set -e
+source ./Scripts/lib/shell_prompt.sh
+source ./Scripts/lib/parsing.sh
+openshift=$(parse_arg_exists "-[oO]*|--openshift" $*)
+if [ $openshift 2> /dev/null ]; then
+  echo "Real environment bootargs..."
+else
+  echo "Provided local/test bootargs..."
+  source ./Scripts/bootargs.sh $*
+fi
+saved=("$*")
 #; if the full set of the arguments exists, there won't be any prompt in the shell
-cd app/webroot/php-cms/e13/etc/
-copies=0
-while true
-do
-        # (1) prompt user, and read command line argument
-        echo "${cyan}Step 1. Overwrite constantes.properties...\n${nc}"
-        answer=$1
-        case $answer in
-               -[yY]* ) echo "Yes.\n"
-                        answer="Y";;
-        
-               -[nN]* ) echo "No.\n"
-                        break;;
-
-               * )
-                        read -p "Run the copy template script now (Y/N) ? " answer;;
-        esac
-        while [ -f constantes.properties.old-$copies ]
-        do
-        let copies++
-        done
-        # (2) handle the input we were given
-        case $answer in
-                [yY]* )                         
-                        cp -v constantes.properties constantes.properties.old-$copies
-                        cp -v constantes_template.properties constantes.properties
-                        echo "Okay, just ran the shell script. Please, review the files.\n"
-                        #quit while loop
-                        break;;
-
-                [nN]* ) break;;
-
-                * )     echo "${red}Dude, just enter Y or N, please.\n${nc}";;
-        esac
-done
-#; get hash password argv are -p password -s salt -f filename
-echo "${cyan}Step 2. Get a hashed password with encryption, PHP encrypts.\n${nc}"
-pass=$2
-salt=$4
-#; read password if not set as $3 argv
-while true
-do
-        answer=$1
-        case $answer in
-                -[yY]* ) echo "Yes.\n"
-                        answer="Y";;
-        
-                -[nN]* ) echo "No.\n"
-                        break;;
-
-                * )
-                        read -p "Run reset password script now (Y/N) ? " answer;;
-        esac
-         case $answer in
-                [yY]* )                         
-                        case $pass in
-                               -[pP]* ) pass=$3;;
-
-                               * )
-                                       while true 
-                                       do
-                                               read -sp "Please enter a password :" pass
-                                               echo "\n"
-                                               read -sp "Please re-enter the password :" confirmpass
-                                               echo "\n"
-                                               if [ "$pass" == "$confirmpass" ]; then
-                                                       break
-                                               else
-                                                       echo "${red}Passwords don't match.\n${nc}"
-                                               fi
-                                       done;;
-                       esac 
-                       # read salt if not set as $5 argv
-                       case $salt in
-                               -[sS]* ) salt=$5;;
-
-                               * )
-                                       while [ "$salt" == "" ] 
-                                       do
-                                       read -p "Please enter the salt word :" salt 
-                                       done;;
-                       esac     
-
-                       hash_file="export_hash_password.sh"     
-                       php -f getHashPassword.php -- -p $pass -s $salt -f $hash_file
-                       #; so that the shell can execute export file
-                       chmod 777 $hash_file
-                       echo "Saved in $hash_file .\n"
-                       break;;
-                [nN]* ) break;;
-
-                * )     echo "${red}Dude, just enter Y or N, please.\n${nc}";;
-                        esac
-done
-cd ../../../../../
-
-# Know-How : In Openshift 3, configure a CakePhp-Mysql-persistent docker image. Set automatic deployment with _100%_ unavailability
-# while deploying and _0_ surge pod in deployment advanced edit configuration tab. 
-# If it starts a build, it automatically scales deployments down to zero, and deploys and scales up when it's finished to build.
-# Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
-
-echo "${cyan}Step 3. migrate database\n${nc}"
-while true
-do
-        answer=$1
-        case $answer in
-               -[yY]* ) echo "Yes.\n"
-                        answer="Y";;        
-               -[nN]* ) echo "No.\n"
-                        break;;
-
-               * )
-                        read -p "Run migrate database script now (Y/N) ? " answer;;
-        esac
-        
-        case $answer in
-                [yY]* ) /bin/sh migrate-database.sh -y -y -y
-                        break;;
-                [nN]* ) break;;
-                * )     echo "${red}Dude, just enter Y or N, please.\n${nc}";;
-        esac
-done;
+while [[ "$#" > 0 ]]; do case $1 in
+    -[cC]*|--const)
+        shell_prompt "./Scripts/config_etc_const.sh" "${cyan}Step 1. Overwrite constantes.properties\n${nc}" "-Y"
+        ;;
+    -[hH]*|--hash)
+    #; get hash password
+        shell_prompt "./Scripts/config_etc_pass.sh $*" "${cyan}Step 2. Get a hashed password with encryption, PHP encrypts.\n${nc}" "-Y"
+        ;;
+    -[dD]*|--mig-database)
+        #; Know-How : In Openshift 3, configure a CakePhp-Mysql-persistent docker image. Set automatic deployment with _100%_ unavailability
+        #; If it starts a build, it automatically scales deployments down to zero, and deploys and scales up when it's finished to build.
+        #; Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
+        #; [[-d|--mig-database] [-u]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
+        args=""
+        shift
+        if [ $openshift 2> /dev/null ]; then args="--openshift "; fi
+        shell_prompt "./migrate-database.sh ${args}$*" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
+        break;;
+    -[sS]*|-[pP]*|-[fF]*)
+        #; void source script known args
+        shift;;
+    -[mM]*|--submodule)
+        git submodule update --init --recursive --force;;
+    --help )
+          echo "Usage: $0 [-m] [-c] [-h [-p password -s salt [-f filename]]] [[-d|--mig-database] [options]]
+              -c,--const
+                  Reset to app/webroot/php_cms/etc/constantes-template.properties
+              -h,--hash
+                  Reset administrator password hash
+              -p <password> -s <salt> [-f <save-filename>]
+                  Set administrator <password> with md5 <salt>. Optional file to save a shell script export.
+              -m,--submodule
+                  Update sub-modules from Git
+              -d, --mig-database [options]
+                  Migrate Database (see ./migrate-database.sh --help)"
+              exit 0;;
+    -[oO]*|--openshift )
+      show_password_status $DATABASE_USER $DATABASE_PASSWORD "is configuring openshift...";;
+    -[vV]*|--verbose )
+      echo "Passed params :  $0 ${saved}";;
+    *) echo "Unknown parameter passed: $0 $1"; exit 1;;
+esac; shift; done
+echo -e "${green}Fixing some file permissions...${nc}"
+[ $openshift 2> /dev/null ] && echo "None." || source ./Scripts/configure_tmp.sh
+#; update plugins and dependencies
+source ./Scripts/composer.sh "--dev --no-interaction"

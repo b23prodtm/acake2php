@@ -38,14 +38,14 @@ if (!defined('DS')) {
  *
  */
 if (!defined('ROOT')) {
-	define('ROOT', dirname(dirname(dirname(__FILE__))));
+	define('ROOT', dirname(__FILE__));
 }
 /**
  * The actual directory name for the "app".
  *
  */
 if (!defined('APP_DIR')) {
-	define('APP_DIR', basename(dirname(dirname(__FILE__))));
+	define('APP_DIR', basename(ROOT . DS . 'app'));
 }
 
 /**
@@ -56,7 +56,7 @@ if (!defined('APP_DIR')) {
  *
  * Leaving this constant undefined will result in it being defined in Cake/bootstrap.php
  */
-//define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
+define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
 
 /**
  * Editing below this line should not be necessary.
@@ -64,10 +64,10 @@ if (!defined('APP_DIR')) {
  *
  */
 if (!defined('WEBROOT_DIR')) {
-	define('WEBROOT_DIR', basename(dirname(__FILE__)));
+	define('WEBROOT_DIR', APP_DIR . DS . 'webroot');
 }
 if (!defined('WWW_ROOT')) {
-	define('WWW_ROOT', dirname(__FILE__) . DS);
+	define('WWW_ROOT', WEBROOT_DIR . DS);
 }
 
 if (!defined('CAKE_CORE_INCLUDE_PATH')) {
@@ -89,6 +89,9 @@ if (!empty($failed)) {
 if (Configure::read('debug') < 1) {
 	die(__d('cake_dev', 'Debug setting does not allow access to this url.'));
 }
+
+/** PHP autoloader shall detect applcation plugins from this profile */
+include_once APP . 'Config' . DS . 'boot_profile.cms.php';
 
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteDispatcher.php';
 require_once CAKE . 'TestSuite' . DS . 'CakeTestSuiteCommand.php';

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -50,7 +49,7 @@
  * database. Uses database default not specified.
  *
  * sslmode =>
- * For Postgres specifies whether to 'disable', 'allow', 'prefer', or 'require' SSL for the 
+ * For Postgres specifies whether to 'disable', 'allow', 'prefer', or 'require' SSL for the
  * connection. The default value is 'allow'.
  *
  * unix_socket =>
@@ -64,65 +63,47 @@
  *
  * flags =>
  * A key/value array of driver specific connection options.
- */
+ *
+ * Edit ./Scripts/bootargs.sh !
+ * For Test settings in test-cake.sh  */
+
 class DATABASE_CONFIG {
 
         public $default = array(
-            'datasource' => 'Database/Mysql',
+        /* this is an extended Mysql database (providing blob-binary storage)*/
+            'datasource' => 'Database/MysqlCms',
             'persistent' => false,
-            'host' => 'localhost',
-            'port' => '3306',
-            'login' => 'test',
-           'password' => 'mypassword',
-            'database' => 'phpcms',
             'prefix' => '',
             'encoding' => 'utf8',
         );
         public $test = array(
-            'datasource' => 'Database/Mysql',
+            'datasource' => 'Database/MysqlCms',
             'persistent' => false,
-             'host' => 'localhost',
-            'port' => '3306',
-            'login' => 'test',
-           'password' => 'mypassword',
-            'database' => 'phpcms',
             'prefix' => '',
             'encoding' => 'utf8',
         );
 
         public function __construct() {
-
                 $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) : FALSE;
+                $test = array(
+                  'host' => getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST"),
+                  'port' => getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT"),
+                  'login' => getenv('TEST_DATABASE_USER'),
+                  'password' => getenv('TEST_DATABASE_PASSWORD'),
+                  'database' => getenv('TEST_DATABASE_NAME'),
+                  'datasource' => $datasource ? $this->test['datasource'] : $datasource
+                );
+                $default = array(
+                  'host' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST"),
+                  'port' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT"),
+                  'login' => getenv("DATABASE_USER"),
+                  'password' => getenv("DATABASE_PASSWORD"),
+                  'database' => getenv("DATABASE_NAME"),
+                  'datasource' => $datasource ? $this->default['datasource'] : $datasource
+                );
 
-                
-                /** a different test/local configuration (shall not be the same as production)*/ 
-                $test['host'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
-                $test['port'] = getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
-                $test['login'] = getenv('TEST_DATABASE_USER');
-                $test['password'] = getenv('TEST_DATABASE_PASSWORD');
-                $test['database'] = getenv('TEST_DATABASE_NAME');
-                $test['datasource'] = $datasource;
-                
-                $this->redirectIfNull($test, $this->test);
-                $this->test = $test;
-                
-                $default['host'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST");
-                $default['port'] = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT");
-                $default['login'] = getenv("DATABASE_USER");
-                $default['password'] = getenv("DATABASE_PASSWORD");
-                $default['database'] = getenv("DATABASE_NAME");
-                $default['datasource'] = $datasource;
-
-                $this->redirectIfNull($default, $this->default);
-                $this->default = $default;
+                /* override member variables */
+                $this->test = array_merge($this->test, $test);
+                $this->default = array_merge($this->default, $default);
         }
-        function redirectIfNull(&$default, $test) {
-                foreach ($default as $key => $val) {
-                        if (!$val || $val === "") {
-                                $default[$key] = $test[$key];
-                        }
-                }
-        }
-        
-
 }
