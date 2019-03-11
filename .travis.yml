@@ -15,15 +15,13 @@ dist: xenial
 
 env:
   matrix:
-  - DB=Mysql _PHP=hhvm
-  - DB=Mysql _PHP=5.6 _PKG=php
-  - DB=Mysql _PHP=7.0 _PKG=php
-  - DB=Mysql _PHP=7.1 _PKG=php
-  - DB=Mysql _PHP=7.2 _PKG=php
-  - DB=Mysql _PHP=7.3 _PKG=php
-  - DB=Pgsql _PHP=5.6 _PKG=php
-  - DB=Sqlite _PHP=5.6 _PKG=php
+  - _PHP=latest _PKG=hhvm
+  - _PHP=7.1 _PKG=php
+  - _PHP=7.2 _PKG=php
+  - _PHP=7.3 _PKG=php
   global:
+  - _SSL=openssl
+  - DB=Mysql
   - PHPUNIT=4
   - PHPCS=3
   - COLLECT_COVERAGE=false
@@ -34,31 +32,27 @@ env:
 matrix:
   fast_finish: true
   exclude:
-    - os: osx
-      env: DB=Mysql _PHP=7.0 _PKG=php
     - os: windows
     - os: linux
   include:
     - os: linux
       language: php
-      php: '7.0'
-      env: DB=Mysql _PHP=7.0 _PKG=php PHPENV_ROOT=~/.phpenv
+      php: 7.1
+      env: _PHP=7.1 _PKG=php PHPENV_ROOT=~/.phpenv
     - os: linux
       language: php
       php: 'hhvm'
-      env: DB=Mysql _PHP=hhvm PHPENV_ROOT=~/.phpenv
+      env: _PHP=latest _PKG=hhvm PHPENV_ROOT=~/.phpenv
     - os: osx
     - os: windows
-      env: DB=Mysql _PHP=7.3 _PKG=php
+      env: _PHP=7.3 _PKG=php _SSL=openssl.light
     - os: windows
-      env: DB=Mysql _PHP=hhvm
+      env: _PHP=latest _PKG=hhvm _SSL=openssl.light
   allow_failures:
+    - php: 'hhvm'
+    - env: _PHP=latest _PKG=hhvm
+    - env: _PHP=7.3 _PKG=php
     - os: windows
-    - env: DB=Mysql _PHP=hhvm
-    - env: DB=Mysql _PHP=7.3 _PKG=php
-    - env: DB=Mysql _PHP=5.6 _PKG=php
-    - env: DB=Pgsql _PHP=5.6 _PKG=php
-    - env: DB=Sqlite _PHP=5.6 _PKG=php
 
 addons:
   coverity_scan:
@@ -83,24 +77,29 @@ services:
 - memcached
 
 before_install:
-  - source .travis/TravisCI-OSX-PHP/build/phpenv_install.sh
-  - source .travis/TravisCI-OSX-PHP/build/prepare_${TRAVIS_OS_NAME}_env.sh #; source exports
+  - cd .travis/TravisCI-OSX-PHP
+  - source build/phpenv_install.sh
+  - source build/prepare_${TRAVIS_OS_NAME}_env.sh #; source exports
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
   - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
-  - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
-  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
-  - "./Scripts/configure_tmp.sh"
+  - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then source build/custom_php_ini.sh; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
+  - cd ../..
+  - source ./Scripts/configure_tmp.sh
 install:
-  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then .travis/TravisCI-OSX-PHP/build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-openssl"; fi
-  - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install --dev --no-interaction
+  - cd .travis/TravisCI-OSX-PHP
+  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_SSL}"; /usr/local/opt/openssl/bin/c_rehash; fi
+  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-openssl"; fi
+  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer"; bash -c 'composer install --dev --no-interaction'; fi
+  - cd ../..
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then curl -s http://getcomposer.org/installer | php && php composer.phar install --dev --no-interaction; fi
+
 before_script:
 - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == "hhvm" ]]; then curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar; fi
 - mkdir -p build/logs
-- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./configure.sh "-c" "-h" "-p" "pass" "-s" "word" "--mig-database" "-y"; fi
-- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then .travis/configure.sh; fi
+
 script:
-- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh | grep Test; fi
+- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis | grep Test; fi
 after_script:
 - if [[ ("${COLLECT_COVERAGE}" == "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]];
   then travis_retry php app/vendor/bin/php-coveralls -v -r ./app/; fi
