@@ -45,8 +45,8 @@ parse_arg_exists() {
   esac; ((count++)); shift; done
 }
 #; export -f parse_arg_exists()
-parse_dns_host() {
+parse_dom_host() {
   [ $# -lt 3 ] && echo "Usage: $0 <passed-argument> <export-var> <description>"
-  parse_arg_export $1 "-dns*|-DNS*" $2 $3
+  parse_arg_export $1 "--domain*" $2 $3
 }
-#; export -f parse_dns_host()
+#; export -f parse_dom_host()

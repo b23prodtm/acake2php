@@ -20,7 +20,8 @@ myphpcms*.zip
 /dist
 /tags
 *.mo
-/bin/composer.phar
+*/composer.phar
+
 
 # IDE and editor specific files #
 #################################

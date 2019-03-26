@@ -3,7 +3,7 @@ source ./Scripts/lib/parsing.sh
 bootargs=""
 docker=""
 saved=("$*")
-usage="[-dns=<domainname>] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [other-args]"
+usage="[--domain=<domainname>] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [other-args]"
 [ $# -eq 0 ] && echo "Usage: $0 ${usage}" && exit 1
 while [[ "$#" > 0 ]]; do case $1 in
     -[pP]*|--sql-password*)
@@ -16,11 +16,11 @@ while [[ "$#" > 0 ]]; do case $1 in
       bootargs=$saved;;
     -[S]*|-submodule )
       git submodule update --init --recursive;;
-    -dns*|-DNS*)
-      parse_dns_host "$1" "SERVER_NAME" "Domain Server Name";;
+    --domain*)
+      parse_dom_host "$1" "SERVER_NAME" "Domain Server Name";;
     -[hH]*|--help )
       echo "Usage: $0 ${usage}
-        -dns=<domainname>
+        --domain=<domainname>
 	    Apache ServerName global directive
 	-p, --sql-password=<password>
             Exports DATABASE_PASSWORD
@@ -47,4 +47,4 @@ else
     cp -v docker/apache/site-default.conf docker/apache/site.conf
 fi
 docker-compose $docker
-sudo cp index-redirect-8000.php /var/www/html/index.php
+#sudo cp index-redirect-8000.php /var/www/html/index.php
