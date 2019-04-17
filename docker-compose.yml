@@ -46,9 +46,9 @@ services:
       retries: 3 
       # v3.4 compose file
       #start_period: 40s
-    #dns:
-    #  - 8.8.8.8
-    #  - 8.8.4.4
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
   db:
     image: library/mariadb:10.4-bionic
     volumes:
@@ -60,9 +60,9 @@ services:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
       MYSQL_USER: ubuntu
       MYSQL_PASSWORD: ${TEST_DATABASE_PASSWORD}
-    #dns:
-    #  - 8.8.8.8
-    #  - 8.8.4.4
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
 volumes:
   db-data:
     external: false
