@@ -1,4 +1,4 @@
-FROM arm64v8/php:7.2-apache 
+FROM arm32v7/php:7.2-apache 
 RUN apt-get update -yqq \
   && apt-get install -yqq --no-install-recommends \
     git \

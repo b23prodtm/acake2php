@@ -50,12 +50,15 @@ services:
       - 8.8.8.8
       - 8.8.4.4
   db:
-    image: library/mariadb:10.4-bionic
+    image: linuxserver/mariadb:arm32v7-latest
     volumes:
       - db-data:/var/lib/mysql
     networks:
       - cake
     environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Paris
       MYSQL_DATABASE: ${DATABASE_NAME}
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
       MYSQL_USER: mytest
