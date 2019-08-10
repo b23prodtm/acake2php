@@ -7,3 +7,6 @@
 [submodule ".travis/TravisCI-OSX-PHP"]
 	path = .travis/TravisCI-OSX-PHP
 	url = https://github.com/b23prodtm/TravisCI-OSX-PHP.git
+[submodule "balena-sound"]
+	path = balena-sound
+	url = https://github.com/b23prodtm/balena-sound.git

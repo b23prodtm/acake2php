@@ -35,7 +35,9 @@ while [[ "$#" > 0 ]]; do case $1 in
     -[mM]*|--submodule)
         git submodule update --init --recursive --force;;
     --help )
-          echo "Usage: $0 [-m] [-c] [-h [-p password -s salt [-f filename]]] [[-d|--mig-database] [options]]
+          echo "Usage: $0 [-m] [--openshift] [-c] [-h [-p password -s salt [-f filename]]] [[-d|--mig-database] [options]]
+              --openshift -d
+	          Using real environment variables to migrate database
               -c,--const
                   Reset to app/webroot/php_cms/etc/constantes-template.properties
               -h,--hash

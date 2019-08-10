@@ -21,11 +21,11 @@ while [[ "$#" > 0 ]]; do case $1 in
   -[yY]*)
     #; symlink mysql socket with php
     echo "Please allow the super-user to link mysql socket to php ..."
-    sudo mkdir -p /var/mysql
+    mkdir -p /var/mysql
     if [ -h /var/mysql/mysql.sock ]; then
 				ls -al /var/mysql/mysql.sock
 	 	else
-			 sudo ln -vs /tmp/mysql.sock /var/mysql/mysql.sock
+			 ln -vs /tmp/mysql.sock /var/mysql/mysql.sock
 		fi;;
   *)
     ;;

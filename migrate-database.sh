@@ -37,11 +37,12 @@ while [[ "$#" > 0 ]]; do case $1 in
       new_test_pass=$3
       shift;shift;;
   -[vV]*|--verbose )
-    [ -f $identities ] && cat $identities
-    # Reset passed args (shift reset)
-    echo "Passed params : $0 ${saved}
-    and environment VARIABLES:"
-    export -p | grep "DATABASE\|MYSQL";;
+      [ -f $identities ] && cat $identities
+      # Reset passed args (shift reset)
+      echo "Passed params : $0 ${saved}
+and environment VARIABLES:"
+      echo $(export -p | grep "DATABASE\|MYSQL")
+      ;;
   -[hH]*|--help )
     echo "Usage: $0 [-u] [-y|n] [-o] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [-i] [-p|--new-sql-password=<password>] [-t,--new-test-sql-password=<password>]
         -u
@@ -133,3 +134,4 @@ if [[ $update_checked -eq 1 ]]; then
   echo "Migrating database 'cake schema update' ..."
   ./lib/Cake/Console/cake schema update --file myschema.php -y
 fi
+echo -e "$0 finished"
