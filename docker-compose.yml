@@ -3,7 +3,28 @@ services:
   cakephp:
     build:
       context: .
-      dockerfile: Dockerfile      
+      args:
+        # variables are build-time environment
+        - PHP_TAG
+        - PHP_OWNER
+        - DB
+        - MYSQL_SERVICE_HOST
+        - MYSQL_SERVICE_PORT
+        - TEST_MYSQL_SERVICE_HOST
+        - TEST_MYSQL_SERVICE_PORT
+        - DATABASE_SERVICE_NAME
+        #(optional)
+        #- WEBHOOK_URL=<discordapp-url>
+        # Persistent connection credentials
+        - DATABASE_NAME
+        - DATABASE_USER
+        - DATABASE_PASSWORD
+        - TEST_DATABASE_USER
+        - TEST_DATABASE_PASSWORD
+        # CakePHP generated
+        #- CAKEPHP_SECRET_TOKEN
+        #- CAKEPHP_SECRET_SALT
+        #- CAKEPHP_SECURITY_CIPHER_SEED
     volumes:
       - data:/var/www/html
     ports:
@@ -12,38 +33,16 @@ services:
       - db
     networks:
       - cake
-    environment:
-      - DOCKER_OS_NAME=linux
-      - DOCKER_PHP_VERSION=7.2
-      - DB=Mysql
-      # a host alias or IP address
-      - MYSQL_SERVICE_HOST=db
-      - MYSQL_SERVICE_PORT=3306
-      - TEST_MYSQL_SERVICE_HOST=db
-      - TEST_MYSQL_SERVICE_PORT=3306
-      - DATABASE_SERVICE_NAME=MYSQL
-      #(optional)
-      #- WEBHOOK_URL=<discordapp-url>
-      # Persistent connection credentials
-      - DATABASE_NAME
-      - DATABASE_USER=root
-      - DATABASE_PASSWORD
-      - TEST_DATABASE_USER
-      - TEST_DATABASE_PASSWORD
-      # CakePHP generated
-      #- CAKEPHP_SECRET_TOKEN=<secret-token>
-      #- CAKEPHP_SECRET_SALT=<secret-salt>
-      #- CAKEPHP_SECURITY_CIPHER_SEED=<cipher-seed>
-# docker-compose v3
-#    healthcheck:
- #     test: ["CMD", "curl", "-f", "http://localhost"] 
-   #   interval: 1m30s
-  #    timeout: 10s 
-    #  retries: 3 
+  #docker-compose v3
+    #healthcheck:
+      #test: ["CMD", "curl", "-f", "http://localhost"] 
+      #interval: 1m30s
+      #timeout: 10s 
+      #retries: 3 
       # v3.4 compose file
       #start_period: 40s
   db:
-    image: linuxserver/mariadb:arm32v7-latest
+    image: linuxserver/mariadb:${DB_TAG?database-tag-missing}
     volumes:
       - db-data:/config
     ports:
