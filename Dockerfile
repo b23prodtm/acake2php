@@ -1,3 +1,4 @@
+ARG DEBIAN_FRONTEND=noninteractive
 ARG PHP_TAG
 ARG PHP_OWNER
 FROM ${PHP_OWNER:-arm32v7}/php:${PHP_TAG:-7.2-apache}

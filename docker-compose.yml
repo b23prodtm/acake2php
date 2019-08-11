@@ -42,7 +42,8 @@ services:
       # v3.4 compose file
       #start_period: 40s
   db:
-    image: linuxserver/mariadb:${DB_TAG?database-tag-missing}
+    #image: linuxserver/mariadb:${DB_TAG?database-tag-missing}
+    image: linuxserver/mariadb:arm32v7-latest
     volumes:
       - db-data:/config
     ports:
