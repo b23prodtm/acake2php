@@ -13,6 +13,7 @@ ARG DATABASE_USER
 ARG DATABASE_PASSWORD
 ARG TEST_DATABASE_USER
 ARG TEST_DATABASE_PASSWORD
+ARG SERVER_NAME
 
 # ARG CAKEPHP_SECRET_TOKEN
 # ARG CAKEPHP_SECRET_SALT
@@ -56,11 +57,11 @@ ENV PATH="${PATH}:/var/www/html/lib/Cake/Console"
 ENV PATH="${PATH}:/var/www/html/app/Vendor/bin"
 
 # COPY apache site.conf file
-COPY docker/apache/site-default.conf /etc/apache2/sites-available/000-default.conf
-COPY docker/apache/b23prodtm.info.conf /etc/apache2/sites-available/b23prodtm.info.conf
+COPY docker/apache/site-default.conf /etc/apache2/site-available/000-default.conf
+COPY docker/apache/${SERVER_NAME}.conf /etc/apache2/site-available/${SERVER_NAME}.conf
 
 # Add site conf to available domains
-RUN a2ensite b23prodtm.info
+RUN a2ensite ${SERVER_NAME}
 
 # Add SSL module
 RUN a2enmod ssl
@@ -74,7 +75,7 @@ WORKDIR /var/www/html/
 # Install all PHP dependencies
 RUN composer install --no-interaction
 
-# Configuration 
+# Configuration
 RUN ["bash", "-c", "./configure.sh", "--openshift" ,"-d", "-u", "-v"]
 # Password Hash Verbose
 # RUN cat app/webroot/php_cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
