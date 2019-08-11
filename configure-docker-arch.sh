@@ -9,9 +9,12 @@ while [ true ]; do
     2|arm64*|aarch64)
       arch="aarch64"
       break;;
+    3|amd64)
+      arch="amd64"
+      break;;
     *)
       echo $usage
-      read -p "Set docker machine architecture ARM 32 bits or 64 bits (choose 1 or 2) ? " arch   
+      read -p "Set docker machine architecture ARM32, ARM64 bits or X86-64 (choose 1, 2 or 3) ? " arch   
       ;;
   esac
 done

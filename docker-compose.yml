@@ -3,6 +3,7 @@ services:
   cakephp:
     build:
       context: .
+      dockerfile: dockerfile
       args:
         # variables are build-time environment
         - PHP_TAG
@@ -28,7 +29,7 @@ services:
     volumes:
       - data:/var/www/html
     ports:
-      - 8000:80
+      - 8080:80
     depends_on:
       - db
     networks:
@@ -42,8 +43,7 @@ services:
       # v3.4 compose file
       #start_period: 40s
   db:
-    #image: linuxserver/mariadb:${DB_TAG?database-tag-missing}
-    image: linuxserver/mariadb:arm32v7-latest
+    image: linuxserver/mariadb:${DB_TAG?database-tag-missing}
     volumes:
       - db-data:/config
     ports:

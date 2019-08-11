@@ -3,7 +3,8 @@ source ./Scripts/lib/parsing.sh
 bootargs=""
 docker=""
 saved=("$*")
-usage="[--domain=<domainname>] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [other-args]"
+usage="[--domain=<domainname>] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [other-args]
+$0 --dommain=example.com -p=foo -t=bar -v up -d --build"
 [ $# -eq 0 ] && echo "Usage: $0 ${usage}" && exit 1
 while [[ "$#" > 0 ]]; do case $1 in
     -[pP]*|--sql-password*)
@@ -38,13 +39,11 @@ while [[ "$#" > 0 ]]; do case $1 in
         exit 0;;
     *) docker="${docker} $1";;
 esac; shift; done
-export DB=Mysql
 source Scripts/bootstrap.sh $bootargs
+logger -st docker-compose "Evaluating file .env environment variables..."
+export `eval $(cat .env)`
 if [ ! $(which docker-compose) 2> /dev/null ]; then Scripts/install-docker-compose.sh; fi
 if [ ! -z $SERVER_NAME ]; then
-    source Scripts/docker_site_conf.sh $SERVER_NAME
-else
-    cp -v docker/apache/site-default.conf docker/apache/site.conf
+    source Scripts/configure-available-site.sh $SERVER_NAME
 fi
 docker-compose $docker
-#sudo cp index-redirect-8000.php /var/www/html/index.php
