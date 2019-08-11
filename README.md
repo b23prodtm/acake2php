@@ -1,5 +1,3 @@
-
-
 <!-- toc -->
 
 - [CakePHP Sample App on OpenShift](#cakephp-sample-app-on-openshift)
@@ -71,9 +69,30 @@ However, if these files exist they will affect the behavior of the build process
          RewriteRule    (.*) webroot/$1    [L]
       </IfModule>
 
+* **.env files**
+
+  Set environment variables as the following arguments, for instance on MacOS X:
+	
+	./configure-docker-arch.sh amd64	
+	# .env -> amd64.env
+	docker-compose up -d --build myphpcms_cakephp
+
+  Use a .env file in shell t push up into the cloud BalenaOS, with RaspberryPI3 hosts : 
+
+	./configure-docker-arch.sh arm32
+	# .env -> arm32v7.env
+	DEBUG=1 balena push <cloud-application-name>
+
 ### Compatibility
 
-This repository is compatible with PHP 5.6 and higher, excluding any alpha or beta versions.
+* PHP 5.6 and higher, but PHP 7 's recommended, excluding any alpha or beta versions.
+* CakePHP 2.X application also supports Docker CE 18.03 and later
+* Container builder supported: docker-compose 1.2 and DockerFile version 2.1
+* Mysql 5.7 and later (or MariaDB)
+* Cloud Platforms: 
+  + Openshift 3
+  + BalenaOS
+  + Kubernetes (not provided)
 
 ### Local built-in server
 >for local test only

@@ -15,12 +15,6 @@ while [[ "$#" > 0 ]]; do case $1 in
     )
     config_args="${config_args}"
     config_work_dir=".travis";;
-  --docker )
-    #; Test values
-    export DB="Mysql"
-    export COLLECT_COVERAGE="false"
-    config_args="${config_args}"
-    config_work_dir="docker";;
   --cov )
     export COLLECT_COVERAGE=true;;
   -[hH]*|--help )
@@ -31,8 +25,6 @@ while [[ "$#" > 0 ]]; do case $1 in
           Exports TEST_DATABASE_PASSWORD
       --travis
           Travis CI Local Test Workflow
-      --docker
-          Docker Local Test Workflow
       --cov
           Coverage All Tests
       -o, --openshift

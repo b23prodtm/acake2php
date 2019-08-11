@@ -13,7 +13,7 @@ ARG DATABASE_USER
 ARG DATABASE_PASSWORD
 ARG TEST_DATABASE_USER
 ARG TEST_DATABASE_PASSWORD
-ARG SERVER_NAME
+ARG SERVER_NAME=localhost
 
 # ARG CAKEPHP_SECRET_TOKEN
 # ARG CAKEPHP_SECRET_SALT
@@ -32,6 +32,7 @@ RUN apt-get update -yqq \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
+    mariadb-client \
   && rm -rf /var/lib/apt/lists
 
 # Enable PHP extensions
@@ -57,14 +58,14 @@ ENV PATH="${PATH}:/var/www/html/lib/Cake/Console"
 ENV PATH="${PATH}:/var/www/html/app/Vendor/bin"
 
 # COPY apache site.conf file
-COPY docker/apache/site-default.conf /etc/apache2/site-available/000-default.conf
-COPY docker/apache/${SERVER_NAME}.conf /etc/apache2/site-available/${SERVER_NAME}.conf
+COPY docker/apache/${SERVER_NAME}.conf /etc/apache2/sites-available/${SERVER_NAME}.conf
+COPY docker/apache/site-default.conf /etc/apache2/sites-available/000-default.conf
 
-# Add site conf to available domains
-RUN a2ensite ${SERVER_NAME}
+# Add to hosts
+RUN echo "127.0.0.1 ${SERVER_NAME}" >> /etc/hosts
 
-# Add SSL module
-RUN a2enmod ssl
+# Add site conf to available domains, disable default instance
+RUN a2ensite ${SERVER_NAME} && a2dissite 000-default
 
 # Copy the source code into /var/www/html/ inside the image
 COPY . /var/www/html/
@@ -76,7 +77,7 @@ WORKDIR /var/www/html/
 RUN composer install --no-interaction
 
 # Configuration
-RUN ["bash", "-c", "./configure.sh", "--openshift" ,"-d", "-u", "-v"]
+RUN ["bash", "-c", "./configure.sh", "--openshift", "-d", "-u"]
 # Password Hash Verbose
 # RUN cat app/webroot/php_cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
 
@@ -97,6 +98,7 @@ RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
 
 # Enable Apache modules and restart
 RUN a2enmod rewrite \
+  && a2enmod ssl \
   && service apache2 restart
 
 EXPOSE 80

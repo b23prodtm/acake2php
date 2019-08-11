@@ -7,10 +7,10 @@ A typical install script could look like the following script, for instance edit
 	cd myphpcms
 	git pull
 	git submodule update --init --recursive
-	./docker-compose-alias.sh -dns=domain.com -S -p=sqlrootpassword -t=testpassword -v $*
+	Scripts/docker-compose-alias.sh -dns=domain.com -v $*
 	cd ..
 
-If you saved the file as _startup.sh_  In bash follows : ```startup.sh --build -d up``` You can add more docker-compose parameters as arguments.
+If you saved the file as _startup.sh_  In bash follows : ```sh ./startup.sh up -d --build cakephp``` You can add more docker-compose parameters as arguments.
 Docker builds up a new container and pushes it in registry.
 It will eventually run the container as the startup script succeeds.
 
@@ -22,13 +22,12 @@ A local test may only run with a complete local Virtual Host (Vbox) configuratio
 ### Simple Docker compose tests
 To use the built-in CakePHP 2 interface to test with Docker Compose YAML run the test script as follows :
 
-	test-cake.sh --docker
+	docker run -it myphpcms_cakephp
 
 ### Requirements
 - Broadband Internet access to the Worldwide Web, to download the packages and container images dependencies from the remote Docker registries.
 - The [VBoxmanager](https://www.virtualbox.org/wiki/Downloads) package.
 - The Docker VM described with the Dockerfile. >:whale: [Get Started](https://docs.docker.com/machine/get-started/) application.
-- The docker:docker user SSH remote access enabled (Ask the system administrator to enable Remote Session Accounts with Password authentification in /etc/ssh/sshd_config)
 - The CircleCI Client installed in ```$PATH```. [CLI Configuration](https://circleci.com/docs/2.0/local-cli/#section=configuration) shell command line :
 
 	curl -fLSs https://circle.ci/cli | bash

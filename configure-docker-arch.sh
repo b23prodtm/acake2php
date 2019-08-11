@@ -25,3 +25,4 @@ eval $(cat ${arch}.env | grep BALENA_MACHINE_NAME)
 cd balena-sound/bluetooth-audio
 sed -E -e s/"(%%BALENA_MACHINE_NAME%%)"/"${BALENA_MACHINE_NAME}"/g Dockerfile.template > Dockerfile.${BALENA_MACHINE_NAME}
 cd ../..
+sed -i.old -E -e /"bluetooth-audio:"/,/"io.balena"/s/"(dockerfile:)[^:]+"/"\\1 Dockerfile.${BALENA_MACHINE_NAME}"/ docker-compose.yml
