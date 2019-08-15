@@ -75,13 +75,13 @@ However, if these files exist they will affect the behavior of the build process
 	
 	./configure-docker-arch.sh amd64	
 	# .env -> amd64.env
-	docker-compose up -d --build myphpcms_cakephp
+	./Scripts/docker-compose-alias.sh --domain=b23prodtm.info -v up -d --build cakephp --openshift
 
-  Use a .env file in shell t push up into the cloud BalenaOS, with RaspberryPI3 hosts : 
+  Use a .env file in shell to push up into the cloud BalenaOS, with RaspberryPI3 hosts : 
 
 	./configure-docker-arch.sh arm32
 	# .env -> arm32v7.env
-	DEBUG=1 balena push <cloud-application-name>
+	balena push <cloud-application-name>
 
 ### Compatibility
 

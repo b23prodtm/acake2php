@@ -9,7 +9,7 @@ while [ true ]; do
     2|arm64*|aarch64)
       arch="arm64v8"
       break;;
-    3|amd64)
+    3|amd64|x86_64)
       arch="amd64"
       break;;
     *)

@@ -2,22 +2,12 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG PHP_TAG
 ARG PHP_OWNER
 FROM ${PHP_OWNER:-arm32v7}/php:${PHP_TAG:-7.2-apache}
-ARG DB
-ARG MYSQL_SERVICE_HOST
-ARG MYSQL_SERVICE_PORT
-ARG TEST_MYSQL_SERVICE_HOST
-ARG TEST_MYSQL_SERVICE_PORT
-ARG DATABASE_SERVICE_NAME
-ARG DATABASE_NAME
-ARG DATABASE_USER
-ARG DATABASE_PASSWORD
-ARG TEST_DATABASE_USER
-ARG TEST_DATABASE_PASSWORD
-ARG SERVER_NAME=localhost
 
-# ARG CAKEPHP_SECRET_TOKEN
-# ARG CAKEPHP_SECRET_SALT
-# ARG CAKEPHP_SECURITY_CIPHER_SEED
+# Docker architecture (x86_64, armhf, aarch64 )
+ARG DKR_ARCH
+
+RUN ["bash", "-c", "./configure-docker-arch.sh", "${DKR_ARCH}"]
+RUN ["bash", "-c", "eval", "$(cat .env)"]
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
@@ -57,10 +47,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 ENV PATH="${PATH}:/var/www/html/lib/Cake/Console"
 ENV PATH="${PATH}:/var/www/html/app/Vendor/bin"
 
-# COPY apache site.conf file
-COPY docker/apache/${SERVER_NAME}.conf /etc/apache2/sites-available/${SERVER_NAME}.conf
-COPY docker/apache/site-default.conf /etc/apache2/sites-available/000-default.conf
-
 # Add to hosts
 RUN echo "127.0.0.1 ${SERVER_NAME}" >> /etc/hosts
 
@@ -73,11 +59,22 @@ COPY . /var/www/html/
 # Configure the application
 WORKDIR /var/www/html/
 
+# set architecture
+RUN ["bash", "-c", "./configure-docker-arch.sh", "${DKR_ARCH}"]
+
+# add available site
+RUN ["bash", "-c", "./Scripts/configure-available-site.sh", "${SERVER_NAME}"]
+
+# COPY apache site.conf file
+COPY docker/apache/${SERVER_NAME}.conf /etc/apache2/sites-available/${SERVER_NAME}.conf
+COPY docker/apache/site-default.conf /etc/apache2/sites-available/000-default.conf
+
 # Install all PHP dependencies
 RUN composer install --no-interaction
 
 # Configuration
-RUN ["bash", "-c", "./configure.sh", "--openshift", "-d", "-u"]
+RUN ["bash", "-c", "./configure.sh", "--openshift -d -u"]
+
 # Password Hash Verbose
 # RUN cat app/webroot/php_cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
 
