@@ -59,9 +59,6 @@ COPY . /var/www/html/
 # Configure the application
 WORKDIR /var/www/html/
 
-# set architecture
-RUN ["bash", "-c", "./configure-docker-arch.sh", "${DKR_ARCH}"]
-
 # add available site
 RUN ["bash", "-c", "./Scripts/configure-available-site.sh", "${SERVER_NAME}"]
 
