@@ -1,0 +1,54 @@
+#
+# Source DockerFile: https://github.com/ulsmith/rpi-raspbian-apache-php/blob/master/Dockerfile
+#
+FROM balenalib/raspberrypi3-debian:build
+RUN [ "cross-build-start" ]
+ARG PHP_LIB
+ENV PHP_LIB ${PHP_LIB:-7.2}
+
+## Install add-apt-repository packages
+RUN install_packages \
+		software-properties-common \
+		dirmngr \
+		apt-transport-https \
+		lsb-release \
+		ca-certificates
+
+RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" \
+		| tee "/etc/apt/sources.list.d/php${PHP_LIB}.list"
+
+## Install base packages
+RUN install_packages \
+		apache2 \
+		php${PHP_LIB}-dev \
+		libapache2-mod-php${PHP_LIB} \
+		curl \
+		php${PHP_LIB}-curl \
+		php${PHP_LIB}-json \
+		php${PHP_LIB}-odbc \
+		php${PHP_LIB}-sqlite \
+    php${PHP_LIB}-mysql
+
+# https://geekmag.fr/2018/12/20/installer-php-7-3-sur-debian-9-ou-debian-8/
+# https://www.techrepublic.com/article/how-to-install-mcrypt-for-php-7-2/
+COPY --from=library/php /usr/local/bin/docker-php-* /usr/local/bin/
+RUN install_packages \
+    php${PHP_LIB}-cli \
+    php${PHP_LIB}-xml \
+    php-pear \
+    libmcrypt-dev
+# Fixes /usr/bin/phpize: 1: /usr/bin/phpize: /usr/bin/sed: not found
+RUN ln -vsf $(which sed) /usr/bin/sed
+RUN pecl config-set php_ini "${PHP_INI_DIR}/php.ini" \
+  && mkdir -p /conf.d/ \
+  && pecl install mcrypt \
+	&& docker-php-ext-enable mcrypt
+RUN a2enmod php${PHP_LIB} && a2enmod rewrite
+COPY conf/000-default.conf /etc/apache2/conf-available/000-default.conf
+RUN chown -R www-data:www-data /var/www/html
+
+RUN [ "cross-build-end" ]
+EXPOSE 80
+
+CMD [ "apache2 -D FOREGROUND" ]

@@ -1,55 +1,58 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
 source ./Scripts/lib/parsing.sh
 bootargs=""
-saved=("$*")
+saved=("$@")
+config_args="-c -h -p=pass -s=word --development --connection=test"
+config_work_dir=""
+usage=("" \
+"${cyan}Notice:${nc}The test script." \
+"Usage: $0 [-p <password>] [-t <password>] [--travis,--circle [--cov]]" \
+"           -p <password>       Exports MYSQL_ROOT_PASSWORD" \
+"           -t <password>       Exports MYSQL_PASSWORD" \
+"           --travis, --circle  Travis or Circle CI Local Test Workflow" \
+"           --cov               Coverage All Tests" \
+"           -o, --openshift     [path to a file with a list of variables]" \
+"Notice:    Use environment variables from open container/pod and a file if it exists" \
+"")
 while [[ "$#" > 0 ]]; do case $1 in
   --travis )
     #; Test values
     export DB="Mysql"
     export COLLECT_COVERAGE="false"
     export TRAVIS_OS_NAME="osx"
-    export TRAVIS_PHP_VERSION=$(php -v | grep -E "[5-7]\.\\d+\.\\d+" | cut -d " " -f 2 | cut -c 1-3
-    )
-    # remote servers CI don't need (-i) identities but the socket: use configure.sh --mig-database --openshift
-    notice="\n${cyan}Notice:${nc}The test script is about to modify the root and test users password into resp. ${orange}'proot'${nc} and ${cyan}'ptest'${nc}\n"
-    echo -e $notice
-    source ./configure.sh "--mig-database" "-p" "-t" "-i" "-p=proot" "-t=ptest"
-    echo -e $notice
-    source .travis/configure.sh;;
+    export TRAVIS_PHP_VERSION=$(php -v | grep -E "[5-7]\.\\d+\.\\d+" | cut -d " " -f 2 | cut -c 1-3)
+    config_work_dir=".travis"
+    # Abort tests
+    exit 0;;
+  --circle )
+    #; Test values
+    export DB="Mysql"
+    export COLLECT_COVERAGE="false"
+    export PHP_CS="false"
+    config_work_dir=".circleci";;
   --cov )
     export COLLECT_COVERAGE=true;;
   -[hH]*|--help )
-    echo "Usage: $0 [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [--travis [--cov]]
-      -p, --sql-password=<password>
-          Exports DATABASE_PASSWORD
-      -t, --test-sql-password=<password>
-          Exports TEST_DATABASE_PASSWORD
-      --travis
-          Travis CI Local Test Workflow
-      --cov
-          Coverage All Tests
-      -o, --openshift
-          Use environment variables from real pod or current shell
-      "
-      exit 0;;
-  -[pP]*|--sql-password*)
-    parse_sql_password "$1" "DATABASE_PASSWORD" "user ${DATABASE_USER}";;
-  -[tT]*|--test-sql-password*)
-    parse_sql_password "$1" "TEST_DATABASE_PASSWORD" "test user ${TEST_DATABASE_USER}";;
+    printf "%s\n" "${usage[@]}"
+    exit 0;;
+  -[pP]*)
+    parse_sql_password "MYSQL_ROOT_PASSWORD" "user ${DATABASE_USER}" "$*"
+    shift $((OPTIND -2));;
+  -[tT]*)
+    parse_sql_password "MYSQL_PASSWORD" "test user ${MYSQL_USER}" "$*"
+    shift $((OPTIND -2));;
   -[vV]*|--verbose )
-    echo "Passed params :  $0 ${saved}"
-    bootargs="${bootargs} $1";;
+    set -x
+    echo "Passed params :  $0 ${saved}";;
   -[oO]*|--openshift )
-    bootargs="${bootargs} $1";;
-  *) echo "Unknown parameter passed: $0 $1"; exit 1;;
+    bootargs="${bootargs} --openshift"
+    config_args="--openshift ${config_args}"
+    ;;
+  --docker )
+    config_args="--docker ${config_args}"
+    bootargs="--docker ${bootargs}";;
+  *) echo "Unknown parameter, passed $0: $1"; exit 1;;
 esac; shift; done
-source ./Scripts/bootstrap.sh $bootargs
-if [[ "$COLLECT_COVERAGE" == "true" ]]; then
-  ./app/Vendor/bin/phpunit --coverage-clover app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/Case/AllTestsTest.php
-else
-  if [ '${PHPCS}' != '1' ]; then
-    ./lib/Cake/Console/cake test core AllTests --stderr
-  else
-    ./app/Vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake
-  fi
-fi
+source ./configure.sh ${config_args}
+bash -c "./migrate-database.sh -u -i -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} ${bootargs}"

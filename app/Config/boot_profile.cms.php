@@ -2,7 +2,7 @@
 /*var_dump(App::path('Cms'));*/
 /* -- PHP AUTOLOAD
  Load Composer autoload.*/
-require APP . 'Vendor' . DS . 'autoload.php';
+include APP . 'Vendor' . DS . 'autoload.php';
 /* Remove and re-prepend CakePHP's autoloader as Composer thinks it is the
  most important.
  See: http://goo.gl/kKVJO7 */
@@ -24,4 +24,9 @@ CakePlugin::load('DebugKit');
 /**
  * Load Markdown Plugin
  */
+
 CakePlugin::load(array('Markdown' => array('bootstrap' => true)));
+/**
+ * Load UpdateShell Plugin
+ */
+CakePlugin::load('UpdateShell');

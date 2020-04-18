@@ -1,4 +1,4 @@
-<?php 
+<?php
 class AppSchema extends CakeSchema {
 
 	public $file = 'schema.php';
@@ -16,16 +16,6 @@ class AppSchema extends CakeSchema {
 		'fk_reference_magasin' => array('type' => 'string', 'null' => false, 'length' => 4, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'indexes' => array(
 			'PRIMARY' => array('column' => array('fk_reference_commande', 'fk_reference_facture', 'fk_reference_magasin'), 'unique' => 1)
-		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
-	);
-
-	public $cake_sessions = array(
-		'id' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'primary', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'data' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'expires' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);

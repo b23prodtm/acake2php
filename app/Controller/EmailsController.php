@@ -22,7 +22,7 @@ class EmailsController extends AppController {
         }
 
         public function send() {
-                if (empty($this->request->data) || $this->params['requested']) {
+                if (empty($this->request->data) || $this->request->params['requested']) {
                         $post_email = $this->request->data('Email');
                         if (!$post_email) {
                                 $post_email = array(
@@ -33,11 +33,11 @@ class EmailsController extends AppController {
                         };
                         $this->set($post_email);
                         /** continues to render send.ctp ... */
-                        if ($this->params['requested']) {
+                        if ($this->request->params['requested']) {
                                 return $this->render()->body();
                         }
                 } else {
-                        if ($this->params['requested']) {
+                        if ($this->request->params['requested']) {
                                 trigger_error("Illegal request");
                         } else {
                                 $post_email = $this->request->data('Email');

@@ -1,141 +1,269 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
+source ./Scripts/lib/logging.sh
 source ./Scripts/lib/shell_prompt.sh
 source ./Scripts/lib/parsing.sh
-openshift=$(parse_arg_exists "-[oO]*|--openshift" $*)
-if [ $openshift > /dev/null ]; then
-  echo "Real environment bootargs..."
+openshift=$(parse_arg_exists "-[oO]+|--openshift" "$@")
+docker=$(parse_arg_exists "--docker" "$@")
+pargs=$(parse_arg_trim "-[oO]+|--openshift|--docker" "$@")
+if [ $openshift 2> /dev/null ]; then
+  slogger -st $0 "Bootargs...: ${pargs}"
 else
-  echo "Provided local/test bootargs..."
-  source ./Scripts/bootargs.sh $*
+  slogger -st $0 "Locally Testing values, bootargs...: ${pargs}"
+  source ./Scripts/fooargs.sh "$@"
 fi
+usage=("" \
+"Usage: $0 [-u] [-y|n] [-o] [-p <word>] [-t <word>] [-i] [--sql-password=<password>] [--test-sql-password=<password>]" \
+"          -u          Update the database in app/Config/Schema/" \
+"          -y          Reset database.php and default socket file" \
+"          -n          Doesn't reset database.php and socket" \
+"          -i --sql-password=<word> --test-sql-password=<word>" \
+"                      Import SQL identities with new passwords and reset MYSQL_DATABASE and TEST_DATABASE_NAME privileges" \
+"          -o, --openshift" \
+"                      Resets database.php, keep socket and update the database" \
+"          -p=<password>" \
+"                      Exports MYSQL_ROOT_PASSWORD" \
+"          -t=<password>" \
+"                      Exports MYSQL_PASSWORD" \
+"          -d,--database=<name>" \
+"                      Exports MYSQL_DATABASE" \
+"          --testunitbase=<name>" \
+"                      Exports TEST_DATABASE_NAME" \
+"          -v, --verbose" \
+"                      Outputs more debug information" \
+"          -h, --help  Displays this help" \
+"")
+sql_connect="mysql"
+sql_connect_host="-h ${MYSQL_SERVICE_HOST} -P ${MYSQL_SERVICE_PORT}"
+sql_connect_test_host="-h ${TEST_MYSQL_SERVICE_HOST} -P ${TEST_MYSQL_SERVICE_PORT}"
 dbfile=database.cms.php
-fix_socket="-Y"
+fix_socket="-N"
 config_app_checked=""
+test_checked=0
 update_checked=0
 import_identities=0
 identities=app/Config/database.sql
 new_pass=""
 new_test_pass=""
-saved=("$*")
-while [[ "$#" > 0 ]]; do case $1 in
+saved=("$@")
+mysql_connect_args=""
+test_mysql_connect_args=""
+mysql_host=${MYSQL_SERVICE_HOST}
+test_mysql_host=${TEST_MYSQL_SERVICE_HOST}
+ck_args="--connection=default"
+echo "$@"
+while [[ "$#" > 0 ]]; do case "$1" in
+  --connect-expired-password )
+    mysql_connect_args="${mysql_connect_args} --connect-expired-password"
+    test_mysql_connect_args="${mysql_connect_args} --connect-expired-password";;
+  --docker )
+    bash -c "./Scripts/start_daemon.sh ${docker}"
+    sql_connect="docker exec -i maria mysql"
+    sql_connect_host=""
+    sql_connect_test_host=""
+    mysql_host="%"
+    test_mysql_host="%"
+    config_app_checked="-Y"
+    slogger -st $0 "Docker exec option ... ";;
   -[uU]* )
-      update_checked=1
-      ;;
-  -[yY]* );;
+    update_checked=1
+    ;;
+  --connection* )
+    ck_args="$1"
+    ;;
+  -[yY]* ) fix_socket="-Y";;
   -[nN]* )
-      fix_socket="-N"
-      dbfile=""
-      config_app_checked="-N"
-      ;;
+    fix_socket="-N"
+    dbfile=""
+    config_app_checked="-N";;
   -[iI]* )
-      import_identities=1
-      new_pass=$2
-      new_test_pass=$3
-      shift;shift;;
+    import_identities="1"
+    ;;
+  --sql-password*)
+    parse_sql_password "set_DATABASE_PASSWORD" "Altering ${DATABASE_USER} password" "$@"
+    shift $((OPTIND -1))
+    ;;
+  --test-sql-password*)
+    parse_sql_password "set_MYSQL_PASSWORD" "Altering ${MYSQL_USER} password" "$@"
+    shift $((OPTIND -1))
+    ;;
   -[vV]*|--verbose )
     [ -f $identities ] && cat $identities
-    echo -e "
-    ${red}
-            ///// MySQL HOWTO: connect to the database${nc}
-            A MySQL server (must match remote server version)
-            must be reachable locally. If it's the 1st time you use this connection,
-
-            Configure it as a service and log in with super or admin user shell:${green}mysql -u root -p${nc}
-
-            See common issues in README.md file.
-
-            This command ${orange}will reset SQL root and test password : ${cyan}$0 -i -p --test-sql-password${nc}
-
-            These SQL statements initializes the database, replaced with current ${orange}environment variables${nc} :
-    "
     # Reset passed args (shift reset)
-    echo "Passed params : $0 ${saved}";;
+    text=("" \
+"Passed params : $0 ${saved}" \
+"and environment VARIABLES:" \
+$(export -p | grep "DATABASE\|MYSQL") \
+"")
+    printf "%s\n" "${text[@]}"
+    ;;
   -[hH]*|--help )
-    echo "Usage: $0 [-u] [-y|n] [-o] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [-i] [-p|--new-sql-password=<password>] [-t,--new-test-sql-password=<password>]
-        -u
-            Update the database in app/Config/Schema/
-        -y
-            Reset ${dbfile} and default socket file
-        -n
-            Doesn't reset ${dbfile} and socket
-        -i -p=<new-password> -t=<new-password>
-            Import SQL identities
-        -o, --openshift
-            Resets ${dbfile}, keep socket and update the database
-        -p, --sql-password=<password>
-            Exports DATABASE_PASSWORD
-        -t,--test-sql-password=<password>
-            Exports TEST_DATABASE_PASSWORD
-        -dbase=<name>
-            Exports DATABASE_NAME
-        -tbase=<name>
-            Exports TEST_DATABASE_NAME
-        -v, --verbose
-            Outputs more debug information
-        -h, --help
-            Displays this help"
-        exit 0;;
-  -[oO]*|--openshift )
-    fix_socket="-N"
-    update_checked=1;;
-  -[pP]*|--sql-password*)
-    parse_sql_password "$1" "DATABASE_PASSWORD" "current ${DATABASE_USER}";;
-  -[tT]*|--test-sql-password*)
-    parse_sql_password "$1" "TEST_DATABASE_PASSWORD" "current ${TEST_DATABASE_USER}";;
-  -dbase*|-DBASE*)
-    parse_arg_export "$1" "-dbase*|-DBASE*" "DATABASE_NAME" "${DATABASE_USER} database";;
-  -tbase*|-TBASE*)
-    parse_arg_export "$1" "-tbase*|-TBASE*" "TEST_DATABASE_NAME" "${TEST_DATABASE_USER} database";;
-  *) echo "Unknown parameter passed: $0 $1"; exit 1;;
+    printf "%s\n" "${usage[@]}"
+    exit 0;;
+  -[oO]*|--openshift );;
+  -[pP]* )
+    parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER}" "$@"
+    shift $((OPTIND -2))
+    export set_DATABASE_PASSWORD=$MYSQL_ROOT_PASSWORD
+    ;;
+  -[tT]* )
+    test_checked=1
+    parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER}" "$@"
+    shift $((OPTIND -2))
+    export set_MYSQL_PASSWORD=$MYSQL_PASSWORD
+    ck_args="--connection=test"
+    ;;
+  -[dD]*|--database*)
+    # Transform long options to short ones
+    arg=$1; shift; set -- $(echo "${arg}" \
+    | awk 'BEGIN{ FS="[ =]+" }{ print "-d " $2 }') "$@"
+    parse_and_export "d" "MYSQL_DATABASE" "${DATABASE_USER} database" "$@"
+    shift $((OPTIND -1))
+    ;;
+  --testunitbase*)
+    # Transform long options to short ones
+    arg=$1; shift; set -- $(echo "${arg}" \
+    | awk 'BEGIN{ FS="[ =]+" }{ print "-u " $2 }') "$@"
+    test_checked=1
+    parse_and_export "u" "TEST_DATABASE_NAME" "${MYSQL_USER} database" "$@"
+    shift $((OPTIND -1))
+    ;;
+  *) echo "Invalid parameter: $0 $1" && exit 1;;
   esac
 shift; done
 #; import identities
-[ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p | grep " DATABASE\| MYSQL");
-[ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] || (echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p | grep "TEST_DATABASE\|TEST_MYSQL");
-if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
+: ${MYSQL_DATABASE?} ${DATABASE_USER?} ${MYSQL_ROOT_PASSWORD?} ${MYSQL_SERVICE_HOST?} ${MYSQL_SERVICE_PORT?}
+: $TEST_DATABASE_NAME?} ${MYSQL_USER?} ${MYSQL_PASSWORD?} ${TEST_MYSQL_SERVICE_HOST?} ${TEST_MYSQL_SERVICE_PORT?}
 # configure user application database and eventually alter user database access
-[ -z $dbfile ] && [ $fix_socket == "-N" ] && [ -f app/Config/database.php ] || config_app_checked="-Y"
-shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" $config_app_checked
+[ -z $dbfile ] && [ $fix_socket == "-N" ] && [ -f $identities ] || config_app_checked="-Y"
+shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket} ${docker}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" $config_app_checked
 if [[ $import_identities -eq 1 ]]; then
-  echo -e "Importing the mysql ${cyan}${DATABASE_USER}${nc} and ${cyan}${TEST_DATABASE_USER}${nc} users SQL identities..."
-  echo -e "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}" &&
-  parse_sql_password "$new_pass" "set_DATABASE_PASSWORD" "new ${DATABASE_USER}" &&
-  echo -e "\r${red}WARNING: You will modify SQL ${TEST_DATABASE_USER} password !${nc}" &&
-  parse_sql_password "$new_test_pass" "set_TEST_DATABASE_PASSWORD" "new ${TEST_DATABASE_USER}" &&
-  echo -e "# WARNING: You will alter SQL users access rights\r
-  create database if not exists ${DATABASE_NAME};\r
-  use mysql;\r
-  create user if not exists '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
-  # set_DATABASE_PASSWORD
-  alter user '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}' identified by '${set_DATABASE_PASSWORD}';\r
-  select * from user where user = '${DATABASE_USER}';\r
-  grant all on ${DATABASE_NAME}.* to '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
+  slogger -st $0 "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}"
+  #; $identities file contents
+  cat << EOF | tee $identities
+use mysql;
+create user if not exists '${DATABASE_USER}'@'${mysql_host}';
+create user if not exists '${DATABASE_USER}'@'localhost';
+create user if not exists '${DATABASE_USER}'@'$(hostname)';
+alter user '${DATABASE_USER}'@'localhost' identified by '${set_DATABASE_PASSWORD}';
+alter user '${DATABASE_USER}'@'$(hostname)' identified by '${set_DATABASE_PASSWORD}';
+alter user '${DATABASE_USER}'@'${mysql_host}' identified by '${set_DATABASE_PASSWORD}';
+select * from user where user = '${DATABASE_USER}';
+create database if not exists '${MYSQL_DATABASE}';
+grant all on ${MYSQL_DATABASE}.* to '${DATABASE_USER}'@'${mysql_host}';
+EOF
+  slogger -st $0 "Forked script to keep hidden table user secrets..."
+  bash -c "echo \"source ${identities}\" | ${sql_connect} ${sql_connect_host} ${mysql_connect_args} -u ${DATABASE_USER} --password=${MYSQL_ROOT_PASSWORD} && echo 'Imported default identities with Success!' && export MYSQL_ROOT_PASSWORD=${set_DATABASE_PASSWORD}"
+  slogger -st $0 "\r${red}WARNING: You will modify SQL ${MYSQL_USER} password !${nc}"
+  #; $identities file contents
+  cat << EOF | tee $identities
+use mysql;
+create user if not exists '${MYSQL_USER}'@'${test_mysql_host}';
+create user if not exists '${MYSQL_USER}'@'localhost';
+create user if not exists '${MYSQL_USER}'@'$(hostname)';
+alter user '${MYSQL_USER}'@'localhost' identified by '${set_MYSQL_PASSWORD}';
+alter user '${MYSQL_USER}'@'$(hostname)' identified by '${set_MYSQL_PASSWORD}';
+alter user '${MYSQL_USER}'@'${test_mysql_host}' identified by '${set_MYSQL_PASSWORD}';
+select * from user where user = '${MYSQL_USER}';
+grant all on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${test_mysql_host}';
+grant all on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${test_mysql_host}';
+grant all on ${TEST_DATABASE_NAME}2.* to '${MYSQL_USER}'@'${test_mysql_host}';
+grant all on ${TEST_DATABASE_NAME}3.* to '${MYSQL_USER}'@'${test_mysql_host}';
+EOF
+  bash -c "echo \"source ${identities}\" | ${sql_connect} ${sql_connect_host} ${mysql_connect_args} -u ${DATABASE_USER} --password=${MYSQL_ROOT_PASSWORD} && echo 'Imported test identities with Success!' && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}"
+  rm $identities
+fi
+if [[ $test_checked -eq 1 ]]; then
+  echo -e "
+  Set of default environment
+  ==========================
+    Find exports for local development phase (testing) only in './Scripts/fooargs.sh')
+    ";
+  echo -e "
+  Documented VARIABLES in config.yml
+    DB=['Mysql']
 
-  create database if not exists ${TEST_DATABASE_NAME};\r
-  use mysql;\r
-  create user if not exists '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
-  # set_TEST_DATABASE_PASSWORD
-  alter user '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}' identified by '${set_TEST_DATABASE_PASSWORD}';\r
-  select * from user where user = '${TEST_DATABASE_USER}';\r
-  grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
-  " > $identities
-  echo "source ${identities}" | mysql -u $DATABASE_USER --password=$DATABASE_PASSWORD
-  export DATABASE_PASSWORD=$set_DATABASE_PASSWORD
-  export TEST_DATABASE_PASSWORD=$set_TEST_DATABASE_PASSWORD
+  Required VARIABLES  in config.yml or Pod environment
+    DATABASE_USER: <root-user>
+    MYSQL_ROOT_PASSWORD: <user-password>
+    MYSQL_DATABASE: <db_name>
+    MYSQL_USER: <database-rw-user>
+    MYSQL_PASSWORD: <user-password>
+    TEST_MYSQL_SERVICE_HOST: <mysql-host>
+    TEST_MYSQL_SERVICE_PORT: <mysql-host>
+    TEST_DATABASE_NAME: <test_db_name>
+  ==========================
+  ";
+  : ${MYSQL_USER?} ${MYSQL_PASSWORD?} ${TEST_MYSQL_SERVICE_HOST?}
+  slogger -st $0 "Database Unit Tests... DB=${DB}"
+  if [[ ${DB} == 'Mysql' ]]; then
+    $sql_connect ${sql_connect_test_host} ${test_mysql_connect_args} -u ${DATABASE_USER} --password=${MYSQL_ROOT_PASSWORD} -v \
+    -e "CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME};" \
+    -e "CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME}2;" \
+    -e "CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME}3;"
+fi
+  set +H
+  cat << EOF | tee app/Config/database.php
+<?php
+/** This is a source file generated by $0 . Modify it from there. */
+class DATABASE_CONFIG {
+private \$identities = array(
+  'Mysql' => array(
+    'datasource' => 'Database/MysqlCms',
+    'host' => '${TEST_MYSQL_SERVICE_HOST}',
+    'login' => '${MYSQL_USER}',
+    'password' => '${MYSQL_PASSWORD}'
+  )
+);
+public \$default = array(
+  'persistent' => false,
+  'host' => '',
+  'login' => '',
+  'password' => '',
+  'database' => '${MYSQL_DATABASE}',
+  'prefix' => ''
+);
+public \$test = array(
+  'persistent' => false,
+  'host' => '',
+  'login' => '',
+  'password' => '',
+  'database' => '${TEST_DATABASE_NAME}',
+  'prefix' => ''
+);
+public \$test2 = array(
+  'persistent' => false,
+  'host' => '',
+  'login' => '',
+  'password' => '',
+  'database' => '${TEST_DATABASE_NAME}2',
+  'prefix' => ''
+);
+public \$test_database_three = array(
+  'persistent' => false,
+  'host' => '',
+  'login' => '',
+  'password' => '',
+  'database' => '${TEST_DATABASE_NAME}3',
+  'prefix' => ''
+);
+public function __construct() {
+  \$db = 'Mysql';
+  if (!empty(\$_SERVER['DB'])) {
+    \$db = \$_SERVER['DB'];
+  }
+  foreach (array('default', 'test', 'test2', 'test_database_three') as \$source) {
+    \$config = array_merge(\$this->{\$source}, \$this->identities[\$db]);
+    \$this->{\$source} = \$config;
+  }
+}
+}
+EOF
+    slogger -st $0 "${green}Unit Test was set up in app/Config/database.php${nc}"
 fi
 if [[ $update_checked -eq 1 ]]; then
-  #; update plugins and dependencies
-  source ./Scripts/composer.sh "-o"
-  #; cakephp shell
-  if [ ! -f app/Config/Schema/schema.php ]; then
-    echo "Generating database schema 'cake schema generate'"
-    ./lib/Cake/Console/cake schema generate -f s
-  fi
-  if [ ! -f app/Config/Schema/sessions.php ]; then
-      echo "Generating default Sessions table"
-      ./lib/Cake/Console/cake schema create Sessions -y
-  fi
-  echo "Migrating database 'cake schema update' ..."
-  ./lib/Cake/Console/cake schema update --file myschema.php -y
+  bash -c "./Scripts/start_daemon.sh ${docker} update ${ck_args}"
+fi
+if [[ $test_checked -eq 1 ]]; then
+  bash -c "./Scripts/bootstrap.sh ${docker} test app AllTests --stderr"
 fi

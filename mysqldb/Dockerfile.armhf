@@ -1,0 +1,26 @@
+ARG MARIADB_HUB
+FROM ${MARIADB_HUB:-lsioarmhf/mariadb}
+
+ENV MYSQL_ALLOW_EMPTY_PASSWORD=true \
+    MYSQL_DATABASE=foo_db \
+    MYSQL_HOST=127.0.0.1 \
+    MYSQL_ROOT_HOST=% \
+    MYSQL_USER=root
+
+# This is the performance optimization tweak to make DB faster
+RUN echo '\n\
+[mysqld]\n\
+collation-server = utf8_unicode_ci\n\
+init-connect="SET NAMES utf8"\n\
+character-set-server = utf8\n\
+innodb_flush_log_at_trx_commit=2\n\
+sync_binlog=0\n\
+innodb_use_native_aio=0\n' >> /etc/mysql/my.cnf
+
+RUN sed -i.old -E -e /bind_address/s/^/#/ /etc/mysql/my.cnf
+
+RUN apt update && apt install -y expect
+
+COPY mysql_secure_shell /usr/local/bin
+RUN chmod 1755 /usr/local/bin/mysql_secure_shell
+RUN mysql_secure_shell

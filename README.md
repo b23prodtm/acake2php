@@ -1,5 +1,3 @@
-
-
 <!-- toc -->
 
 - [CakePHP Sample App on OpenShift](#cakephp-sample-app-on-openshift)
@@ -7,10 +5,13 @@
     + [Compatibility](#compatibility)
     + [Local Built-in Server](#local-built-in-server)
     + [PHP Unit Test](#php-unit-test)
+    + [Server-side environment](#server-side-environment)
+    + [Database configuration](#database-configuration)
     + [Common Issues](#common-issues)
     + [License](#license)
 
 <!-- tocstop -->
+> We are moving to Kubernetes to host our website... See more about that project in [Kubespray](http://www.github.com/b23prodtm/kubespray).
 
 CakePHP for [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) on OpenShift [![Build Status](https://travis-ci.org/b23prodtm/myphpcms.svg?branch=development)](https://travis-ci.org/b23prodtm/myphpcms)
 ===============================
@@ -32,6 +33,7 @@ However, if these files exist they will affect the behavior of the build process
   After the first checkout browse to myphpcms folder and do
   ```git submodule update --init --recursive```
   You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the myphpcms folder and start over.
+  > After a sucessful ```git checkout```each time, run once ```git submodule update --init --recursive``` to ensure submodules are downloaded from git. Otherwise your build may fail.
 
 * **composer.json**
 
@@ -40,23 +42,77 @@ However, if these files exist they will affect the behavior of the build process
   Plugins are registered in both _git submodule_ and _composer.json_. To allow a plugin to accept ```composer update```, edit _composer.json_ according to the available released tags. In the plugin's home repository (app/Plugin/<plugin-name>/), call```git tag``` or  ``git log``` for more information.
   >_DEVELOPER TIP:_ To push tags : ```git tag`<version> && git push --tags```.   
 
+* **.htaccess**
+
+  To allow Apache server to browse directly to the app/webroot folder on server-side, use mod_rewrite rules, as provided by .htaccess files.
+
+  >/.htaccess
+
+      <IfModule mod_rewrite.c>
+        RewriteEngine on
+        # Uncomment if you have a .well-known directory in the root folder, e.g. for the Let's Encrypt challenge
+        # https://tools.ietf.org/html/rfc5785
+        #RewriteRule ^(\.well-known/.*)$ $1 [L]
+        RewriteRule ^$ app/webroot/ [L]
+        RewriteRule (.*) app/webroot/$1 [L]
+      </IfModule>
+
+  >/app/.htaccess
+
+      <IfModule mod_rewrite.c>
+         RewriteEngine on
+         RewriteBase /app/
+         RewriteRule    ^$    webroot/    [L]
+         RewriteRule    (.*) webroot/$1    [L]
+      </IfModule>
+
+* **.env files**
+
+  Set environment variables as the following arguments, for instance on MacOS X:
+
+        ./deploy.sh amd64
+
+.env" -> amd64.env
+
+        ./Scripts/docker-compose-alias.sh --domain=b23prodtm.info -v up -d --build cakephp --openshift
+
+  Use a .env file in shell to push up into the cloud BalenaOS, with RaspberryPI3 hosts :
+
+	./deploy.sh arm32
+
+.env" -> arm32v7.env
+
+	balena push <cloud-application-name>
+
 ### Compatibility
 
-This repository is compatible with PHP 5.6 and higher, excluding any alpha or beta versions.
+* PHP 5.6 and higher, but PHP 7 's recommended, excluding any alpha or beta versions.
+* CakePHP 2.X application also supports Docker CE 18.03 and later
+* Container builder: docker-compose 1.19 and DockerFile version 2.1
+* Mysql 5.7 and later (or MariaDB)
+* Cloud Platforms:
+  + Openshift 3
+  + BalenaOS
+  + Kubernetes (not provided)
 
-### Local built-in server
->for local test only
-
+### Local built-in server (cake) and dockerized database in a local container
+CAKE includes a server application that´s only made for local tests on port 9000.
 Open a Terminal window:
 
-    ./start_cake.sh <options>
+    DB=Mysql ./configure.sh --mig-database -u
+    ./start-cake.sh --docker -c server -p 9000
 
->Ctrl-click the URLs to open them in the browser.
+>Ctrl-click the URLs to open them in the browser. To get more help about the command line interface :
+
+    ./start-cake.sh --help
+
 ### PHP Unit Test
-
+JUNIT tests are available with the following call to CAKE server:
 Open a Terminal window:
 
-    ./test-cake.sh -p=<sql-password>
+    ./test-cake.sh
+
+There are options (--travis, --openshift, --circle) dedicated to continuous integration build environments. Use --help to see more about options.
 
 See [below](#common-issues) to allow access on the built-in local server.
 
@@ -66,14 +122,17 @@ When deployment happens on server-side or is triggered by a git push event, 'sou
 
 The following variables must be set up as server environment, provided by your **database administrator**:
 
-    # Sqlite_cms, Postgres_cms
-    DATABASE_ENGINE:Mysql_cms
-    DATABASE_NAME:default
-    DATABASE_SERVICE_NAME:mysql
+    # SqliteCms, PostgresCms
+    DATABASE_ENGINE:MysqlCms
+
+>Note: DB Engine selects CakePhp Model/Datasource/Database DBOSource class to configure SQL connections.    
+
+    MYSQL_DATABASE:default
+    DATABASE_SERVICE_NAME:MYSQL
     # a host alias or IP address
     MYSQL_SERVICE_HOST:mysql
 
->Note: Prefixed with *TEST_* they are used by the index.php?test=1 URLs and ./test-cake.sh (also in post git commit to test)
+>Note: Prefixed with *TEST_* they are used by the index.php?test=1 URLs and ./test-cake.sh (--travis)
 
 The following additional variables must be set up as server secrets environment, provided by your database administrator:
 
@@ -81,16 +140,50 @@ The following additional variables must be set up as server secrets environment,
     WEBHOOK_URL:<discordapp-url>
     # Persistent connection credentials
     DATABASE_USER:<provided-user>
-    DATABASE_PASSWORD:<provided-password>
-    # Just add TEST_DATABASE_USER and TEST_DATABASE_PASSWORD
-    TEST_DATABASE_USER:<test-user>
-    TEST_DATABASE_PASSWORD:<test-password>
+    MYSQL_ROOT_PASSWORD:<provided-password>
+    # Just add MYSQL_USER and MYSQL_PASSWORD
+    MYSQL_USER:<test-user>
+    MYSQL_PASSWORD:<test-password>
     # CakePHP generated
     CAKEPHP_SECRET_TOKEN:<secret-token>
-    CAKEPHP_SECRET_SQLT:<secret-salt>
+    CAKEPHP_SECRET_SALT:<secret-salt>
     CAKEPHP_SECURITY_CIPHER_SEED:<cipher-seed>
     # Generated by ./configure.sh -h
     GET_HASH_PASSWORD:<hashed-password>
+
+### Database Configuration
+
+An SQL server (must match remote server version) must be reachable by hostname or via its socket. If it's the 1st time you use this connection,
+
+Configure it as a service and configure the login ACL with the user shell.
+* __Mysql__ database automatic configuration:
+
+    ./configure.sh -d -y
+
+* __Optional__ To Setup MYSQL_ROOT_PASSWORD at prompt:
+
+    mysql_secure_installation
+
+* __Optional__ Edit `./app/Config/database.cms.php` if you wish to modify the DATABASE_CONFIG class.
+
+* __Optional__ Edit `./app/Model/Datasources/Database` if you wish to modify the DBOSource driver.
+
+* Edit `./Scripts/fooargs.sh` to change default *test* environment settings (host, port, login, database name)
+
+* Run the configuration script:
+
+    ./configure.sh -d -p=<root-password> -u
+
+* More about configuration:
+
+    ./configure.sh --help && ./migrate-database.sh --help
+
+* More [common issues](#common-issues)
+
+* The following command resets SQL users `${DATABASE_USER}` and `${MYSQL_USER}` password :
+
+    ./migrate-database.sh -p -i -p --test-sql-password
+
 
 ### Common Issues
 
@@ -112,31 +205,40 @@ You probably have modified user privileges on your server:
 
     mysql -u root
     use mysql;
-    grant all on $TEST_DATABASE_NAME.* to '$TEST_DATABASE_USER'@'$TEST_MYSQL_SERVICE_HOST';
+    grant all on $TEST_DATABASE_NAME.* to '$MYSQL_USER'@'$TEST_MYSQL_SERVICE_HOST';
     exit
     ./configure.sh -c
 
 This will reset the connection profile in ..etc/ properties file with the template.
-More about environment variables are located in the remote pod (OpenShift) settings and locally in ./Scripts/bootargs.sh.  
+More about environment variables are located in the remote pod (OpenShift) settings and locally in ./Scripts/fooargs.sh.  
 
 >Note:
 
-    ./configure.sh --mig-database -i -p -t
+    ./configure.sh --mig-database -p -i -p -t
 
 to do a reset with environment root and user password.
 
 3. ACCESS DENIED for root@'127.0.0.1' or root@'localhost' appears with other information complaining about database connection, what does that mean ?
 
-This looks like a first installation of mysql. You have to secure or reset your mysql root access:
+(automatic) This looks like a first installation of mysql. You have to secure or reset your mysql root access:
+
+    MYSQL_ROOT_PASSWORD=<password> sudo bash mysqldb/mysql_secure_installation.sh
+
+(manual) The Linux shell way to reinitialize sql root password:
 
     sudo rm -rf /usr/local/var/mysql
-    mysqld --initialize
+    mysqld --initialize | grep "temporary password" | cut -f4  -d ":" | cut -c 2-  > app/tmp/nupwd
 
-[Note] A temporary password is generated for root@localhost. Now import identities.
+>Note: A temporary password is generated for root@localhost. Now import identities.
 
     brew services restart mysql@5.7
-    ./migrate-database.sh -y -i -p=<root-password>
-    ./test-cake.sh -t=<test-password>
+    ./configure.sh --mig-database -p=$(cat app/tmp/nupwd) -i -p -t
+
+>You have now configured a new SQL root password and a test password. Local SQL access and server is ready to run tests:
+
+    ./test-cake.sh -p -t=<test-password>
+
+Go on to development phase with the [Local Built-in server](#local-built-in-server).
 
 4. My mysql server's upgraded to another version, what should I do ?
 
@@ -152,19 +254,40 @@ Migrate all your tables:
 
 Answer 'y' when prompted.
 
-5. How to fix up 'Database connection "Mysql" is missing, or could not be created' ?
+5. How to fix up 'Database connection "Mysql" or could not be created ?
+PHP mysql extensions must be installed.
+
+    php -i | grep Extensions
 
 Log in with root privileges should work:
 
     mysql -u root --password=<password> cakephp_test
 
-Check your environment variable (./Scripts/bootargs.sh or Docker/Pod settings)
+If it isn't possible to login:
+  + Check your environment variables (common.env and docker-compose.yml) settings). Use one or the other, and see which works for you:
 
-    MYSQL_SERVICE_HOST=localhost
-            or
+    MYSQL_SERVICE_HOST=localhost (Unix/OSX platforms)
+            or if docker mysql service containers:
     MYSQL_SERVICE_HOST=127.0.0.1
+    ..
 
-Use one or the other, and see which works for you.
+    MYSQL_SERVICE_PORT=3306
+
+  + Debug the local configuration, look for unbound VARIABLES, add verbosity level information (add `-o` if you are in a remote shell):
+
+    set -u
+    ./configure.sh --verbose -d -u
+
+  + Try resetting privileges for the requested TEST_, or MYSQL_DATABASE connection
+
+    ./configure.sh --mig-database -i -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} -y
+
+  Don't miss the parameter in container environment :
+
+    ./migrate-database.sh or --mig-database --docker
+
+  + Note that localhost is a special value. Using 127.0.0.1 is not the same thing. The latter will connect to the mysqld server through tcpip.
+  + Try the [secure_installation](#database-configuration).
 
 6. How to fix up ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/mysql/mysql.sock' (2) ?
 
@@ -192,7 +315,8 @@ The Mysql.php Datasource must define binary and mediumbinary storage types. Plea
 
 Add the *__mediumbinary__* storage, extending the original Datasource class:
 
-```<?php
+```
+<?php
 App::uses('Mysql', 'Model/Datasource/Database');
 
 class Mysql_cms extends Mysql
@@ -226,18 +350,24 @@ class Mysql_cms extends Mysql
 }
 ?>
 ```
-Ensure it is set as DATABASE_ENGINE in __app/Config/database.cms.php__, __./Scripts/bootargs.sh__, __.travis.yml__ and update the database schema:
+Ensure it is set as DATABASE_ENGINE in `app/Config/database.cms.php`,`./Scripts/fooargs.sh`, `.travis.yml` and update the database schema:
 
     ./migrate-database.sh -u
 
 9. It looks like submodule folders have disappeared, why ?
 
-A recent `git checkout` made the submodule disappear from disk, that can happen on master/development branch.  Recall or add the shell configure script to your workflow:
+A recent `git checkout ` made the submodule disappear from disk, that can happen on master/development branch.  Recall or add the shell configure script to your workflow:
 
     ./configure.sh -m
 
+10. Error: Please install PHPUnit framework v3.7 (http://www.phpunit.de)
+
+You need to configure development environment from Composer dependencies.
+
+    ./configure.sh --development
+
 ### License
-   Copyright 2016 b23production GNU
+   Copyright 2016 www.b23prodtm.info
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
