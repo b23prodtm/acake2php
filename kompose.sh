@@ -9,6 +9,12 @@ if [[ "$OSTYPE" != "linux"* ]]; then
       echo "ERROR: This application only runs on Linux."
       exit 1
     fi
+else
+  ARM=("armhf" "armv7l" "arm64v8" "aarch64")
+  for arch in ${ARM[@]}; do if [[ $(arch) = "${arch}" ]]; then
+	echo "INFO: Detected Linux ARM processor."
+	REV=https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-arm
+  fi; done
 fi
 curl -L $REV -o kompose
 chmod 0755 kompose
