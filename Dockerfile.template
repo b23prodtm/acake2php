@@ -89,7 +89,7 @@ COPY vagrant-shell.sh .
 RUN chmod 0755 vagrant-shell.sh
 RUN ./vagrant-shell.sh php-settings-update extension memcached.so \
  && ./vagrant-shell.sh php-settings-update session.save_handler memcached \
- && ./vagrant-shell.sh php-settings-update session.save_path '127.0.0.1:11211, 127.0.0.1:11212'
+ && ./vagrant-shell.sh php-settings-update session.save_path '127.0.0.1:11211,127.0.0.1:11212'
 
 # Copy the source code into /var/www/html/ inside the image
 COPY . /var/www/html/

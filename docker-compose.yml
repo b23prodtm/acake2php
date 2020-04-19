@@ -3,7 +3,7 @@ services:
   db:
     build:
       context: mysqldb
-      dockerfile: Dockerfile.armhf
+      dockerfile: Dockerfile.template
       args:
         MYSQL_ROOT_HOST: "%"
         MYSQL_HOST: "db"
@@ -11,7 +11,7 @@ services:
         MYSQL_ROOT_PASSWORD: "foo_pass"
         MYSQL_USER: "dummy_foo"
         MYSQL_PASSWORD: "foo_pass_test"
-    image: betothreeprod/mariadb-raspberrypi3
+    image: betothreeprod/mariadb-%%BALENA_MACHINE_NAME%%
     volumes:
       - db-data:/config
     ports:
@@ -27,7 +27,7 @@ services:
     env_file: common.env
     build:
       context: .
-      dockerfile: Dockerfile.armhf
+      dockerfile: Dockerfile.template
       args:
         DEBUG: "1"
         MYSQL_ROOT_HOST: "%"
@@ -36,7 +36,7 @@ services:
         MYSQL_ROOT_PASSWORD: "foo_pass"
         MYSQL_USER: "dummy_foo"
         MYSQL_PASSWORD: "foo_pass_test"
-    image: betothreeprod/myphpcms-raspberrypi3
+    image: betothreeprod/myphpcms-%%BALENA_MACHINE_NAME%%
     privileged: true
     labels:
       io.balena.features.dbus: "1"

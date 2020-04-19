@@ -48,7 +48,7 @@ ENV SERVER_NAME ${SERVER_NAME:-'localhost.local'}
 
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
-RUN [ "cross-build-start" ]
+# RUN [ "cross-build-start" ]
 RUN install_packages \
     git \
     ssh \
@@ -149,6 +149,6 @@ RUN a2enmod rewrite \
 # Install all PHP dependencies
 WORKDIR /var/www/html/
 RUN ./configure.sh --openshift -c -h -p=pass -s=word
-RUN [ "cross-build-end" ]
+# RUN [ "cross-build-end" ]
 ENTRYPOINT [ "/bin/bash", "-c", "./configure.sh --openshift -d -u -i --sql-password=$MYSQL_ROOT_PASSWORD --test-sql-password=$MYSQL_PASSWORD -Y" ]
 CMD [ "apache2 -D FOREGROUND" ]
