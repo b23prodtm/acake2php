@@ -1,6 +1,6 @@
 <!--vue Article index.ctp-->
 <?php
-include $GLOBALS['include__php_tbl.class.inc'];
+include_once $GLOBALS['include__php_tbl.class.inc'];
 $t = new Tableau(count($articles) + 1, 3, __d('article', 'db_articles'));
 $t->setContenu_Ligne(0, array(__d('article', "categorie"), __d('article', "article"), __d('article', "published")));
 

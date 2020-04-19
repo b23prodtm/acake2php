@@ -1,6 +1,6 @@
 <?php
 
-include APP . $r->r["include__php_module_DVD.inc"];
+include_once APP . $r->r["include__php_module_DVD.inc"];
 $pageUrl = $r->sitemap[$pIndex];
 if ($nom && $base) {
 
