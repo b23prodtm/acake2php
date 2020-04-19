@@ -22,15 +22,18 @@ while [[ "$#" > 0 ]]; do case $1 in
     exit 0;;
   -[pP]*)
     parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER}" "$*"
-    shift $((OPTIND -2));;
+    shift
+    ;;
   -[tT]*)
     parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER}" "$*"
-    shift $((OPTIND -2));;
+    shift
+    ;;
   -[cC]*)
     command=$2
-    shift; shift; command="${command} $@"
+    shift; shift; command="${command} $*"
     parse_and_export "p" "CAKE_TCP_PORT" "specify -p <port>" "$*"
-    shift $((OPTIND -1));;
+    shift
+    ;;
   *);;
 esac; shift; done
 ./Scripts/bootstrap.sh $command

@@ -1,5 +1,5 @@
-ARG MARIADB_HUB
-FROM ${MARIADB_HUB:-library}/mariadb
+ARG SECONDARY_HUB
+FROM ${SECONDARY_HUB:-library}/mariadb
 
 ENV MYSQL_ALLOW_EMPTY_PASSWORD=true \
     MYSQL_DATABASE=circle_test \

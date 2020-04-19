@@ -4,6 +4,13 @@ services:
     build:
       context: mysqldb
       dockerfile: Dockerfile.armhf
+      args:
+        MYSQL_ROOT_HOST: "%"
+        MYSQL_HOST: "db"
+        MYSQL_DATABASE: "foo_db"
+        MYSQL_ROOT_PASSWORD: "foo_pass"
+        MYSQL_USER: "dummy_foo"
+        MYSQL_PASSWORD: "foo_pass_test"
     image: betothreeprod/mariadb-raspberrypi3
     volumes:
       - db-data:/config
@@ -18,16 +25,17 @@ services:
     privileged: true
   myphpcms:
     env_file: common.env
-    environment:
-      MYSQL_SERVICE_HOST: "db"
-      TEST_MYSQL_SERVICE_HOST: "db"
     build:
       context: .
       dockerfile: Dockerfile.armhf
       args:
         DEBUG: "1"
-        MYSQL_SERVICE_HOST: "db"
-        TEST_MYSQL_SERVICE_HOST: "db"
+        MYSQL_ROOT_HOST: "%"
+        MYSQL_HOST: "db"
+        MYSQL_DATABASE: "foo_db"
+        MYSQL_ROOT_PASSWORD: "foo_pass"
+        MYSQL_USER: "dummy_foo"
+        MYSQL_PASSWORD: "foo_pass_test"
     image: betothreeprod/myphpcms-raspberrypi3
     privileged: true
     labels:

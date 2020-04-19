@@ -52,7 +52,7 @@ jobs:
           set -x
           for i in `seq 1 10`;
           do
-            nc -z $TEST_MYSQL_SERVICE_HOST $TEST_MYSQL_SERVICE_PORT && echo Success && exit 0
+            nc -z $MYSQL_HOST $MYSQL_TCP_PORT && echo Success && exit 0
             echo -n .
             sleep 1
           done

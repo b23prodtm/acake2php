@@ -32,7 +32,7 @@ parse_arg_export() {
   evar=$1
   desc=$2
   shift; shift
-  zval=$(echo "$@" | awk 'BEGIN{ FS="[ =]+" }{ print $2 }')
+  zval=$(echo "$*" | awk 'BEGIN{ FS="[ =]+" }{ print $2 }')
   while true; do case "$zval" in
     "")
       read -sp "
@@ -51,7 +51,7 @@ parse_arg_exists() {
 Prints the index of the item that's matched in the list (regexpression pattern)" && exit 1
   arg_case=$1
   shift
-  export ARGS="$@"
+  export ARGS="$*"
   echo $arg_case | awk 'BEGIN{FS="|"; ORS=" "; split(ENVIRON["ARGS"], a, " ")} {
   n=-1
   for(i=0; ++i in a;) {
@@ -71,7 +71,7 @@ parse_arg_trim() {
 Prints the list without the items that's matched (regexpression pattern)" && exit 1
   match_case_regexp=$1
   shift
-  export ARGS="$@"
+  export ARGS="$*"
   echo $match_case_regexp | awk 'BEGIN{FS="|"; ORS=" "; split(ENVIRON["ARGS"], a, " ")} {
   n=-1
   for(i=0; ++i in a;) {
@@ -96,9 +96,9 @@ END {
 #     | awk 'BEGIN{ FS="[ =]+" }{ print "-n " $2 }') "$@"
 #     parse_and_export -n NAME "Set user name" "$@"
 #
-# To coninue arguments processing after a call to this function :
+# To continue arguments processing after a call to this function :
 #
-#     shift $((OPTIND -1))
+#     shift
 #
 parse_and_export() {
   [ $# -lt 4 ] && echo "Usage: $0 <arg-name> <export-var> <description> <argument-list> " && exit 1

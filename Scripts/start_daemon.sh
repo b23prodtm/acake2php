@@ -28,7 +28,7 @@ if [ $docker 2> /dev/null ] && [ $(which docker) 2> /dev/null ]; then
 	fi
 	if [ $maria > $LOG ]; then
 		slogger -st $0 "Started docker container --name maria, ref: ${maria}"
-		wait_for_host $TEST_MYSQL_SERVICE_HOST $TEST_MYSQL_SERVICE_PORT
+		wait_for_host $MYSQL_HOST ${MYSQL_TCP_PORT:-3306}
 		[ $? = 1 ] && slogger -st $0 "Failed waiting for Mysql"
 	fi
 fi

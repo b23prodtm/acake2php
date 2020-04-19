@@ -19,15 +19,15 @@ services:
   myphpcms:
     env_file: common.env
     environment:
-      MYSQL_SERVICE_HOST: "db"
-      TEST_MYSQL_SERVICE_HOST: "db"
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_HOST: "db"
     build:
       context: .
       dockerfile: Dockerfile.x86_64
       args:
         DEBUG: "1"
-        MYSQL_SERVICE_HOST: "db"
-        TEST_MYSQL_SERVICE_HOST: "db"
+        MYSQL_ROOT_HOST: "db"
+        MYSQL_HOST: "db"
     image: betothreeprod/myphpcms-raspberrypi3
     privileged: true
     labels:

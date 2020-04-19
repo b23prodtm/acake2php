@@ -38,10 +38,13 @@ while [[ "$#" > 0 ]]; do case $1 in
     exit 0;;
   -[pP]*)
     parse_sql_password "MYSQL_ROOT_PASSWORD" "user ${DATABASE_USER}" "$*"
-    shift $((OPTIND -2));;
+    export -p
+    shift
+    ;;
   -[tT]*)
     parse_sql_password "MYSQL_PASSWORD" "test user ${MYSQL_USER}" "$*"
-    shift $((OPTIND -2));;
+    shift
+    ;;
   -[vV]*|--verbose )
     set -x
     echo "Passed params :  $0 ${saved}";;
@@ -55,4 +58,4 @@ while [[ "$#" > 0 ]]; do case $1 in
   *) echo "Unknown parameter, passed $0: $1"; exit 1;;
 esac; shift; done
 source ./configure.sh ${config_args}
-bash -c "./migrate-database.sh -u -i -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} ${bootargs}"
+bash -c "./migrate-database.sh -u ${bootargs} -i"

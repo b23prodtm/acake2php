@@ -129,8 +129,8 @@ The following variables must be set up as server environment, provided by your *
 
     MYSQL_DATABASE:default
     DATABASE_SERVICE_NAME:MYSQL
-    # a host alias or IP address
-    MYSQL_SERVICE_HOST:mysql
+    # a hostname or IP address
+    MYSQL_HOST:mysql
 
 >Note: Prefixed with *TEST_* they are used by the index.php?test=1 URLs and ./test-cake.sh (--travis)
 
@@ -205,7 +205,7 @@ You probably have modified user privileges on your server:
 
     mysql -u root
     use mysql;
-    grant all on $TEST_DATABASE_NAME.* to '$MYSQL_USER'@'$TEST_MYSQL_SERVICE_HOST';
+    grant all on $TEST_DATABASE_NAME.* to '$MYSQL_USER'@'$MYSQL_HOST';
     exit
     ./configure.sh -c
 
@@ -266,12 +266,12 @@ Log in with root privileges should work:
 If it isn't possible to login:
   + Check your environment variables (common.env and docker-compose.yml) settings). Use one or the other, and see which works for you:
 
-    MYSQL_SERVICE_HOST=localhost (Unix/OSX platforms)
+    MYSQL_ROOT_HOST=% (Unix/OSX platforms)
             or if docker mysql service containers:
-    MYSQL_SERVICE_HOST=127.0.0.1
+    MYSQL_ROOT_HOST=127.0.0.1
     ..
 
-    MYSQL_SERVICE_PORT=3306
+    MYSQL_TCP_PORT=3306
 
   + Debug the local configuration, look for unbound VARIABLES, add verbosity level information (add `-o` if you are in a remote shell):
 

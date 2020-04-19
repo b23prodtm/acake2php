@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-### Paste Here latest File Revisions
-REV=https://gist.githubusercontent.com/b23prodtm/5f96368412589223869bc659b30d263e/raw/63652bbd3859767e52801371c196e463a288e9bf/balena_deploy.sh
-sudo curl -sSL -o /usr/local/bin/balena_deploy $REV
+### Paste in here latest File Revisions
+REV=https://raw.githubusercontent.com/b23prodtm/vagrant-shell-scripts/b23prodtm-patch/vendor/cni/balena_deploy.sh
+#REV=https://raw.githubusercontent.com/b23prodtm/vagrant-shell-scripts/87e48481c955e213de3d08453dd4dd56d1104bec/vendor/cni/balena_deploy.sh
+sudo curl -SL -o /usr/local/bin/balena_deploy $REV
 sudo chmod 0755 /usr/local/bin/balena_deploy
 source balena_deploy ${BASH_SOURCE[0]} "$@"
