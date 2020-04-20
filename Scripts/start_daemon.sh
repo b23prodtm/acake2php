@@ -44,8 +44,7 @@ if [ $(parse_arg_exists "server" $ck_args) 2>&1 > $LOG ]; then
   slogger -st $0 "==============================================="
    ./lib/Cake/Console/cake $ck_args
 elif [ $(parse_arg_exists "test" $(parse_arg_trim "--connection*" $ck_args)) 2>&1 > $LOG ]; then
-  show_password_status "${MYSQL_USER}" "${MYSQL_PASSWORD}" "is running tests"
-	slogger -st $0 $(printf "Passed Cake Args: %s" "$ck_args")
+  slogger -st $0 $(printf "Passed Cake Args: %s" "$ck_args")
   if [[ "${COLLECT_COVERAGE}" == "true" ]]; then
     ./app/Vendor/bin/phpunit --log-junit ~/phpunit/junit.xml --coverage-clover app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/Case/AllTestsTest.php
   elif [ "${PHPCS}" != '1' ]; then
@@ -60,7 +59,6 @@ elif [ $(parse_arg_exists "docker-compose" $ck_args) 2>&1 > $LOG ]; then
   slogger -st $0 "${ck_args}"
   bash -c "${ck_args}"
 elif [ $(parse_arg_exists "update" $ck_args) 2>&1 > $LOG ]; then
-  show_password_status "${DATABASE_USER}" "${MYSQL_ROOT_PASSWORD}" "'s migrating database schemas"
   #; cakephp shell
   echo "Migrating database 'cake schema update' ..."
 	p=$(parse_arg_trim "update" $ck_args)

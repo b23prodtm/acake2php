@@ -86,18 +86,18 @@ class DATABASE_CONFIG {
         public function __construct() {
                 $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) : FALSE;
                 $test = array(
-                  'host' => getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST"),
-                  'port' => getenv('TEST_' . strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT"),
-                  'login' => getenv('DATABASE_USER'),
-                  'password' => getenv('MYSQL_ROOT_PASSWORD'),
+                  'host' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_HOST"),
+                  'port' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_PORT"),
+                  'login' => getenv('MYSQL_USER'),
+                  'password' => getenv('MYSQL_PASSWORD'),
                   'database' => getenv('TEST_DATABASE_NAME'),
                   'datasource' => $datasource ? $this->test['datasource'] : $datasource
                 );
                 $default = array(
-                  'host' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_HOST"),
-                  'port' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_SERVICE_PORT"),
-                  'login' => getenv("MYSQL_USER"),
-                  'password' => getenv("MYSQL_PASSWORD"),
+                  'host' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_HOST"),
+                  'port' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_PORT"),
+                  'login' => getenv("DATABASE_USER"),
+                  'password' => getenv("MYSQL_ROOT_PASSWORD"),
                   'database' => getenv("MYSQL_DATABASE"),
                   'datasource' => $datasource ? $this->default['datasource'] : $datasource
                 );

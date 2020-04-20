@@ -38,7 +38,7 @@ sql_connect_host="-h ${MYSQL_HOST} -P ${MYSQL_TCP_PORT}"
 sql_connect_test_host="-h ${MYSQL_HOST} -P ${MYSQL_TCP_PORT}"
 dbfile=database.cms.php
 fix_socket="-N"
-config_app_checked=""
+config_app_checked="-Y"
 test_checked=0
 update_checked=0
 import_identities=0
@@ -63,7 +63,6 @@ while [[ "$#" > 0 ]]; do case "$1" in
     sql_connect_test_host=""
     mysql_host="db"
     test_mysql_host="db"
-    config_app_checked="-Y"
     slogger -st $0 "Docker exec option ... ";;
   -[uU]* )
     update_checked=1
@@ -131,7 +130,6 @@ shift; done
 : ${MYSQL_DATABASE?} ${DATABASE_USER?} ${MYSQL_ROOT_PASSWORD?} ${MYSQL_ROOT_HOST?} ${MYSQL_TCP_PORT?}
 : $TEST_DATABASE_NAME?} ${MYSQL_USER?} ${MYSQL_PASSWORD?} ${MYSQL_HOST?} ${MYSQL_TCP_PORT?}
 # configure user application database and eventually alter user database access
-[ -z $dbfile ] && [ $fix_socket == "-N" ] && [ -f $identities ] || config_app_checked="-Y"
 shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket} ${docker}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" $config_app_checked
 if [[ $import_identities -eq 1 ]]; then
   slogger -st $0 "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}"
@@ -146,7 +144,7 @@ alter user '${DATABASE_USER}'@'${mysql_host}' identified by '${set_DATABASE_PASS
 grant all PRIVILEGES on *.* to '${DATABASE_USER}'@'$(hostname)' WITH GRANT OPTION;
 grant all PRIVILEGES on *.* to '${DATABASE_USER}'@'${mysql_host}' WITH GRANT OPTION;
 select * from user where user = '${DATABASE_USER}';
-create database if not exists '${MYSQL_DATABASE}';
+create database if not exists ${MYSQL_DATABASE} default character set utf8 default collate utf8_bin;
 EOF
   slogger -st $0 "Forked script to keep hidden table user secrets..."
   bash -c "echo \"source ${identities}\" | ${sql_connect} ${sql_connect_host} \
@@ -168,6 +166,7 @@ grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${test_mysql_hos
 grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${test_mysql_host}';
 grant all PRIVILEGES on ${TEST_DATABASE_NAME}2.* to '${MYSQL_USER}'@'${test_mysql_host}';
 grant all PRIVILEGES on ${TEST_DATABASE_NAME}3.* to '${MYSQL_USER}'@'${test_mysql_host}';
+use ${MYSQL_DATABASE};
 select * from user where user = '${MYSQL_USER}';
 EOF
   bash -c "echo \"source ${identities}\" | ${sql_connect} ${sql_connect_host} \
@@ -200,11 +199,11 @@ if [[ $test_checked -eq 1 ]]; then
   : ${MYSQL_USER?} ${MYSQL_PASSWORD?} ${MYSQL_HOST?}
   slogger -st $0 "Database Unit Tests... DB=${DB}"
   if [[ ${DB} == 'Mysql' ]]; then
-    $sql_connect ${sql_connect_test_host} ${test_mysql_connect_args} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} -v \
+    $sql_connect ${sql_connect_test_host} ${test_mysql_connect_args} -u ${MYSQL_ROOT_USER} --password=${MYSQL_ROOT_PASSWORD} -v \
     -e "CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME};" \
     -e "CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME}2;" \
     -e "CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME}3;"
-fi
+  fi
   set +H
   cat << EOF | tee app/Config/database.php
 <?php
