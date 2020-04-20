@@ -140,14 +140,13 @@ if [[ $import_identities -eq 1 ]]; then
   cat << EOF | tee $identities
 use mysql;
 create user if not exists '${DATABASE_USER}'@'${mysql_host}';
-create user if not exists '${DATABASE_USER}'@'localhost';
 create user if not exists '${DATABASE_USER}'@'$(hostname)';
-alter user '${DATABASE_USER}'@'localhost' identified by '${set_DATABASE_PASSWORD}';
 alter user '${DATABASE_USER}'@'$(hostname)' identified by '${set_DATABASE_PASSWORD}';
 alter user '${DATABASE_USER}'@'${mysql_host}' identified by '${set_DATABASE_PASSWORD}';
+grant all PRIVILEGES on *.* to '${DATABASE_USER}'@'$(hostname)' WITH GRANT OPTION;
+grant all PRIVILEGES on *.* to '${DATABASE_USER}'@'${mysql_host}' WITH GRANT OPTION;
 select * from user where user = '${DATABASE_USER}';
 create database if not exists '${MYSQL_DATABASE}';
-grant all on ${MYSQL_DATABASE}.* to '${DATABASE_USER}'@'${mysql_host}';
 EOF
   slogger -st $0 "Forked script to keep hidden table user secrets..."
   bash -c "echo \"source ${identities}\" | ${sql_connect} ${sql_connect_host} \
@@ -165,11 +164,11 @@ create user if not exists '${MYSQL_USER}'@'$(hostname)';
 alter user '${MYSQL_USER}'@'localhost' identified by '${set_MYSQL_PASSWORD}';
 alter user '${MYSQL_USER}'@'$(hostname)' identified by '${set_MYSQL_PASSWORD}';
 alter user '${MYSQL_USER}'@'${test_mysql_host}' identified by '${set_MYSQL_PASSWORD}';
+grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${test_mysql_host}';
+grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${test_mysql_host}';
+grant all PRIVILEGES on ${TEST_DATABASE_NAME}2.* to '${MYSQL_USER}'@'${test_mysql_host}';
+grant all PRIVILEGES on ${TEST_DATABASE_NAME}3.* to '${MYSQL_USER}'@'${test_mysql_host}';
 select * from user where user = '${MYSQL_USER}';
-grant all on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${test_mysql_host}';
-grant all on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${test_mysql_host}';
-grant all on ${TEST_DATABASE_NAME}2.* to '${MYSQL_USER}'@'${test_mysql_host}';
-grant all on ${TEST_DATABASE_NAME}3.* to '${MYSQL_USER}'@'${test_mysql_host}';
 EOF
   bash -c "echo \"source ${identities}\" | ${sql_connect} ${sql_connect_host} \
   ${mysql_connect_args} -u ${DATABASE_USER} --password=${MYSQL_ROOT_PASSWORD} \
@@ -201,7 +200,7 @@ if [[ $test_checked -eq 1 ]]; then
   : ${MYSQL_USER?} ${MYSQL_PASSWORD?} ${MYSQL_HOST?}
   slogger -st $0 "Database Unit Tests... DB=${DB}"
   if [[ ${DB} == 'Mysql' ]]; then
-    $sql_connect ${sql_connect_test_host} ${test_mysql_connect_args} -u ${DATABASE_USER} --password=${MYSQL_ROOT_PASSWORD} -v \
+    $sql_connect ${sql_connect_test_host} ${test_mysql_connect_args} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} -v \
     -e "CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME};" \
     -e "CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME}2;" \
     -e "CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME}3;"
