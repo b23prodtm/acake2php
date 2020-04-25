@@ -5,7 +5,6 @@ source ./Scripts/lib/shell_prompt.sh
 command="server -p 8000"
 saved=("$*")
 export COLLECT_COVERAGE="false"
-export PHP_CS="false"
 usage=("" \
 "Usage: $0 [-p <password>] [-t <password>] [-c <command>] [options]" \
 "          -p <password>        Exports MYSQL_ROOT_PASSWORD to bootargs." \

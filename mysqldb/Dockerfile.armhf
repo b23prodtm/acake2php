@@ -25,7 +25,7 @@ ENV MYSQL_ALLOW_EMPTY_PASSWORD=false \
 # 4. "~/.my.cnf" to set user-specific options.
 COPY conf.d/my.cnf /etc/mysql/conf.d/my.cnf
 
-RUN sed -i.bind /bind-address/s/^/#/ /etc/mysql/conf.d/my.cnf
+RUN sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_HOST}/" /etc/mysql/conf.d/my.cnf
 
 RUN apt update && apt install -y expect
 

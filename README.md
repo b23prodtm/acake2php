@@ -205,7 +205,7 @@ You probably have modified user privileges on your server:
 
     mysql -u root
     use mysql;
-    grant all on $TEST_DATABASE_NAME.* to '$MYSQL_USER'@'$MYSQL_HOST';
+    grant all PRIVILEGES on $TEST_DATABASE_NAME.* to '$MYSQL_USER'@'$MYSQL_HOST';
     exit
     ./configure.sh -c
 
@@ -214,7 +214,7 @@ More about environment variables are located in the remote pod (OpenShift) setti
 
 >Note:
 
-    ./configure.sh --mig-database -p -i -p -t
+    ./configure.sh --mig-database -p -i --sql-password
 
 to do a reset with environment root and user password.
 
@@ -222,7 +222,7 @@ to do a reset with environment root and user password.
 
 (automatic) This looks like a first installation of mysql. You have to secure or reset your mysql root access:
 
-    MYSQL_ROOT_PASSWORD=<password> sudo bash mysqldb/mysql_secure_installation.sh
+    MYSQL_ROOT_PASSWORD=<password> sudo bash mysqldb/mysql_secure_shell
 
 (manual) The Linux shell way to reinitialize sql root password:
 
@@ -232,7 +232,7 @@ to do a reset with environment root and user password.
 >Note: A temporary password is generated for root@localhost. Now import identities.
 
     brew services restart mysql@5.7
-    ./configure.sh --mig-database -p=$(cat app/tmp/nupwd) -i -p -t
+    ./configure.sh --mig-database -p=$(cat app/tmp/nupwd) -i --sql-password
 
 >You have now configured a new SQL root password and a test password. Local SQL access and server is ready to run tests:
 
@@ -278,13 +278,13 @@ If it isn't possible to login:
     set -u
     ./configure.sh --verbose -d -u
 
-  + Try resetting privileges for the requested TEST_, or MYSQL_DATABASE connection
+  + Try resetting privileges
 
-    ./configure.sh --mig-database -i -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} -y
+    ./configure.sh --mig-database -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} -i -y
 
   Don't miss the parameter in container environment :
 
-    ./migrate-database.sh or --mig-database --docker
+    ./migrate-database.sh -u --docker -i or ./configure.sh --mig-database -u --docker -i
 
   + Note that localhost is a special value. Using 127.0.0.1 is not the same thing. The latter will connect to the mysqld server through tcpip.
   + Try the [secure_installation](#database-configuration).

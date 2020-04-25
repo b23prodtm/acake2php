@@ -169,7 +169,7 @@ grant all PRIVILEGES on ${TEST_DATABASE_NAME}3.* to '${MYSQL_USER}'@'${test_mysq
 use ${MYSQL_DATABASE};
 select * from user where user = '${MYSQL_USER}';
 EOF
-  bash -c "echo \"source ${identities}\" | ${sql_connect} ${sql_connect_host} \
+  bash -c "echo \"source ${identities}\" | ${sql_connect} ${sql_connect_test_host} \
   ${mysql_connect_args} -u ${DATABASE_USER} --password=${MYSQL_ROOT_PASSWORD} \
   && echo 'Imported test identities with Success!' \
   && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}"

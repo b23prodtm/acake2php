@@ -22,15 +22,12 @@ while [[ "$#" > 0 ]]; do case $1 in
     export COLLECT_COVERAGE="false"
     export TRAVIS_OS_NAME="osx"
     export TRAVIS_PHP_VERSION=$(php -v | grep -E "[5-7]\.\\d+\.\\d+" | cut -d " " -f 2 | cut -c 1-3)
-    config_work_dir=".travis"
     # Abort tests
     exit 0;;
   --circle )
     #; Test values
     export DB="Mysql"
-    export COLLECT_COVERAGE="false"
-    export PHP_CS="false"
-    config_work_dir=".circleci";;
+    export COLLECT_COVERAGE="false";;
   --cov )
     export COLLECT_COVERAGE=true;;
   -[hH]*|--help )

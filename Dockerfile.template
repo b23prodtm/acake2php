@@ -15,6 +15,8 @@ ENV DEBUG ${DEBUG:-0}
 ENV BALENA_MACHINE_NAME ${BALENA_MACHINE_NAME:-%%BALENA_MACHINE_NAME%%}
 ARG DKR_ARCH
 ENV DKR_ARCH ${DKR_ARCH:-%%BALENA_ARCH%%}
+ARG COLLECT_COVERAGE
+ENV COLLECT_COVERAGE ${COLLECT_COVERAGE:-'False'}
 ARG DB
 ENV DB ${DB:-Mysql}
 ARG DATABASE_ENGINE
@@ -148,7 +150,7 @@ RUN a2enmod rewrite \
 
 # Install all PHP dependencies
 WORKDIR /var/www/html/
-RUN ./configure.sh --openshift -c -h -p=pass -s=word
+RUN ./configure.sh --openshift -c -h -p=pass -s=word --development
 # RUN [ "cross-build-end" ]
-ENTRYPOINT [ "/bin/bash", "-c", "./configure.sh --openshift -d -u -i --sql-password=$MYSQL_ROOT_PASSWORD --test-sql-password=$MYSQL_PASSWORD -Y" ]
+ENTRYPOINT [ "/bin/bash", "-c", "./migrate-database.sh -u -o -i --test-sql-password=${MYSQL_PASSWORD}"]
 CMD [ "apache2 -D FOREGROUND" ]
