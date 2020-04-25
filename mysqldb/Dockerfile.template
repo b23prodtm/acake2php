@@ -1,5 +1,5 @@
 ARG SECONDARY_HUB
-FROM ${SECONDARY_HUB:-betothreeprod/mariadb}
+FROM ${SECONDARY_HUB:-linuxserver/mariadb}
 
 ARG MYSQL_ROOT_PASSWORD
 ENV MYSQL_ROOT_PASSWORD ${MYSQL_ROOT_PASSWORD:-'foo_pass'}
@@ -7,16 +7,18 @@ ARG MYSQL_ROOT_HOST
 ENV MYSQL_ROOT_HOST ${MYSQL_ROOT_HOST:-%}
 ARG MYSQL_HOST
 ENV MYSQL_HOST ${MYSQL_HOST:-127.0.0.1}
+ENV TZ ${TZ:-'Europe/Paris'}
+# Optional
 ARG MYSQL_DATABASE
 ENV MYSQL_DATABASE ${MYSQL_DATABASE:-'foo_db'}
+# Optional
 ARG MYSQL_USER
 ENV MYSQL_USER ${MYSQL_USER:-'dummy_foo'}
-
-ENV MYSQL_ALLOW_EMPTY_PASSWORD=false \
-    MYSQL_DATABASE=${MYSQL_DATABASE} \
-    MYSQL_HOST=${MYSQL_HOST} \
-    MYSQL_ROOT_HOST=${MYSQL_ROOT_HOST} \
-    MYSQL_USER=${MYSQL_USER}
+# Optional
+ARG MYSQL_PASSWORD
+ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'foo_pass_test'}
+# Optional
+ENV MYSQL_ALLOW_EMPTY_PASSWORD=false
 
 # The MariaDB/MySQL tools read configuration files in the following order:
 # 1. "/etc/mysql/mariadb.cnf" (this file) to set global defaults,

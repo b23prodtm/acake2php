@@ -4,12 +4,17 @@ services:
     build:
       context: mysqldb
       dockerfile: Dockerfile.x86_64
-    image: betothreeprod/mariadb-raspberrypi3
+      args:
+        MYSQL_ROOT_HOST: "%"
+        MYSQL_HOST: "127.0.0.1"
+        MYSQL_DATABASE: "foo_db"
+        MYSQL_ROOT_PASSWORD: "foo_pass"
+        MYSQL_USER: "dummy_foo"
+        MYSQL_PASSWORD: "foo_pass_test"
+    image: betothreeprod/mariadb-intel-nuc
     volumes:
       - db-data:/config
-    ports:
-      - "3306:3306"
-    restart: always
+    restart: unless-stopped
     networks:
       - cake
     env_file: common.env
@@ -18,17 +23,18 @@ services:
     privileged: true
   myphpcms:
     env_file: common.env
-    environment:
-      MYSQL_ROOT_HOST: "%"
-      MYSQL_HOST: "db"
     build:
       context: .
       dockerfile: Dockerfile.x86_64
       args:
         DEBUG: "1"
-        MYSQL_ROOT_HOST: "db"
-        MYSQL_HOST: "db"
-    image: betothreeprod/myphpcms-raspberrypi3
+        MYSQL_ROOT_HOST: "%"
+        MYSQL_HOST: "127.0.0.1"
+        MYSQL_DATABASE: "foo_db"
+        MYSQL_ROOT_PASSWORD: "foo_pass"
+        MYSQL_USER: "dummy_foo"
+        MYSQL_PASSWORD: "foo_pass_test"
+    image: betothreeprod/myphpcms-intel-nuc
     privileged: true
     labels:
       io.balena.features.dbus: "1"
@@ -37,7 +43,7 @@ services:
     ports:
       #Dockerfile's exposed 80 (through apache2), forward 8000 as of CakePHP default port setting
       - "80:8000"
-    depends_on:
+    links:
       - db
     networks:
       - cake
@@ -49,16 +55,6 @@ services:
       #retries: 3
       # v3.4 compose file
       #start_period: 40s
-  wifi-connect:
-    network_mode: host
-    build:
-      context: ./python-wifi-connect
-      dockerfile: Dockerfile.x86_64
-    env_file: common.env
-    labels:
-      io.balena.features.dbus: "1"
-      io.balena.features.supervisor-api: "1"
-    privileged: true
 volumes:
   hostapcache:
   data:

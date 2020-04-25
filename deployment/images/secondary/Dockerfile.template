@@ -1,23 +1,33 @@
 ARG SECONDARY_HUB
-FROM ${SECONDARY_HUB:-betothreeprod/mariadb}
+FROM ${SECONDARY_HUB:-linuxserver/mariadb}
 
-ENV MYSQL_ALLOW_EMPTY_PASSWORD=true \
-    MYSQL_DATABASE=foo_db \
-    MYSQL_HOST=127.0.0.1 \
-    MYSQL_ROOT_HOST=% \
-    MYSQL_USER=root
+ARG MYSQL_ROOT_PASSWORD
+ENV MYSQL_ROOT_PASSWORD ${MYSQL_ROOT_PASSWORD:-'foo_pass'}
+ARG MYSQL_ROOT_HOST
+ENV MYSQL_ROOT_HOST ${MYSQL_ROOT_HOST:-%}
+ARG MYSQL_HOST
+ENV MYSQL_HOST ${MYSQL_HOST:-127.0.0.1}
+ENV TZ ${TZ:-'Europe/Paris'}
+# Optional
+ARG MYSQL_DATABASE
+ENV MYSQL_DATABASE ${MYSQL_DATABASE:-'foo_db'}
+# Optional
+ARG MYSQL_USER
+ENV MYSQL_USER ${MYSQL_USER:-'dummy_foo'}
+# Optional
+ARG MYSQL_PASSWORD
+ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'foo_pass_test'}
+# Optional
+ENV MYSQL_ALLOW_EMPTY_PASSWORD=false
 
-# This is the performance optimization tweak to make DB faster
-RUN echo '\n\
-[mysqld]\n\
-collation-server = utf8_unicode_ci\n\
-init-connect="SET NAMES utf8"\n\
-character-set-server = utf8\n\
-innodb_flush_log_at_trx_commit=2\n\
-sync_binlog=0\n\
-innodb_use_native_aio=0\n' >> /etc/mysql/my.cnf
+# The MariaDB/MySQL tools read configuration files in the following order:
+# 1. "/etc/mysql/mariadb.cnf" (this file) to set global defaults,
+# 2. "/etc/mysql/conf.d/*.cnf" to set global options.
+# 3. "/etc/mysql/mariadb.conf.d/*.cnf" to set MariaDB-only options.
+# 4. "~/.my.cnf" to set user-specific options.
+COPY conf.d/my.cnf /etc/mysql/conf.d/my.cnf
 
-RUN sed -i.old -E -e /bind_address/s/^/#/ /etc/mysql/my.cnf
+RUN sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_HOST}/" /etc/mysql/conf.d/my.cnf
 
 RUN apt update && apt install -y expect
 
