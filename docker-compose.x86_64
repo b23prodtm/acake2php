@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile.x86_64
       args:
         MYSQL_ROOT_HOST: "%"
+        # bind-address = "127.0.0.1"
         MYSQL_HOST: "127.0.0.1"
         MYSQL_DATABASE: "foo_db"
         MYSQL_ROOT_PASSWORD: "foo_pass"
@@ -14,6 +15,7 @@ services:
     image: betothreeprod/mariadb-intel-nuc
     volumes:
       - db-data:/config
+      - db-socket:/var/run/mysqld
     restart: unless-stopped
     networks:
       - cake
@@ -29,7 +31,8 @@ services:
       args:
         DEBUG: "1"
         MYSQL_ROOT_HOST: "%"
-        MYSQL_HOST: "127.0.0.1"
+        # mysql -h "localhost" uses db-socket
+        MYSQL_HOST: "localhost"
         MYSQL_DATABASE: "foo_db"
         MYSQL_ROOT_PASSWORD: "foo_pass"
         MYSQL_USER: "dummy_foo"
@@ -40,6 +43,7 @@ services:
       io.balena.features.dbus: "1"
     volumes:
       - data:/var/www/html
+      - db-socket:/var/run/mysqld
     ports:
       #Dockerfile's exposed 80 (through apache2), forward 8000 as of CakePHP default port setting
       - "80:8000"
@@ -60,6 +64,8 @@ volumes:
   data:
     external: false
   db-data:
+    external: false
+  db-socket:
     external: false
 networks:
   cake:

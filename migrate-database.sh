@@ -167,7 +167,7 @@ grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${test_mysql
 grant all PRIVILEGES on ${TEST_DATABASE_NAME}2.* to '${MYSQL_USER}'@'${test_mysql_host}';
 grant all PRIVILEGES on ${TEST_DATABASE_NAME}3.* to '${MYSQL_USER}'@'${test_mysql_host}';
 use ${MYSQL_DATABASE};
-select * from user where user = '${MYSQL_USER}';
+select * from mysql.user where user = '${MYSQL_USER}';
 EOF
   bash -c "echo \"source ${identities}\" | ${sql_connect} ${sql_connect_test_host} \
   ${mysql_connect_args} -u ${DATABASE_USER} --password=${MYSQL_ROOT_PASSWORD} \

@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile.template
       args:
         MYSQL_ROOT_HOST: "%"
+        # bind-address = "127.0.0.1"
         MYSQL_HOST: "127.0.0.1"
         MYSQL_DATABASE: "foo_db"
         MYSQL_ROOT_PASSWORD: "foo_pass"
@@ -30,7 +31,8 @@ services:
       args:
         DEBUG: "1"
         MYSQL_ROOT_HOST: "%"
-        MYSQL_HOST: "127.0.0.1"
+        # mysql -h "localhost" uses db-socket
+        MYSQL_HOST: "localhost"
         MYSQL_DATABASE: "foo_db"
         MYSQL_ROOT_PASSWORD: "foo_pass"
         MYSQL_USER: "dummy_foo"

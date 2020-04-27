@@ -1,5 +1,5 @@
 {
-	"name": "b23prodtm/myphpcms",
+	"name": "betothreeprod/myphpcms",
 	"description": "CMS featuring CakePHP Framework",
 	"homepage": "https://www.sourceforge.net/projects/pohse",
 	"license": "MIT",
@@ -19,7 +19,8 @@
 	"require": {
 		"php": "^5.6 || ^7",
 		"cakephp/debug_kit": "2.2.*",
-		"b23prodtm/markdown-plugin": "master@dev"
+		"betothreeprod/markdown-plugin": "master@dev",
+		"betothreeprod/updateshell": "0.1.*"
 	},
 	"suggest": {
 		"ext-openssl": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption",
@@ -33,8 +34,9 @@
 	},
 	"extra": {
 		"installer-paths": {
-			"app/Plugin/Markdown": ["b23prodtm/markdown-plugin"],
-			"app/Plugin/DebugKit": ["cakephp/debug_kit"]
+			"app/Plugin/Markdown": ["betothreeprod/markdown-plugin"],
+			"app/Plugin/DebugKit": ["cakephp/debug_kit"],
+			"app/Plugin/UpdateShell": ["betothreeprod/updateshell"]
 		}
 	},
 	"config": {

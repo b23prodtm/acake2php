@@ -16,4 +16,4 @@
 	branch = 2.x
 [submodule "app/Plugin/UpdateShell"]
 	path = app/Plugin/UpdateShell
-	url = https://github.com/mcurry/update.git
+	url = https://github.com/b23prodtm/update.git
