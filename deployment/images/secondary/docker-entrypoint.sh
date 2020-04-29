@@ -5,7 +5,7 @@ shopt -s nullglob
 # logging functions
 mysql_log() {
 	local type="$1"; shift
-	printf '%s [%s] [Entrypoint]: %s\n' "$(date --rfc-3339=seconds)" "$type" "$*"
+	printf '%s [%s] [Entrypoint]: %s\n' "$(date --rfc-3339=seconds)" "$type" "$@"
 }
 mysql_note() {
 	mysql_log Note "$@"

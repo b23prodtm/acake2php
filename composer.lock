@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8f832bc06af32b71296d70c334e49281",
+    "content-hash": "eaa90905a8aa19d93181616430725537",
     "packages": [
         {
             "name": "betothreeprod/markdown-plugin",
@@ -54,16 +54,16 @@
         },
         {
             "name": "betothreeprod/updateshell",
-            "version": "0.1.2",
+            "version": "0.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/b23prodtm/update.git",
-                "reference": "a54ac23f49fb2d0cc9ec0b4be4767f18ff93e9db"
+                "reference": "ecd5d431cd0a6692e17d78d542e607f276a6796d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/b23prodtm/update/zipball/a54ac23f49fb2d0cc9ec0b4be4767f18ff93e9db",
-                "reference": "a54ac23f49fb2d0cc9ec0b4be4767f18ff93e9db",
+                "url": "https://api.github.com/repos/b23prodtm/update/zipball/ecd5d431cd0a6692e17d78d542e607f276a6796d",
+                "reference": "ecd5d431cd0a6692e17d78d542e607f276a6796d",
                 "shasum": ""
             },
             "require": {
@@ -81,7 +81,7 @@
                 "plugin",
                 "update"
             ],
-            "time": "2020-04-27T21:02:09+00:00"
+            "time": "2020-04-27T21:33:11+00:00"
         },
         {
             "name": "cakephp/debug_kit",
@@ -1980,16 +1980,16 @@
         },
         {
             "name": "symfony/config",
-            "version": "v5.0.7",
+            "version": "v5.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/config.git",
-                "reference": "3e633c31a34738f7f4ed7a225c43fc45ca74c986"
+                "reference": "db1674e1a261148429f123871f30d211992294e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/config/zipball/3e633c31a34738f7f4ed7a225c43fc45ca74c986",
-                "reference": "3e633c31a34738f7f4ed7a225c43fc45ca74c986",
+                "url": "https://api.github.com/repos/symfony/config/zipball/db1674e1a261148429f123871f30d211992294e7",
+                "reference": "db1674e1a261148429f123871f30d211992294e7",
                 "shasum": ""
             },
             "require": {
@@ -2054,7 +2054,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-03-27T16:56:45+00:00"
+            "time": "2020-04-15T15:59:10+00:00"
         },
         {
             "name": "symfony/console",
@@ -2176,16 +2176,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v5.0.7",
+            "version": "v5.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "ca3b87dd09fff9b771731637f5379965fbfab420"
+                "reference": "7cd0dafc4353a0f62e307df90b48466379c8cc91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/ca3b87dd09fff9b771731637f5379965fbfab420",
-                "reference": "ca3b87dd09fff9b771731637f5379965fbfab420",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/7cd0dafc4353a0f62e307df90b48466379c8cc91",
+                "reference": "7cd0dafc4353a0f62e307df90b48466379c8cc91",
                 "shasum": ""
             },
             "require": {
@@ -2236,11 +2236,11 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-03-27T16:56:45+00:00"
+            "time": "2020-04-12T14:40:17+00:00"
         },
         {
             "name": "symfony/finder",
-            "version": "v5.0.7",
+            "version": "v5.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
@@ -2651,7 +2651,7 @@
         },
         {
             "name": "symfony/stopwatch",
-            "version": "v5.0.7",
+            "version": "v5.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/stopwatch.git",

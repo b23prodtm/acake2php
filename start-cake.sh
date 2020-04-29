@@ -3,7 +3,7 @@ set -e
 source ./Scripts/lib/parsing.sh
 source ./Scripts/lib/shell_prompt.sh
 command="server -p 8000"
-saved=("$*")
+saved=("$@")
 export COLLECT_COVERAGE="false"
 usage=("" \
 "Usage: $0 [-p <password>] [-t <password>] [-c <command>] [options]" \
@@ -20,18 +20,21 @@ while [[ "$#" > 0 ]]; do case $1 in
     printf "%s\n" "${usage[@]}"
     exit 0;;
   -[pP]*)
-    parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER}" "$*"
+    parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER}" "$@"
     shift
     ;;
   -[tT]*)
-    parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER}" "$*"
+    parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER}" "$@"
     shift
     ;;
   -[cC]*)
     command=$2
     shift; shift; command="${command} $*"
-    parse_and_export "p" "CAKE_TCP_PORT" "specify -p <port>" "$*"
+    parse_and_export "p" "CAKE_TCP_PORT" "specify -p <port>" "$@"
     shift
+    ;;
+  --docker )
+    command="--docker ${command}"
     ;;
   *);;
 esac; shift; done

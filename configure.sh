@@ -26,7 +26,7 @@ usage=("" \
 "          --development  Install composer dependencies" \
 "")
 composer_args="require --no-interaction --update-no-dev"
-saved=("$*")
+saved=("$@")
 export PHP_CMS_DIR=${PHP_CMS_DIR:-app/webroot/php_cms}
 printf "PHP_CMS_DIR=%s in ~/.bash_profile or as environment variable." "${PHP_CMS_DIR}"
 #; if the full set of the arguments exists, there won't be any prompt in the shell
@@ -45,7 +45,7 @@ while [[ "$#" > 0 ]]; do case $1 in
         #; Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
         #; [[-d|--mig-database] [-u]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
         shift
-        shell_prompt "./migrate-database.sh ${docker}${openshift}$*" "${cyan}Step 3. Migrate database\n${nc}" "-Y"
+        shell_prompt "./migrate-database.sh ${docker}${openshift}$@" "${cyan}Step 3. Migrate database\n${nc}" "-Y"
         break;;
     -[sS]*|-[pP]*|-[fF]*|-[tT]*|--connection* )
         #; void --hash password known args

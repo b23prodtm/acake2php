@@ -21,7 +21,7 @@ if [ ! -f ./$PHP_CMS_DIR/e13/etc/constantes.properties ] && [ ! $openshift 2> /d
 fi
 slogger -st $0 "Auto configuration..."
 #; hash file that is stored in webroot to allow administrator privileges
-if [[ -z $GET_HASH_PASSWORD ]] && [ ! $openshift 2> /dev/null ]; then
+if [[ -z ${GET_HASH_PASSWORD:-''} ]] && [ ! $openshift 2> /dev/null ]; then
   hash="./${PHP_CMS_DIR}/e13/etc/export_hash_password.sh"
   if [ ! -f $hash ]; then
     shell_prompt "./configure.sh -h " "define a value for missing GET_HASH_PASSWORD"

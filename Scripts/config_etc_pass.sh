@@ -23,7 +23,7 @@ if [ -z $pass ]; then while true; do
    echo -e "\n"
    read -sp "Please re-enter the password :" confirmpass
    echo -e "\n"
-   if [ "$pass" == "$confirmpass" ]; then
+   if [ "$pass" = "$confirmpass" ]; then
            break
    else
            echo -e "${red}Passwords don't match.\n${nc}"
@@ -31,7 +31,7 @@ if [ -z $pass ]; then while true; do
 done; fi
 
 # read salt if not set
-if [ -z $salt ]; then while [ "$salt" == "" ]; do
+if [ -z $salt ]; then while [ "$salt" = "" ]; do
    read -p "Please enter the salt word :" salt
 done; fi
 # read filename if not set

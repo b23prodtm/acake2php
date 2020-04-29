@@ -82,10 +82,10 @@ before_install:
   - cd .travis/TravisCI-OSX-PHP
   - source build/phpenv_install.sh
   - source build/prepare_${TRAVIS_OS_NAME}_env.sh #; source exports
-  - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == 7* ]]; then COLLECT_COVERAGE=true ; fi
-  - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
+  - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${_PHP}" = 7* ]]; then COLLECT_COVERAGE=true ; fi
+  - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
   - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then source build/custom_php_ini.sh; fi
-  - if [[ "${TRAVIS_OS_NAME}" == "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
+  - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
   - cd ../..
   - source ./Scripts/configure_tmp.sh
   - source ./deploy.sh "${DKR_ARCH}" --nobuild
@@ -95,17 +95,17 @@ install:
   - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-openssl"; fi
   - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer"; bash -c 'composer install --dev --no-interaction'; fi
   - cd ../..
-  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then curl -s http://getcomposer.org/installer | php && php composer.phar install --dev --no-interaction; fi
+  - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then curl -s http://getcomposer.org/installer | php && php composer.phar install --dev --no-interaction; fi
 
 before_script:
-- if [[ "${TRAVIS_OS_NAME}" == "linux" && "${_PHP}" == "hhvm" ]]; then curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar; fi
+- if [[ "${TRAVIS_OS_NAME}" = "linux" && "${_PHP}" = "hhvm" ]]; then curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar; fi
 - mkdir -p build/logs
 
 script:
 - docker login -u $DOCKER_USER -p $DOCKER_PASS
 - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis -o .env common.env --docker; fi
 after_script:
-- if [[ ("${COLLECT_COVERAGE}" == "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]];
+- if [[ ("${COLLECT_COVERAGE}" = "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]];
   then travis_retry php app/Vendor/bin/php-coveralls -v -r ./app/; fi
 after_success:
 - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh

@@ -19,7 +19,7 @@ shell_prompt() {
           # (2) run a script if the user answered Y (yes) or N (no) quit the script
           case $answer in
                  [yY]* ) echo -e "Yes.\n"
-                          source $script
+                          [[ -f "$script" ]] && source $script || bash -c "$script"
                           break;;
 
                  [nN]* ) echo -e "No.\n"

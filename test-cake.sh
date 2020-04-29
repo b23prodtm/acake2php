@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
-source ./Scripts/lib/parsing.sh
+source ./Scripts/lib/test/parsing.sh
+test=("test_parse_and_export" "test_parse_sql_password")
+for t in "${test[@]}"; do printf "TEST CASES : %s\n" "$t" && eval "$t"; done; sleep 5
 bootargs=""
 saved=("$@")
 config_args="-c -h -p=pass -s=word --development --connection=test"
@@ -34,16 +36,16 @@ while [[ "$#" > 0 ]]; do case $1 in
     printf "%s\n" "${usage[@]}"
     exit 0;;
   -[pP]*)
-    parse_sql_password "MYSQL_ROOT_PASSWORD" "user ${DATABASE_USER}" "$*"
-    export -p
+    parse_sql_password "MYSQL_ROOT_PASSWORD" "user ${DATABASE_USER}" "$@"
     shift
     ;;
   -[tT]*)
-    parse_sql_password "MYSQL_PASSWORD" "test user ${MYSQL_USER}" "$*"
+    parse_sql_password "MYSQL_PASSWORD" "test user ${MYSQL_USER}" "$@"
     shift
     ;;
   -[vV]*|--verbose )
     set -x
+    bootargs="-v ${bootargs}"
     echo "Passed params :  $0 ${saved}";;
   -[oO]*|--openshift )
     bootargs="${bootargs} --openshift"

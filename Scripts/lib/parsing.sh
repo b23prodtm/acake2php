@@ -7,6 +7,7 @@ green="\033[0;32m"
 orange="\033[0;33m"
 cyan="\033[0;36m"
 parse_sql_password() {
+  [ $# -lt 3 ] && echo "Usage: $0 <environment-variable> <description> -<arg val>|--<arg=val>" && exit 1
   evar=$1
   desc=$2
   shift;
@@ -17,10 +18,14 @@ parse_sql_password() {
     case "${arg}" in
       -[pP]*|--sql-password*) set -- $(echo "${arg}" \
       | awk 'BEGIN{ FS="[ =]+" }{ print "-p " $2 }') "$@"
-        parse_and_export "p" $evar $desc "$@";;
+        OPTIND=1
+        parse_and_export "p" $evar "$desc" "$@"
+        shift $((OPTIND -1));;
       -[tT]*|--test-sql-password*) set -- $(echo "${arg}" \
-      | awk 'BEGIN{ FS="[ =]+" }{ print "-p " $2 }') "$@"
-        parse_and_export "t" $evar $desc "$@";;
+      | awk 'BEGIN{ FS="[ =]+" }{ print "-t " $2 }') "$@"
+        OPTIND=1
+        parse_and_export "t" $evar "$desc" "$@"
+        shift $((OPTIND -1));;
       *)
         set -- "$@" "${arg}";;
     esac
@@ -32,7 +37,7 @@ parse_arg_export() {
   evar=$1
   desc=$2
   shift; shift
-  zval=$(echo "$*" | awk 'BEGIN{ FS="[ =]+" }{ print $2 }')
+  zval=$(echo "$@" | awk 'BEGIN{ FS="[ =]+" }{ print $2 }')
   while true; do case "$zval" in
     "")
       read -sp "
@@ -51,7 +56,7 @@ parse_arg_exists() {
 Prints the index of the item that's matched in the list (regexpression pattern)" && exit 1
   arg_case=$1
   shift
-  export ARGS="$*"
+  export ARGS="$@"
   echo $arg_case | awk 'BEGIN{FS="|"; ORS=" "; split(ENVIRON["ARGS"], a, " ")} {
   n=-1
   for(i=0; ++i in a;) {
@@ -71,7 +76,7 @@ parse_arg_trim() {
 Prints the list without the items that's matched (regexpression pattern)" && exit 1
   match_case_regexp=$1
   shift
-  export ARGS="$*"
+  export ARGS="$@"
   echo $match_case_regexp | awk 'BEGIN{FS="|"; ORS=" "; split(ENVIRON["ARGS"], a, " ")} {
   n=-1
   for(i=0; ++i in a;) {

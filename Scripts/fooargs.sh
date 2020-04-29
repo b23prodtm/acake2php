@@ -12,13 +12,13 @@ cyan="\033[0;36m"
 slogger -st $0 "Loading ${orange}Test environment${nc} : $0..."
 #; To change  Model/Datasource/Database
 export DB=${DB:-Mysql}
-[ "${DB}" == "Mysql" ] && export DATABASE_ENGINE=MysqlCms && export DATABASE_SERVICE_NAME=MYSQL
-[ "${DB}" == "Pgsql" ] && export DATABASE_ENGINE=PostgresCms && export DATABASE_SERVICE_NAME=PGSQL
-[ "${DB}" == "Sqlite" ] && export DATABASE_ENGINE=SqliteCms && export DATABASE_SERVICE_NAME=SQLITE
+[ "${DB}" = "Mysql" ] && export DATABASE_ENGINE=MysqlCms && export DATABASE_SERVICE_NAME=MYSQL
+[ "${DB}" = "Pgsql" ] && export DATABASE_ENGINE=PostgresCms && export DATABASE_SERVICE_NAME=PGSQL
+[ "${DB}" = "Sqlite" ] && export DATABASE_ENGINE=SqliteCms && export DATABASE_SERVICE_NAME=SQLITE
 slogger -st $0 "DB : ${green}${DB}${nc}"
 if [ $docker 2> /dev/null ]; then
-  export MYSQL_ROOT_HOST=127.0.0.1
-  export PGSQL_SERVICE_HOST=127.0.0.1
+  export MYSQL_ROOT_HOST=%
+  export PGSQL_SERVICE_HOST=localhost
 fi
 export MYSQL_ROOT_HOST=${MYSQL_ROOT_HOST:-%}
 export PGSQL_SERVICE_HOST=${PGSQL_SERVICE_HOST:-localhost}
