@@ -1,7 +1,7 @@
 <?php
 	/* vue message view.ctp */
 	$r = new Index($this);
-	require $GLOBALS['include__php_tbl.class.inc'];
+	include_once $GLOBALS['include__php_tbl.class.inc'];
 	$t = new Tableau(3, 2, $r->lang("view", "contactus"));
 	$t->setContenu_Colonne(0, $r->lang(array("date", "titre", "texte"), "contactus"));
 	$t->setContenu_Cellule(0, 1, $message['Message']['date']);

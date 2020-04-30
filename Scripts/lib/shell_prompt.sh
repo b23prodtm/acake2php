@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 shell_prompt() {
-  [ $# -lt 2 ] && echo "Usage: $0 <file> <name> [-y|n]" && return $FALSE
+  [ $# -lt 2 ] && echo "Usage: $0 <file> <name> [-y|n]" && exit 1
   script=$1
   title=$2
   while true; do
@@ -19,7 +19,7 @@ shell_prompt() {
           # (2) run a script if the user answered Y (yes) or N (no) quit the script
           case $answer in
                  [yY]* ) echo -e "Yes.\n"
-                          source $script
+                          [[ -f "$script" ]] && source $script || bash -c "$script"
                           break;;
 
                  [nN]* ) echo -e "No.\n"
@@ -30,3 +30,8 @@ shell_prompt() {
   done
 }
 #; export -f shell_prompt
+show_password_status() {
+  [ "$#" -lt 3 ] && echo "Usage: $0 '<VAR_USER>' '<VAR_PASSWORD>' <action-description>" && exit 1
+  slogger -st $0 "User ${green}${1}${nc} (using password:${orange} $([ -z $2 ] && echo "NO" || echo "YES")${nc}) $3...\n"
+}
+#; export -f show_password_status

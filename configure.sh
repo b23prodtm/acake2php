@@ -1,15 +1,34 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -eu
+source ./Scripts/lib/logging.sh
 source ./Scripts/lib/shell_prompt.sh
 source ./Scripts/lib/parsing.sh
-openshift=$(parse_arg_exists "-[oO]*|--openshift" $*)
-if [ $openshift > /dev/null ]; then
-  echo "Real environment bootargs..."
+openshift=$(parse_arg_exists "-[oO]+|--openshift"  $*)
+docker=$(parse_arg_exists "--docker" $*)
+pargs=$(parse_arg_trim "--docker|-[oO]+|--openshift" $*)
+if [ $openshift 2> /dev/null ]; then
+  slogger -st $0 "Bootargs...: ${pargs}"
 else
-  echo "Provided local/test bootargs..."
-  source ./Scripts/bootargs.sh $*
+  slogger -st $0 "Locally Testing values, bootargs...: ${pargs}"
+  source ./Scripts/fooargs.sh $*
 fi
-saved=("$*")
+usage=("" \
+"Usage: $0 [-m] [--openshift] [-c] [-h [-p password -s salt [-f filename]]]" \
+"          [-m] [--openshift] [-c][[-d|--mig-database] [options]]" \
+"          --openshift -d Using real environment variables to migrate database" \
+"          -c,--const     Reset to app/webroot/php_cms/etc/constantes-template.properties" \
+"          -h,--hash      Reset administrator password hash:" \
+"               -p <password> -s <salt> [-f <save-filename>]" \
+"                         Set administrator <password> with md5 <salt>. Optional file to save a shell script export." \
+"          -m,--submodule Update sub-modules from Git" \
+"          -d, --mig-database [options]" \
+"                         Migrate Database (see $0 --mig-database --help)" \
+"          --development  Install composer dependencies" \
+"")
+composer_args="require --no-interaction --update-no-dev"
+saved=("$@")
+export PHP_CMS_DIR=${PHP_CMS_DIR:-app/webroot/php_cms}
+printf "PHP_CMS_DIR=%s in ~/.bash_profile or as environment variable." "${PHP_CMS_DIR}"
 #; if the full set of the arguments exists, there won't be any prompt in the shell
 while [[ "$#" > 0 ]]; do case $1 in
     -[cC]*|--const)
@@ -17,6 +36,7 @@ while [[ "$#" > 0 ]]; do case $1 in
         ;;
     -[hH]*|--hash)
     #; get hash password
+        shift
         shell_prompt "./Scripts/config_etc_pass.sh $*" "${cyan}Step 2. Get a hashed password with encryption, PHP encrypts.\n${nc}" "-Y"
         ;;
     -[dD]*|--mig-database)
@@ -25,34 +45,33 @@ while [[ "$#" > 0 ]]; do case $1 in
         #; Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
         #; [[-d|--mig-database] [-u]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
         shift
-        args=""
-        if [ $openshift > /dev/null ]; then args="--openshift"; fi
-        shell_prompt "./migrate-database.sh ${args} $*" "${cyan}Step 3. Migrate database\n${nc}" '-Y'
+        shell_prompt "./migrate-database.sh ${docker}${openshift}$@" "${cyan}Step 3. Migrate database\n${nc}" "-Y"
         break;;
-    -[sS]*|-[pP]*|-[fF]*)
-        #; void source script known args
-        shift;;
+    -[sS]*|-[pP]*|-[fF]*|-[tT]*|--connection* )
+        #; void --hash password known args
+        [[ "$#" > 1 ]] && arg=$2 && [[ ${arg:0:1} != '-' ]] && shift
+        ;;
     -[mM]*|--submodule)
         git submodule update --init --recursive --force;;
     --help )
-          echo "Usage: $0 [-m] [-c] [-h [-p password -s salt [-f filename]]] [[-d|--mig-database] [options]]
-              -c,--const
-                  Reset to app/webroot/php_cms/etc/constantes-template.properties
-              -h,--hash
-                  Reset administrator password hash
-              -p <password> -s <salt> [-f <save-filename>]
-                  Set administrator <password> with md5 <salt>. Optional file to save a shell script export.
-              -m,--submodule
-                  Update sub-modules from Git
-              -d, --mig-database [options]
-                  Migrate Database (see ./migrate-database.sh --help)"
-              exit 0;;
-    -[oO]*|--openshift );;
+        printf "%s\n" "${usage[@]}"
+        exit 0;;
+    -[oO]*|--openshift )
+      ;;
+    --docker )
+      slogger -st docker "check database container status"
+      bash -c "docker ps -q -f name=maria"
+      ;;
+    --development )
+      composer_args="require --no-interaction"
+      ;;
     -[vV]*|--verbose )
+      set -x
       echo "Passed params :  $0 ${saved}";;
     *) echo "Unknown parameter passed: $0 $1"; exit 1;;
 esac; shift; done
-#; update plugins and dependencies
-source ./Scripts/composer.sh "-o"
+show_password_status "${DATABASE_USER}" "${MYSQL_ROOT_PASSWORD}" "is configuring ${openshift} ${docker}..."
 echo -e "${green}Fixing some file permissions...${nc}"
-source ./Scripts/configure_tmp.sh
+[ $openshift 2> /dev/null ] && echo "None." || source ./Scripts/configure_tmp.sh
+#; update plugins and dependencies
+bash -c "./Scripts/composer.sh ${composer_args}"

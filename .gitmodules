@@ -7,3 +7,13 @@
 [submodule ".travis/TravisCI-OSX-PHP"]
 	path = .travis/TravisCI-OSX-PHP
 	url = https://github.com/b23prodtm/TravisCI-OSX-PHP.git
+[submodule "python-wifi-connect"]
+	path = python-wifi-connect
+	url = https://github.com/b23prodtm/python-wifi-connect.git
+[submodule "cakephp"]
+	path = cakephp
+	url = git://github.com/cakephp/cakephp.git
+	branch = 2.x
+[submodule "app/Plugin/UpdateShell"]
+	path = app/Plugin/UpdateShell
+	url = https://github.com/b23prodtm/update.git

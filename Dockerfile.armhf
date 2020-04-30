@@ -1,0 +1,158 @@
+# THIS file was generated for $DKR_ARCH raspberrypi3
+# Make changes to the Dockefile.template
+# Docker architecture (x86_64, armhf, aarch64 )
+ARG IMG_TAG
+ARG BALENA_MACHINE_NAME
+ARG PRIMARY_HUB
+# Primary image is a Linux PHP with Apache 2 server pre-installed
+FROM ${PRIMARY_HUB:-betothreeprod/raspberrypi3-php}:${IMG_TAG:-latest}
+
+ENV INITSYSTEM on
+ENV UDEV on
+ARG DEBUG
+ENV DEBUG ${DEBUG:-0}
+
+ENV BALENA_MACHINE_NAME ${BALENA_MACHINE_NAME:-raspberrypi3}
+ARG DKR_ARCH
+ENV DKR_ARCH ${DKR_ARCH:-armhf}
+ARG COLLECT_COVERAGE
+ENV COLLECT_COVERAGE ${COLLECT_COVERAGE:-'False'}
+ARG DB
+ENV DB ${DB:-Mysql}
+ARG DATABASE_ENGINE
+ENV DATABASE_ENGINE ${DATABASE_ENGINE:-MysqlCms}
+ARG DATABASE_SERVICE_NAME
+ENV DATABASE_SERVICE_NAME ${DATABASE_SERVICE_NAME:-MYSQL}
+ARG MYSQL_ROOT_HOST
+ENV MYSQL_ROOT_HOST ${MYSQL_ROOT_HOST:-%}
+ARG MYSQL_HOST
+ENV MYSQL_HOST ${MYSQL_HOST:-db}
+ARG MYSQL_TCP_PORT
+ENV MYSQL_TCP_PORT ${MYSQL_TCP_PORT:-3306}
+ARG DATABASE_SERVICE_NAME
+ENV DATABASE_SERVICE_NAME ${DATABASE_SERVICE_NAME:-MYSQL}
+ARG PHP_CMS_DIR
+ENV PHP_CMS_DIR ${PHP_CMS_DIR:-'app/webroot/php_cms'}
+ARG DATABASE_USER
+ENV DATABASE_USER ${DATABASE_USER:-'root'}
+ARG MYSQL_DATABASE
+ENV MYSQL_DATABASE ${MYSQL_DATABASE:-'foo_db'}
+ARG MYSQL_ROOT_PASSWORD
+ENV MYSQL_ROOT_PASSWORD ${MYSQL_ROOT_PASSWORD:-'foo_pass'}
+ARG TEST_DATABASE_NAME
+ENV TEST_DATABASE_NAME ${TEST_DATABASE_NAME:-'test'}
+ARG MYSQL_USER
+ENV MYSQL_USER ${MYSQL_USER:-'dummy_foo'}
+ARG MYSQL_PASSWORD
+ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'foo_pass_test'}
+ARG SERVER_NAME
+ENV SERVER_NAME ${SERVER_NAME:-'localhost.local'}
+
+# Use the default production configuration
+#COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
+# RUN [ "cross-build-start" ]
+RUN install_packages \
+    git \
+    ssh \
+    tar \
+    gzip \
+    ca-certificates \
+    zip \
+    unzip \
+    mariadb-client
+
+RUN install_packages \
+#   libicu libicu-dev
+    memcached \
+    libmemcached-dev
+
+RUN memcached -d -l 127.0.0.1 -p 11211 -u www-data -m 16 \
+ && memcached -d -l 127.0.0.1 -p 11212 -u www-data -m 16
+
+RUN pecl config-set php_ini "${PHP_INI_DIR}/php.ini" \
+&& pecl install mysqli \
+    gd \
+    xdebug \
+    # intl \
+    mbstring \
+    pcntl opcache \
+    memcached
+
+RUN docker-php-ext-enable mysqli \
+    # gd \
+    xdebug \
+    # intl \
+    xml \
+    opcache
+
+WORKDIR /usr/src/
+
+COPY vagrant-shell.sh .
+RUN chmod 0755 vagrant-shell.sh
+RUN ./vagrant-shell.sh php-settings-update extension memcached.so \
+ && ./vagrant-shell.sh php-settings-update session.save_handler memcached \
+ && ./vagrant-shell.sh php-settings-update session.save_path '127.0.0.1:11211,127.0.0.1:11212'
+
+# Copy the source code into /var/www/html/ inside the image
+COPY . /var/www/html/
+
+# Configure the application
+WORKDIR /var/www/html/
+
+# Change mode of bash Scripts
+RUN chmod -R gu+xs deploy.sh configure.sh migrate-database.sh Scripts/
+
+# Add cake and composer command to system path
+ENV PATH "${PATH}:/var/www/html/lib/Cake/Console"
+ENV PATH "${PATH}:/var/www/html/app/Vendor/bin"
+
+# add available site
+RUN Scripts/configure-available-site.sh ${SERVER_NAME}
+RUN cp -f ${SERVER_NAME}.conf /etc/apache2/conf-available/${SERVER_NAME}.conf
+
+# Add to hosts
+RUN echo "127.0.0.1 ${SERVER_NAME}" | tee -a /etc/hosts
+
+# Add site conf to available domains, disable default instance
+RUN a2enconf ${SERVER_NAME} \
+  && a2disconf 000-default
+#  && service apache2 reload
+
+# Password Hash Verbose
+# RUN cat app/webroot/php_cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
+
+# Change uid and gid of apache to docker user uid/gid
+RUN usermod -u 1000 www-data && groupmod -g 1000 www-data \
+  && chown -R :www-data . \
+  && chmod -R 755 . \
+  && chmod -R g+s . \
+  && chmod -R 750 app \
+  && checkgid www-data
+
+# set architecture
+RUN ./deploy.sh ${DKR_ARCH} --nobuild
+
+# Set default working directory
+WORKDIR app
+
+# Create tmp directory and make it writable by the web server
+RUN mkdir -p \
+    tmp/cache/models \
+    tmp/cache/persistent \
+    tmp/cache/long \
+  && chown -R www-data:www-data tmp \
+  && chmod -R 660 tmp
+
+# Enable Apache modules and restart
+RUN a2enmod rewrite \
+  && a2enmod ssl \
+  && service apache2 restart
+
+# Install all PHP dependencies
+WORKDIR /var/www/html/
+
+RUN git submodule update --init
+RUN ./configure.sh --openshift -c -h -p=pass -s=word --development
+# RUN [ "cross-build-end" ]
+ENTRYPOINT [ "/bin/bash", "-c", "./migrate-database.sh -u -o -i --test-sql-password=${MYSQL_PASSWORD}"]
+CMD [ "apache2 -D FOREGROUND" ]

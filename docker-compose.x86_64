@@ -1,0 +1,72 @@
+version: "2"
+services:
+  db:
+    build:
+      context: mysqldb
+      dockerfile: Dockerfile.x86_64
+      args:
+        MYSQL_ROOT_HOST: "%"
+        # bind-address = "127.0.0.1"
+        MYSQL_HOST: "127.0.0.1"
+        MYSQL_DATABASE: "foo_db"
+        MYSQL_ROOT_PASSWORD: "foo_pass"
+        MYSQL_USER: "dummy_foo"
+        MYSQL_PASSWORD: "foo_pass_test"
+    image: betothreeprod/mariadb-raspberrypi3
+    volumes:
+      - db-data:/config
+      - db-socket:/var/run/mysqld
+    restart: unless-stopped
+    networks:
+      - cake
+    env_file: common.env
+    labels:
+      io.balena.features.dbus: "1"
+    privileged: true
+  myphpcms:
+    env_file: common.env
+    build:
+      context: .
+      dockerfile: Dockerfile.x86_64
+      args:
+        DEBUG: "1"
+        MYSQL_ROOT_HOST: "%"
+        # mysql -h "localhost" uses db-socket
+        MYSQL_HOST: "localhost"
+        MYSQL_DATABASE: "foo_db"
+        MYSQL_ROOT_PASSWORD: "foo_pass"
+        MYSQL_USER: "dummy_foo"
+        MYSQL_PASSWORD: "foo_pass_test"
+    image: betothreeprod/myphpcms-raspberrypi3
+    privileged: true
+    labels:
+      io.balena.features.dbus: "1"
+    volumes:
+      - data:/var/www/html
+      - db-socket:/var/run/mysqld
+    ports:
+      #Dockerfile's exposed 80 (through apache2), forward 8000 as of CakePHP default port setting
+      - "80:8000"
+    links:
+      - db
+    networks:
+      - cake
+  #docker-compose v3
+    #healthcheck:
+      #test: ["CMD", "curl", "-f", "http://localhost"]
+      #interval: 1m30s
+      #timeout: 10s
+      #retries: 3
+      # v3.4 compose file
+      #start_period: 40s
+volumes:
+  hostapcache:
+  data:
+    external: false
+  db-data:
+    external: false
+  db-socket:
+    external: false
+networks:
+  cake:
+    external: false

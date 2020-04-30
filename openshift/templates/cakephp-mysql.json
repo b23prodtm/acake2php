@@ -27,7 +27,7 @@
       },
       "stringData" : {
         "database-user" : "${DATABASE_USER}",
-        "database-password" : "${DATABASE_PASSWORD}",
+        "database-password" : "${MYSQL_ROOT_PASSWORD}",
         "cakephp-secret-token" : "${CAKEPHP_SECRET_TOKEN}",
         "cakephp-security-salt" : "${CAKEPHP_SECURITY_SALT}",
         "cakephp-security-cipher-seed" : "${CAKEPHP_SECURITY_CIPHER_SEED}"
@@ -233,8 +233,8 @@
                     "value": "${DATABASE_ENGINE}"
                   },
                   {
-                    "name": "DATABASE_NAME",
-                    "value": "${DATABASE_NAME}"
+                    "name": "MYSQL_DATABASE",
+                    "value": "${MYSQL_DATABASE}"
                   },
                   {
                     "name": "DATABASE_USER",
@@ -246,7 +246,7 @@
                     }
                   },
                   {
-                    "name": "DATABASE_PASSWORD",
+                    "name": "MYSQL_ROOT_PASSWORD",
                     "valueFrom": {
                       "secretKeyRef" : {
                         "name" : "${NAME}",
@@ -389,7 +389,7 @@
                   "timeoutSeconds": 1,
                   "initialDelaySeconds": 5,
                   "exec": {
-                    "command": [ "/bin/sh", "-i", "-c", "MYSQL_PWD='${DATABASE_PASSWORD}' mysql -h 127.0.0.1 -u ${DATABASE_USER} -D ${DATABASE_NAME} -e 'SELECT 1'" ]
+                    "command": [ "/bin/sh", "-i", "-c", "MYSQL_PWD='${MYSQL_ROOT_PASSWORD}' mysql -h 127.0.0.1 -u ${DATABASE_USER} -D ${MYSQL_DATABASE} -e 'SELECT 1'" ]
                   }
                 },
                 "livenessProbe": {
@@ -420,7 +420,7 @@
                   },
                   {
                     "name": "MYSQL_DATABASE",
-                    "value": "${DATABASE_NAME}"
+                    "value": "${MYSQL_DATABASE}"
                   }
                 ],
                 "resources": {
@@ -508,7 +508,7 @@
       "value": "mysql"
     },
     {
-      "name": "DATABASE_NAME",
+      "name": "MYSQL_DATABASE",
       "displayName": "Database Name",
       "required": true,
       "value": "default"
@@ -520,7 +520,7 @@
       "value": "cakephp"
     },
     {
-      "name": "DATABASE_PASSWORD",
+      "name": "MYSQL_ROOT_PASSWORD",
       "displayName": "Database Password",
       "generate": "expression",
       "from": "[a-zA-Z0-9]{16}"

@@ -1,7 +1,7 @@
 <?php
 /* vue message index.ctp */
 $r = new Index($this);
-require $GLOBALS['include__php_tbl.class.inc'];
+include_once $GLOBALS['include__php_tbl.class.inc'];
 $t = new Tableau(count($messages) + 1, 3, $r->lang("contactus"));
 $t->setContenu_Ligne(0, $r->lang(array("date", "titre", "identifiant"), "contactus"));
 

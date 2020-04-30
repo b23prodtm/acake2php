@@ -1,5 +1,20 @@
 # User specific & automatically generated files #
 #################################################
+.env
+*.old
+*.yaml
+*.armhf
+*.aarch64
+*.x86_64
+Dockerfile.*
+!Dockerfile.template
+!Dockerfile.armhf
+!Dockerfile.x86_64
+docker-compose.*
+!docker-compose.yml
+!docker-compose.x86_64
+.circleci/config-compat.yml
+myphpcms*.zip
 /app/Config/database.php*
 /app/Config/database.sql*
 /app/tmp
@@ -19,7 +34,8 @@
 /dist
 /tags
 *.mo
-/bin/composer.phar
+**/composer*.phar
+
 
 # IDE and editor specific files #
 #################################

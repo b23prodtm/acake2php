@@ -1,31 +1,23 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #;
 #;
 #; Composer simplifies the process to add features like plugins
 #;
 #;
 #; colorful shell
-nc='\033[0m'
-red="\033[0;31m"
-green="\033[0;32m"
-orange="\033[0;33m"
-cyan="\033[0;36m"
+source ./Scripts/lib/logging.sh
+source ./Scripts/lib/parsing.sh
 composer="bin/composer.phar"
-if [ ! -f $composer ]; then
-        echo -e "Composer setup...\n"
+if [ $(which composer) 2> /dev/null ]; then
+        composer="composer"
+elif [ ! -f $composer ]; then
+        slogger -st $0 "Composer setup...\n"
         mkdir -p bin
         cd bin
         curl -sS https://getcomposer.org/installer | php
         cd ..
-else
-        echo -e "Composer ${green}[OK]${nc}"
 fi
-php bin/composer.phar --version
-echo -e "\n
-        //// FAQ:
-        1. When ${orange}SHA1 signature could not be verified: broken signature${nc} appears on terminal :\r
-            The composer binary wasn't downloaded on this machine or it must be updated :
-            Please copy and run :
-            ${cyan}rm bin/composer.phar && ./Scripts/composer.sh${nc}\n"
-#; update plugins and dependencies
-php bin/composer.phar update --with-dependencies --apcu-autoloader $*
+slogger -st $0 "Composer ${green}[OK]${nc}"
+bash -c "${composer} --version"
+#; update plugins and dependencies (composer install is good enough to check for updates)
+bash -c "${composer} $*"

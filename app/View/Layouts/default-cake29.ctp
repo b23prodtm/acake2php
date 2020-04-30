@@ -266,9 +266,9 @@ $ git push</pre>
                                                 <pre>
 oc env dc/cakephp-mysql-example DATABASE_SERVICE_NAME=&lt;database service name&gt;
 oc env dc/cakephp-mysql-example DATABASE_ENGINE=mysql
-oc env dc/cakephp-mysql-example DATABASE_NAME=&lt;your created database&gt;
+oc env dc/cakephp-mysql-example MYSQL_DATABASE=&lt;your created database&gt;
 oc env dc/cakephp-mysql-example DATABASE_USER=&lt;your database user&gt;
-oc env dc/cakephp-mysql-example DATABASE_PASSWORD=&lt;your database user's password&gt;
+oc env dc/cakephp-mysql-example MYSQL_ROOT_PASSWORD=&lt;your database user's password&gt;
                                                 </pre>
                                                 </p>
                                                 <p>
