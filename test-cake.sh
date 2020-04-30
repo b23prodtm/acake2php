@@ -36,12 +36,14 @@ while [[ "$#" > 0 ]]; do case $1 in
     printf "%s\n" "${usage[@]}"
     exit 0;;
   -[pP]*)
+    OPTIND=1
     parse_sql_password "MYSQL_ROOT_PASSWORD" "user ${DATABASE_USER}" "$@"
-    shift
+    shift $((OPTIND -1))
     ;;
   -[tT]*)
+    OPTIND=1
     parse_sql_password "MYSQL_PASSWORD" "test user ${MYSQL_USER}" "$@"
-    shift
+    shift $((OPTIND -1))
     ;;
   -[vV]*|--verbose )
     set -x

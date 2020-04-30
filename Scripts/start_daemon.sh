@@ -25,10 +25,10 @@ if [ $docker 2> /dev/null ]; then
 	else
 		slogger -st $0 "Container $container 's started up..."
 		maria=$(docker rm -f $maria >> $LOG 2>&1)
-		maria=$(docker run --name maria -d -h db --env-file common.env ${container} >> $LOG 2>&1)
+		maria=$(docker run --name maria -d --publish $MYSQL_TCP_PORT:$MYSQL_TCP_PORT --env-file common.env ${container} 2>> $LOG)
 	fi
 	if [ $? = 0 ]; then
-		slogger -st $0 "Started docker container --name maria, ref: ${maria}"
+		slogger -st $0 "Started docker container --name maria ref: $(docker ps -q -a -f "name=maria") host: $MYSQL_HOST}"
 		wait_for_host $MYSQL_HOST ${MYSQL_TCP_PORT:-3306}
 		[ $? = 1 ] && slogger -st $0 "${red}Failed waiting for Mysql${nc}"
 	fi

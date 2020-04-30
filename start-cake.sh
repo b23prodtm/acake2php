@@ -20,18 +20,21 @@ while [[ "$#" > 0 ]]; do case $1 in
     printf "%s\n" "${usage[@]}"
     exit 0;;
   -[pP]*)
+    OPTIND=1
     parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER}" "$@"
-    shift
+    shift $((OPTIND -1))
     ;;
   -[tT]*)
+    OPTIND=1
     parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER}" "$@"
-    shift
+    shift $((OPTIND -1))
     ;;
   -[cC]*)
     command=$2
     shift; shift; command="${command} $*"
+    OPTIND=1
     parse_and_export "p" "CAKE_TCP_PORT" "specify -p <port>" "$@"
-    shift
+    shift $((OPTIND -1))
     ;;
   --docker )
     command="--docker ${command}"

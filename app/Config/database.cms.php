@@ -87,7 +87,7 @@ class DATABASE_CONFIG {
                 $datasource = getenv('DATABASE_ENGINE') ? 'Database/' . ucfirst(getenv('DATABASE_ENGINE')) : FALSE;
                 $test = array(
                   'host' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_HOST"),
-                  'port' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_PORT"),
+                  'port' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_TCP_PORT"),
                   'login' => getenv('MYSQL_USER'),
                   'password' => getenv('MYSQL_PASSWORD'),
                   'database' => getenv('TEST_DATABASE_NAME'),
@@ -95,7 +95,7 @@ class DATABASE_CONFIG {
                 );
                 $default = array(
                   'host' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_HOST"),
-                  'port' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_PORT"),
+                  'port' => getenv(strtoupper(getenv("DATABASE_SERVICE_NAME")) . "_TCP_PORT"),
                   'login' => getenv("DATABASE_USER"),
                   'password' => getenv("MYSQL_ROOT_PASSWORD"),
                   'database' => getenv("MYSQL_DATABASE"),

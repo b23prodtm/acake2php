@@ -12,7 +12,7 @@ services:
         MYSQL_ROOT_PASSWORD: "foo_pass"
         MYSQL_USER: "dummy_foo"
         MYSQL_PASSWORD: "foo_pass_test"
-    image: betothreeprod/mariadb-intel-nuc
+    image: betothreeprod/mariadb-raspberrypi3
     volumes:
       - db-data:/config
       - db-socket:/var/run/mysqld
@@ -37,7 +37,7 @@ services:
         MYSQL_ROOT_PASSWORD: "foo_pass"
         MYSQL_USER: "dummy_foo"
         MYSQL_PASSWORD: "foo_pass_test"
-    image: betothreeprod/myphpcms-intel-nuc
+    image: betothreeprod/myphpcms-raspberrypi3
     privileged: true
     labels:
       io.balena.features.dbus: "1"
