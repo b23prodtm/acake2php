@@ -3,10 +3,10 @@ jobs:
   build:
     docker:
     - image: betothreeprod/dind-php7
-    - image: betothreeprod/mariadb-intel-nuc
+    - image: betothreeprod/mariadb-intel-nuc:dev
       environment:
-        PUID: 1000
-        PGID: 1000
+        PUID: 0
+        PGID: 0
         TZ: Europe/Paris
         MYSQL_DATABASE: foo_db
         MYSQL_ROOT_PASSWORD: foo_pass

@@ -5,24 +5,24 @@ services:
       context: mysqldb
       dockerfile: Dockerfile.x86_64
       args:
-        MYSQL_ROOT_HOST: "%"
-        # bind-address = "127.0.0.1"
+        # bind-address = "127.0.0.1" > conf.d/my.cnf
         MYSQL_HOST: "127.0.0.1"
         MYSQL_DATABASE: "foo_db"
         MYSQL_ROOT_PASSWORD: "foo_pass"
         MYSQL_USER: "dummy_foo"
         MYSQL_PASSWORD: "foo_pass_test"
-    image: betothreeprod/mariadb-raspberrypi3
+    image: betothreeprod/mariadb-intel-nuc
     volumes:
       - db-data:/config
       - db-socket:/var/run/mysqld
+    ports:
+      - "3306:3306"
     restart: unless-stopped
     networks:
       - cake
     env_file: common.env
     labels:
       io.balena.features.dbus: "1"
-    privileged: true
   myphpcms:
     env_file: common.env
     build:
@@ -30,15 +30,13 @@ services:
       dockerfile: Dockerfile.x86_64
       args:
         DEBUG: "1"
-        MYSQL_ROOT_HOST: "%"
         # mysql -h "localhost" uses db-socket
-        MYSQL_HOST: "localhost"
+        MYSQL_HOST: "127.0.0.1"
         MYSQL_DATABASE: "foo_db"
         MYSQL_ROOT_PASSWORD: "foo_pass"
         MYSQL_USER: "dummy_foo"
         MYSQL_PASSWORD: "foo_pass_test"
-    image: betothreeprod/myphpcms-raspberrypi3
-    privileged: true
+    image: betothreeprod/myphpcms-intel-nuc
     labels:
       io.balena.features.dbus: "1"
     volumes:

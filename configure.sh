@@ -35,21 +35,23 @@ while [[ "$#" > 0 ]]; do case $1 in
         shell_prompt "./Scripts/config_etc_const.sh" "${cyan}Step 1. Overwrite constantes.properties\n${nc}" "-Y"
         ;;
     -[hH]*|--hash)
-    #; get hash password
-        shift
-        shell_prompt "./Scripts/config_etc_pass.sh $*" "${cyan}Step 2. Get a hashed password with encryption, PHP encrypts.\n${nc}" "-Y"
+        #; get hash password
+        shell_prompt "./Scripts/config_etc_pass.sh ${*:2}" "${cyan}Step 2. Get a hashed password with encryption, PHP encrypts.\n${nc}" "-Y"
         ;;
     -[dD]*|--mig-database)
         #; Know-How : In Openshift 3, configure a CakePhp-Mysql-persistent docker image. Set automatic deployment with _100%_ unavailability
         #; If it starts a build, it automatically scales deployments down to zero, and deploys and scales up when it's finished to build.
         #; Be sure that lib/Cake/Console/cake test app and Health checks should return gracefullly, or the pods get terminated after a short time.
         #; [[-d|--mig-database] [-u]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
-        shift
-        shell_prompt "./migrate-database.sh ${docker}${openshift}$@" "${cyan}Step 3. Migrate database\n${nc}" "-Y"
+        shell_prompt "./migrate-database.sh ${docker} ${openshift} ${*:2}" "${cyan}Step 3. Migrate database\n${nc}" "-Y"
         break;;
     -[sS]*|-[pP]*|-[fF]*|-[tT]*|--connection* )
         #; void --hash password known args
-        [[ "$#" > 1 ]] && arg=$2 && [[ ${arg:0:1} != '-' ]] && shift
+        OPTIND=1
+        if [[ "$#" > 1 ]]; then
+          arg=$2; [[ ${arg:0:1} != '-' ]] && OPTIND=2
+        fi
+        shift $((OPTIND -1))
         ;;
     -[mM]*|--submodule)
         git submodule update --init --recursive --force;;
@@ -67,8 +69,8 @@ while [[ "$#" > 0 ]]; do case $1 in
       ;;
     -[vV]*|--verbose )
       set -x
-      echo "Passed params :  $0 ${saved}";;
-    *) echo "Unknown parameter passed: $0 $1"; exit 1;;
+      echo "Passed params : ${BASH_SOURCE[@]} ${saved[*]}";;
+    *) echo "Unknown parameter passed: ${BASH_SOURCE[0]} $1"; exit 1;;
 esac; shift; done
 show_password_status "${DATABASE_USER}" "${MYSQL_ROOT_PASSWORD}" "is configuring ${openshift} ${docker}..."
 echo -e "${green}Fixing some file permissions...${nc}"

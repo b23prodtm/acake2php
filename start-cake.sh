@@ -2,7 +2,7 @@
 set -e
 source ./Scripts/lib/parsing.sh
 source ./Scripts/lib/shell_prompt.sh
-command="server -p 8000"
+command="server -p 8000 -H 0.0.0.0"
 saved=("$@")
 export COLLECT_COVERAGE="false"
 usage=("" \
@@ -14,28 +14,28 @@ usage=("" \
 "                               E.g. $0 -c server --help" \
 "                               Default command is " \
 "                               lib/Cake/Console/cake server -p 8000" \
+"           --docker            Startup Docker Image DATABASE" \
 "")
 while [[ "$#" > 0 ]]; do case $1 in
   --help )
     printf "%s\n" "${usage[@]}"
     exit 0;;
-  -[pP]*)
-    OPTIND=1
-    parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER}" "$@"
+  -[vV]*|--verbose )
+    set -x
+    command="-v ${command}"
+    echo "Passed params : $0 ${saved[*]}";;
+  -[pP]* )
+    parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
     shift $((OPTIND -1))
     ;;
   -[tT]*)
-    OPTIND=1
-    parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER}" "$@"
+    parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER} password" "$@"
     shift $((OPTIND -1))
     ;;
   -[cC]*)
-    command=$2
-    shift; shift; command="${command} $*"
-    OPTIND=1
+    command="${command} ${*:2}"
     parse_and_export "p" "CAKE_TCP_PORT" "specify -p <port>" "$@"
-    shift $((OPTIND -1))
-    ;;
+    break;;
   --docker )
     command="--docker ${command}"
     ;;

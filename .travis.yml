@@ -11,7 +11,7 @@ os:
     - osx
     - windows
 
-dist: xenial
+dist: trusty
 
 env:
   matrix:
@@ -33,9 +33,6 @@ env:
 
 matrix:
   fast_finish: true
-  exclude:
-    - os: windows
-    - os: linux
   include:
     - os: linux
       language: php
@@ -52,7 +49,7 @@ matrix:
       env: _PHP=latest _PKG=hhvm _SSL=openssl.light
   allow_failures:
     - php: 'hhvm'
-    - env: _PHP=latest _PKG=hhvm
+    - env: _PHP=3.18 _PKG=hhvm
     - env: _PHP=7.3 _PKG=php
     - os: windows
     - os: osx
@@ -68,11 +65,6 @@ addons:
     build_command_prepend: ""
     build_command: "./test-cake.sh --cov --travis -o .env common.env --docker"
     branch_pattern: coverity_scan
-  apt:
-    packages:
-      - php7.0
-      - php7.0-xml
-      - hhvm
     update: true
 
 services:
@@ -91,8 +83,9 @@ before_install:
   - source ./deploy.sh "${DKR_ARCH}" --nobuild
 install:
   - cd .travis/TravisCI-OSX-PHP
-  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_SSL}"; /usr/local/opt/openssl/bin/c_rehash; fi
-  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-openssl"; fi
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_SSL}"; /usr/local/opt/openssl/bin/c_rehash
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-openssl"
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}-xml"
   - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer"; bash -c 'composer install --dev --no-interaction'; fi
   - cd ../..
   - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then curl -s http://getcomposer.org/installer | php && php composer.phar install --dev --no-interaction; fi

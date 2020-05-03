@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 source ./Scripts/lib/logging.sh
 source ./Scripts/lib/shell_prompt.sh
 source ./Scripts/lib/parsing.sh
@@ -26,10 +26,12 @@ usage=("" \
 "                      Exports MYSQL_ROOT_PASSWORD" \
 "          -t=<password>" \
 "                      Exports MYSQL_PASSWORD" \
-"          -d,--database=<name>" \
+"          --database=<name>" \
 "                      Exports MYSQL_DATABASE" \
 "          --testunitbase=<name>" \
 "                      Exports TEST_DATABASE_NAME" \
+"          --enable-authentication-plugin" \
+"                      Enables https://mariadb.com/kb/en/authentication-plugin-ed25519/" \
 "          -v, --verbose" \
 "                      Outputs more debug information" \
 "          -h, --help  Displays this help" \
@@ -47,23 +49,19 @@ identities=app/Config/database.sql
 new_pass=""
 new_test_pass=""
 saved=("$@")
-mysql_connect_args=("-v")
-test_mysql_connect_args=("-v")
+authentication_plugin=0
 mysql_host=${MYSQL_ROOT_HOST}
 test_mysql_host="%"
 ck_args="--connection=default"
-echo "$@"
 while [[ "$#" > 0 ]]; do case "$1" in
-  --connect-expired-password )
-    mysql_connect_args=("${mysql_connect_args[@]}" --connect-expired-password)
-    test_mysql_connect_args=("${test_mysql_connect_args[@]}"  --connect-expired-password)
-    ;;
+  --enable-authentication-plugin*)
+    authentication_plugin=1;;
   --docker )
     bash -c "./Scripts/start_daemon.sh ${docker}"
-    sql_connect="docker exec -i maria mysql"
+    sql_connect="docker exec maria mysql"
     sql_connect_host=""
     sql_connect_test_host=""
-    slogger -st $0 "${sql_connect} ... ";;
+    ;;
   -[uU]* )
     update_checked=1
     ;;
@@ -92,7 +90,7 @@ while [[ "$#" > 0 ]]; do case "$1" in
     [ -f $identities ] && cat $identities
     # Reset passed args (shift reset)
     text=("" \
-"Passed params : $0 ${saved}" \
+"Passed params : $0 ${saved[*]}" \
 "and environment VARIABLES:" \
 $(export -p | grep "DATABASE\|MYSQL") \
 "")
@@ -103,25 +101,20 @@ $(export -p | grep "DATABASE\|MYSQL") \
     exit 0;;
   -[oO]*|--openshift );;
   -[pP]* )
-    OPTIND=1
     parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
     shift $((OPTIND -1))
-    export set_DATABASE_PASSWORD=$MYSQL_ROOT_PASSWORD
     ;;
   -[tT]* )
     test_checked=1
     printf "Testing %s Unit..." $test_checked
-    OPTIND=1
     parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER} password" "$@"
     shift $((OPTIND -1))
-    export set_MYSQL_PASSWORD=$MYSQL_PASSWORD
     ck_args="--connection=test"
     ;;
-  -[dD]*|--database*)
+  --database*)
     # Transform long options to short ones
     arg=$1; shift; set -- $(echo "${arg}" \
     | awk 'BEGIN{ FS="[ =]+" }{ print "-d " $2 }') "$@"
-    OPTIND=1
     parse_and_export "d" "MYSQL_DATABASE" "${DATABASE_USER} database name" "$@"
     shift $((OPTIND -1))
     ;;
@@ -130,33 +123,38 @@ $(export -p | grep "DATABASE\|MYSQL") \
     arg=$1; shift; set -- $(echo "${arg}" \
     | awk 'BEGIN{ FS="[ =]+" }{ print "-u " $2 }') "$@"
     test_checked=1
-    OPTIND=1
     parse_and_export "u" "TEST_DATABASE_NAME" "${MYSQL_USER} database name" "$@"
     shift $((OPTIND -1))
     ;;
-  *) echo "Invalid parameter: $0 $1" && exit 1;;
+  *) echo "Invalid parameter: ${BASH_SOURCE[0]} $1" && exit 1;;
   esac
-shift; done
+shift; #echo "$@";
+done
 #; check unbound variables, exits scripts and inform user on the standard output.
 : ${MYSQL_DATABASE?} ${DATABASE_USER?} ${MYSQL_ROOT_PASSWORD?} ${MYSQL_ROOT_HOST?} ${MYSQL_TCP_PORT?}
 : $TEST_DATABASE_NAME?} ${MYSQL_USER?} ${MYSQL_PASSWORD?} ${MYSQL_HOST?} ${MYSQL_TCP_PORT?}
 # configure user application database and eventually alter user database access
-shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket} ${docker}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" $config_app_checked
+shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket} ${docker}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
 if [[ $import_identities -eq 1 ]]; then
   #; $identities file contents
   export set_DATABASE_PASSWORD=${set_DATABASE_PASSWORD:-$MYSQL_ROOT_PASSWORD}
   slogger -st $0 "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}"
-  args=("${mysql_connect_args[@]}" \
-"-e use mysql;" \
-"-e create user if not exists '${DATABASE_USER}'@'${mysql_host}' identified by '${set_DATABASE_PASSWORD}';" \
-"-e alter user CURRENT_USER identified by '${set_DATABASE_PASSWORD}';" \
-"-e alter user '${DATABASE_USER}'@'${mysql_host}' identified by '${set_DATABASE_PASSWORD}';" \
-"-e grant all PRIVILEGES on *.* to CURRENT_USER WITH GRANT OPTION;" \
-"-e grant all PRIVILEGES on *.* to '${DATABASE_USER}'@'${mysql_host}' WITH GRANT OPTION;" \
-"-e select * from user where user='${DATABASE_USER}';" \
-"-e create database if not exists ${MYSQL_DATABASE} default character set='utf8' default collate='utf8_bin';" \
-# enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days:
-# "-e FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;" \
+  if [ $authentication_plugin = 1 ]; then
+    identifiedby="IDENTIFIED VIA ed25519 USING PASSWORD('${set_DATABASE_PASSWORD}')"
+  else
+    identifiedby="identified by '${set_DATABASE_PASSWORD}'"
+  fi
+  args=(\
+"-e \"use mysql;\"" \
+"-e \"create user if not exists '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
+"-e \"alter user CURRENT_USER ${identifiedby};\"" \
+"-e \"alter user '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
+"-e \"grant all PRIVILEGES on *.* to CURRENT_USER WITH GRANT OPTION;\"" \
+"-e \"grant all PRIVILEGES on *.* to '${DATABASE_USER}'@'${mysql_host}' WITH GRANT OPTION;\"" \
+"-e \"select * from user where user='${DATABASE_USER}';\"" \
+"-e \"create database if not exists ${MYSQL_DATABASE} default character set='utf8' default collate='utf8_bin';\"" \
+# enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
+# "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
 "")
   slogger -st $0 "Forked script to keep hidden table user secrets..."
   password=${MYSQL_ROOT_PASSWORD:-''}
@@ -173,18 +171,22 @@ if [[ $import_identities -eq 1 ]]; then
   slogger -st $0 "\r${red}WARNING: You will modify SQL ${MYSQL_USER} password !${nc}"
   #; $identities file contents
   export set_MYSQL_PASSWORD=${set_MYSQL_PASSWORD:-$MYSQL_PASSWORD}
-  args=("${test_mysql_connect_args[@]}" \
-"-e use mysql;" \
-"-e create user if not exists '${MYSQL_USER}'@'${test_mysql_host}' identified by '${set_MYSQL_PASSWORD}';" \
-"-e alter user '${MYSQL_USER}'@'${test_mysql_host}' identified by '${set_MYSQL_PASSWORD}';" \
-"-e grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${test_mysql_host}';" \
-"-e grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${test_mysql_host}';" \
-"-e grant all PRIVILEGES on ${TEST_DATABASE_NAME}2.* to '${MYSQL_USER}'@'${test_mysql_host}';" \
-"-e grant all PRIVILEGES on ${TEST_DATABASE_NAME}3.* to '${MYSQL_USER}'@'${test_mysql_host}';" \
-"-e use ${MYSQL_DATABASE};" \
-"-e select * from mysql.user where user='${MYSQL_USER}';" \
-# enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days:
-# "-e FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;" \
+  if [ $authentication_plugin = 1 ]; then
+    identifiedby="IDENTIFIED VIA ed25519 USING PASSWORD('${set_MYSQL_PASSWORD}')"
+  else
+    identifiedby="identified by '${set_MYSQL_PASSWORD}'"
+  fi
+  args=(\
+"-e \"use mysql;\"" \
+"-e \"create user if not exists '${MYSQL_USER}'@'${test_mysql_host}' ${identifiedby};\"" \
+"-e \"alter user '${MYSQL_USER}'@'${test_mysql_host}' ${identifiedby};\"" \
+"-e \"grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${test_mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${test_mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}2.* to '${MYSQL_USER}'@'${test_mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}3.* to '${MYSQL_USER}'@'${test_mysql_host}';\"" \
+"-e \"select * from mysql.user where user='${MYSQL_USER}';\"" \
+# enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
+# "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
 "")
   password=${MYSQL_ROOT_PASSWORD:-''}
   prompt=""
@@ -222,10 +224,10 @@ if [[ $test_checked -eq 1 ]]; then
   ";
   : ${MYSQL_USER?} ${MYSQL_PASSWORD?} ${MYSQL_HOST?} ${DB?}
   slogger -st $0 "Database Unit Tests... DB=${DB} TEST_DATABASE_NAME=${TEST_DATABASE_NAME}"
-  args=("{test_mysql_connect_args[@]}" \
-  "-e CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME};" \
-  "-e CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME}2;" \
-  "-e CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME}3;" \
+  args=(\
+  "-e \"CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME};\"" \
+  "-e \"CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME}2;\"" \
+  "-e \"CREATE DATABASE IF NOT EXISTS ${TEST_DATABASE_NAME}3;\"" \
   "")
   exec ${sql_connect} ${sql_connect_test_host} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} \
 "${args[@]}" >> $LOG 2>&1

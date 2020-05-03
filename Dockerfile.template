@@ -151,8 +151,8 @@ RUN a2enmod rewrite \
 # Install all PHP dependencies
 WORKDIR /var/www/html/
 
-RUN git submodule update --init
-RUN ./configure.sh --openshift -c -h -p=pass -s=word --development
+RUN git submodule sync && git submodule update --init
+RUN ./configure.sh --openshift -c -h -p pass -s word --development
 # RUN [ "cross-build-end" ]
-ENTRYPOINT [ "/bin/bash", "-c", "./migrate-database.sh -u -o -i --test-sql-password=${MYSQL_PASSWORD}"]
+ENTRYPOINT [ "/bin/bash", "-c", "./migrate-database.sh -u -o -i --test-sql-password=${MYSQL_PASSWORD} --enable-authentication-plugin"]
 CMD [ "apache2 -D FOREGROUND" ]
