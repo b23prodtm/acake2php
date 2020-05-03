@@ -8,6 +8,7 @@ docker=$(parse_arg_exists "--docker" $*)
 pargs=$(parse_arg_trim "--docker|-[oO]+|--openshift" $*)
 if [ $openshift 2> /dev/null ]; then
   slogger -st $0 "Bootargs...: ${pargs}"
+  source ./Scripts/bootargs.sh $*
 else
   slogger -st $0 "Locally Testing values, bootargs...: ${pargs}"
   source ./Scripts/fooargs.sh $*

@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
+TOPDIR=$(cd `dirname $BASH_SOURCE`/.. && pwd)
 source ./Scripts/lib/logging.sh
 source ./Scripts/lib/shell_prompt.sh
 source ./Scripts/lib/parsing.sh
 docker=$(parse_arg_exists "--docker" $*)
 ck_args=$(parse_arg_trim "-[oO]+|--openshift|--docker" $*)
 LOG=$(new_log) && slogger -st $0 $LOG
+MARIADB_SHORT_NAME=$(echo $SECONDARY_HUB | awk -F/ '{ print $2 }' | awk -F: '{ print $1 }')
+MARIADB_CONT_NAME=betothreeprod/${MARIADB_SHORT_NAME}-${BALENA_MACHINE_NAME:-intel-nuc}
 wait_for_host() {
 	[ "$#" -lt 2 ] && printf "Usage: $FUNCNAME <host> <port>" && exit 1
 	for i in `seq 1 10`; do
@@ -15,24 +18,28 @@ wait_for_host() {
 	return 1
 }
 if [ $docker 2> /dev/null ]; then
-	container="betothreeprod/mariadb-${BALENA_MACHINE_NAME:-intel-nuc}"
-	slogger -st $0 "Docker list maria containers ($container)"
+	slogger -st $0 "Docker list ${MARIADB_SHORT_NAME} containers"
 	#docker quits shell ??
-	maria=$(docker ps -q -a -f "name=maria")
+	maria=$(docker ps -q -a -f "name=${MARIADB_SHORT_NAME}")
 	if [ ! -z $maria ]; then
-		slogger -st $0 "Container $container already running, was stopped."
+		slogger -st $0 "Container $MARIADB_SHORT_NAME already running, was stopped."
 		docker kill $maria >> $LOG 2>&1 || true
 	fi
 	docker rm -f $maria >> $LOG 2>&1 || true
-	slogger -st $0 "Container $container 's started up..."
-	docker run --name maria -id -h $MYSQL_HOST --publish $MYSQL_TCP_PORT:$MYSQL_TCP_PORT \
-	--env-file common.env --env-file .env ${container} >> $LOG 2>&1
+	slogger -st $0 "Container $MARIADB_SHORT_NAME 's started up..."
+	docker run --name $MARIADB_SHORT_NAME -id \
+	--env-file common.env --env-file .env \
+	-e PUID=$(id -u $USER) -e PGID=$(id -g $USER) \
+	-h $MYSQL_HOST --publish $MYSQL_TCP_PORT:$MYSQL_TCP_PORT \
+	-v $TOPDIR/mysqldb/config:/config \
+	-v $TOPDIR/mysqldb/mysqld:/var/run/mysqld \
+	${MARIADB_CONT_NAME} >> $LOG 2>&1
 	if [ $? = 0 ]; then
-		slogger -st $0 "Started docker container --name maria ref: $(docker ps -q -a -f "name=maria") host: $MYSQL_HOST}"
+		slogger -st $0 "Started docker --name=${MARIADB_SHORT_NAME} ref: $(docker ps -q -a -f "name=maria") host: $MYSQL_HOST}"
 		wait_for_host $MYSQL_HOST ${MYSQL_TCP_PORT:-3306}
 		[ $? = 1 ] && slogger -st $0 "${red}Failed waiting for Mysql${nc}"
 	fi
-		slogger -st $0 "Connect to docker exec -it maria <ENTRYPOINT> .."
+		slogger -st $0 "Connect to docker exec -it ${MARIADB_SHORT_NAME} <ENTRYPOINT> .."
 		check_log $LOG
 fi
 if [ $(parse_arg_exists "server" $ck_args) >> $LOG 2>&1 ]; then

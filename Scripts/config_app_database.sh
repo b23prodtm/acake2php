@@ -3,9 +3,9 @@ sqlversion="5.7"
 source ./Scripts/lib/logging.sh
 source ./Scripts/lib/parsing.sh
 docker=$(parse_arg_exists "--docker" $*)
+MARIADB_SHORT_NAME=$(echo $SECONDARY_HUB | awk -F/ '{ print $2 }' | awk -F: '{ print $1 }')
 if [ $docker 2> /dev/null ]; then
 	./Scripts/start_daemon.sh ${docker}
-	docker exec -i maria ln -vsf /tmp/mysqld.sock /var/run/mysqld/mysqld.sock
 else
 	if [ ! $(which brew) 2> /dev/null ]; then echo "Missing homebrew... aborted mysql check."; elif [ ! $(which mysql) 2> /dev/null ]; then
 		slogger -st $0 "Missing MySQL ${sqlversion} database service."
@@ -26,7 +26,7 @@ while [[ "$#" > 0 ]]; do case $1 in
     ;;
 	-[yY]*)
 		if [ $docker 2> /dev/null ]; then
-			docker exec maria ln -vsf /tmp/mysqld.sock /var/run/mysqld/mysqld.sock
+			docker exec ${MARIADB_SHORT_NAME} "mkdir -p /var/run/mysqld && ln -vs /tmp/mysqld.sock /var/run/mysqld/mysqld.sock"
 		else
 			if [ $(which mysql) 2> /dev/null ]; then
 				mysql --version

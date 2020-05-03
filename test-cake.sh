@@ -4,9 +4,9 @@ source ./Scripts/lib/test/parsing.sh
 test=("test_parse_and_export" "test_parse_sql_password" "test_arg_exists" "test_arg_trim")
 for t in "${test[@]}"; do printf "TEST CASES : %s\n" "$t" && eval "$t"; done; sleep 5
 bootargs=""
-migrate="-u -i --enable-authentication-plugin"
+migrate="-i -u --connection=test"
 saved=("$@")
-config_args="-c -h -p pass -s word --development --connection=test"
+config_args="-c -h -p pass -s word"
 config_work_dir=""
 usage=("" \
 "${cyan}Notice:${nc}The test script." \
@@ -23,16 +23,12 @@ usage=("" \
 while [[ "$#" > 0 ]]; do case $1 in
   --travis )
     #; Test values
-    export DB="Mysql"
-    export COLLECT_COVERAGE="false"
     export TRAVIS_OS_NAME="osx"
     export TRAVIS_PHP_VERSION=$(php -v | grep -E "[5-7]\.\\d+\.\\d+" | cut -d " " -f 2 | cut -c 1-3)
     # Abort tests
-    exit 0;;
+    ;;
   --circle )
-    #; Test values
-    export DB="Mysql"
-    export COLLECT_COVERAGE="false";;
+    ;;
   --cov )
     export COLLECT_COVERAGE=true;;
   -[hH]*|--help )
@@ -56,7 +52,8 @@ while [[ "$#" > 0 ]]; do case $1 in
     ;;
   --docker )
     config_args="--docker ${config_args}"
-    bootargs="--docker ${bootargs}";;
+    bootargs="--docker ${bootargs}"
+    ;;
   --socket )
     migrate="-Y ${migrate}";;
   *) echo "Unknown parameter, passed $0: $1"; exit 1;;

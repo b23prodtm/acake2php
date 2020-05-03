@@ -15,6 +15,7 @@ function test_parse_and_export() {
   parse_and_export "${args[@]}"
   [ "$P" = "pass_two" ] \
   && printf "$Z" "OK" "2° export" $FUNCNAME $OPTIND || printf "$Z" "FAILED" "2° export" $FUNCNAME $OPTIND
+  unset P T
 }
 
 function test_parse_sql_password() {
@@ -27,6 +28,7 @@ function test_parse_sql_password() {
   parse_sql_password "${args[@]}"
   [ "$S" = "pass_two" ] \
   && printf "$Z" "OK" "2° password" $FUNCNAME $OPTIND || printf "$Z" "FAILED" "2° password" $FUNCNAME $OPTIND
+  unset P S
 }
 
 function test_arg_exists() {

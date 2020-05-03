@@ -3,23 +3,22 @@ jobs:
   build:
     docker:
     - image: betothreeprod/dind-php7
-    - image: betothreeprod/mariadb-intel-nuc:dev
+    - image: betothreeprod/mariadb-intel-nuc
       environment:
         PUID: 0
         PGID: 0
         TZ: Europe/Paris
-        MYSQL_DATABASE: foo_db
-        MYSQL_ROOT_PASSWORD: foo_pass
-        MYSQL_USER: dummy_foo
-        MYSQL_PASSWORD: foo_pass_test
+        MYSQL_ROOT_PASSWORD: mariadb
+        MYSQL_HOST: localhost
+        MYSQL_DATABASE: aria_db
+        MYSQL_USER: maria
+        MYSQL_PASSWORD: maria-abc
     shell: /bin/bash -leo pipefail
     environment:
     - BASH_ENV: /etc/profile
     - DKR_ARCH: x86_64
-    - MYSQL_DATABASE: foo_db
-    - MYSQL_ROOT_PASSWORD: foo_pass
-    - MYSQL_USER: dummy_foo
-    - MYSQL_PASSWORD: foo_pass_test
+    - MYSQL_HOST: 127.0.0.1
+    - MYSQL_TCP_PORT: 3306
     working_directory: /var/www/html/
     steps:
     - checkout
@@ -45,7 +44,6 @@ jobs:
         name: Set architecture and Setup Environment Variables
         command: |
           source ./deploy.sh $DKR_ARCH --nobuild
-          echo $(cat $DKR_ARCH.env common.env .circleci/$DKR_ARCH.env | awk 'BEGIN{ FS="$"; RS="$" }{ print "export " $1}') >> /etc/profile
     - run:
         name: Waiting for Mysql to be ready
         command: |
@@ -62,7 +60,7 @@ jobs:
           set -x
           mkdir -p ./app/build/logs
           mkdir -p ~/phpunit
-          ./test-cake.sh --circle -o
+          source ./test-cake.sh --circle
           cat $PHP_CMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
         when: always
     - save_cache:
@@ -83,10 +81,6 @@ jobs:
     environment:
     - BASH_ENV: /etc/profile
     - DKR_ARCH: x86_64
-    - MYSQL_DATABASE: foo_db
-    - MYSQL_ROOT_PASSWORD: foo_pass
-    - MYSQL_USER: dummy_foo
-    - MYSQL_PASSWORD: foo_pass_test
     steps:
     - checkout
     - run:
@@ -101,7 +95,6 @@ jobs:
         name: Set architecture and Setup Environment Variables
         command: |
           source ./deploy.sh $DKR_ARCH --nobuild
-          echo $(cat $DKR_ARCH.env | awk 'BEGIN{ FS="$"; RS="$" }{ print "export " $1}') >> /etc/profile
     - run:
         command: |
           set -u

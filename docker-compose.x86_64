@@ -5,12 +5,14 @@ services:
       context: mysqldb
       dockerfile: Dockerfile.x86_64
       args:
-        # bind-address = "127.0.0.1" > conf.d/my.cnf
-        MYSQL_HOST: "127.0.0.1"
-        MYSQL_DATABASE: "foo_db"
-        MYSQL_ROOT_PASSWORD: "foo_pass"
-        MYSQL_USER: "dummy_foo"
-        MYSQL_PASSWORD: "foo_pass_test"
+        PUID: 0
+        PGID: 0
+        TZ: Europe/Paris
+        MYSQL_ROOT_PASSWORD: mariadb
+        MYSQL_HOST: localhost
+        MYSQL_DATABASE: aria_db
+        MYSQL_USER: abc
+        MYSQL_PASSWORD: maria-abc
     image: betothreeprod/mariadb-intel-nuc
     volumes:
       - db-data:/config
@@ -30,12 +32,7 @@ services:
       dockerfile: Dockerfile.x86_64
       args:
         DEBUG: "1"
-        # mysql -h "localhost" uses db-socket
-        MYSQL_HOST: "127.0.0.1"
-        MYSQL_DATABASE: "foo_db"
-        MYSQL_ROOT_PASSWORD: "foo_pass"
-        MYSQL_USER: "dummy_foo"
-        MYSQL_PASSWORD: "foo_pass_test"
+        DATABASE_USER: "root"
     image: betothreeprod/myphpcms-intel-nuc
     labels:
       io.balena.features.dbus: "1"

@@ -261,14 +261,18 @@ PHP mysql extensions must be installed.
 
 Log in with root privileges should work:
 
-    mysql -u root --password=<password> cakephp_test
+    mysql -u root --password=<password>
+
+If not, do a reset of your passwords:
+
+    mysqladmin -uroot password
 
 If it isn't possible to login:
   + Check your environment variables (common.env and docker-compose.yml) settings). Use one or the other, and see which works for you:
 
-    MYSQL_ROOT_HOST=% (Unix/OSX platforms)
+    MYSQL_HOST=127.0.0.1 (Unix/OSX platforms)
             or if docker mysql service containers:
-    MYSQL_ROOT_HOST=127.0.0.1
+    MYSQL_HOST=localhost
     ..
 
     MYSQL_TCP_PORT=3306

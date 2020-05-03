@@ -10,37 +10,50 @@ ENV PUID ${PUID:-0}
 ARG PGID
 ENV PGID ${PGID:-0}
 ARG MYSQL_ROOT_PASSWORD
-ENV MYSQL_ROOT_PASSWORD ${MYSQL_ROOT_PASSWORD:-'foo_pass'}
-# bind-address = "127.0.0.1" > conf.d/my.cnf
+ENV MYSQL_ROOT_PASSWORD ${MYSQL_ROOT_PASSWORD:-'mariadb'}
+# bind-address = '127.0.0.1' > conf.d/my.cnf
 ARG MYSQL_HOST
-ENV MYSQL_HOST ${MYSQL_HOST:-127.0.0.1}
+ENV MYSQL_HOST ${MYSQL_HOST:-'localhost'}
 ENV TZ ${TZ:-'Europe/Paris'}
 # Optional
 ARG MYSQL_DATABASE
-ENV MYSQL_DATABASE ${MYSQL_DATABASE:-'foo_db'}
+ENV MYSQL_DATABASE ${MYSQL_DATABASE:-'aria_db'}
 # Optional
 ARG MYSQL_USER
-ENV MYSQL_USER ${MYSQL_USER:-'dummy_foo'}
+ENV MYSQL_USER ${MYSQL_USER:-'maria'}
 # Optional
 ARG MYSQL_PASSWORD
-ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'foo_pass_test'}
+ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'maria-abc'}
 # Optional
-ENV MYSQL_ALLOW_EMPTY_PASSWORD=false
+ARG MYSQL_BIND_ADDRESS
+ENV MYSQL_BIND_ADDRESS ${MYSQL_BIND_ADDRESS:-0.0.0.0}
+
+# The MariaDB/MySQL tools read configuration files in the following order:
+# 1. "/etc/mysql/my.cnf" to set global defaults,
+# 2. "/etc/mysql/conf.d/my.cnf" to set server options.
+# 3. "~/.my.cnf" User
+COPY conf.d/my.cnf /etc/mysql/conf.d/my.cnf
+RUN sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS}/" /etc/mysql/conf.d/my.cnf
+
+RUN apt update && apt install -y \
+  expect \
+  # auth_ed25519 support package
+  libmariadbclient18 \
+  \
+ && echo "**** cleanup ****" && \
+ rm -rf \
+  /tmp/* \
+  /var/lib/apt/lists/* \
+  /var/tmp/*
+
+COPY mysql_secure_shell .
+RUN chmod 1755 mysql_secure_shell
+RUN ./mysql_secure_shell
+
+RUN echo "***** Fix PASSWORD, PRIVILEGES and CREATE ${MYSQL_USER}..." \
+  && echo "GRANT ALL PRIVILEGES ON *.* TO CURRENT USER WITH GRANT OPTION;" | tee -a p.sql \
+  && echo "CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';" | tee -a p.sql \
+  && mkdir -p /config/initdb.d/ && mv p.sql /config/initdb.d/patch.sql
 
 COPY mariadb.ans .
 RUN cat mariadb.ans
-
-# The MariaDB/MySQL tools read configuration files in the following order:
-# 1. "/etc/mysql/mariadb.cnf" (this file) to set global defaults,
-# 2. "/etc/mysql/conf.d/*.cnf" to set global options.
-# 3. "/etc/mysql/mariadb.conf.d/*.cnf" to set MariaDB-only options.
-# 4. "~/.my.cnf" to set user-specific options.
-COPY conf.d/my.cnf /etc/mysql/conf.d/my.cnf
-COPY mariadb.conf.d/my.cnf /etc/mysql/mariadb.conf.d/my.cnf
-RUN sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_HOST}/" /etc/mysql/conf.d/my.cnf
-
-RUN apt update && apt install -y expect
-
-COPY mysql_secure_shell /usr/local/bin
-RUN chmod 1755 /usr/local/bin/mysql_secure_shell
-RUN mysql_secure_shell

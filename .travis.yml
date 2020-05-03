@@ -15,43 +15,37 @@ dist: trusty
 
 env:
   matrix:
-  - _PHP=latest _PKG=hhvm
-  - _PHP=7.1 _PKG=php
-  - _PHP=7.2 _PKG=php
-  - _PHP=7.3 _PKG=php
+    - _PHP=latest _PKG=hhvm PHPENV_ROOT=~/.phpenv # developed by facebook, trusty only
+    - _PHP=7.2 _PKG=php PHPENV_ROOT=~/.phpenv
+    - _PHP=7.3 _PKG=php PHPENV_ROOT=~/.phpenv
+
   global:
-  - PHP_CMS_DIR=app/webroot/php_cms
-  - _SSL=openssl
-  - DB=Mysql
-  - PHPUNIT=4
-  - PHPCS=3
-  - COLLECT_COVERAGE=false
-  - PHPENV_ROOT=/usr/local/bin/phpenv
-  - DKR_ARCH=x86_64
-  - WEBHOOK_URL=https://discordapp.com/api/webhooks/479745392880386058/YOO7Nnn1IFWUtXX0n0qAZYeMDeV-SLa0lSzjGpNnKGTzG-xA0T3dplVGzSM4ObKLeMWg
-  - secure: C39DQ1zYpSAOy33Sb8NP89o6k4HUnjHnQ+bQkgbo3WH7WtiN76dGeO9jm1DjMn5np6oKbDi41/fxonaTUIjb9YMksG2YB+NBDYXHyV1H7/xAeC6uTxwUObrLXh8aOUwiiuLPllMdtOLX8JSPxl1Ixc6KyeFywPiMvwuOe4QZW6sVG4sqhZC/UUycYKRSMaOthtuTDPYKjBLaDPiEzkUmdBIo9IhAsidEFAHj4jEmw9gBtac0B2x7GbvvoDivdH3KdNSoPt2SkD0RLX51Qf7AYeAV4fw65cuCp/Aat/uk55x3lN5g18Ww9khY/cFSwPC0JXGQnnJvdcDP2diZNkqE41Yc/Mw3xwfrvp3/v8js3VIBzsGINKiSdXZ/yXqI9iRzvzlfmXRHvd4sFXRzUpi8ZB4PXaboMndbNRoh4PcoRNFtXhyebQCEgZv2x3oiKXw38WT5cga03uMH4E5z5afS3n7NP1tsuiNWd499dJzAkW8OPeLDPqY3a/b5qLeZIK1bo23mvCjPtbm+B2g2QocKcd1oQ+XANCyuT3M/+AIypdMabGOSon2fDKrUUN+SqIX4FcYaHi1sG3qUp23870u9YcT4hK2LCKBcBPkFpxqEZLwdHbJmjHPo6uRyAKOD7r/k1DtIRqkcJ+5BpU4emo6rM9rdh5mWjLtK7vdY8Y/tvP8=
+    - COLLECT_COVERAGE=false
+    - PHPENV_ROOT=/usr/local/bin/phpenv
+    - _SSL=openssl
+    - PHP_CMS_DIR=app/webroot/php_cms
+    - DB=Mysql
+    - PHPUNIT=4
+    - PHPCS=3
+    - COLLECT_COVERAGE=false
+    - DKR_ARCH=x86_64
+    - WEBHOOK_URL=https://discordapp.com/api/webhooks/479745392880386058/YOO7Nnn1IFWUtXX0n0qAZYeMDeV-SLa0lSzjGpNnKGTzG-xA0T3dplVGzSM4ObKLeMWg
+    - secure: C39DQ1zYpSAOy33Sb8NP89o6k4HUnjHnQ+bQkgbo3WH7WtiN76dGeO9jm1DjMn5np6oKbDi41/fxonaTUIjb9YMksG2YB+NBDYXHyV1H7/xAeC6uTxwUObrLXh8aOUwiiuLPllMdtOLX8JSPxl1Ixc6KyeFywPiMvwuOe4QZW6sVG4sqhZC/UUycYKRSMaOthtuTDPYKjBLaDPiEzkUmdBIo9IhAsidEFAHj4jEmw9gBtac0B2x7GbvvoDivdH3KdNSoPt2SkD0RLX51Qf7AYeAV4fw65cuCp/Aat/uk55x3lN5g18Ww9khY/cFSwPC0JXGQnnJvdcDP2diZNkqE41Yc/Mw3xwfrvp3/v8js3VIBzsGINKiSdXZ/yXqI9iRzvzlfmXRHvd4sFXRzUpi8ZB4PXaboMndbNRoh4PcoRNFtXhyebQCEgZv2x3oiKXw38WT5cga03uMH4E5z5afS3n7NP1tsuiNWd499dJzAkW8OPeLDPqY3a/b5qLeZIK1bo23mvCjPtbm+B2g2QocKcd1oQ+XANCyuT3M/+AIypdMabGOSon2fDKrUUN+SqIX4FcYaHi1sG3qUp23870u9YcT4hK2LCKBcBPkFpxqEZLwdHbJmjHPo6uRyAKOD7r/k1DtIRqkcJ+5BpU4emo6rM9rdh5mWjLtK7vdY8Y/tvP8=
 
 matrix:
-  fast_finish: true
+  #fast_finish: true
+  exclude:
+    - os: windows
   include:
     - os: linux
-      language: php
-      php: 7.1
-      env: _PHP=7.1 _PKG=php PHPENV_ROOT=~/.phpenv
-    - os: linux
-      language: php
-      php: 'hhvm'
-      env: _PHP=latest _PKG=hhvm PHPENV_ROOT=~/.phpenv
     - os: osx
     - os: windows
+      env: _PHP=7.2 _PKG=php _SSL=openssl.light
+    - os: windows
       env: _PHP=7.3 _PKG=php _SSL=openssl.light
-    - os: windows
-      env: _PHP=latest _PKG=hhvm _SSL=openssl.light
   allow_failures:
-    - php: 'hhvm'
-    - env: _PHP=3.18 _PKG=hhvm
-    - env: _PHP=7.3 _PKG=php
     - os: windows
+    - os: linux
     - os: osx
 
 addons:
@@ -83,10 +77,9 @@ before_install:
   - source ./deploy.sh "${DKR_ARCH}" --nobuild
 install:
   - cd .travis/TravisCI-OSX-PHP
-  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_SSL}"; /usr/local/opt/openssl/bin/c_rehash
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_SSL}" "latest"; [ $(which c_rehash) > /dev/null ] && c_rehash
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-openssl"
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}-xml"
-  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer"; bash -c 'composer install --dev --no-interaction'; fi
   - cd ../..
   - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then curl -s http://getcomposer.org/installer | php && php composer.phar install --dev --no-interaction; fi
 
