@@ -31,7 +31,7 @@ However, if these files exist they will affect the behavior of the build process
 
   The myphpcms folder includes modules that need to be pulled in order to install locally.
   After the first checkout browse to myphpcms folder and do
-  ```git submodule update --init --recursive```
+  ```git submodule sync && git submodule update --init --recursive```
   You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the myphpcms folder and start over.
   > After a sucessful ```git checkout```each time, run once ```git submodule update --init --recursive``` to ensure submodules are downloaded from git. Otherwise your build may fail.
 
@@ -261,14 +261,18 @@ PHP mysql extensions must be installed.
 
 Log in with root privileges should work:
 
-    mysql -u root --password=<password> cakephp_test
+    mysql -u root --password=<password>
+
+If not, do a reset of your passwords:
+
+    mysqladmin -uroot password
 
 If it isn't possible to login:
   + Check your environment variables (common.env and docker-compose.yml) settings). Use one or the other, and see which works for you:
 
-    MYSQL_ROOT_HOST=% (Unix/OSX platforms)
+    MYSQL_HOST=127.0.0.1 (Unix/OSX platforms)
             or if docker mysql service containers:
-    MYSQL_ROOT_HOST=127.0.0.1
+    MYSQL_HOST=localhost
     ..
 
     MYSQL_TCP_PORT=3306

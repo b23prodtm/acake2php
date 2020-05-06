@@ -8,6 +8,7 @@ pargs=$(parse_arg_trim "-[oO]+|--openshift"  $*)
 if [ $openshift 2> /dev/null ]; then
   slogger -st $0 "Bootargs...: ${pargs}"
   export CAKEPHP_DEBUG_LEVEL=1
+  source ./Scripts/bootargs.sh $*
 else
   slogger -st $0 "Locally Testing values, bootargs...: ${pargs}"
   export CAKEPHP_DEBUG_LEVEL=2

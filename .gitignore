@@ -35,7 +35,7 @@ myphpcms*.zip
 /tags
 *.mo
 **/composer*.phar
-
+mysqldb/config/
 
 # IDE and editor specific files #
 #################################
