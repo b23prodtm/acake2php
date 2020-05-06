@@ -29,8 +29,8 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   #               $ .circleci/build.sh
   #
   if [ $docker 2> /dev/null ]; then
-    export MYSQL_HOST=127.0.0.1
-    export TEST_PGSQL_SERVICE_HOST=127.0.0.1
+    export MYSQL_HOST=${MYSQL_HOST:-'127.0.0.1'}
+    export TEST_PGSQL_SERVICE_HOST=${MYSQL_HOST:-'127.0.0.1'}
   fi
   export MYSQL_HOST=${MYSQL_HOST:-'localhost'}
   export MYSQL_TCP_PORT=${MYSQL_TCP_PORT:-'3306'}

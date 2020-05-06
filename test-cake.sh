@@ -3,10 +3,10 @@ set -e
 source ./Scripts/lib/test/parsing.sh
 test=("test_parse_and_export" "test_parse_sql_password" "test_arg_exists" "test_arg_trim")
 for t in "${test[@]}"; do printf "TEST CASES : %s\n" "$t" && eval "$t"; done; sleep 5
-bootargs=""
+bootargs="--docker"
 migrate="-i -u --connection=test"
 saved=("$@")
-config_args="-c -h -p pass -s word"
+config_args="-c -h -p pass -s word --development"
 config_work_dir=""
 usage=("" \
 "${cyan}Notice:${nc}The test script." \
@@ -28,6 +28,7 @@ while [[ "$#" > 0 ]]; do case $1 in
     # Abort tests
     ;;
   --circle )
+    bootargs=$(parse_arg_trim "--docker" $bootargs)
     ;;
   --cov )
     export COLLECT_COVERAGE=true;;
@@ -47,6 +48,7 @@ while [[ "$#" > 0 ]]; do case $1 in
     bootargs="-v ${bootargs}"
     echo "Passed params :  $0 ${saved[*]}";;
   -[oO]*|--openshift )
+    bootargs=$(parse_arg_trim "--docker" $bootargs)
     bootargs="${bootargs} --openshift"
     config_args="--openshift ${config_args}"
     ;;

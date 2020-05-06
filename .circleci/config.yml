@@ -38,6 +38,7 @@ jobs:
           apk update \
             && apk add \
               php7-session \
+              mariadb-connector-c \
             && apk del build-base \
             && rm -rf /var/cache/apk/*
     - run:

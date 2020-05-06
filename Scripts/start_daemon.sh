@@ -27,12 +27,14 @@ if [ $docker 2> /dev/null ]; then
 	fi
 	docker rm -f $maria >> $LOG 2>&1 || true
 	slogger -st $0 "Container $MARIADB_SHORT_NAME 's started up..."
+	socket=$TOPDIR/mysqldb/config/mysqld && [ -h /var/run/mysqld/mysqld.sock ] \
+	&& ln -vsf /var/run/mysqld/mysqld.sock $socket/mysqld.sock
 	docker run --name $MARIADB_SHORT_NAME -id \
 	--env-file common.env --env-file .env \
 	-e PUID=$(id -u $USER) -e PGID=$(id -g $USER) \
-	-h $MYSQL_HOST --publish $MYSQL_TCP_PORT:$MYSQL_TCP_PORT \
+	-h ${MYSQL_HOST} --publish $MYSQL_TCP_PORT:$MYSQL_TCP_PORT \
 	-v $TOPDIR/mysqldb/config:/config \
-	-v $TOPDIR/mysqldb/mysqld:/var/run/mysqld \
+	-v $socket:/var/run/mysqld/ \
 	${MARIADB_CONT_NAME} >> $LOG 2>&1
 	if [ $? = 0 ]; then
 		slogger -st $0 "Started docker --name=${MARIADB_SHORT_NAME} ref: $(docker ps -q -a -f "name=maria") host: $MYSQL_HOST}"

@@ -2,7 +2,7 @@
 set -e
 source ./Scripts/lib/parsing.sh
 source ./Scripts/lib/shell_prompt.sh
-command="server -p 8000 -H 0.0.0.0"
+command="--docker server -p 8000 -H 0.0.0.0"
 saved=("$@")
 export COLLECT_COVERAGE="false"
 usage=("" \
@@ -14,7 +14,7 @@ usage=("" \
 "                               E.g. $0 -c server --help" \
 "                               Default command is " \
 "                               lib/Cake/Console/cake server -p 8000" \
-"           --docker            Startup Docker Image DATABASE" \
+"           --disable-docker    Don't start Docker Image DATABASE" \
 "")
 while [[ "$#" > 0 ]]; do case $1 in
   --help )
@@ -33,11 +33,11 @@ while [[ "$#" > 0 ]]; do case $1 in
     shift $((OPTIND -1))
     ;;
   -[cC]*)
-    command="${command} ${*:2}"
+    command="${*:2}"
     parse_and_export "p" "CAKE_TCP_PORT" "specify -p <port>" "$@"
     break;;
-  --docker )
-    command="--docker ${command}"
+  --disable-docker )
+    command=$(parse_arg_trim "--docker" $command)
     ;;
   *);;
 esac; shift; done

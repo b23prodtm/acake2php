@@ -32,7 +32,7 @@ usage=("" \
 "          --testunitbase=<name>" \
 "                      Exports TEST_DATABASE_NAME" \
 "          --enable-authentication-plugin" \
-"                      Enables https://mariadb.com/kb/en/authentication-plugin-ed25519/" \
+"                      Disables https://mariadb.com/kb/en/authentication-plugin-ed25519/" \
 "          -v, --verbose" \
 "                      Outputs more debug information" \
 "          -h, --help  Displays this help" \
@@ -46,7 +46,6 @@ config_app_checked="-Y"
 test_checked=0
 update_checked=0
 import_identities=0
-identities=app/Config/database.sql
 saved=("$@")
 authentication_plugin=0
 mysql_host="%"
@@ -54,6 +53,7 @@ ck_args="--connection=default"
 MARIADB_SHORT_NAME=$(echo $SECONDARY_HUB | awk -F/ '{ print $2 }' | awk -F: '{ print $1 }')
 while [[ "$#" > 0 ]]; do case "$1" in
   --enable-authentication-plugin*)
+    slogger -st $0 "Enabled auth_ed25519 plugin..."
     authentication_plugin=1;;
   --docker )
     bash -c "./Scripts/start_daemon.sh ${docker}"
@@ -86,7 +86,6 @@ while [[ "$#" > 0 ]]; do case "$1" in
     shift $((OPTIND -1))
     ;;
   -[vV]*|--verbose )
-    [ -f $identities ] && cat $identities
     # Reset passed args (shift reset)
     text=("" \
 "Passed params : $0 ${saved[*]}" \
@@ -153,11 +152,16 @@ if [[ $import_identities -eq 1 ]]; then
 "-e \"alter user '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
 "-e \"grant all PRIVILEGES on *.* to '${DATABASE_USER}'@'${mysql_host}' WITH GRANT OPTION;\"" \
 "-e \"create database if not exists ${MYSQL_DATABASE} default character set='utf8' default collate='utf8_bin';\"" \
+"-e \"create database if not exists ${TEST_DATABASE_NAME};\"" \
+"-e \"create database if not exists ${TEST_DATABASE_NAME}2;\"" \
+"-e \"create database if not exists ${TEST_DATABASE_NAME}3;\"" \
 # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
 # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
-"-e \"select * from user where user='${DATABASE_USER}';\"" \
+"-e \"select plugin from user where user='${DATABASE_USER}';\"" \
+"-e \"show databases;\"" \
 "")
   slogger -st $0 "Forked script to keep hidden table user secrets..."
+  password=""
   if [ ! -z ${MYSQL_ROOT_PASSWORD:-''} ]; then
     password="--password=${MYSQL_ROOT_PASSWORD}"
   fi
@@ -181,16 +185,17 @@ if [[ $import_identities -eq 1 ]]; then
 "-e \"create user if not exists '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
 "-e \"alter user '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
 "-e \"grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
-"-e \"create database if not exists ${TEST_DATABASE_NAME};\"" \
-"-e \"create database if not exists ${TEST_DATABASE_NAME}2;\"" \
-"-e \"create database if not exists ${TEST_DATABASE_NAME}3;\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}3.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
 # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
-"-e \"select * from user where user='${MYSQL_USER}';\"" \
+"-e \"select plugin from user where user='${MYSQL_USER}';\"" \
 "")
+  password=""
+  if [ ! -z ${MYSQL_ROOT_PASSWORD:-''} ]; then
+    password="--password=${MYSQL_ROOT_PASSWORD}"
+  fi
   shell_prompt "exec ${sql_connect} ${sql_connect_test_host} -u ${DATABASE_USER} ${password} \
   ${args[*]} >> $LOG 2>&1" "Import test identities" "$prompt" \
   && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}

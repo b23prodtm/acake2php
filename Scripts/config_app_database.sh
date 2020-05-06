@@ -25,20 +25,16 @@ while [[ "$#" > 0 ]]; do case $1 in
     source ./Scripts/cp_bkp_old.sh $wd $dbfile "database.php"
     ;;
 	-[yY]*)
-		if [ $docker 2> /dev/null ]; then
-			docker exec ${MARIADB_SHORT_NAME} "mkdir -p /var/run/mysqld && ln -vs /tmp/mysqld.sock /var/run/mysqld/mysqld.sock"
-		else
-			if [ $(which mysql) 2> /dev/null ]; then
-				mysql --version
-				#; symlink mysql socket with php
-		    echo "Please allow the super-user to link mysql socket to php ..."
-		    mkdir -p /var/run/mysqld
-		    if [ -h /var/run/mysqld/mysqld.sock ]; then
-						ls -al /var/run/mysqld/mysqld.sock
-			 	else
-					 ln -vs /tmp/mysqld.sock /var/run/mysqld/mysqld.sock
-				fi
-			fi
+		if [ $(which mysql) 2> /dev/null ]; then
+			mysql --version
+		fi
+		#; symlink mysql socket with php
+    echo "Please allow the super-user to link mysql socket to php ..."
+    mkdir -p /var/run/mysqld
+    if [ -h /var/run/mysqld/mysqld.sock ]; then
+				ls -al /var/run/mysqld/mysqld.sock
+	 	else
+			 ln -vsf /tmp/mysqld.sock /var/run/mysqld/mysqld.sock
 		fi;;
   *)
     ;;
@@ -46,7 +42,6 @@ esac; shift; done
 if [ ! $docker 2> /dev/null ]; then
 	if [ $(which mysql) 2> /dev/null ] && [ ! -h /var/run/mysqld/mysqld.sock ]; then
 		slogger -st $0 "${orange}Warning:${nc}/var/run/mysqld/mysqld.sock symlink not found."
-		export -p | grep MYSQL_ &
 	else
 		slogger -st $0 "${green}Notice: mysqld.sock symlink was found.${nc}"
 	fi

@@ -46,7 +46,7 @@ while [[ "$#" > 0 ]]; do case $1 in
         #; [[-d|--mig-database] [-u]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
         shell_prompt "./migrate-database.sh ${docker} ${openshift} ${*:2}" "${cyan}Step 3. Migrate database\n${nc}" "-Y"
         break;;
-    -[sS]*|-[pP]*|-[fF]*|-[tT]*|--connection* )
+    -[sS]*|-[pP]*|-[fF]*)
         #; void --hash password known args
         OPTIND=1
         if [[ "$#" > 1 ]]; then
