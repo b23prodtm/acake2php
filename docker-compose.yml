@@ -19,12 +19,12 @@ services:
     restart: unless-stopped
     networks:
       - cake
-    env_file: common.env
+    env_file: common.env .env
     labels:
       io.balena.features.dbus: "1"
     privileged: true
   myphpcms:
-    env_file: common.env
+    env_file: common.env .env
     build:
       context: .
       dockerfile: Dockerfile.template
