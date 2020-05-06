@@ -55,3 +55,4 @@ Icon?
 ehthumbs.db
 Thumbs.db
 /nbproject/private/
+mysqldb/config/mysqld/mysqld.sock

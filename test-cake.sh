@@ -4,7 +4,9 @@ source ./Scripts/lib/test/parsing.sh
 test=("test_parse_and_export" "test_parse_sql_password" "test_arg_exists" "test_arg_trim")
 for t in "${test[@]}"; do printf "TEST CASES : %s\n" "$t" && eval "$t"; done; sleep 5
 bootargs="--docker"
-migrate="-i -u --connection=test"
+migrate="-i -u --connection=test" 
+# BUG ISSUE
+#\  --enable-authentication-plugin"
 saved=("$@")
 config_args="-c -h -p pass -s word --development"
 config_work_dir=""

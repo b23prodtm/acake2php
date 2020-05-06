@@ -143,7 +143,7 @@ if [[ $import_identities -eq 1 ]]; then
     prompt=""
   fi
   if [ $authentication_plugin = 1 ]; then
-    identifiedby="IDENTIFIED VIA ed25519 USING PASSWORD('${set_DATABASE_PASSWORD}')"
+    identifiedby="IDENTIFIED VIA ed25519 USING '${set_DATABASE_PASSWORD}'"
   else
     identifiedby="identified by '${set_DATABASE_PASSWORD}'"
   fi
@@ -176,7 +176,7 @@ if [[ $import_identities -eq 1 ]]; then
     prompt=""
   fi
   if [ $authentication_plugin = 1 ]; then
-    identifiedby="IDENTIFIED VIA ed25519 USING PASSWORD('${set_MYSQL_PASSWORD}')"
+    identifiedby="IDENTIFIED VIA ed25519 USING '${set_MYSQL_PASSWORD}'"
   else
     identifiedby="identified by '${set_MYSQL_PASSWORD}'"
   fi
