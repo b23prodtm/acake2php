@@ -46,7 +46,7 @@ services:
     ports:
       #Dockerfile's exposed 80 (through apache2), forward 8000 as of CakePHP default port setting
       - "80:8000"
-    links:
+    depends_on:
       - db
     networks:
       - cake
