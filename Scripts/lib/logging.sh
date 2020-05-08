@@ -11,7 +11,8 @@ function slogger() {
 }
 #; export -f slogger
 function new_log() {
-	LOG="/usr/local/var/log/$(basename $FUNCNAME .sh).$(date +%Y-%m-%d_%H:%M).log" && mkdir -p $(dirname $LOG)
+  [ "$#" -gt 0 ] && LOG=$1
+	LOG="${LOG:-/var/www/html/app/tmp/log}/$(basename $FUNCNAME .sh).$(date +%Y-%m-%d_%H:%M).log" && mkdir -p $(dirname $LOG)
 	touch $LOG && echo $LOG
 }
 #; export -f new_log

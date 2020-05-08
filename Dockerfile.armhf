@@ -48,7 +48,7 @@ ENV SERVER_NAME ${SERVER_NAME:-'localhost.local'}
 
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
-RUN [ "cross-build-start" ]
+# RUN [ "cross-build-start" ]
 RUN install_packages \
     git \
     ssh \
@@ -151,6 +151,6 @@ WORKDIR /var/www/html/
 
 RUN git submodule sync && git submodule update --init
 RUN ./configure.sh --openshift -c -h -p pass -s word --development
-RUN [ "cross-build-end" ]
+# RUN [ "cross-build-end" ]
 ENTRYPOINT [ "/bin/bash", "-c", "./migrate-database.sh -u -o -i --test-sql-password=${MYSQL_PASSWORD}"]
 CMD [ "apache2 -D FOREGROUND" ]

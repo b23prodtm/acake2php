@@ -2,7 +2,7 @@
 # Source DockerFile: https://github.com/ulsmith/rpi-raspbian-apache-php/blob/master/Dockerfile
 #
 FROM balenalib/raspberrypi3-debian:build
-RUN [ "cross-build-start" ]
+# RUN [ "cross-build-start" ]
 ARG PHP_LIB
 ENV PHP_LIB ${PHP_LIB:-7.2}
 
@@ -48,7 +48,7 @@ RUN a2enmod php${PHP_LIB} && a2enmod rewrite
 COPY conf/000-default.conf /etc/apache2/conf-available/000-default.conf
 RUN chown -R www-data:www-data /var/www/html
 
-RUN [ "cross-build-end" ]
+# RUN [ "cross-build-end" ]
 EXPOSE 80
 
 CMD [ "apache2 -D FOREGROUND" ]

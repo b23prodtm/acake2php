@@ -81,6 +81,8 @@ while [[ "$#" > 0 ]]; do case "$1" in
     shift $((OPTIND -1))
     ;;
   --test-sql-password*)
+    test_checked=1
+    ck_args="--connection=test"
     OPTIND=1
     parse_sql_password "set_MYSQL_PASSWORD" "Altering ${MYSQL_USER} password" "$@"
     shift $((OPTIND -1))
@@ -104,10 +106,10 @@ $(export -p | grep "DATABASE\|MYSQL") \
     ;;
   -[tT]* )
     test_checked=1
+    ck_args="--connection=test"
     printf "Testing %s Unit..." $test_checked
     parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER} password" "$@"
     shift $((OPTIND -1))
-    ck_args="--connection=test"
     ;;
   --database*)
     # Transform long options to short ones
@@ -121,6 +123,7 @@ $(export -p | grep "DATABASE\|MYSQL") \
     arg=$1; shift; set -- $(echo "${arg}" \
     | awk 'BEGIN{ FS="[ =]+" }{ print "-u " $2 }') "$@"
     test_checked=1
+    ck_args="--connection=test"
     parse_and_export "u" "TEST_DATABASE_NAME" "${MYSQL_USER} database name" "$@"
     shift $((OPTIND -1))
     ;;
