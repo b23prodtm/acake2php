@@ -13,7 +13,9 @@
 <!-- tocstop -->
 > We are moving to Kubernetes to host our website... See more about that project in [Kubespray](http://www.github.com/b23prodtm/kubespray).
 
-CakePHP for [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) on OpenShift [![Build Status](https://travis-ci.org/b23prodtm/myphpcms.svg?branch=development)](https://travis-ci.org/b23prodtm/myphpcms)
+CakePHP for [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) on Docker [![TravisCI Status](https://travis-ci.org/b23prodtm/myphpcms.svg?branch=development)](https://travis-ci.org/b23prodtm/myphpcms)
+[![CircleCI Status](https://app.circleci.com/pipelines/github/b23prodtm/myphpcms)](https://circleci.com/gh/b23prodtm/myphpcms.svg?style=svg)
+
 ===============================
 
 This is a quickstart CakePHP application for OpenShift v3 that you ''can'' use as a starting point to develop your own application and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.

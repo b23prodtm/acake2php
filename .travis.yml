@@ -11,11 +11,25 @@ os:
     - osx
     - windows
 
-dist: trusty
+dist: bionic
+addons:
+  apt:
+    sources:
+    - sourceline: ppa:ondrej/php
+  coverity_scan:
+    project:
+      name: b23prodtm/myphpcms
+      description: 'This PHP CMS is featuring well-known functionalities as cool as
+        posting some web contents with pictures stored in a database. Developer Note
+        : This is the Cake PHP cartridge repository. A submodule is included in app/webroot.'
+    notification_email: b23prodtm@users.sourceforge.net
+    build_command_prepend: ""
+    build_command: "./test-cake.sh --cov --travis -o .env common.env --docker"
+    branch_pattern: coverity_scan
+      update: true
 
 env:
   matrix:
-    - _PHP=latest _PKG=hhvm PHPENV_ROOT=~/.phpenv # developed by facebook, trusty only
     - _PHP=7.2 _PKG=php PHPENV_ROOT=~/.phpenv
     - _PHP=7.3 _PKG=php PHPENV_ROOT=~/.phpenv
 
@@ -40,26 +54,9 @@ matrix:
     - os: linux
     - os: osx
     - os: windows
-      env: _PHP=7.2 _PKG=php _SSL=openssl.light
-    - os: windows
-      env: _PHP=7.3 _PKG=php _SSL=openssl.light
   allow_failures:
     - os: windows
-    - os: linux
     - os: osx
-
-addons:
-  coverity_scan:
-    project:
-      name: b23prodtm/myphpcms
-      description: 'This PHP CMS is featuring well-known functionalities as cool as
-        posting some web contents with pictures stored in a database. Developer Note
-        : This is the Cake PHP cartridge repository. A submodule is included in app/webroot.'
-    notification_email: b23prodtm@users.sourceforge.net
-    build_command_prepend: ""
-    build_command: "./test-cake.sh --cov --travis -o .env common.env --docker"
-    branch_pattern: coverity_scan
-    update: true
 
 services:
 - memcached
@@ -70,30 +67,30 @@ before_install:
   - source build/prepare_${TRAVIS_OS_NAME}_env.sh #; source exports
   - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${_PHP}" = 7* ]]; then COLLECT_COVERAGE=true ; fi
   - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
-  - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then source build/custom_php_ini.sh; fi
-  - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
+  - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then build/custom_php_ini.sh; fi
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_SSL}" "latest";
+  - if [[ "${TRAVIS_OS_NAME}" != "windows" ]]; then [ $(which c_rehash) > /dev/null ] && sudo c_rehash; fi
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "curl" "latest" "--with-openssl"
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-homebrew-curl"
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}-xml"
+  - php -i | grep "SSL Version"
   - cd ../..
+
+install:
+  - curl -s http://getcomposer.org/installer | php && php composer.phar require --no-interaction
   - source ./Scripts/configure_tmp.sh
   - source ./deploy.sh "${DKR_ARCH}" --nobuild
-install:
-  - cd .travis/TravisCI-OSX-PHP
-  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_SSL}" "latest"; [ $(which c_rehash) > /dev/null ] && c_rehash
-  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-openssl"
-  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}-xml"
-  - cd ../..
-  - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then curl -s http://getcomposer.org/installer | php && php composer.phar install --dev --no-interaction; fi
 
 before_script:
-- if [[ "${TRAVIS_OS_NAME}" = "linux" && "${_PHP}" = "hhvm" ]]; then curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar; fi
-- mkdir -p build/logs
-
 script:
+- mkdir -p build/logs
+- php vendor/bin/phpunit -c app/phpunit.xml.dist
 - docker login -u $DOCKER_USER -p $DOCKER_PASS
 - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis -o .env common.env --docker; fi
 after_script:
-- if [[ ("${COLLECT_COVERAGE}" = "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]];
-  then travis_retry php app/Vendor/bin/php-coveralls -v -r ./app/; fi
 after_success:
+- if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
+- if [[ ("${COLLECT_COVERAGE}" = "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]]; then travis_retry php app/Vendor/bin/php-coveralls -v -r ./app/; fi
 - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
 - chmod +x send.sh
 - "./send.sh success $WEBHOOK_URL"
