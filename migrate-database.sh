@@ -151,8 +151,11 @@ if [[ $import_identities -eq 1 ]]; then
     identifiedby="identified by '${set_DATABASE_PASSWORD}'"
   fi
   args=(\
+"-e \"select version();\"" \
 "-e \"use mysql;\"" \
-"-e \"alter user '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
+# ALTER USER is MariaDB 10.2 and above waiting for ARM binary
+# "-e \"alter user '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
+"-e \"SET PASSWORD FOR '${DATABASE_USER}'@'${mysql_host}' = PASSWORD('${set_DATABASE_PASSWORD}');\"" \
 "-e \"grant all PRIVILEGES on *.* to '${DATABASE_USER}'@'${mysql_host}' WITH GRANT OPTION;\"" \
 "-e \"create database if not exists ${MYSQL_DATABASE} default character set='utf8' default collate='utf8_bin';\"" \
 "-e \"create database if not exists ${TEST_DATABASE_NAME};\"" \
@@ -186,7 +189,9 @@ if [[ $import_identities -eq 1 ]]; then
   args=(\
 "-e \"use mysql;\"" \
 "-e \"create user if not exists '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
-"-e \"alter user '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
+# ALTER USER is MariaDB 10.2 and above waiting for ARM binary
+# "-e \"alter user '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
+"-e \"SET PASSWORD FOR '${MYSQL_USER}'@'${mysql_host}' = PASSWORD('${set_MYSQL_PASSWORD}');\"" \
 "-e \"grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \

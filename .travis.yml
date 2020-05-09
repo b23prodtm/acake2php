@@ -24,7 +24,7 @@ addons:
         : This is the Cake PHP cartridge repository. A submodule is included in app/webroot.'
     notification_email: b23prodtm@users.sourceforge.net
     build_command_prepend: ""
-    build_command: "./test-cake.sh --cov --travis -o .env common.env --docker"
+    build_command: "./test-cake.sh --cov --travis --docker"
     branch_pattern: coverity_scan
       update: true
 
@@ -74,10 +74,11 @@ before_install:
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-homebrew-curl"
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}-xml"
   - php -i | grep "SSL Version"
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer" "latest"
   - cd ../..
 
 install:
-  - curl -s http://getcomposer.org/installer | php && php composer.phar require --no-interaction
+  - composer require --no-interaction
   - source ./Scripts/configure_tmp.sh
   - source ./deploy.sh "${DKR_ARCH}" --nobuild
 
@@ -86,7 +87,7 @@ script:
 - mkdir -p build/logs
 - php vendor/bin/phpunit -c app/phpunit.xml.dist
 - docker login -u $DOCKER_USER -p $DOCKER_PASS
-- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis -o .env common.env --docker; fi
+- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis --docker; fi
 after_script:
 after_success:
 - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi

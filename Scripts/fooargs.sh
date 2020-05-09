@@ -13,6 +13,7 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   cyan="\033[0;36m"
   slogger -st $0 "Loading ${orange}Test environment${nc} : $0..."
   #; Common Environment profile
+  [[ ! -e .env || ! -e common.env ]] && printf "Missing environment configuration, please run ./deploy.sh %s --nobuild first." $(arch)
   eval $(cat .env common.env | awk 'BEGIN{ FS="$" }{ print "export " $1 }')
   #; To change  Model/Datasource/Database
   export DB=${DB:-Mysql}
