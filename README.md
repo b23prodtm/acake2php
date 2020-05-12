@@ -124,13 +124,12 @@ When deployment happens on server-side or is triggered by a git push event, 'sou
 
 The following variables must be set up as server environment, provided by your **database administrator**:
 
-    # SqliteCms, PostgresCms
-    DATABASE_ENGINE:MysqlCms
+    # Sqlite, Postgres
+    DB:Mysql
 
->Note: DB Engine selects CakePhp Model/Datasource/Database DBOSource class to configure SQL connections.    
+>Note: DB selects CakePhp Model/Datasource/Database DBOSource class to configure SQL connections.    
 
     MYSQL_DATABASE:default
-    DATABASE_SERVICE_NAME:MYSQL
     # a hostname or IP address
     MYSQL_HOST:mysql
 
@@ -272,7 +271,7 @@ If not, do a reset of your passwords:
 If it isn't possible to login:
   + Check your environment variables (common.env and docker-compose.yml) settings). Use one or the other, and see which works for you:
 
-    MYSQL_HOST=127.0.0.1 (Unix/OSX platforms)
+    MYSQL_HOST=$(hostname) (Unix/OSX platforms)
             or if docker mysql service containers:
     MYSQL_HOST=localhost
     ..
@@ -356,7 +355,7 @@ class Mysql_cms extends Mysql
 }
 ?>
 ```
-Ensure it is set as DATABASE_ENGINE in `app/Config/database.cms.php`,`./Scripts/fooargs.sh`, `.travis.yml` and update the database schema:
+Ensure it is set as $identities[DB]['datasource'] in `app/Config/database.cms.php`,`./Scripts/fooargs.sh`, `.travis.yml` and update the database schema:
 
     ./migrate-database.sh -u
 

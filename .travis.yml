@@ -26,7 +26,6 @@ addons:
     build_command_prepend: ""
     build_command: "./test-cake.sh --cov --travis --docker"
     branch_pattern: coverity_scan
-      update: true
 
 env:
   matrix:
@@ -37,10 +36,9 @@ env:
     - COLLECT_COVERAGE=false
     - PHPENV_ROOT=/usr/local/bin/phpenv
     - _SSL=openssl
-    - PHP_CMS_DIR=app/webroot/php_cms
+    - MYPHPCMS_LOG=app/tmp/log
     - DB=Mysql
     - PHPUNIT=4
-    - PHPCS=3
     - COLLECT_COVERAGE=false
     - DKR_ARCH=x86_64
     - WEBHOOK_URL=https://discordapp.com/api/webhooks/479745392880386058/YOO7Nnn1IFWUtXX0n0qAZYeMDeV-SLa0lSzjGpNnKGTzG-xA0T3dplVGzSM4ObKLeMWg
@@ -48,8 +46,6 @@ env:
 
 matrix:
   #fast_finish: true
-  exclude:
-    - os: windows
   include:
     - os: linux
     - os: osx
@@ -70,11 +66,11 @@ before_install:
   - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then build/custom_php_ini.sh; fi
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_SSL}" "latest";
   - if [[ "${TRAVIS_OS_NAME}" != "windows" ]]; then [ $(which c_rehash) > /dev/null ] && sudo c_rehash; fi
-  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "curl" "latest" "--with-openssl"
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "curl" "latest" "--with-openssl" | tail
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-homebrew-curl"
-  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}-xml"
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}-xml" | tail
   - php -i | grep "SSL Version"
-  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer" "latest"
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer" "latest" | tail
   - cd ../..
 
 install:
@@ -84,19 +80,19 @@ install:
 
 before_script:
 script:
-- mkdir -p build/logs
-- php vendor/bin/phpunit -c app/phpunit.xml.dist
-- docker login -u $DOCKER_USER -p $DOCKER_PASS
-- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis --docker; fi
+  - mkdir -p build/logs
+  - php app/Vendor/bin/phpunit -c app/phpunit.xml.dist
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis; fi
 after_script:
 after_success:
-- if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
-- if [[ ("${COLLECT_COVERAGE}" = "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]]; then travis_retry php app/Vendor/bin/php-coveralls -v -r ./app/; fi
-- wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
-- chmod +x send.sh
-- "./send.sh success $WEBHOOK_URL"
-- zip -r myphpcms.zip *
-- git tag --force "v${GIT_RELEASE_VERSION}.${TRAVIS_BUILD_NUMBER}"
+  - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
+  - if [[ ("${COLLECT_COVERAGE}" = "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]]; then travis_retry php app/Vendor/bin/php-coveralls -v -r ./app/; fi
+  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - "./send.sh success $WEBHOOK_URL"
+  - zip -r myphpcms.zip *
+  - git tag --force "v${GIT_RELEASE_VERSION}.${TRAVIS_BUILD_NUMBER}"
 deploy:
   provider: releases
   api_key:

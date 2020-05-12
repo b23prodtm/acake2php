@@ -3,7 +3,7 @@ services:
   db:
     build:
       context: mysqldb
-      dockerfile: Dockerfile.template
+      dockerfile: Dockerfile.armhf
       args:
         PUID: 0
         PGID: 0
@@ -11,9 +11,9 @@ services:
         MYSQL_ROOT_PASSWORD: mariadb
         MYSQL_HOST: localhost
         MYSQL_DATABASE: aria_db
-        MYSQL_USER: abc
+        MYSQL_USER: maria
         MYSQL_PASSWORD: maria-abc
-    image: betothreeprod/mariadb-%%BALENA_MACHINE_NAME%%
+    image: betothreeprod/mariadb-raspberrypi3
     volumes:
       - db-data:/config
       - db-socket:/var/run/mysqld
@@ -33,11 +33,11 @@ services:
       - .env
     build:
       context: .
-      dockerfile: Dockerfile.template
+      dockerfile: Dockerfile.armhf
       args:
         DEBUG: "1"
         DATABASE_USER: "root"
-    image: betothreeprod/myphpcms-%%BALENA_MACHINE_NAME%%
+    image: betothreeprod/myphpcms-raspberrypi3
     labels:
       io.balena.features.dbus: "1"
     volumes:

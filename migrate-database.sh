@@ -39,9 +39,9 @@ usage=("" \
 "")
 sql_connect="mysql"
 sql_connect_host="-h ${MYSQL_HOST} -P ${MYSQL_TCP_PORT}"
-sql_connect_test_host="-h ${MYSQL_HOST} -P ${MYSQL_TCP_PORT}"
 dbfile=database.cms.php
-fix_socket="-N"
+schemafile=Schema/schema.cms.php
+sockfile=/tmp/mysqld.sock
 config_app_checked="-Y"
 test_checked=0
 update_checked=0
@@ -50,6 +50,7 @@ saved=("$@")
 authentication_plugin=0
 mysql_host="%"
 ck_args="--connection=default"
+test_args="app AllTests"
 MARIADB_SHORT_NAME=$(echo $SECONDARY_HUB | awk -F/ '{ print $2 }' | awk -F: '{ print $1 }')
 while [[ "$#" > 0 ]]; do case "$1" in
   --enable-authentication-plugin*)
@@ -57,20 +58,21 @@ while [[ "$#" > 0 ]]; do case "$1" in
     authentication_plugin=1;;
   --docker )
     bash -c "./Scripts/start_daemon.sh ${docker}"
-    sql_connect="docker exec $MARIADB_SHORT_NAME mysql"
-    sql_connect_host=""
-    sql_connect_test_host=""
+    #sql_connect="docker exec $MARIADB_SHORT_NAME mysql"
+    sockfile="$(pwd)/mysqldb/config/mysqld/mysqld.sock"
     ;;
   -[uU]* )
     update_checked=1
     ;;
-  --connection* )
+  --connection=test )
     ck_args="$1"
+    test_checked=1
     ;;
-  -[yY]* ) fix_socket="-Y";;
+  --connection* )
+    ck_args="$1";;
+  *.sock ) sockfile=$1;;
   -[nN]* )
-    fix_socket="-N"
-    dbfile=""
+    sockfile=""
     config_app_checked="-N";;
   -[iI]* )
     import_identities=1
@@ -95,6 +97,8 @@ while [[ "$#" > 0 ]]; do case "$1" in
 $(export -p | grep "DATABASE\|MYSQL") \
 "")
     printf "%s\n" "${text[@]}"
+    ck_args="${ck_args} -v"
+    test_args="${test_args} -v"
     ;;
   -[hH]*|--help )
     printf "%s\n" "${usage[@]}"
@@ -135,7 +139,7 @@ done
 : ${MYSQL_DATABASE?} ${DATABASE_USER?} ${MYSQL_ROOT_PASSWORD?} ${MYSQL_TCP_PORT?}
 : $TEST_DATABASE_NAME?} ${MYSQL_USER?} ${MYSQL_PASSWORD?} ${MYSQL_HOST?} ${MYSQL_TCP_PORT?}
 # configure user application database and eventually alter user database access
-shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket} ${docker}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
+shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${schemafile} ${sockfile} ${docker}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
 if [[ $import_identities -eq 1 ]]; then
   #; ---------------------------------- set MYSQL_ROOT_PASSWORD
   export set_DATABASE_PASSWORD=${set_DATABASE_PASSWORD:-$MYSQL_ROOT_PASSWORD}
@@ -157,10 +161,11 @@ if [[ $import_identities -eq 1 ]]; then
 # "-e \"alter user '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
 "-e \"SET PASSWORD FOR '${DATABASE_USER}'@'${mysql_host}' = PASSWORD('${set_DATABASE_PASSWORD}');\"" \
 "-e \"grant all PRIVILEGES on *.* to '${DATABASE_USER}'@'${mysql_host}' WITH GRANT OPTION;\"" \
+"-e \"flush PRIVILEGES;\"" \
 "-e \"create database if not exists ${MYSQL_DATABASE} default character set='utf8' default collate='utf8_bin';\"" \
 "-e \"create database if not exists ${TEST_DATABASE_NAME};\"" \
-"-e \"create database if not exists ${TEST_DATABASE_NAME}2;\"" \
-"-e \"create database if not exists ${TEST_DATABASE_NAME}3;\"" \
+"-e \"create database if not exists ${TEST_DATABASE_NAME}_2;\"" \
+"-e \"create database if not exists ${TEST_DATABASE_NAME}_3;\"" \
 # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
 # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
 "-e \"select plugin from user where user='${DATABASE_USER}';\"" \
@@ -194,17 +199,17 @@ if [[ $import_identities -eq 1 ]]; then
 "-e \"SET PASSWORD FOR '${MYSQL_USER}'@'${mysql_host}' = PASSWORD('${set_MYSQL_PASSWORD}');\"" \
 "-e \"grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
-"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
-"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}3.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_3.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
 # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
 "-e \"select plugin from user where user='${MYSQL_USER}';\"" \
-"")
+"-e \"flush PRIVILEGES;\"")
   password=""
   if [ ! -z ${MYSQL_ROOT_PASSWORD:-''} ]; then
     password="--password=${MYSQL_ROOT_PASSWORD}"
   fi
-  shell_prompt "exec ${sql_connect} ${sql_connect_test_host} -u ${DATABASE_USER} ${password} \
+  shell_prompt "exec ${sql_connect} ${sql_connect_host} -u ${DATABASE_USER} ${password} \
   ${args[*]} >> $LOG 2>&1" "Import test identities" "$prompt" \
   && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}
   check_log $LOG
@@ -241,40 +246,29 @@ private \$identities = array(
   'Mysql' => array(
     'datasource' => 'Database/MysqlCms',
     'host' => '${MYSQL_HOST}',
+    'port' => '${MYSQL_TCP_PORT}',
     'login' => '${MYSQL_USER}',
     'password' => '${MYSQL_PASSWORD}'
   )
 );
 public \$default = array(
-  'persistent' => false,
-  'host' => '',
-  'login' => '',
-  'password' => '',
+  'persistent' => true,
   'database' => '${MYSQL_DATABASE}',
   'prefix' => ''
 );
 public \$test = array(
-  'persistent' => false,
-  'host' => '',
-  'login' => '',
-  'password' => '',
+  'persistent' => true,
   'database' => '${TEST_DATABASE_NAME}',
   'prefix' => ''
 );
-public \$test2 = array(
-  'persistent' => false,
-  'host' => '',
-  'login' => '',
-  'password' => '',
-  'database' => '${TEST_DATABASE_NAME}2',
+public \$test_database_two = array(
+  'persistent' => true,
+  'database' => '${TEST_DATABASE_NAME}_2',
   'prefix' => ''
 );
 public \$test_database_three = array(
-  'persistent' => false,
-  'host' => '',
-  'login' => '',
-  'password' => '',
-  'database' => '${TEST_DATABASE_NAME}3',
+  'persistent' => true,
+  'database' => '${TEST_DATABASE_NAME}_3',
   'prefix' => ''
 );
 public function __construct() {
@@ -282,7 +276,7 @@ public function __construct() {
   if (!empty(\$_SERVER['DB'])) {
     \$db = \$_SERVER['DB'];
   }
-  foreach (array('default', 'test', 'test2', 'test_database_three') as \$source) {
+  foreach (array('default', 'test', 'test_database_two', 'test_database_three') as \$source) {
     \$config = array_merge(\$this->{\$source}, \$this->identities[\$db]);
     \$this->{\$source} = \$config;
   }
@@ -295,5 +289,5 @@ if [[ $update_checked -eq 1 ]]; then
   bash -c "./Scripts/start_daemon.sh ${docker} update ${ck_args}"
 fi
 if [[ $test_checked -eq 1 ]]; then
-  bash -c "./Scripts/bootstrap.sh ${docker} test app AllTests --stderr"
+  bash -c "./Scripts/bootstrap.sh ${docker} test ${test_args}"
 fi

@@ -23,18 +23,18 @@ if [ $docker 2> /dev/null ]; then
 	maria=$(docker ps -q -a -f "name=${MARIADB_SHORT_NAME}")
 	if [ ! -z $maria ]; then
 		slogger -st $0 "Container $MARIADB_SHORT_NAME already running, was stopped."
-		docker kill $maria >> $LOG 2>&1 || true
+		docker stop $maria >> $LOG 2>&1 || true
 	fi
 	docker rm -f $maria >> $LOG 2>&1 || true
 	slogger -st $0 "Container $MARIADB_SHORT_NAME 's started up..."
-	socket=$TOPDIR/mysqldb/config/mysqld && [ -h /var/run/mysqld/mysqld.sock ] \
-	&& ln -vsf /var/run/mysqld/mysqld.sock $socket/mysqld.sock
+	mysql_credentials=("-e MYSQL_DATABASE=${MYSQL_DATABASE} -e MYSQL_USER=${MYSQL_USER}" "-e MYSQL_PASSWORD=${MYSQL_PASSWORD}" \
+	"-e DATABASE_USER=${DATABASE_USER}" "-e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}")
 	docker run --name $MARIADB_SHORT_NAME -id \
-	--env-file common.env --env-file .env \
-	-e PUID=$(id -u $USER) -e PGID=$(id -g $USER) \
-	-h ${MYSQL_HOST} --publish $MYSQL_TCP_PORT:$MYSQL_TCP_PORT \
-	-v $TOPDIR/mysqldb/config:/config \
-	-v $socket:/var/run/mysqld/ \
+	--env-file .env -e PUID=$(id -u $USER) -e PGID=$(id -g $USER) \
+	-h ${MYSQL_HOST} -e MYSQL_BIND_ADDRESS=${MYSQL_BIND_ADDRESS:-'0.0.0.0'} \
+	"${mysql_credentials[@]}" --publish $MYSQL_TCP_PORT:$MYSQL_TCP_PORT \
+	-v $TOPDIR/mysqldb/conf.d:/etc/mysql/conf.d -v $TOPDIR/mysqldb/config:/config \
+	-v $TOPDIR/mysqldb/config/mysqld:/var/run/mysqld/ \
 	${MARIADB_CONT_NAME} >> $LOG 2>&1
 	if [ $? = 0 ]; then
 		slogger -st $0 "Started docker --name=${MARIADB_SHORT_NAME} ref: $(docker ps -q -a -f "name=maria") host: $MYSQL_HOST}"
@@ -55,13 +55,14 @@ if [ $(parse_arg_exists "server" $ck_args) >> $LOG 2>&1 ]; then
   slogger -st $0 "Unit tests ${cyan}${url}/test.php${nc}"
   slogger -st $0 "Turnoff flags (fix captcha)${cyan}${url}/admin/logoff.php${nc}"
   slogger -st $0 "==============================================="
-   ./lib/Cake/Console/cake $ck_args
+   ./app/Console/cake $ck_args
 elif [ $(parse_arg_exists "test" $(parse_arg_trim "--connection*" $ck_args)) >> $LOG 2>&1 ]; then
   slogger -st $0 $(printf "Passed Cake Args: %s" "$ck_args")
   if [[ "${COLLECT_COVERAGE}" == "true" ]]; then
-    ./app/Vendor/bin/phpunit --log-junit ~/phpunit/junit.xml --coverage-clover app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/Case/AllTestsTest.php
+    ./app/Vendor/bin/phpunit --log-junit ~/phpunit/junit.xml --coverage-clover \
+		app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/Case/AllTestsTest.php
   elif [ "${PHPCS}" != '1' ]; then
-      ./lib/Cake/Console/cake $ck_args
+      ./app/Console/cake $ck_args  --coverage-clover app/build/logs/clover.xml
   else
       ./app/Vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake ${ck_args}
   fi

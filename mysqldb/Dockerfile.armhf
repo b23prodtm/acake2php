@@ -34,6 +34,7 @@ ENV MYSQL_BIND_ADDRESS ${MYSQL_BIND_ADDRESS:-0.0.0.0}
 # 3. "~/.my.cnf" User
 COPY conf.d/my.cnf /etc/mysql/conf.d/my.cnf
 RUN sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS}/" /etc/mysql/conf.d/my.cnf
+RUN sed -i.user "/user/s/=.*$/= ${USER}/" /etc/mysql/conf.d/my.cnf
 
 RUN apt update && apt install -y \
   expect \
@@ -53,6 +54,7 @@ RUN ./mysql_secure_shell
 RUN echo "***** Fix PASSWORD, PRIVILEGES and CREATE ${MYSQL_USER}..." \
   && echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'% WITH GRANT OPTION;" | tee -a p.sql \
   && echo "CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';" | tee -a p.sql \
+  && echo "FLUSH PRIVILEGES;" | tee -a p.sql \
   && mkdir -p /config/initdb.d/ && mv p.sql /config/initdb.d/patch.sql
 
 COPY mariadb.ans .

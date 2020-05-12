@@ -33,11 +33,11 @@ function test_parse_sql_password() {
 
 function test_arg_exists() {
   args=("-d" "me" "--open=9" "--data")
-  T=$(parse_arg_exists "-d" $args)
+  T=$(parse_arg_exists "-d" "${args[@]}")
   [ $T ] \
   && printf "$Z" "OK" "1° match" $FUNCNAME $OPTIND || printf "$Z" "FAILED" "1° match" $FUNCNAME $OPTIND
 
-  P=$(parse_arg_exists "-d|--data" $args)
+  P=$(parse_arg_exists "-d|--data" "${args[@]}")
   [ $P ] \
   && printf "$Z" "OK" "2° match" $FUNCNAME $OPTIND || printf "$Z" "FAILED" "2° match" $FUNCNAME $OPTIND
 }

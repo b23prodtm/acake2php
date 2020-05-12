@@ -19,16 +19,10 @@ ARG COLLECT_COVERAGE
 ENV COLLECT_COVERAGE ${COLLECT_COVERAGE:-'False'}
 ARG DB
 ENV DB ${DB:-Mysql}
-ARG DATABASE_ENGINE
-ENV DATABASE_ENGINE ${DATABASE_ENGINE:-MysqlCms}
-ARG DATABASE_SERVICE_NAME
-ENV DATABASE_SERVICE_NAME ${DATABASE_SERVICE_NAME:-MYSQL}
 ARG MYSQL_HOST
 ENV MYSQL_HOST ${MYSQL_HOST:-db}
 ARG MYSQL_TCP_PORT
 ENV MYSQL_TCP_PORT ${MYSQL_TCP_PORT:-3306}
-ARG DATABASE_SERVICE_NAME
-ENV DATABASE_SERVICE_NAME ${DATABASE_SERVICE_NAME:-MYSQL}
 ARG PHP_CMS_DIR
 ENV PHP_CMS_DIR ${PHP_CMS_DIR:-'app/webroot/php_cms'}
 ARG DATABASE_USER
@@ -152,5 +146,5 @@ WORKDIR /var/www/html/
 RUN git submodule sync && git submodule update --init
 RUN ./configure.sh --openshift -c -h -p pass -s word --development
 # RUN [ "cross-build-end" ]
-ENTRYPOINT [ "/bin/bash", "-c", "./migrate-database.sh -u -o -i --enable-authentication-plugin"]
+ENTRYPOINT [ "/bin/bash", "-c", "./migrate-database.sh -o -u -i --enable-authentication-plugin"]
 CMD [ "apache2 -D FOREGROUND" ]

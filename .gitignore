@@ -17,6 +17,7 @@ docker-compose.*
 myphpcms*.zip
 /app/Config/database.php*
 /app/Config/database.sql*
+/app/Config/Schema/schema*.php
 /app/tmp
 /app/Vendor/
 !/app/Vendor/autoload.php
@@ -36,6 +37,7 @@ myphpcms*.zip
 *.mo
 **/composer*.phar
 mysqldb/config/
+mysqldb/conf.d/custom.cnf
 
 # IDE and editor specific files #
 #################################
@@ -56,3 +58,4 @@ ehthumbs.db
 Thumbs.db
 /nbproject/private/
 mysqldb/config/mysqld/mysqld.sock
+mysqld/conf.d/custom.cnf

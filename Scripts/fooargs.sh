@@ -4,7 +4,7 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   source ./Scripts/lib/logging.sh
   source ./Scripts/lib/parsing.sh
   set -eu
-  docker=$(parse_arg_exists "--docker" "$@")
+  docker=$(parse_arg_exists "--docker" $*)
   #; colorize shell script
   nc="\033[0m"
   red="\033[0;31m"
@@ -13,13 +13,10 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   cyan="\033[0;36m"
   slogger -st $0 "Loading ${orange}Test environment${nc} : $0..."
   #; Common Environment profile
-  [[ ! -e .env || ! -e common.env ]] && printf "Missing environment configuration, please run ./deploy.sh %s --nobuild first." $(arch)
+  [[ ! -e .env || ! -e common.env ]] && printf "Missing environment configuration, please run ./deploy.sh %s --nobuild first." $(arch) && exit 1
   eval $(cat .env common.env | awk 'BEGIN{ FS="$" }{ print "export " $1 }')
   #; To change  Model/Datasource/Database
   export DB=${DB:-Mysql}
-  [ "${DB}" = "Mysql" ] && export DATABASE_ENGINE=MysqlCms && export DATABASE_SERVICE_NAME=MYSQL
-  [ "${DB}" = "Pgsql" ] && export DATABASE_ENGINE=PostgresCms && export DATABASE_SERVICE_NAME=PGSQL
-  [ "${DB}" = "Sqlite" ] && export DATABASE_ENGINE=SqliteCms && export DATABASE_SERVICE_NAME=SQLITE
   slogger -st $0 "DB : ${green}${DB}${nc}"
   # Test units :
   #             - Web interface:
@@ -29,23 +26,23 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   #             - Continuous Integration
   #               $ .circleci/build.sh
   #
-  if [ $docker 2> /dev/null ]; then
-    export MYSQL_HOST=${MYSQL_HOST:-'127.0.0.1'}
-    export TEST_PGSQL_SERVICE_HOST=${MYSQL_HOST:-'127.0.0.1'}
+  if [ $docker ]; then
+    export MYSQL_HOST=${MYSQL_HOST:-$(hostname)}
+    export PGSQL_HOST=${MYSQL_HOST:-$(hostname)}
   fi
   export MYSQL_HOST=${MYSQL_HOST:-'localhost'}
+  export PGSQL_HOST=${PGSQL_HOST:-'localhost'}
   export MYSQL_TCP_PORT=${MYSQL_TCP_PORT:-'3306'}
-  #; To override, use shell parameter -dbase=<name> instead
-  export MYSQL_DATABASE=${MYSQL_DATABASE:-'aria_db'}
-  export DATABASE_USER=${DATABASE_USER:-'root'}
-  #; To override, shell parameter -p=<password> instead
-  export MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-'mariadb'}
-  export TEST_PGSQL_SERVICE_HOST=${TEST_PGSQL_SERVICE_HOST:-'localhost'}
-  #; To override, use shell parameter -tbase=<name> instead
-  export TEST_DATABASE_NAME=${TEST_DATABASE_NAME:-'test'}
   export MYSQL_USER=${MYSQL_USER:-'maria'}
   #; To override, use shell parameter -t <password> instead
   export MYSQL_PASSWORD=${MYSQL_PASSWORD:-'maria-abc'}
+  export MYSQL_DATABASE=${MYSQL_DATABASE:-'aria_db'}
+  #; To override, use shell parameter -dbase=<name> instead
+  export DATABASE_USER=${DATABASE_USER:-'root'}
+  #; To override, shell parameter -p=<password> instead
+  export MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-'mariadb'}
+  #; To override, use shell parameter -tbase=<name> instead
+  export TEST_DATABASE_NAME=${TEST_DATABASE_NAME:-'test'}
   export FTP_SERVICE_HOST=localhost
   export FTP_SERVICE_USER=test
   export FTP_SERVICE_PASSWORD=mypassword

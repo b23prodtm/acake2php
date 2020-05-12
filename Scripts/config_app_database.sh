@@ -22,19 +22,20 @@ while [[ "$#" > 0 ]]; do case $1 in
   *.php)
     dbfile=$1
     wd="app/Config"
-    source ./Scripts/cp_bkp_old.sh $wd $dbfile "database.php"
+		outfile=$(echo $dbfile | cut -d . -f 1)
+    source ./Scripts/cp_bkp_old.sh $wd $dbfile "${outfile}.php"
     ;;
-	-[yY]*)
+	*.sock )
 		if [ $(which mysql) 2> /dev/null ]; then
 			mysql --version
 		fi
 		#; symlink mysql socket with php
     echo "Please allow the super-user to link mysql socket to php ..."
-    mkdir -p /var/run/mysqld
+    [ ! -d /var/run/mysqld ] && sudo mkdir -p /var/run/mysqld
     if [ -h /var/run/mysqld/mysqld.sock ]; then
 				ls -al /var/run/mysqld/mysqld.sock
 	 	else
-			 ln -vsf /tmp/mysqld.sock /var/run/mysqld/mysqld.sock
+			 sudo ln -vsf $1 /var/run/mysqld/mysqld.sock
 		fi;;
   *)
     ;;
