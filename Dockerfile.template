@@ -146,5 +146,5 @@ WORKDIR /var/www/html/
 RUN git submodule sync && git submodule update --init
 RUN ./configure.sh --openshift -c -h -p pass -s word --development
 # RUN [ "cross-build-end" ]
-ENTRYPOINT [ "/bin/bash", "-c", "./migrate-database.sh -o -u -i --enable-authentication-plugin"]
+ENTRYPOINT [ "/var/www/html/migrate-database.sh -o -u -i --enable-authentication-plugin" ]
 CMD [ "apache2 -D FOREGROUND" ]

@@ -11,7 +11,6 @@ ARG PGID
 ENV PGID ${PGID:-0}
 ARG MYSQL_ROOT_PASSWORD
 ENV MYSQL_ROOT_PASSWORD ${MYSQL_ROOT_PASSWORD:-'mariadb'}
-# bind-address = '127.0.0.1' > conf.d/my.cnf
 ARG MYSQL_HOST
 ENV MYSQL_HOST ${MYSQL_HOST:-'localhost'}
 ENV TZ ${TZ:-'Europe/Paris'}
@@ -59,3 +58,5 @@ RUN echo "***** Fix PASSWORD, PRIVILEGES and CREATE ${MYSQL_USER}..." \
 
 COPY mariadb.ans .
 RUN cat mariadb.ans
+
+VOLUME /var/run/mysqld

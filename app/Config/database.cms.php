@@ -70,7 +70,7 @@
 * The resulting file is a generated copy made by ./Scripts/config_app_database.sh of database.cms.php. Edit app/Config/database.cms.php to make changes.
 * --------------------------------------
 */
-App::uses('MysqlCms', 'Model/Datasource/Database');
+App::uses('MysqlCms', 'Datasources.Model/Datasource/Database');
 define('unix_socket', '/var/run/mysqld/mysqld.sock');
 /**
 * Defines a constant expression from environment variables
@@ -95,7 +95,7 @@ class DATABASE_CONFIG {
   private $identities = array(
     'Mysql' => array(
       /* this is an extended Mysql database (providing blob-binary storage)*/
-      'datasource' => 'Database/MysqlCms',
+      'datasource' => 'Datasources.Database/MysqlCms',
       'persistent' => true,
       'prefix' => '',
       'encoding' => 'utf8',
@@ -108,7 +108,7 @@ class DATABASE_CONFIG {
       )
     ),
     'unix_socket' => array(
-      'datasource' => 'Database/MysqlCms',
+      'datasource' => 'Datasources.Database/MysqlCms',
       'persistent' => true,
       'prefix' => '',
       'encoding' => 'utf8',

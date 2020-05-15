@@ -59,7 +59,7 @@ while [[ "$#" > 0 ]]; do case "$1" in
   --docker )
     bash -c "./Scripts/start_daemon.sh ${docker}"
     #sql_connect="docker exec $MARIADB_SHORT_NAME mysql"
-    sockfile="$(pwd)/mysqldb/config/mysqld/mysqld.sock"
+    sockfile="$(pwd)/mysqldb/mysqld/mysqld.sock"
     ;;
   -[uU]* )
     update_checked=1
@@ -244,7 +244,7 @@ check_log $LOG
 class DATABASE_CONFIG {
 private \$identities = array(
   'Mysql' => array(
-    'datasource' => 'Database/MysqlCms',
+    'datasource' => 'Datasources.MysqlCms',
     'host' => '${MYSQL_HOST}',
     'port' => '${MYSQL_TCP_PORT}',
     'login' => '${MYSQL_USER}',

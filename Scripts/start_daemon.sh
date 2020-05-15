@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 TOPDIR=$(cd `dirname $BASH_SOURCE`/.. && pwd)
-source ./Scripts/lib/logging.sh
-source ./Scripts/lib/shell_prompt.sh
-source ./Scripts/lib/parsing.sh
+source $TOPDIR/Scripts/lib/logging.sh
+source $TOPDIR/Scripts/lib/shell_prompt.sh
+source $TOPDIR/Scripts/lib/parsing.sh
 docker=$(parse_arg_exists "--docker" $*)
 ck_args=$(parse_arg_trim "-[oO]+|--openshift|--docker" $*)
 LOG=$(new_log) && slogger -st $0 $LOG
@@ -21,28 +21,32 @@ if [ $docker 2> /dev/null ]; then
 	slogger -st $0 "Docker list ${MARIADB_SHORT_NAME} containers"
 	#docker quits shell ??
 	maria=$(docker ps -q -a -f "name=${MARIADB_SHORT_NAME}")
-	if [ ! -z $maria ]; then
+	if [ ! -z $maria ] && [ $(cat $TOPDIR/mysqldb/mysqld/mysqld.cid) != $maria ]; then
 		slogger -st $0 "Container $MARIADB_SHORT_NAME already running, was stopped."
 		docker stop $maria >> $LOG 2>&1 || true
+		docker rm -f $maria >> $LOG 2>&1 || true
+		slogger -st $0 "Container $MARIADB_SHORT_NAME 's started up..."
+		mysql_credentials=("-e MYSQL_DATABASE=${MYSQL_DATABASE} -e MYSQL_USER=${MYSQL_USER}" "-e MYSQL_PASSWORD=${MYSQL_PASSWORD}" \
+		"-e DATABASE_USER=${DATABASE_USER}" "-e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}")
+		[ ! $(docker network ls -q -f 'name=cake') ] && docker create network cake
+		docker run --name $MARIADB_SHORT_NAME -id \
+		--env-file .env -e PUID=$(id -u $USER) -e PGID=$(id -g $USER) \
+		--network cake -e MYSQL_HOST=${MYSQL_HOST} -e MYSQL_BIND_ADDRESS=${MYSQL_BIND_ADDRESS:-'0.0.0.0'} \
+		"${mysql_credentials[@]}" --publish $MYSQL_TCP_PORT:$MYSQL_TCP_PORT \
+		-v $TOPDIR/mysqldb/conf.d:/etc/mysql/conf.d -v $TOPDIR/mysqldb/config:/config \
+		-v $TOPDIR/mysqldb/mysqld:/var/run/mysqld/ \
+		${MARIADB_CONT_NAME} >> $LOG 2>&1
+	else
+		slogger -st $0 "Container $MARIADB_SHORT_NAME OK."
 	fi
-	docker rm -f $maria >> $LOG 2>&1 || true
-	slogger -st $0 "Container $MARIADB_SHORT_NAME 's started up..."
-	mysql_credentials=("-e MYSQL_DATABASE=${MYSQL_DATABASE} -e MYSQL_USER=${MYSQL_USER}" "-e MYSQL_PASSWORD=${MYSQL_PASSWORD}" \
-	"-e DATABASE_USER=${DATABASE_USER}" "-e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}")
-	docker run --name $MARIADB_SHORT_NAME -id \
-	--env-file .env -e PUID=$(id -u $USER) -e PGID=$(id -g $USER) \
-	-h ${MYSQL_HOST} -e MYSQL_BIND_ADDRESS=${MYSQL_BIND_ADDRESS:-'0.0.0.0'} \
-	"${mysql_credentials[@]}" --publish $MYSQL_TCP_PORT:$MYSQL_TCP_PORT \
-	-v $TOPDIR/mysqldb/conf.d:/etc/mysql/conf.d -v $TOPDIR/mysqldb/config:/config \
-	-v $TOPDIR/mysqldb/config/mysqld:/var/run/mysqld/ \
-	${MARIADB_CONT_NAME} >> $LOG 2>&1
 	if [ $? = 0 ]; then
 		slogger -st $0 "Started docker --name=${MARIADB_SHORT_NAME} ref: $(docker ps -q -a -f "name=maria") host: $MYSQL_HOST}"
 		wait_for_host $MYSQL_HOST ${MYSQL_TCP_PORT:-3306}
 		[ $? = 1 ] && slogger -st $0 "${red}Failed waiting for Mysql${nc}"
 	fi
-		slogger -st $0 "Connect to docker exec -it ${MARIADB_SHORT_NAME} <ENTRYPOINT> .."
-		check_log $LOG
+	slogger -st $0 "Connect to docker exec -it ${MARIADB_SHORT_NAME} <ENTRYPOINT> .. $$"
+	check_log $LOG
+	docker ps -q -a -f "name=${MARIADB_SHORT_NAME}" > $TOPDIR/mysqldb/mysqld/mysqld.cid
 fi
 if [ $(parse_arg_exists "server" $ck_args) >> $LOG 2>&1 ]; then
   show_password_status "${DATABASE_USER}" "${MYSQL_ROOT_PASSWORD}" "is running development server"
@@ -55,21 +59,21 @@ if [ $(parse_arg_exists "server" $ck_args) >> $LOG 2>&1 ]; then
   slogger -st $0 "Unit tests ${cyan}${url}/test.php${nc}"
   slogger -st $0 "Turnoff flags (fix captcha)${cyan}${url}/admin/logoff.php${nc}"
   slogger -st $0 "==============================================="
-   ./app/Console/cake $ck_args
+  cakephp $ck_args
 elif [ $(parse_arg_exists "test" $(parse_arg_trim "--connection*" $ck_args)) >> $LOG 2>&1 ]; then
   slogger -st $0 $(printf "Passed Cake Args: %s" "$ck_args")
   if [[ "${COLLECT_COVERAGE}" == "true" ]]; then
-    ./app/Vendor/bin/phpunit --log-junit ~/phpunit/junit.xml --coverage-clover \
+    $TOPDIR/app/Vendor/bin/phpunit --log-junit ~/phpunit/junit.xml --coverage-clover \
 		app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/Case/AllTestsTest.php
   elif [ "${PHPCS}" != '1' ]; then
-      ./app/Console/cake $ck_args  --coverage-clover app/build/logs/clover.xml
+      cakephp $ck_args  --coverage-clover app/build/logs/clover.xml
   else
-      ./app/Vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake ${ck_args}
+      $TOPDIR/app/Vendor/bin/phpcs -p --extensions=php --standard=CakePHP $TOPDIR/lib/Cake ${ck_args}
   fi
 elif [ $(parse_arg_exists "docker-compose" $ck_args) >> $LOG 2>&1 ]; then
-  if [ ! $(which docker-compose) 2> /dev/null ]; then ./Scripts/install-docker-compose.sh; fi
+  if [ ! $(which docker-compose) 2> /dev/null ]; then $TOPDIR/Scripts/install-docker-compose.sh; fi
 	: ${SERVER_NAME?}
-	./Scripts/configure-available-site.sh $SERVER_NAME
+	$TOPDIR/Scripts/configure-available-site.sh $SERVER_NAME
   slogger -st $0 "${ck_args}"
   bash -c "${ck_args}"
 elif [ $(parse_arg_exists "update" $ck_args) >> $LOG 2>&1 ]; then
@@ -77,13 +81,13 @@ elif [ $(parse_arg_exists "update" $ck_args) >> $LOG 2>&1 ]; then
   echo "Migrating database 'cake schema update' ..."
 	p=$(parse_arg_trim "update" $ck_args)
 	slogger -st $0 $(printf "Passed Cake Args:(%s) -> %s" "$ck_args" "$p")
-  ./lib/Cake/Console/cake schema update $p -y
+  cakephp schema update $p -y
   slogger -st $0 "Update finished"
   if [ -f app/Config/Schema/sessions.php ]; then
       slogger -st $0 "Generating default Sessions table"
-      ./lib/Cake/Console/cake schema create Sessions $p -y
+      cakephp schema create Sessions $p -y
   fi
   slogger -st $0 "Generating database schema 'cake schema generate'"
-  ./lib/Cake/Console/cake schema generate $p -f snapshot
+  cakephp schema generate $p -f snapshot
 fi
 check_log $LOG

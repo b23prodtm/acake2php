@@ -29,13 +29,15 @@ while [[ "$#" > 0 ]]; do case $1 in
 		if [ $(which mysql) 2> /dev/null ]; then
 			mysql --version
 		fi
-		#; symlink mysql socket with php
-    echo "Please allow the super-user to link mysql socket to php ..."
-    [ ! -d /var/run/mysqld ] && sudo mkdir -p /var/run/mysqld
-    if [ -h /var/run/mysqld/mysqld.sock ]; then
-				ls -al /var/run/mysqld/mysqld.sock
+		sockdir=/var/run/mysqld
+		sockh=$sockdir/mysqld.sock
+		#; symlink mysql socket
+    slogger -st $0 "${orange}Please allow the super-user to link mysql socket to $1 ...${nc}"
+    [ ! -d $sockdir ] && sudo mkdir -p $sockdir
+    if [ -h $sockh ]; then
+				ls -al $sockh
 	 	else
-			 sudo ln -vsf $1 /var/run/mysqld/mysqld.sock
+			 sudo ln -vsf $1 $sockh
 		fi;;
   *)
     ;;

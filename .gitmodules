@@ -11,3 +11,12 @@
 	path = cakephp
 	url = git://github.com/cakephp/cakephp.git
 	branch = 2.x
+[submodule "app/Plugin/Datasources"]
+	path = app/Plugin/Datasources
+	url = https://github.com/b23prodtm/datasources
+[submodule "app/Plugin/UpdateShell"]
+	path = app/Plugin/UpdateShell
+	url = https://github.com/b23prodtm/update
+[submodule "app/Plugin/Markdown"]
+	path = app/Plugin/Markdown
+	url = https://github.com/b23prodtm/markdown-plugin

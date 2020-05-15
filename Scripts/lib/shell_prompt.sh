@@ -35,3 +35,8 @@ show_password_status() {
   slogger -st $FUNCNAME "User ${green}${1}${nc} (using password:${orange} $([ -z $2 ] && echo "NO" || echo "YES")${nc}) $3...\n"
 }
 #; export -f show_password_status
+cakephp() {
+  CONSOLE=$(dirname $(dirname $(dirname $BASH_SOURCE)))/app/Console
+  APP=$(cd "$CONSOLE"/.. && pwd)
+  exec php -q "$CONSOLE"/cake.php -working "$APP" "$@"
+}

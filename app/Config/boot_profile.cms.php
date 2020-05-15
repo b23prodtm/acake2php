@@ -30,3 +30,7 @@ CakePlugin::load(array('Markdown' => array('bootstrap' => true)));
  * Load UpdateShell Plugin
  */
 CakePlugin::load('UpdateShell');
+/**
+ * Load DataSources Plugin
+ */
+CakePlugin::load('Datasources');
