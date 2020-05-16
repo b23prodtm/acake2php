@@ -13,10 +13,10 @@
 	branch = 2.x
 [submodule "app/Plugin/Datasources"]
 	path = app/Plugin/Datasources
-	url = https://github.com/b23prodtm/datasources
+	url = https://github.com/cakephp/datasources.git
 [submodule "app/Plugin/UpdateShell"]
 	path = app/Plugin/UpdateShell
-	url = https://github.com/b23prodtm/update
+	url = https://github.com/b23prodtm/update.git
 [submodule "app/Plugin/Markdown"]
 	path = app/Plugin/Markdown
-	url = https://github.com/b23prodtm/markdown-plugin
+	url = https://github.com/b23prodtm/markdown-plugin.git

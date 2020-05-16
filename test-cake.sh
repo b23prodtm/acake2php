@@ -3,29 +3,31 @@ set -e
 source ./Scripts/lib/test/parsing.sh
 test=("test_parse_and_export" "test_parse_sql_password" "test_arg_exists" "test_arg_trim")
 for t in "${test[@]}"; do printf "TEST CASES : %s\n" "$t" && eval "$t"; done; sleep 5
-bootargs=""
 migrate="--connection=test -v -u -i --enable-authentication-plugin"
+# default arg --docker, is enabled
 saved=("$@")
+set -- "--docker" "$@"
 config_args="-c -h -p pass -s word --development"
 db_data="db-data:/config/databases/"
 usage=("" \
 "${cyan}Notice:${nc}The test script." \
-"Usage: $0 [-p <password>] [-t <password>] [--travis,--circle [--cov]]" \
-"           -p <password>       Exports MYSQL_ROOT_PASSWORD" \
-"           -t <password>       Exports MYSQL_PASSWORD" \
+"Usage: $0 [--travis|--docker --openshift --circle [--cov]] [-p <password>] [-t <password>] " \
 "           --travis, --circle  Travis or Circle CI Local Test Workflow" \
 "           --cov               Coverage All Tests" \
-"           -o, --openshift     [path to a file with a list of variables]" \
-"           --docker            Startup Docker Image DATABASE" \
-"Notice:    Use environment variables from open container/pod and a file if it exists" \
+"           -o, --openshift     [path to a file with a list of variables], " \
+"                               also disables Docker Image" \
+"           --docker            [enabled] Startup with Docker Image DATABASE" \
+"           -p <password>       Exports MYSQL_ROOT_PASSWORD" \
+"           -t <password>       Exports MYSQL_PASSWORD" \
+"" \
+"Notice:                        Use environment variables from open container/pod" \
+"                               and a file if it exists" \
+"Default arguments:   " \
+"           --docker" \
 "")
 while [[ "$#" > 0 ]]; do case $1 in
-  --travis )
-    #; Test values
-    set -- "$@" "--docker"
-    ;;
   --circle )
-    bootargs=$(parse_arg_trim "--docker" $bootargs)
+    migrate=$(parse_arg_trim "--docker" $migrate)
     ;;
   --cov )
     export COLLECT_COVERAGE=true;;
@@ -42,21 +44,20 @@ while [[ "$#" > 0 ]]; do case $1 in
     ;;
   -[vV]*|--verbose )
     set -x
-    bootargs="-v ${bootargs}"
+    migrate="-v ${migrate}"
     echo "Passed params :  $0 ${saved[*]}";;
   -[oO]*|--openshift )
-    bootargs=$(parse_arg_trim "--docker" $bootargs)
-    bootargs="${bootargs} --openshift"
+    migrate=$(parse_arg_trim "--docker" $migrate)" --openshift"
     config_args="--openshift ${config_args}"
     ;;
-  --docker )
+  --travis|--docker )
     config_args="--docker ${config_args}"
-    bootargs="--docker ${bootargs}"
+    migrate="--docker ${migrate}"
     db_data="$(pwd)/mysqld$(echo ${db_data} | cut -d : -f 2)"
     ;;
   *) echo "Unknown parameter, passed $0: $1"; exit 1;;
 esac; shift; done
-source ./configure.sh ${config_args}
-bash -c "./migrate-database.sh ${migrate} ${bootargs}" \
-&& printf "[SUCCESS] CakePHP Test Suite exited successfully.\n" || printf "[FAILED] CakePHP Test Suite had errors.\n\
-[INFO] Only continuous integration scripts may run tests.\n"
+source ./configure.sh $config_args
+bash -c "./migrate-database.sh ${migrate}" \
+&& printf "[SUCCESS] CakePHP Test Suite successfully finished, go on with the job...\n" || printf "[FAILED] CakePHP Test Suite had errors. Quit the job thread.\n\
+[INFO] Only continuous integration scripts may run tests.\n" && exit 1

@@ -16,18 +16,12 @@
 	"support": {
 		"source": "https://www.sourceforge.net/projects/pohse/support"
 	},
-	"repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/b23prodtm/datasources"
-    }
-  ],
 	"require": {
 		"php": "^5.6 || ^7",
 		"cakephp/debug_kit": "2.2.*",
-		"betothreeprod/markdown-plugin": "master@dev",
+		"betothreeprod/markdown-plugin": "^0.9.1",
 		"betothreeprod/updateshell": "dev-development",
-		"cakephp/datasources": "dev-development"
+		"cakephp/datasources": "2.3.x-dev"
 	},
 	"suggest": {
 		"ext-openssl": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption",
@@ -52,14 +46,14 @@
 		"process-timeout": 0
 	},
 	"bin": [
-		"lib/Cake/Console/cake"
+		"app/Console/cake"
 	],
 	"scripts": {
 		"check": [
 			"@cs-check",
 			"@test"
 		],
-		"cs-check": "./app/Vendor/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake",
-		"test": "./lib/Cake/Console/cake test core AllTests --stderr"
+		"cs-check": "PHP_CS=1 ./test-cake.sh",
+		"test": "./test-cake.sh"
 	}
 }

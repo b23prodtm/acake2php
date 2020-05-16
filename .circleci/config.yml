@@ -27,9 +27,7 @@ jobs:
     - run:
         command: git submodule update --init --recursive
     - restore_cache:
-        keys:
-        - v1-dependencies-{{ checksum "composer.lock" }}
-        - v1-dependencies-
+        key: v1-dependencies-{{ checksum "composer.lock" }}
     - setup_remote_docker:
         docker_layer_caching: false
     - run:
