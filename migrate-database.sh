@@ -21,7 +21,7 @@ usage=("" \
 "          -n          Doesn't reset database.php and socket" \
 "          -i --sql-password=<word> --test-sql-password=<word>" \
 "                      Import SQL identities with new passwords and reset MYSQL_DATABASE and TEST_DATABASE_NAME privileges" \
-"          -o, --openshift" \
+"          -o, --openshift", "--travis" \
 "                      Resets database.php, keep socket and update the database" \
 "          -p=<password>" \
 "                      Exports MYSQL_ROOT_PASSWORD" \
@@ -106,7 +106,7 @@ $(export -p | grep "DATABASE\|MYSQL") \
   -[hH]*|--help )
     printf "%s\n" "${usage[@]}"
     exit 0;;
-  -[oO]*|--openshift );;
+  -[oO]*|--openshift|--travis);;
   -[pP]* )
     parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
     shift $((OPTIND -1))
@@ -187,7 +187,7 @@ if [[ $import_identities -eq 1 ]]; then
   export set_MYSQL_PASSWORD=${set_MYSQL_PASSWORD:-$MYSQL_PASSWORD}
   if [ -z ${set_MYSQL_PASSWORD} ]; then
     slogger -st $0 "\r${orange}WARNING: Using blank password for ${MYSQL_USER} !!${nc}"
-    prompt=""
+    prompt=${DEBIAN_FRONTEND:-''}
   fi
   if [ $authentication_plugin = 1 ]; then
     identifiedby="IDENTIFIED VIA ed25519 USING '${set_MYSQL_PASSWORD}'"

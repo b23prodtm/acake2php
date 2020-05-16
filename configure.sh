@@ -59,7 +59,7 @@ while [[ "$#" > 0 ]]; do case $1 in
     --help )
         printf "%s\n" "${usage[@]}"
         exit 0;;
-    -[oO]*|--openshift )
+    -[oO]*|--openshift|--travis )
       ;;
     --docker )
       slogger -st docker "check database container status"

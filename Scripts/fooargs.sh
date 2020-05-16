@@ -5,6 +5,7 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   source ./Scripts/lib/parsing.sh
   set -eu
   docker=$(parse_arg_exists "--docker" $*)
+  travis=$(parse_arg_exists "--travis" $*)
   #; colorize shell script
   nc="\033[0m"
   red="\033[0;31m"
@@ -35,12 +36,12 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   export MYSQL_TCP_PORT=${MYSQL_TCP_PORT:-'3306'}
   export MYSQL_USER=${MYSQL_USER:-'maria'}
   #; To override, use shell parameter -t <password> instead
-  export MYSQL_PASSWORD=${MYSQL_PASSWORD:-'maria-abc'}
+  [ ! $travis ] && export MYSQL_PASSWORD=${MYSQL_PASSWORD:-'maria-abc'}
   export MYSQL_DATABASE=${MYSQL_DATABASE:-'aria_db'}
   #; To override, use shell parameter -dbase=<name> instead
   export DATABASE_USER=${DATABASE_USER:-'root'}
   #; To override, shell parameter -p=<password> instead
-  export MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-'mariadb'}
+  [ ! $travis ] && export MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-'mariadb'}
   #; To override, use shell parameter -tbase=<name> instead
   export TEST_DATABASE_NAME=${TEST_DATABASE_NAME:-'test'}
   export FTP_SERVICE_HOST=localhost

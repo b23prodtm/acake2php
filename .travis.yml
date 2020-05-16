@@ -13,6 +13,7 @@ os:
 
 dist: bionic
 addons:
+  mariadb: '10.4'
   apt:
     sources:
     - sourceline: ppa:ondrej/php
@@ -24,7 +25,7 @@ addons:
         : This is the Cake PHP cartridge repository. A submodule is included in app/webroot.'
     notification_email: b23prodtm@users.sourceforge.net
     build_command_prepend: ""
-    build_command: "./test-cake.sh --cov --travis --docker"
+    build_command: "./test-cake.sh --travis --cov"
     branch_pattern: coverity_scan
 
 env:
@@ -33,6 +34,7 @@ env:
     - _PHP=7.3 _PKG=php PHPENV_ROOT=~/.phpenv
 
   global:
+    - DEBIAN_FRONTEND=noninteractive
     - COLLECT_COVERAGE=false
     - PHPENV_ROOT=/usr/local/bin/phpenv
     - _SSL=openssl

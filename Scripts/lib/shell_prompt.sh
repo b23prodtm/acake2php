@@ -9,7 +9,7 @@ shell_prompt() {
           echo -e "${cyan}Run ${title} ?...\n${nc}"
           answer=$3
           case $answer in
-                 -[yY]* ) answer="Y";;
+                 -[yY]*|noninteractive ) answer="Y";;
 
                  -[nN]* ) answer="N";;
 

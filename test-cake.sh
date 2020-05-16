@@ -11,8 +11,9 @@ config_args="-c -h -p pass -s word --development"
 db_data="db-data:/config/databases/"
 usage=("" \
 "${cyan}Notice:${nc}The test script." \
-"Usage: $0 [--travis|--docker --openshift --circle [--cov]] [-p <password>] [-t <password>] " \
+"Usage: $0 [--travis|--docker|--openshift|--circle [--cov]] [-p <password>] [-t <password>] " \
 "           --travis, --circle  Travis or Circle CI Local Test Workflow" \
+"                               also disables Docker Image" \
 "           --cov               Coverage All Tests" \
 "           -o, --openshift     [path to a file with a list of variables], " \
 "                               also disables Docker Image" \
@@ -50,7 +51,15 @@ while [[ "$#" > 0 ]]; do case $1 in
     migrate=$(parse_arg_trim "--docker" $migrate)" --openshift"
     config_args="--openshift ${config_args}"
     ;;
-  --travis|--docker )
+  --travis)
+    export MYSQL_HOST=${MYSQL_HOST:-'127.0.0.1'}
+    export MYSQL_USER='travis'
+    export MYSQL_PASSWORD=''
+    export MYSQL_ROOT_PASSWORD=''
+    migrate=$(parse_arg_trim "--docker" $migrate)" --travis"
+    config_args="--travis ${config_args}"
+    ;;
+  --docker )
     config_args="--docker ${config_args}"
     migrate="--docker ${migrate}"
     db_data="$(pwd)/mysqld$(echo ${db_data} | cut -d : -f 2)"
@@ -58,6 +67,11 @@ while [[ "$#" > 0 ]]; do case $1 in
   *) echo "Unknown parameter, passed $0: $1"; exit 1;;
 esac; shift; done
 source ./configure.sh $config_args
-bash -c "./migrate-database.sh ${migrate}" \
-&& printf "[SUCCESS] CakePHP Test Suite successfully finished, go on with the job...\n" || printf "[FAILED] CakePHP Test Suite had errors. Quit the job thread.\n\
-[INFO] Only continuous integration scripts may run tests.\n" && exit 1
+bash -c "./migrate-database.sh ${migrate}"
+if [ "$?" = 0 ]; then
+  printf "[SUCCESS] CakePHP Test Suite successfully finished, go on with the job...\n"
+else
+  printf "[FAILED] CakePHP Test Suite had errors. Quit the job thread.\n\
+[INFO] Only continuous integration scripts may run tests.\n"
+  exit 1
+fi
