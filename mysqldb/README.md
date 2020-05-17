@@ -18,13 +18,14 @@ Here are some example snippets to help you get started creating a container.
 ```
 docker create \
   --name=mariadb \
-  -e PUID=1000 \
-  -e PGID=1000 \
+  -e PUID=UID \
+  -e PGID=GUID \
   -e MYSQL_ROOT_PASSWORD=ROOT_ACCESS_PASSWORD \
   -e TZ=Europe/London \
-  -e MYSQL_DATABASE=USER_DB_NAME `#optional` \
-  -e MYSQL_USER=MYSQL_USER `#optional` \
-  -e MYSQL_PASSWORD=DATABASE_PASSWORD `#optional` \
+  -e MYSQL_DATABASE=USER_DB_NAME \
+  -e MYSQL_USER=MYSQL_USER \
+  -e MYSQL_PASSWORD=DATABASE_PASSWORD \			
+	-e MYSQL_HOST=EXTERNAL_IP_ADDRESS `#optional` \
   -e REMOTE_SQL=http://URL1/your.sql,https://URL2/your.sql `#optional` \
   -p 3306:3306 \
   -v path_to_data:/config \
@@ -39,19 +40,20 @@ Compatible with docker-compose v2 schemas.
 
 ```
 ---
-version: "2.1"
+version: "2"
 services:
   mariadb:
     image: betothreeprod/mariadb-%%BALENA_MACHINE_NAME%%
     container_name: mariadb
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=UID
+      - PGID=GUID
       - MYSQL_ROOT_PASSWORD=ROOT_ACCESS_PASSWORD
       - TZ=Europe/London
-      - MYSQL_DATABASE=USER_DB_NAME #optional
-      - MYSQL_USER=MYSQL_USER #optional
-      - MYSQL_PASSWORD=DATABASE_PASSWORD #optional
+			- MYSQL_DATABASE=USER_DB_NAME
+      - MYSQL_USER=MYSQL_USER
+      - MYSQL_PASSWORD=DATABASE_PASSWORD			
+			- MYSQL_HOST=EXTERNAL_IP_ADDRESS #optional
       - REMOTE_SQL=http://URL1/your.sql,https://URL2/your.sql #optional
     volumes:
       - path_to_data:/config
@@ -67,9 +69,10 @@ When using volumes (`-v` flags) permissions issues can arise between the host OS
 
 Ensure any volume directories on the host are owned by the same user you specify and any permissions issues will vanish like magic.
 
-In this instance `PUID=1000` and `PGID=1000`, to find yours use `id user` as below:
+In this instance `PUID=UID` and `PGID=GUID`, to find it, you use `id user` as below:
 
 ```
   $ id $USER
     uid=1000(thedockeruser) gid=1000(thedockergroup) groups=1000(thedockergroup)
 ```
+If docker's run by `root(0)`, it's the default behaviour, `PUID=0` and `GUID=0`.
