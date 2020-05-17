@@ -55,10 +55,11 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   export CAKEPHP_DEBUG_LEVEL=${CAKEPHP_DEBUG_LEVEL:-'2'}
   #; Shell parameters -h -p password -s salt
   #; export GET_HASH_PASSWORD=wokUd0mcc
-  export PHP_CMS_DIR=${PHP_CMS_DIR:-'app/webroot/php_cms'}
   if [[ $(parse_arg_exists "-[vV]+|--verbose" $*) ]]; then
     echo "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
     echo "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
   fi
   export SERVER_NAME=${SERVER_NAME:-$(hostname)}
+  export MYPHPCMS_DIR=${MYPHPCMS_DIR:-'app/webroot/php_cms'}
+  export MYPHPCMS_LOG=${MYPHPCMS_LOG:-'app/tmp/logs'}
 fi

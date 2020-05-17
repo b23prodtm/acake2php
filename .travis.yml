@@ -13,7 +13,6 @@ os:
 
 dist: bionic
 addons:
-  mariadb: '10.4'
   apt:
     sources:
     - sourceline: ppa:ondrej/php
@@ -38,10 +37,7 @@ env:
     - COLLECT_COVERAGE=false
     - PHPENV_ROOT=/usr/local/bin/phpenv
     - _SSL=openssl
-    - MYPHPCMS_LOG=app/tmp/log
-    - DB=Mysql
-    - PHPUNIT=4
-    - COLLECT_COVERAGE=false
+    - MYPHPCMS_LOG=app/tmp/logs
     - DKR_ARCH=x86_64
     - WEBHOOK_URL=https://discordapp.com/api/webhooks/479745392880386058/YOO7Nnn1IFWUtXX0n0qAZYeMDeV-SLa0lSzjGpNnKGTzG-xA0T3dplVGzSM4ObKLeMWg
     - secure: C39DQ1zYpSAOy33Sb8NP89o6k4HUnjHnQ+bQkgbo3WH7WtiN76dGeO9jm1DjMn5np6oKbDi41/fxonaTUIjb9YMksG2YB+NBDYXHyV1H7/xAeC6uTxwUObrLXh8aOUwiiuLPllMdtOLX8JSPxl1Ixc6KyeFywPiMvwuOe4QZW6sVG4sqhZC/UUycYKRSMaOthtuTDPYKjBLaDPiEzkUmdBIo9IhAsidEFAHj4jEmw9gBtac0B2x7GbvvoDivdH3KdNSoPt2SkD0RLX51Qf7AYeAV4fw65cuCp/Aat/uk55x3lN5g18Ww9khY/cFSwPC0JXGQnnJvdcDP2diZNkqE41Yc/Mw3xwfrvp3/v8js3VIBzsGINKiSdXZ/yXqI9iRzvzlfmXRHvd4sFXRzUpi8ZB4PXaboMndbNRoh4PcoRNFtXhyebQCEgZv2x3oiKXw38WT5cga03uMH4E5z5afS3n7NP1tsuiNWd499dJzAkW8OPeLDPqY3a/b5qLeZIK1bo23mvCjPtbm+B2g2QocKcd1oQ+XANCyuT3M/+AIypdMabGOSon2fDKrUUN+SqIX4FcYaHi1sG3qUp23870u9YcT4hK2LCKBcBPkFpxqEZLwdHbJmjHPo6uRyAKOD7r/k1DtIRqkcJ+5BpU4emo6rM9rdh5mWjLtK7vdY8Y/tvP8=
@@ -57,6 +53,7 @@ matrix:
     - os: osx
 
 services:
+- mysql
 - memcached
 
 before_install:
@@ -85,8 +82,9 @@ script:
   - mkdir -p build/logs
   - php app/Vendor/bin/phpunit -c app/phpunit.xml.dist
   - docker login -u $DOCKER_USER -p $DOCKER_PASS
-  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis; fi
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis || true; fi
 after_script:
+  - cat ${MYPHPCMS_LOG}/migrate-${TRAVIS_BUILD_NUMBER}.log
 after_success:
   - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
   - if [[ ("${COLLECT_COVERAGE}" = "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]]; then travis_retry php app/Vendor/bin/php-coveralls -v -r ./app/; fi

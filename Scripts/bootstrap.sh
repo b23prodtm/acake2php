@@ -17,13 +17,13 @@ fi
 #;
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;
-if [ ! -f ./$PHP_CMS_DIR/e13/etc/constantes.properties ] && [ ! $openshift 2> /dev/null ]; then
+if [ ! -f ./$MYPHPCMS_DIR/e13/etc/constantes.properties ] && [ ! $openshift 2> /dev/null ]; then
   shell_prompt "./configure.sh -c" "missing file creation constantes.properties"
 fi
 slogger -st $0 "Auto configuration..."
 #; hash file that is stored in webroot to allow administrator privileges
 if [[ -z ${GET_HASH_PASSWORD:-''} ]] && [ ! $openshift 2> /dev/null ]; then
-  hash="./${PHP_CMS_DIR}/e13/etc/export_hash_password.sh"
+  hash="./${MYPHPCMS_DIR}/e13/etc/export_hash_password.sh"
   if [ ! -f $hash ]; then
     shell_prompt "./configure.sh -h " "define a value for missing GET_HASH_PASSWORD"
   fi

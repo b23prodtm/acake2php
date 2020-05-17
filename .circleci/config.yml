@@ -60,7 +60,7 @@ jobs:
           mkdir -p ./app/build/logs
           mkdir -p ~/phpunit
           source ./test-cake.sh --circle
-          cat $PHP_CMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
+          cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
         when: always
     - save_cache:
         key: v1-dependencies-{{ checksum "composer.lock" }}

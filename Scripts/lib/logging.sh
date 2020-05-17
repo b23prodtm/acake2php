@@ -11,7 +11,7 @@ function slogger() {
 }
 #; export -f slogger
 function new_log() {
-	LOG="${MYPHPCMS_LOG:-$(pwd)/app/tmp/log}/$(basename $FUNCNAME .sh).$(date +%Y-%m-%d_%H:%M).log" && mkdir -p $(dirname $LOG)
+	LOG="${MYPHPCMS_LOG}/$(basename $FUNCNAME .sh).$(date +%Y-%m-%d_%H:%M).log" && mkdir -p $(dirname $LOG)
 	touch $LOG && echo $LOG || printf "Please set MYPHPCMS_LOG=%s to a writeable folder !" $MYPHPCMS_LOG
 }
 #; export -f new_log

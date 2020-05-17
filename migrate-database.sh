@@ -106,7 +106,10 @@ $(export -p | grep "DATABASE\|MYSQL") \
   -[hH]*|--help )
     printf "%s\n" "${usage[@]}"
     exit 0;;
-  -[oO]*|--openshift|--travis);;
+  -[oO]*|--openshift);;
+  --travis)
+    LOG="${MYPHPCMS_LOG}/migrate-${TRAVIS_BUILD_NUMBER:-'TRAVIS_BUILD_NUMBER'}.log"
+    ;;
   -[pP]* )
     parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
     shift $((OPTIND -1))
@@ -150,7 +153,7 @@ if [[ $import_identities -eq 1 ]]; then
   prompt="-Y"
   if [ -z ${set_DATABASE_PASSWORD} ]; then
     slogger -st $0 "\r${orange}WARNING: Using blank password for ${DATABASE_USER} !!${nc}"
-    prompt=""
+    prompt=${DEBIAN_FRONTEND:-''}
   fi
   if [ $authentication_plugin = 1 ]; then
     identifiedby="IDENTIFIED VIA ed25519 USING '${set_DATABASE_PASSWORD}'"

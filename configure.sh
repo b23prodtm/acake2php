@@ -28,8 +28,6 @@ usage=("" \
 "")
 composer_args="require --no-interaction --update-no-dev"
 saved=("$@")
-export PHP_CMS_DIR=${PHP_CMS_DIR:-app/webroot/php_cms}
-printf "PHP_CMS_DIR=%s in ~/.bash_profile or as environment variable." "${PHP_CMS_DIR}"
 #; if the full set of the arguments exists, there won't be any prompt in the shell
 while [[ "$#" > 0 ]]; do case $1 in
     -[cC]*|--const)
