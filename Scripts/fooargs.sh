@@ -27,7 +27,7 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   #             - Continuous Integration
   #               $ .circleci/build.sh
   #
-  if [ $docker ]; then
+  if [ $docker ] || [ $travis ]; then
     export MYSQL_HOST=${MYSQL_HOST:-$(hostname)}
     export PGSQL_HOST=${MYSQL_HOST:-$(hostname)}
   fi

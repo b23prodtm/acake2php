@@ -57,6 +57,7 @@ while [[ "$#" > 0 ]]; do case $1 in
     export MYSQL_PASSWORD=''
     export MYSQL_ROOT_PASSWORD=''
     migrate=$(parse_arg_trim "--docker" $migrate)" --travis"
+    #migrate="${migrate} --travis"
     config_args="--travis ${config_args}"
     ;;
   --docker )

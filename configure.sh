@@ -53,7 +53,7 @@ while [[ "$#" > 0 ]]; do case $1 in
         shift $((OPTIND -1))
         ;;
     -[mM]*|--submodule)
-        git submodule update --init --recursive --force;;
+        git submodule sync && git submodule update --init --recursive --force;;
     --help )
         printf "%s\n" "${usage[@]}"
         exit 0;;

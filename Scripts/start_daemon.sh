@@ -15,20 +15,28 @@ wait_for_host() {
 		echo -n .
 		sleep 1
 	done
+	slogger -st $FUNCNAME "${red}Failed: Host's unavailable${nc}"
 	return 1
 }
 if [ $docker 2> /dev/null ]; then
 	slogger -st $0 "Docker list ${MARIADB_SHORT_NAME} containers"
 	#docker quits shell ??
 	maria=$(docker ps -q -a -f "name=${MARIADB_SHORT_NAME}")
-	if [ ! -z $maria ] && [ $(cat $TOPDIR/mysqldb/mysqld/mysqld.cid) != $maria ]; then
-		slogger -st $0 "Container $MARIADB_SHORT_NAME already running, was stopped."
-		docker stop $maria >> $LOG 2>&1 || true
-		docker rm -f $maria >> $LOG 2>&1 || true
+	if [ -z $maria ]; then
+		docker pull ${MARIADB_CONT_NAME}
+	fi
+	CID=$TOPDIR/mysqldb/mysqld/mysqld.cid
+	if [ -f $CID ] && [ $(cat $CID) = "$maria" ]; then
+		slogger -st $0 "Container $MARIADB_SHORT_NAME OK."
+	else
+		slogger -st $0 "Container $MARIADB_SHORT_NAME already maybe running, was stopped."
+		maria_hub=$(docker ps -q -a -f "ancestor=${SECONDARY_HUB}")
+		docker stop $maria $maria_hub >> $LOG 2>&1 || true
+		docker rm -f $maria $maria_hub >> $LOG 2>&1 || true
 		slogger -st $0 "Container $MARIADB_SHORT_NAME 's started up..."
 		mysql_credentials=("-e MYSQL_DATABASE=${MYSQL_DATABASE} -e MYSQL_USER=${MYSQL_USER}" "-e MYSQL_PASSWORD=${MYSQL_PASSWORD}" \
 		"-e DATABASE_USER=${DATABASE_USER}" "-e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}")
-		[ ! $(docker network ls -q -f 'name=cake') ] && docker create network cake
+		[ ! $(docker network ls -q -f 'name=cake') ] && docker network create cake
 		docker run --name $MARIADB_SHORT_NAME -id \
 		--env-file .env -e PUID=$(id -u $USER) -e PGID=$(id -g $USER) \
 		--network cake -e MYSQL_HOST=${MYSQL_HOST} -e MYSQL_BIND_ADDRESS=${MYSQL_BIND_ADDRESS:-'0.0.0.0'} \
@@ -36,17 +44,14 @@ if [ $docker 2> /dev/null ]; then
 		-v $TOPDIR/mysqldb/conf.d:/etc/mysql/conf.d -v $TOPDIR/mysqldb/config:/config \
 		-v $TOPDIR/mysqldb/mysqld:/var/run/mysqld/ \
 		${MARIADB_CONT_NAME} >> $LOG 2>&1
-	else
-		slogger -st $0 "Container $MARIADB_SHORT_NAME OK."
 	fi
 	if [ $? = 0 ]; then
 		slogger -st $0 "Started docker --name=${MARIADB_SHORT_NAME} ref: $(docker ps -q -a -f "name=maria") host: $MYSQL_HOST}"
 		wait_for_host $MYSQL_HOST ${MYSQL_TCP_PORT:-3306}
 		[ $? = 1 ] && slogger -st $0 "${red}Failed waiting for Mysql${nc}"
 	fi
-	slogger -st $0 "Connect to docker exec -it ${MARIADB_SHORT_NAME} <ENTRYPOINT> .. $$"
+	docker ps -q -a -f "name=${MARIADB_SHORT_NAME}" > $CID
 	check_log $LOG
-	docker ps -q -a -f "name=${MARIADB_SHORT_NAME}" > $TOPDIR/mysqldb/mysqld/mysqld.cid
 fi
 if [ $(parse_arg_exists "server" $ck_args) >> $LOG 2>&1 ]; then
   show_password_status "${DATABASE_USER}" "${MYSQL_ROOT_PASSWORD}" "is running development server"

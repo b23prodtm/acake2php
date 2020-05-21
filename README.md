@@ -72,17 +72,15 @@ However, if these files exist they will affect the behavior of the build process
 
   Set environment variables as the following arguments, for instance on MacOS X:
 
-        ./deploy.sh amd64
+        ./deploy.sh amd64 --nobuild
 
-.env" -> amd64.env
-
-        ./Scripts/docker-compose-alias.sh --domain=b23prodtm.info -v up -d --build cakephp --openshift
+.env" -> x86_64.env
 
   Use a .env file in shell to push up into the cloud BalenaOS, with RaspberryPI3 hosts :
 
 	./deploy.sh arm32
 
-.env" -> arm32v7.env
+.env" -> armhf.env
 
 	balena push <cloud-application-name>
 
@@ -159,7 +157,7 @@ An SQL server (must match remote server version) must be reachable by hostname o
 Configure it as a service and configure the login ACL with the user shell.
 * __Mysql__ database automatic configuration:
 
-    ./configure.sh -d -y
+    ./configure.sh -d -u -i
 
 * __Optional__ To Setup MYSQL_ROOT_PASSWORD at prompt:
 
@@ -173,7 +171,7 @@ Configure it as a service and configure the login ACL with the user shell.
 
 * Run the configuration script:
 
-    ./configure.sh -d -p=<root-password> -u
+    ./configure.sh -d -p <root-password> -i --sql-password=<new-password>
 
 * More about configuration:
 
@@ -233,11 +231,11 @@ to do a reset with environment root and user password.
 >Note: A temporary password is generated for root@localhost. Now import identities.
 
     brew services restart mysql@5.7
-    ./configure.sh --mig-database -p=$(cat app/tmp/nupwd) -i --sql-password
+    ./configure.sh --mig-database -p $(cat app/tmp/nupwd) -i --sql-password
 
 >You have now configured a new SQL root password and a test password. Local SQL access and server is ready to run tests:
 
-    ./test-cake.sh -p -t=<test-password>
+    ./test-cake.sh -p -t <test-password>
 
 Go on to development phase with the [Local Built-in server](#local-built-in-server).
 
@@ -247,7 +245,7 @@ Upgrade your phpcms database within a (secure)shell:
 
     mysql_upgrade -u root --password=<password>
 
-4. I've made changes to mysql database tables, I've made changes to Config/Schema/myschema.php, as Config/database.php defines it, what should I do ?
+4. I've made changes to mysql database tables, I've made changes to Config/Schema/schema.cms.php, as Config/database.php defines it, what should I do ?
 
 Migrate all your tables:
 
@@ -285,20 +283,20 @@ If it isn't possible to login:
 
   + Try resetting privileges
 
-    ./configure.sh --mig-database -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} -i -y
+    ./configure.sh --mig-database -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} -i
 
-  Don't miss the parameter in container environment :
+  Don't miss the parameter to startup a local container database :
 
     ./migrate-database.sh -u --docker -i or ./configure.sh --mig-database -u --docker -i
 
   + Note that localhost is a special value. Using 127.0.0.1 is not the same thing. The latter will connect to the mysqld server through tcpip.
   + Try the [secure_installation](#database-configuration).
 
-6. How to fix up ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/mysql/mysql.sock' (2) ?
+6. How to fix up ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysql.sock' (2) ?
 
 Run the socket fixup script with arguments:
 
-    ./migrate-database.sh -y
+    ./migrate-database.sh /tmp/mysqld.sock
     brew services restart mysql@5.7
 
 7. I'm testing with ./start_cake.sh and I cannot add any new post on Updates section, what should I do ?

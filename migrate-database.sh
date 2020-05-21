@@ -51,7 +51,7 @@ authentication_plugin=0
 mysql_host="%"
 ck_args="--connection=default"
 # test_args="app AllTests --stderr"
-test_args="app Controller/PagesController --stderr"
+test_args="app Controller/PagesController --stderr >> $LOG"
 MARIADB_SHORT_NAME=$(echo $SECONDARY_HUB | awk -F/ '{ print $2 }' | awk -F: '{ print $1 }')
 while [[ "$#" > 0 ]]; do case "$1" in
   --enable-authentication-plugin*)
@@ -225,5 +225,5 @@ if [[ $update_checked -eq 1 ]]; then
 fi
 if [[ $test_checked -eq 1 ]]; then
   bash -c "./Scripts/bootstrap.sh ${docker} test ${test_args}"
-  bash -c "./Scripts/config_app_database.sh ${dbfile}"
+  check_log $LOG
 fi

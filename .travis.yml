@@ -13,6 +13,7 @@ os:
 
 dist: bionic
 addons:
+  mariadb: '10.4'
   apt:
     sources:
     - sourceline: ppa:ondrej/php
@@ -54,6 +55,7 @@ matrix:
 
 services:
 - mysql
+#- docker
 - memcached
 
 before_install:
@@ -71,18 +73,16 @@ before_install:
   - php -i | grep "SSL Version"
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer" "latest" | tail
   - cd ../..
+  #- docker login -u $DOCKER_USER -p $DOCKER_PASS
+  - sudo cp -f mysqldb/conf.d/my.cnf /etc/mysql/conf.d/my.cnf
+  - sudo systemctl restart mysql
 
 install:
-  - composer require --no-interaction
-  - source ./Scripts/configure_tmp.sh
   - source ./deploy.sh "${DKR_ARCH}" --nobuild
 
 before_script:
 script:
-  - mkdir -p build/logs
-  - php app/Vendor/bin/phpunit -c app/phpunit.xml.dist
-  - docker login -u $DOCKER_USER -p $DOCKER_PASS
-  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis || true; fi
+  - if [ "${COVERITY_SCAN_BRANCH:-0}" != 1 ]; then ./test-cake.sh --travis || true; fi
 after_script:
   - cat ${MYPHPCMS_LOG}/migrate-${TRAVIS_BUILD_NUMBER}.log
 after_success:
@@ -91,7 +91,7 @@ after_success:
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - "./send.sh success $WEBHOOK_URL"
-  - zip -r myphpcms.zip *
+  - zip -r myphpcms.zip * > /dev/null
   - git tag --force "v${GIT_RELEASE_VERSION}.${TRAVIS_BUILD_NUMBER}"
 deploy:
   provider: releases
