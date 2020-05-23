@@ -72,28 +72,20 @@ However, if these files exist they will affect the behavior of the build process
 
   Set environment variables as the following arguments, for instance on MacOS X:
 
-        ./deploy.sh amd64 --nobuild
-
-.env" -> x86_64.env
+        ./deploy.sh amd64
 
   Use a .env file in shell to push up into the cloud BalenaOS, with RaspberryPI3 hosts :
 
-	./deploy.sh arm32
+      	./deploy.sh arm32
 
-.env" -> armhf.env
+  .env -> arm32v7.env
 
-	balena push <cloud-application-name>
+	      ./deploy.sh arm32 --balena
 
 ### Compatibility
 
-* PHP 5.6 and higher, but PHP 7 's recommended, excluding any alpha or beta versions.
 * CakePHP 2.X application also supports Docker CE 18.03 and later
-* Container builder: docker-compose 1.19 and DockerFile version 2.1
-* Mysql 5.7 and later (or MariaDB)
-* Cloud Platforms:
-  + Openshift 3
-  + BalenaOS
-  + Kubernetes (not provided)
+* MariaDB 10.1 and later
 
 ### Local built-in server (cake) and dockerized database in a local container
 CAKE includes a server application that´s only made for local tests on port 9000.
