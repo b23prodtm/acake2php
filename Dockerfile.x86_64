@@ -13,6 +13,8 @@ ARG DEBUG
 ENV DEBUG ${DEBUG:-0}
 
 ENV BALENA_MACHINE_NAME ${BALENA_MACHINE_NAME:-intel-nuc}
+ARG SECONDARY_HUB
+ENV SECONDARY_HUB ${SECONDARY_HUB:-linuxserver/mariadb:amd64-latest}
 ARG DKR_ARCH
 ENV DKR_ARCH ${DKR_ARCH:-x86_64}
 ARG COLLECT_COVERAGE
@@ -41,6 +43,11 @@ ARG MYSQL_PASSWORD
 ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'maria-abc'}
 ARG SERVER_NAME
 ENV SERVER_NAME ${SERVER_NAME:-'localhost.local'}
+# Change uid and gid of apache to docker user uid/gid
+ARG PUID
+ENV PUID ${PUID:-0}
+ARG PGID
+ENV PGID ${PGID:-0}
 
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
@@ -97,7 +104,7 @@ WORKDIR /var/www/html/
 RUN chmod -R gu+xs deploy.sh configure.sh migrate-database.sh Scripts/
 
 # Add cake and composer command to system path
-ENV PATH "${PATH}:/var/www/html/lib/Cake/Console"
+ENV PATH "${PATH}:/var/www/html/app/Console"
 ENV PATH "${PATH}:/var/www/html/app/Vendor/bin"
 
 # add available site
@@ -116,7 +123,7 @@ RUN a2enconf ${SERVER_NAME} \
 # RUN cat app/webroot/php_cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
 
 # Change uid and gid of apache to docker user uid/gid
-RUN usermod -u 1000 www-data && groupmod -g 1000 www-data \
+RUN usermod -u ${PUID} www-data && groupmod -g ${PGID} www-data \
   && chown -R :www-data . \
   && chmod -R 755 . \
   && chmod -R g+s . \

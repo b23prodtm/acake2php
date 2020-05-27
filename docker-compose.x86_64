@@ -13,7 +13,7 @@ services:
         MYSQL_DATABASE: aria_db
         MYSQL_USER: maria
         MYSQL_PASSWORD: maria-abc
-    image: betothreeprod/mariadb-raspberrypi3
+    image: betothreeprod/mariadb-intel-nuc
     volumes:
       - db-data:/config
       - db-socket:/var/run/mysqld
@@ -37,7 +37,9 @@ services:
       args:
         DEBUG: "1"
         DATABASE_USER: "root"
-    image: betothreeprod/myphpcms-raspberrypi3
+        PUID: 1000
+        PGID: 1000
+    image: betothreeprod/myphpcms-intel-nuc
     labels:
       io.balena.features.dbus: "1"
     volumes:
