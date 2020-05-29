@@ -29,6 +29,7 @@ usage=("" \
 while [[ "$#" > 0 ]]; do case $1 in
   --circle )
     migrate=$(parse_arg_trim "--docker" $migrate)
+    config_args=$(parse_arg_trim "--docker" $config_args)
     ;;
   --cov )
     export COLLECT_COVERAGE=true;;
@@ -49,7 +50,7 @@ while [[ "$#" > 0 ]]; do case $1 in
     echo "Passed params :  $0 ${saved[*]}";;
   -[oO]*|--openshift )
     migrate=$(parse_arg_trim "--docker" $migrate)" --openshift"
-    config_args="--openshift ${config_args}"
+    config_args=$(parse_arg_trim "--docker" $config_args)" --openshift"
     ;;
   --travis)
     export MYSQL_HOST=${MYSQL_HOST:-'127.0.0.1'}
@@ -57,8 +58,7 @@ while [[ "$#" > 0 ]]; do case $1 in
     export MYSQL_PASSWORD=''
     export MYSQL_ROOT_PASSWORD=''
     migrate=$(parse_arg_trim "--docker" $migrate)" --travis"
-    #migrate="${migrate} --travis"
-    config_args="--travis ${config_args}"
+    config_args=$(parse_arg_trim "--docker" $config_args)" --travis"
     ;;
   --docker )
     config_args="--docker ${config_args}"

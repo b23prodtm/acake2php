@@ -15,8 +15,8 @@
 
 CakePHP for [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) on Docker
 ===============================
-[![TravisCI Status](https://travis-ci.org/b23prodtm/myphpcms.svg?branch=development)](https://travis-ci.org/b23prodtm/myphpcms)
-[![CircleCI Status](https://circleci.com/gh/b23prodtm/myphpcms.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/myphpcms)
+[![TravisCI Status](https://travis-ci.org/b23prodtm/acake2php.svg?branch=development)](https://travis-ci.org/b23prodtm/acake2php)
+[![CircleCI Status](https://circleci.com/gh/b23prodtm/acake2php.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/acake2php)
 
 This is a quickstart CakePHP application for OpenShift v3 that you ''can'' use as a starting point to develop your own application and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
 
@@ -31,10 +31,10 @@ However, if these files exist they will affect the behavior of the build process
 
 * **submodules**
 
-  The myphpcms folder includes modules that need to be pulled in order to install locally.
-  After the first checkout browse to myphpcms folder and do
+  The acake2php folder includes modules that need to be pulled in order to install locally.
+  After the first checkout browse to acake2php folder and do
   ```git submodule sync && git submodule update --init --recursive```
-  You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the myphpcms folder and start over.
+  You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the acake2php folder and start over.
   > After a sucessful ```git checkout```each time, run once ```git submodule update --init --recursive``` to ensure submodules are downloaded from git. Otherwise your build may fail.
 
 * **composer.json**
@@ -261,8 +261,8 @@ If it isn't possible to login:
   + Check your environment variables (common.env and docker-compose.yml) settings). Use one or the other, and see which works for you:
 
     MYSQL_HOST=$(hostname) (Unix/OSX platforms)
-            or if docker mysql service containers:
-    MYSQL_HOST=localhost
+            or if docker-compose services are the following name:
+    MYSQL_HOST=db
     ..
 
     MYSQL_TCP_PORT=3306

@@ -5,8 +5,8 @@ A typical install script could look like the following script, for instance edit
 		#!/usr/bin/env bash
 		set -u
 
-		cd myphpcms
-		git clone https://github.com/b23prodtm/myphpcms.git
+		cd acake2php
+		git clone https://github.com/b23prodtm/acake2php.git
 		git submodule sync && git submodule update --init --recursive
 		./deploy.sh x86_64 --docker
 

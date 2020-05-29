@@ -36,7 +36,9 @@ show_password_status() {
 }
 #; export -f show_password_status
 cakephp() {
-  CONSOLE=$(dirname $(dirname $(dirname $BASH_SOURCE)))/app/Console
-  APP=$(cd "$CONSOLE"/.. && pwd)
-  exec php -q "$CONSOLE"/cake.php -working "$APP" "$@"
+  CAKE=$(dirname $(dirname $(dirname $BASH_SOURCE)))/lib/Cake
+  APP=$(dirname $(dirname $(dirname $BASH_SOURCE)))/app
+  slogger -st $FUNCNAME "Cake 2.x patch ShellDispatcher.php"
+  sed -i.orig -e "s/\$dispatcher->_stop\((.*)\);/\\1;/g" "${CAKE}"/Console/ShellDispatcher.php
+  exec php -q "${APP}"/Console/cake.php -working "$APP" "$@"
 }

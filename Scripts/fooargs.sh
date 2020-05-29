@@ -15,7 +15,7 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   slogger -st $0 "Loading ${orange}Test environment${nc} : $0..."
   #; Common Environment profile
   [[ ! -e .env || ! -e common.env ]] && printf "Missing environment configuration, please run ./deploy.sh %s --nobuild first." $(arch) && exit 1
-  eval $(cat .env common.env | awk 'BEGIN{ FS="$" }{ print "export " $1 }')
+  eval $(cat .env common.env | awk 'BEGIN{ FS="\n" }{ print "export " $1 }')
   #; To change  Model/Datasource/Database
   export DB=${DB:-Mysql}
   slogger -st $0 "DB : ${green}${DB}${nc}"
@@ -47,19 +47,10 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   export FTP_SERVICE_HOST=localhost
   export FTP_SERVICE_USER=test
   export FTP_SERVICE_PASSWORD=mypassword
-  #; More about default environment app/Config/core.php
-  #; Openshift Online secure keys (default_keys)
-  export CAKEPHP_SECURITY_SALT=${CAKEPHP_SECURITY_SALT:-'Word'}
-  export CAKEPHP_SECURITY_CIPHER_SEED=${CAKEPHP_SECURITY_CIPHER_SEED:-'01234'}
-  #; 0, 1, 2 the higher the more debug data
-  export CAKEPHP_DEBUG_LEVEL=${CAKEPHP_DEBUG_LEVEL:-'2'}
-  #; Shell parameters -h -p password -s salt
   #; export GET_HASH_PASSWORD=wokUd0mcc
   if [[ $(parse_arg_exists "-[vV]+|--verbose" $*) ]]; then
     echo "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
     echo "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
   fi
   export SERVER_NAME=${SERVER_NAME:-$(hostname)}
-  export MYPHPCMS_DIR=${MYPHPCMS_DIR:-'app/webroot/php_cms'}
-  export MYPHPCMS_LOG=${MYPHPCMS_LOG:-'app/tmp/logs'}
 fi

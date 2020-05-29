@@ -14,7 +14,7 @@ docker-compose.*
 !docker-compose.yml
 !docker-compose.x86_64
 .circleci/config-compat.yml
-myphpcms*.zip
+acake2php*.zip
 /app/Config/database.php*
 /app/Config/database.sql*
 /app/Config/Schema/schema_*.php

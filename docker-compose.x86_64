@@ -27,7 +27,7 @@ services:
       - .env
     labels:
       io.balena.features.dbus: "1"
-  myphpcms:
+  acake2php:
     env_file:
       - common.env
       - .env
@@ -39,7 +39,7 @@ services:
         DATABASE_USER: "root"
         PUID: 1000
         PGID: 1000
-    image: betothreeprod/myphpcms-intel-nuc
+    image: betothreeprod/acake2php-intel-nuc
     labels:
       io.balena.features.dbus: "1"
     volumes:

@@ -19,7 +19,7 @@ addons:
     - sourceline: ppa:ondrej/php
   coverity_scan:
     project:
-      name: b23prodtm/myphpcms
+      name: b23prodtm/acake2php
       description: 'This PHP CMS is featuring well-known functionalities as cool as
         posting some web contents with pictures stored in a database. Developer Note
         : This is the Cake PHP cartridge repository. A submodule is included in app/webroot.'
@@ -91,13 +91,13 @@ after_success:
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - "./send.sh success $WEBHOOK_URL"
-  - zip -r myphpcms.zip * > /dev/null
+  - zip -r acake2php.zip * > /dev/null
   - git tag --force "v${GIT_RELEASE_VERSION}.${TRAVIS_BUILD_NUMBER}"
 deploy:
   provider: releases
   api_key:
     secure: UmXoq0sFQQixpMH12MG1Q3+pQhw05SuN919FgnKCru3X3RTCpXnZB8hgXvQHZn5Hhunq5eBPZ7C/bvk5wkzPXrwpAXyA7wj7PhGn6QbksU6xtkNOQVera/pMoTJW2VtNA2GcWvUvCnht3m73Tp2lguaI3Q6Yt8qq1vHJlDO5hbgvC0LdDrRFLIAA95jA9DWZRCWanHV5aepVNkX0qjQm25BIAwvQtfxkj/DipDYy2eIMh8brh6aZamE3cBv8sXP8b2b89GB670E35Otfseu58a6HxqmLD4dI5kIEzhSFjuelPJne0tmebFKww+mPn7v2SKJZR9xVfQM+mZHAp7SiozEvi1nqhUN31Z64mpDQDPnAB6eO36rGSdxDyYN7Ab24lJuLTcNkRbNOaJzn88q9d5DqGGQRJl6875cJmPFOjUwNteJIvLhDmPX3oHSPvWx3AtpEUtWeCrVt1yc7tyG0kdW8MmzoWvgDhbyvqAefKO3bEzVZeQQy/7LKy1i42+B/7N57oR6sgFX2N/zvdckFKjwHNiydds67Wj++EuJRXr2AhxdraW3iwDBTmkrZ3TjOsxcySbMBJHCOwHF9yAmLklbk4h1haCohkQrQxBp6Rhm3vKJGDOR3rOkjqIzqgHgo3pcXDdBULMpfB3/IbDeh3/RMuTEOXvv7FUNRjb4JIdI=
-  file: myphpcms.zip
+  file: acake2php.zip
   on:
-    repo: b23prodtm/myphpcms
+    repo: b23prodtm/acake2php
     branch: feature/gh-releases
