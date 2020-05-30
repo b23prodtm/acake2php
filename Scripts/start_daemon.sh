@@ -5,7 +5,8 @@ source $TOPDIR/Scripts/lib/shell_prompt.sh
 source $TOPDIR/Scripts/lib/parsing.sh
 docker=$(parse_arg_exists "--docker" $*)
 ck_args=$(parse_arg_trim "-[oO]+|--openshift|--docker" $*)
-LOG=$(new_log) && slogger -st $0 $LOG
+travis=$(parse_arg_exists "--travis" $*)
+LOG=$(new_log $travis $docker) && slogger -st $0 $LOG
 MARIADB_SHORT_NAME=$(echo $SECONDARY_HUB | awk -F/ '{ print $2 }' | awk -F: '{ print $1 }')
 MARIADB_CONT_NAME=betothreeprod/${MARIADB_SHORT_NAME}-${BALENA_MACHINE_NAME:-intel-nuc}
 wait_for_host() {
@@ -64,17 +65,19 @@ if [ $(parse_arg_exists "server" $ck_args) >> $LOG 2>&1 ]; then
   slogger -st $0 "Unit tests ${cyan}${url}/test.php${nc}"
   slogger -st $0 "Turnoff flags (fix captcha)${cyan}${url}/admin/logoff.php${nc}"
   slogger -st $0 "==============================================="
-  cakephp $ck_args
+  cakephp $ck_args >> $LOG 2>&1
+	[ $? = 1 ] && slogger -st $0 "FAILED" || slogger -st $0 "SUCCESS"
 elif [ $(parse_arg_exists "test" $(parse_arg_trim "--connection*" $ck_args)) >> $LOG 2>&1 ]; then
   slogger -st $0 $(printf "Passed Cake Args: %s" "$ck_args")
   if [[ "${COLLECT_COVERAGE}" == "true" ]]; then
     $TOPDIR/app/Vendor/bin/phpunit --log-junit ~/phpunit/junit.xml --coverage-clover \
-		app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/Case/AllTestsTest.php
+		app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist app/Test/Case/AllTestsTest.php >> $LOG 2>&1
   elif [ "${PHPCS}" != '1' ]; then
-      cakephp $ck_args  --coverage-clover app/build/logs/clover.xml
+      cakephp $ck_args  --coverage-clover app/build/logs/clover.xml >> $LOG 2>&1
   else
-      $TOPDIR/app/Vendor/bin/phpcs -p --extensions=php --standard=CakePHP $TOPDIR/lib/Cake ${ck_args}
+      $TOPDIR/app/Vendor/bin/phpcs -p --extensions=php --standard=CakePHP $TOPDIR/lib/Cake ${ck_args} >> $LOG 2>&1
   fi
+	[ $? = 1 ] && slogger -st $0 "FAILED" || slogger -st $0 "SUCCESS"
 elif [ $(parse_arg_exists "docker-compose" $ck_args) >> $LOG 2>&1 ]; then
   if [ ! $(which docker-compose) 2> /dev/null ]; then $TOPDIR/Scripts/install-docker-compose.sh; fi
 	: ${SERVER_NAME?}
@@ -83,16 +86,18 @@ elif [ $(parse_arg_exists "docker-compose" $ck_args) >> $LOG 2>&1 ]; then
   bash -c "${ck_args}"
 elif [ $(parse_arg_exists "update" $ck_args) >> $LOG 2>&1 ]; then
   #; cakephp shell
-  echo "Migrating database 'cake schema update' ..."
+  slogger -st $0 "Migrating database 'cake schema update' ..."
 	p=$(parse_arg_trim "update" $ck_args)
 	slogger -st $0 $(printf "Passed Cake Args:(%s) -> %s" "$ck_args" "$p")
-  cakephp schema update $p -y
-  slogger -st $0 "Update finished"
+  cakephp schema update $p -y >> $LOG 2>&1
+  [ $? = 1 ] && slogger -st $0 "FAILED" || slogger -st $0 "SUCCESS"
   if [ -f app/Config/Schema/sessions.php ]; then
       slogger -st $0 "Generating default Sessions table"
-      cakephp schema create Sessions $p -y
-  fi
+      cakephp schema create Sessions $p -y >> $LOG 2>&1
+			[ $? = 1 ] && slogger -st $0 "FAILED" || slogger -st $0 "SUCCESS"
+	fi
   slogger -st $0 "Generating database schema 'cake schema generate'"
-  cakephp schema generate $p -f snapshot
+  cakephp schema generate $p -f snapshot >> $LOG 2>&1
+	[ $? = 1 ] && slogger -st $0 "FAILED" || slogger -st $0 "SUCCESS"
 fi
 check_log $LOG

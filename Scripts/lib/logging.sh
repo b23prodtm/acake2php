@@ -11,7 +11,18 @@ function slogger() {
 }
 #; export -f slogger
 function new_log() {
-	LOG="${MYPHPCMS_LOG}/$(basename $FUNCNAME .sh).$(date +%Y-%m-%d_%H:%M).log" && mkdir -p $(dirname $LOG)
+  LOG="${MYPHPCMS_LOG}/$(basename $FUNCNAME .sh).$(date +%Y-%m-%d_%H:%M).log"
+  while [ "$#" -gt 0 ]; do case $1 in
+    --travis)
+    	LOG="${MYPHPCMS_LOG}/travis.${TRAVIS_BUILD_NUMBER:-'TRAVIS_BUILD_NUMBER'}.log"
+      ;;
+    --docker|-+[o|O]*)
+      LOG="${MYPHPCMS_LOG}/docker.$(date +%Y-%m-%d).log"
+	    ;;
+      *)
+      ;;
+  esac; shift; done
+  mkdir -p $(dirname $LOG)
 	touch $LOG && echo $LOG || printf "Please set MYPHPCMS_LOG=%s to a writeable folder !" $MYPHPCMS_LOG
 }
 #; export -f new_log

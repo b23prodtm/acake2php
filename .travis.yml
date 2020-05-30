@@ -13,7 +13,7 @@ os:
 
 dist: bionic
 addons:
-  mariadb: '10.4'
+  mariadb: '10.3'
   apt:
     sources:
     - sourceline: ppa:ondrej/php
@@ -74,20 +74,20 @@ before_install:
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer" "latest" | tail
   - cd ../..
   #- docker login -u $DOCKER_USER -p $DOCKER_PASS
-  - sudo cp -f mysqldb/conf.d/my.cnf /etc/mysql/conf.d/my.cnf
-  - sudo systemctl restart mysql
+  - sudo mkdir -p /etc/mysql/conf.d/ && sudo cp -f mysqldb/conf.d/my.cnf /etc/mysql/conf.d/my.cnf
+  - sudo sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS:-127.0.0.1}/" /etc/mysql/conf.d/my.cnf
+  - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then sudo systemctl restart mysql; fi
 
 install:
   - source ./deploy.sh "${DKR_ARCH}" --nobuild
 
 before_script:
 script:
-  - if [ "${COVERITY_SCAN_BRANCH:-0}" != 1 ]; then ./test-cake.sh --travis || true; fi
-after_script:
-  - cat ${MYPHPCMS_LOG}/migrate-${TRAVIS_BUILD_NUMBER}.log
+  - if [[ "${TRAVIS_OS_NAME}" = "linux" &&  "${COVERITY_SCAN_BRANCH:-0}" != 1 ]]; then ./test-cake.sh --travis || true; fi
+  - if [[ "${TRAVIS_OS_NAME}" != "linux" &&  "${COVERITY_SCAN_BRANCH:-0}" != 1 ]]; then ./test-cake.sh --travis --docker || true; fi
+  - cat ${MYPHPCMS_LOG}/travis.${TRAVIS_BUILD_NUMBER}.log
 after_success:
   - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
-  - if [[ ("${COLLECT_COVERAGE}" = "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]]; then travis_retry php app/Vendor/bin/php-coveralls -v -r ./app/; fi
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
   - "./send.sh success $WEBHOOK_URL"

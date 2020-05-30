@@ -5,6 +5,7 @@ source ./Scripts/lib/shell_prompt.sh
 source ./Scripts/lib/parsing.sh
 openshift=$(parse_arg_exists "-[oO]+|--openshift" "$@")
 docker=$(parse_arg_exists "--docker" "$@")
+travis=$(parse_arg_exists "--travis" "$@")
 pargs=$(parse_arg_trim "-[oO]+|--openshift|--docker" "$@")
 if [ $openshift 2> /dev/null ]; then
   slogger -st $0 "Bootargs...: ${pargs}"
@@ -13,7 +14,7 @@ else
   slogger -st $0 "Locally Testing values, bootargs...: ${pargs}"
   source ./Scripts/fooargs.sh $*
 fi
-LOG=$(new_log) && slogger -st $0 $LOG
+LOG=$(new_log $travis $openshift $docker) && slogger -st $0 $LOG
 usage=("" \
 "Usage: $0 [-u] [-y|n] [-o] [-p <word>] [-t <word>] [-i] [--sql-password=<password>] [--test-sql-password=<password>]" \
 "          -u          Update the database in app/Config/Schema/" \
@@ -108,7 +109,6 @@ $(export -p | grep "DATABASE\|MYSQL") \
     exit 0;;
   -[oO]*|--openshift);;
   --travis)
-    LOG="${MYPHPCMS_LOG}/migrate-${TRAVIS_BUILD_NUMBER:-'TRAVIS_BUILD_NUMBER'}.log"
     ;;
   -[pP]* )
     parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
@@ -163,6 +163,7 @@ if [[ $import_identities -eq 1 ]]; then
   args=(\
 "-e \"select version();\"" \
 "-e \"use mysql;\"" \
+"-e \"create user if not exists '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
 # ALTER USER is MariaDB 10.2 and above waiting for ARM binary
 # "-e \"alter user '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
 "-e \"SET PASSWORD FOR '${DATABASE_USER}'@'${mysql_host}' = PASSWORD('${set_DATABASE_PASSWORD}');\"" \

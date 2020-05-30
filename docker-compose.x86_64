@@ -36,7 +36,7 @@ services:
       dockerfile: Dockerfile.x86_64
       args:
         DEBUG: "1"
-        DATABASE_USER: "root"
+        MYSQL_HOST: "db"
         PUID: 1000
         PGID: 1000
     image: betothreeprod/acake2php-intel-nuc

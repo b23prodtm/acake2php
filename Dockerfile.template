@@ -169,4 +169,4 @@ RUN ./configure.sh --openshift -m -c -h -p pass -s word --development
 # RUN [ "cross-build-end" ]
 RUN . /etc/apache2/envvars
 ENTRYPOINT ./migrate-database.sh -o -u -i --enable-authentication-plugin
-CMD apache2 -D FOREGROUND
+CMD [ "bash", "-c", "apache2 -D FOREGROUND || cat $MYPHPCMS_LOG/openshift.$(date +%Y-%m-%d).log" ]

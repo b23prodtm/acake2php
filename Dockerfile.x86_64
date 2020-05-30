@@ -9,9 +9,18 @@ FROM ${PRIMARY_HUB:-betothreeprod/intel-nuc-php}:${IMG_TAG:-latest}
 
 ENV INITSYSTEM off
 ENV UDEV off
-ARG DEBUG
-ENV DEBUG ${DEBUG:-0}
-
+# ----------------------
+# About Dockerfile ARGS:
+# ALL the following ARGS are DUPLICATED in common.env and $DKR_ARCH.env
+# and Scripts/fooargs.sh for development phase.
+# If not set in common.env, it must be set in the host machine environment
+# when ./start.sh or ./test.sh or in development phase.
+# ----------------------
+#                        Values in default (no-arg) production mode
+#                        May be overriden in docker-compose.yml
+#-----------------------
+ARG CAKEPHP_DEBUG_LEVEL
+ENV CAKEPHP_DEBUG_LEVEL ${CAKEPHP_DEBUG_LEVEL:-2}
 ENV BALENA_MACHINE_NAME ${BALENA_MACHINE_NAME:-intel-nuc}
 ARG SECONDARY_HUB
 ENV SECONDARY_HUB ${SECONDARY_HUB:-linuxserver/mariadb:amd64-latest}
@@ -42,7 +51,7 @@ ENV MYSQL_USER ${MYSQL_USER:-'maria'}
 ARG MYSQL_PASSWORD
 ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'maria-abc'}
 ARG SERVER_NAME
-ENV SERVER_NAME ${SERVER_NAME:-'localhost.local'}
+ENV SERVER_NAME ${SERVER_NAME:-'acake2php.local'}
 # Change uid and gid of apache to docker user uid/gid
 ARG PUID
 ENV PUID ${PUID:-0}

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "554a113ee26f132c59cef0b0c60f9797",
+    "content-hash": "9cac34f16cff400ca354d1c9eace8906",
     "packages": [
         {
             "name": "betothreeprod/markdown-plugin",
