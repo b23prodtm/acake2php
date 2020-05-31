@@ -1,5 +1,6 @@
 #
-# Source DockerFile: https://github.com/ulsmith/rpi-raspbian-apache-php/blob/master/Dockerfile
+# Source DockerFile:  https://github.com/ulsmith/rpi-raspbian-apache-php/blob/master/Dockerfile
+# S6 Overlay:         https://github.com/smebberson/docker-alpine/blob/master/alpine-apache/Dockerfile
 #
 FROM balenalib/intel-nuc-debian:build
 # RUN [ "cross-build-start" ]
@@ -49,6 +50,15 @@ COPY conf/000-default.conf /etc/apache2/conf-available/000-default.conf
 RUN chown -R www-data:www-data /var/www/html
 
 # RUN [ "cross-build-end" ]
-EXPOSE 80
 
-CMD [ "apache2 -D FOREGROUND" ]
+# just containers configuration
+COPY etc /etc
+
+# Expose the ports for apache
+EXPOSE 80 443
+
+# Stream apache logs to standard outputs
+RUN ln -sf /dev/stdout /var/log/apache2/access.log && \
+    ln -sf /dev/stderr /var/log/apache2/error.log
+
+ENTRYPOINT /init

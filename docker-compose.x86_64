@@ -17,6 +17,7 @@ services:
     volumes:
       - db-data:/config
       - db-socket:/var/run/mysqld
+      - data:/var/www/html
     ports:
       - "3306:3306"
     restart: unless-stopped
@@ -35,7 +36,7 @@ services:
       context: .
       dockerfile: Dockerfile.x86_64
       args:
-        DEBUG: "1"
+        CAKEPHP_DEBUG_LEVEL: "2"
         MYSQL_HOST: "db"
         PUID: 1000
         PGID: 1000

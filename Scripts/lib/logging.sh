@@ -16,9 +16,12 @@ function new_log() {
     --travis)
     	LOG="${MYPHPCMS_LOG}/travis.${TRAVIS_BUILD_NUMBER:-'TRAVIS_BUILD_NUMBER'}.log"
       ;;
-    --docker|-+[o|O]*)
+    --docker)
       LOG="${MYPHPCMS_LOG}/docker.$(date +%Y-%m-%d).log"
 	    ;;
+    -+[o|O]*)
+      LOG="${MYPHPCMS_LOG}/openshift.log"
+      ;;
       *)
       ;;
   esac; shift; done
