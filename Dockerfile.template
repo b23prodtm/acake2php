@@ -75,9 +75,9 @@ RUN install_packages \
     mariadb-client
 
 RUN install_packages \
-#   libicu libicu-dev
     memcached \
     libmemcached-dev
+    # libicu libicu-dev
 
 RUN memcached -d -l 127.0.0.1 -p 11211 -u www-data -m 16 \
  && memcached -d -l 127.0.0.1 -p 11212 -u www-data -m 16
@@ -86,18 +86,16 @@ RUN pecl config-set php_ini "${PHP_INI_DIR}/php.ini" \
 && pecl install mysqli \
     gd \
     xdebug \
-    # intl \
     mbstring \
     pcntl opcache \
     memcached
-
+    # intl
 RUN docker-php-ext-enable mysqli \
-    # gd \
     xdebug \
-    # intl \
     xml \
     opcache
-
+    # gd \
+    # intl
 WORKDIR /usr/src/
 
 COPY vagrant-shell.sh .
