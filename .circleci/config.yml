@@ -42,7 +42,7 @@ jobs:
     - run:
         name: Set architecture and Setup Environment Variables
         command: |
-          source ./deploy.sh $DKR_ARCH --nobuild
+          source ./deploy.sh $DKR_ARCH --nobuild --exit
     - run:
         name: Waiting for Mysql to be ready
         command: |
@@ -93,7 +93,7 @@ jobs:
     - run:
         name: Set architecture and Setup Environment Variables
         command: |
-          source ./deploy.sh $DKR_ARCH --nobuild
+          source ./deploy.sh $DKR_ARCH --nobuild --exit
     - run:
         command: |
           set -u
