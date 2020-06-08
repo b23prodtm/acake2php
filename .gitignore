@@ -38,6 +38,7 @@ acake2php*.zip
 **/composer*.phar
 mysqldb/config/
 mysqldb/conf.d/custom.cnf
+node_modules
 
 # IDE and editor specific files #
 #################################
