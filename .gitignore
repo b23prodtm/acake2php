@@ -39,6 +39,7 @@ acake2php*.zip
 mysqldb/config/
 mysqldb/conf.d/custom.cnf
 node_modules
+*.log
 
 # IDE and editor specific files #
 #################################

@@ -66,10 +66,10 @@ jobs:
           echo 'Failed waiting for Mysql' && exit 1
     - run:
         command: |
-          set -x
+          set -u
           mkdir -p ./app/build/logs
           mkdir -p ~/phpunit
-          source ./test-cake.sh --circle
+          ./test-cake.sh --circle
           cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
         when: always
     - save_cache:

@@ -22,5 +22,6 @@
   "homepage": "https://github.com/b23prodtm/acake2php#readme",
   "dependencies": {
     "balena-cloud": "stable"
-  }
+  },
+  "devDependencies": {}
 }
