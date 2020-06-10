@@ -14,6 +14,7 @@ aliases:
         rm node_modules/balena-cloud || true
         npm update
         npm link balena-cloud
+        npm link balena-cli
 jobs:
   build:
     docker:
