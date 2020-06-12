@@ -18,7 +18,7 @@ aliases:
 jobs:
   build:
     docker:
-    - image: betothreeprod/dind-php7
+    - image: betothreeprod/intel-nuc-node-php7
     - image: betothreeprod/mariadb-intel-nuc
       environment:
         PUID: 0
@@ -70,7 +70,7 @@ jobs:
           mkdir -p ./app/build/logs
           mkdir -p ~/phpunit
           ./test-cake.sh --circle
-          cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
+          . common.env && cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
         when: always
     - save_cache:
         key: v1-dependencies-{{ checksum "composer.lock" }}
