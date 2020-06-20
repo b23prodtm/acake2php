@@ -1,20 +1,26 @@
 #!/usr/bin/env bash
 set -eu
-source ./Scripts/lib/logging.sh
-source ./Scripts/lib/shell_prompt.sh
-source ./Scripts/lib/parsing.sh
+TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=Scripts/lib/test/logging.sh
+. "$TOPDIR/Scripts/lib/logging.sh"
+# shellcheck source=Scripts/lib/test/parsing.sh
+. "$TOPDIR/Scripts/lib/parsing.sh"
+# shellcheck source=Scripts/lib/test/shell_prompt.sh
+. "$TOPDIR/Scripts/lib/shell_prompt.sh"
 openshift=$(parse_arg_exists "-[oO]+|--openshift" "$@")
 docker=$(parse_arg_exists "--docker" "$@")
 travis=$(parse_arg_exists "--travis" "$@")
 pargs=$(parse_arg_trim "-[oO]+|--openshift|--docker" "$@")
-if [ $openshift 2> /dev/null ]; then
+if [ -n "$openshift" ]; then
   slogger -st $0 "Bootargs...: ${pargs}"
-  source ./Scripts/bootargs.sh $*
+  # shellcheck source=Scripts/bootargs.sh
+  . "$TOPDIR/Scripts/bootargs.sh" "$@"
 else
   slogger -st $0 "Locally Testing values, bootargs...: ${pargs}"
-  source ./Scripts/fooargs.sh $*
+  # shellcheck source=Scripts/fooargs.sh
+  . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi
-LOG=$(new_log $travis $openshift $docker) && slogger -st $0 $LOG
+LOG=$(new_cake_log $travis $openshift $docker) && slogger -st $0 $LOG
 usage=("" \
 "Usage: $0 [-u] [-y|n] [-o] [-p <word>] [-t <word>] [-i] [--sql-password=<password>] [--test-sql-password=<password>]" \
 "          -u          Update the database in app/Config/Schema/" \
@@ -22,7 +28,7 @@ usage=("" \
 "          -n          Doesn't reset database.php and socket" \
 "          -i --sql-password=<word> --test-sql-password=<word>" \
 "                      Import SQL identities with new passwords and reset MYSQL_DATABASE and TEST_DATABASE_NAME privileges" \
-"          -o, --openshift", "--travis" \
+"          -o, --openshift, --travis" \
 "                      Resets database.php, keep socket and update the database" \
 "          -p=<password>" \
 "                      Exports MYSQL_ROOT_PASSWORD" \
@@ -39,6 +45,7 @@ usage=("" \
 "          -h, --help  Displays this help" \
 "")
 sql_connect="mysql"
+# shellcheck disable=SC2153
 sql_connect_host="-h ${MYSQL_HOST} -P ${MYSQL_TCP_PORT}"
 dbfile=database.cms.php
 schemafile=Schema/schema.cms.php
@@ -54,7 +61,7 @@ ck_args="--connection=default"
 # test_args="app AllTests --stderr"
 test_args="app Controller/PagesController --stderr >> $LOG"
 MARIADB_SHORT_NAME=$(echo $SECONDARY_HUB | awk -F/ '{ print $2 }' | awk -F: '{ print $1 }')
-while [[ "$#" > 0 ]]; do case "$1" in
+while [ "$#" -gt 0 ]; do case "$1" in
   --enable-authentication-plugin*)
     slogger -st $0 "Enabled auth_ed25519 plugin..."
     authentication_plugin=1;;
@@ -98,7 +105,7 @@ while [[ "$#" > 0 ]]; do case "$1" in
     text=("" \
 "Passed params : $0 ${saved[*]}" \
 "and environment VARIABLES:" \
-$(export -p | grep "DATABASE\|MYSQL") \
+"$(export -p | grep "DATABASE\|MYSQL")" \
 "")
     printf "%s\n" "${text[@]}"
     ck_args="${ck_args} -v"
@@ -123,14 +130,18 @@ $(export -p | grep "DATABASE\|MYSQL") \
     ;;
   --database*)
     # Transform long options to short ones
-    arg=$1; shift; set -- $(echo "${arg}" \
+    arg=$1; shift
+    # shellcheck disable=SC2046
+    set -- $(echo "${arg}" \
     | awk 'BEGIN{ FS="[ =]+" }{ print "-d " $2 }') "$@"
     parse_and_export "d" "MYSQL_DATABASE" "${DATABASE_USER} database name" "$@"
     shift $((OPTIND -1))
     ;;
   --testunitbase*)
     # Transform long options to short ones
-    arg=$1; shift; set -- $(echo "${arg}" \
+    arg=$1; shift
+    # shellcheck disable=SC2046
+    set -- $(echo "${arg}" \
     | awk 'BEGIN{ FS="[ =]+" }{ print "-u " $2 }') "$@"
     test_checked=1
     ck_args="--connection=test"
@@ -143,16 +154,19 @@ shift; #echo "$@";
 done
 #; check unbound variables, exits scripts and inform user on the standard output.
 : ${MYSQL_DATABASE?} ${DATABASE_USER?} ${MYSQL_ROOT_PASSWORD?} ${MYSQL_TCP_PORT?}
-: $TEST_DATABASE_NAME?} ${MYSQL_USER?} ${MYSQL_PASSWORD?} ${MYSQL_HOST?} ${MYSQL_TCP_PORT?}
+: ${TEST_DATABASE_NAME?} ${MYSQL_USER?} ${MYSQL_PASSWORD?} ${MYSQL_HOST?} ${MYSQL_TCP_PORT?}
 # configure user application database and eventually alter user database access
-shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${schemafile} ${sockfile} ${docker}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
+# shellcheck disable=SC2154
+shell_prompt "$TOPDIR/Scripts/config_app_database.sh ${dbfile} ${schemafile} ${sockfile} ${docker}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
 if [[ $import_identities -eq 1 ]]; then
   #; ---------------------------------- set MYSQL_ROOT_PASSWORD
   export set_DATABASE_PASSWORD=${set_DATABASE_PASSWORD:-$MYSQL_ROOT_PASSWORD}
-  slogger -st $0 "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}"
+  # shellcheck disable=SC2154
+  log_warn_msg "${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}"
   prompt="-Y"
   if [ -z ${set_DATABASE_PASSWORD} ]; then
-    slogger -st $0 "\r${orange}WARNING: Using blank password for ${DATABASE_USER} !!${nc}"
+    # shellcheck disable=SC2154
+     log_warning_msg "${orange}WARNING: Using blank password for ${DATABASE_USER} !!${nc}"
     prompt=${DEBIAN_FRONTEND:-''}
   fi
   if [ $authentication_plugin = 1 ]; then
@@ -180,7 +194,7 @@ if [[ $import_identities -eq 1 ]]; then
 "")
   slogger -st $0 "Forked script to keep hidden table user secrets..."
   password=""
-  if [ ! -z ${MYSQL_ROOT_PASSWORD:-''} ]; then
+  if [ -n "${MYSQL_ROOT_PASSWORD:-}" ]; then
     password="--password=${MYSQL_ROOT_PASSWORD}"
   fi
   shell_prompt "exec ${sql_connect} ${sql_connect_host} -u ${DATABASE_USER} ${password} \
@@ -189,7 +203,7 @@ if [[ $import_identities -eq 1 ]]; then
   #; ---------------------------------- set MYSQL_PASSWORD
   slogger -st $0 "\r${red}WARNING: You will modify SQL ${MYSQL_USER} password !${nc}"
   export set_MYSQL_PASSWORD=${set_MYSQL_PASSWORD:-$MYSQL_PASSWORD}
-  if [ -z ${set_MYSQL_PASSWORD} ]; then
+  if [ -z "${set_MYSQL_PASSWORD}" ]; then
     slogger -st $0 "\r${orange}WARNING: Using blank password for ${MYSQL_USER} !!${nc}"
     prompt=${DEBIAN_FRONTEND:-''}
   fi
@@ -213,7 +227,7 @@ if [[ $import_identities -eq 1 ]]; then
 "-e \"select plugin from user where user='${MYSQL_USER}';\"" \
 "-e \"flush PRIVILEGES;\"")
   password=""
-  if [ ! -z ${MYSQL_ROOT_PASSWORD:-''} ]; then
+  if [ -n "${MYSQL_ROOT_PASSWORD:-}" ]; then
     password="--password=${MYSQL_ROOT_PASSWORD}"
   fi
   shell_prompt "exec ${sql_connect} ${sql_connect_host} -u ${DATABASE_USER} ${password} \

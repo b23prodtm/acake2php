@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
-source ./Scripts/lib/test/parsing.sh
-test=("test_parse_and_export" "test_parse_sql_password" "test_arg_exists" "test_arg_trim")
-for t in "${test[@]}"; do printf "TEST CASES : %s\n" "$t" && eval "$t"; done; sleep 5
+TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=Scripts/lib/test/parsing.sh
+. "$TOPDIR/Scripts/lib/test/parsing.sh"
 migrate="--connection=test -v -u -i --enable-authentication-plugin"
 # default arg --docker, is enabled
 saved=("$@")
@@ -26,7 +26,7 @@ usage=("" \
 "Default arguments:   " \
 "           --docker" \
 "")
-while [[ "$#" > 0 ]]; do case $1 in
+while [[ "$#" -gt 0 ]]; do case $1 in
   --circle )
     migrate=$(parse_arg_trim "--docker" $migrate)
     config_args=$(parse_arg_trim "--docker" $config_args)
@@ -67,9 +67,9 @@ while [[ "$#" > 0 ]]; do case $1 in
     ;;
   *) echo "Unknown parameter, passed $0: $1"; exit 1;;
 esac; shift; done
-source ./configure.sh $config_args
-bash -c "./migrate-database.sh ${migrate}"
-if [ "$?" = 0 ]; then
+# shellcheck source=configure.sh
+. "${TOPDIR}/configure.sh" $config_args
+if bash -c "${TOPDIR}/migrate-database.sh ${migrate}"; then
   printf "[SUCCESS] CakePHP Test Suite successfully finished, go on with the job...\n"
 else
   printf "[FAILED] CakePHP Test Suite had errors. Quit the job thread.\n\

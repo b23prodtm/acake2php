@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 if [ $# -lt 1 ]; then echo "Usage: $0 <ServerName> [wildcard-ip:port]"; fi
-if [ "$#" > 1 ]; then HTTPD_LISTEN=$2; fi
+if [ "$#" -gt 1 ]; then HTTPD_LISTEN=$2; fi
 SERVER_NAME=${SERVER_NAME:-$1}
 HTTPD_LISTEN=${HTTPD_LISTEN:-'*:80'}
 echo -e "
@@ -29,4 +29,4 @@ ServerSignature Off
 ServerTokens Prod
 " > ${SERVER_NAME}.conf
 # change SERVER_NAME environment
-sed -E -i.old -e /SERVER_NAME/s/"(SERVER_NAME=).*"/\\1${SERVER_NAME}/g common.env
+sed -E -i.old -e "/SERVER_NAME/s/(SERVER_NAME=).*/\\1${SERVER_NAME}/g" common.env

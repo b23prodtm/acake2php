@@ -4,20 +4,18 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   source ./Scripts/lib/logging.sh
   source ./Scripts/lib/parsing.sh
   set -eu
-  docker=$(parse_arg_exists "--docker" $*)
-  travis=$(parse_arg_exists "--travis" $*)
-  #; colorize shell script
-  nc="\033[0m"
-  red="\033[0;31m"
-  green="\033[0;32m"
-  orange="\033[0;33m"
-  cyan="\033[0;36m"
+  docker=$(parse_arg_exists "--docker" "$@")
+  travis=$(parse_arg_exists "--travis" "$@")
+  # shellcheck disable=SC2154
   slogger -st $0 "Loading ${orange}Test environment${nc} : $0..."
   #; Common Environment profile
-  [[ ! -e .env || ! -e common.env ]] && printf "Missing environment configuration, please run ./deploy.sh %s --nobuild first." $(arch) && exit 1
-  eval $(cat .env common.env | awk 'BEGIN{ FS="\n" }{ print "export " $1 }')
+  [[ ! -e .env || ! -e common.env ]] \
+  && printf "Missing environment configuration, please run ./deploy.sh %s --nobuild first." "$(arch)" \
+  && exit 1
+  eval "$(cat .env common.env | awk 'BEGIN{ FS="\n" }{ print "export " $1 }')"
   #; To change  Model/Datasource/Database
   export DB=${DB:-Mysql}
+  # shellcheck disable=SC2154
   slogger -st $0 "DB : ${green}${DB}${nc}"
   # Test units :
   #             - Web interface:
@@ -48,7 +46,7 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ $incFOO_ARGS -eq 0 ]; then
   export FTP_SERVICE_USER=test
   export FTP_SERVICE_PASSWORD=mypassword
   #; export GET_HASH_PASSWORD=wokUd0mcc
-  if [[ $(parse_arg_exists "-[vV]+|--verbose" $*) ]]; then
+  if [ -n "$(parse_arg_exists "-[vV]+|--verbose" "$@")" ]; then
     echo "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
     echo "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
   fi

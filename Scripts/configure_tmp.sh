@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-mkdir -p app/tmp/cache/persistent
-mkdir -p app/tmp/cache/models
-mkdir -p app/tmp/tests
-mkdir -p app/tmp/logs
-touch app/tmp/logs/error.log
-chmod -Rv 770 app/tmp
+TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+mkdir -p "$TOPDIR/app/tmp/cache/persistent"
+mkdir -p "$TOPDIR/app/tmp/cache/models"
+mkdir -p "$TOPDIR/app/tmp/tests"
+mkdir -p "$TOPDIR/app/tmp/logs"
+touch "$TOPDIR/app/tmp/logs/error.log"
+chmod -Rv 770 "$TOPDIR/app/tmp"
