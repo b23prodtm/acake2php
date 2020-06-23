@@ -15,7 +15,7 @@ if [ -n "$(command -v composer)" ]; then
 elif [ ! -f $composer ]; then
         slogger -st $0 "Composer setup...\n"
         mkdir -p bin
-        cd bin || log_failure_msg "No such directory: bin" && exit 1
+        cd bin || exit 1
         curl -sS https://getcomposer.org/installer | php
         cd ..
 fi

@@ -79,9 +79,8 @@ before_install:
   - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then sudo systemctl restart mysql; fi
   - rm node_modules/balena-cloud || true
   - rm node_modules/balena-cli || true
-  - npm update
+  - npm install --no-optional
   - npm link balena-cloud
-  - npm link balena-cli
 install:
   - source ./deploy.sh "${DKR_ARCH}" --nobuild
 
