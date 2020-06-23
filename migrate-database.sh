@@ -162,7 +162,7 @@ if [[ $import_identities -eq 1 ]]; then
   #; ---------------------------------- set MYSQL_ROOT_PASSWORD
   export set_DATABASE_PASSWORD=${set_DATABASE_PASSWORD:-$MYSQL_ROOT_PASSWORD}
   # shellcheck disable=SC2154
-  log_warn_msg "${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}"
+  log_warning_msg "${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}"
   prompt="-Y"
   if [ -z ${set_DATABASE_PASSWORD} ]; then
     # shellcheck disable=SC2154
