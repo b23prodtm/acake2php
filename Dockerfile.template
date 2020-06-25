@@ -2,10 +2,10 @@
 # Make changes to the Dockefile.template
 # Docker architecture (x86_64, armhf, aarch64 )
 ARG IMG_TAG
-ARG BALENA_MACHINE_NAME
+ARG DKR_ARCH
 ARG PRIMARY_HUB
 # Primary image is a Linux PHP with Apache 2 server pre-installed
-FROM ${PRIMARY_HUB:-betothreeprod/%%BALENA_MACHINE_NAME%%-php}:${IMG_TAG:-latest}
+FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${IMG_TAG:-latest}-${DKR_ARCH:-%%BALENA_ARCH%%}
 
 ENV INITSYSTEM off
 ENV UDEV off
@@ -24,7 +24,6 @@ ENV CAKEPHP_DEBUG_LEVEL ${CAKEPHP_DEBUG_LEVEL:-2}
 ENV BALENA_MACHINE_NAME ${BALENA_MACHINE_NAME:-%%BALENA_MACHINE_NAME%%}
 ARG SECONDARY_HUB
 ENV SECONDARY_HUB ${SECONDARY_HUB:-'linuxserver\\/mariadb'}
-ARG DKR_ARCH
 ENV DKR_ARCH ${DKR_ARCH:-%%BALENA_ARCH%%}
 ARG COLLECT_COVERAGE
 ENV COLLECT_COVERAGE ${COLLECT_COVERAGE:-'False'}
