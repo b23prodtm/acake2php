@@ -139,9 +139,6 @@ RUN usermod -u ${PUID} www-data && groupmod -g ${PGID} www-data \
   && chmod -R 750 app \
   && checkgid www-data
 
-# reset architecture
-RUN ./deploy.sh ${DKR_ARCH} --nobuild --exit
-
 # Set default working directory
 WORKDIR app
 
