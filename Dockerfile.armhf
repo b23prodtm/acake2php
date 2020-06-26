@@ -5,7 +5,7 @@ ARG IMG_TAG
 ARG DKR_ARCH
 ARG PRIMARY_HUB
 # Primary image is a Linux PHP with Apache 2 server pre-installed
-FROM ${PRIMARY_HUB:-betothreeprod/apache-php7-raspberrypi3}:${IMG_TAG:-latest}-${DKR_ARCH:-armhf}
+FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${IMG_TAG:-latest}-${DKR_ARCH:-armhf}
 
 ENV INITSYSTEM off
 ENV UDEV off

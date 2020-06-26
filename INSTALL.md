@@ -8,6 +8,8 @@ A typical install script could look like the following script, for instance edit
 		cd acake2php
 		git clone https://github.com/b23prodtm/acake2php.git
 		git submodule sync && git submodule update --init --recursive
+		npm install --no-optional
+		./deploy.sh x86_64 --build-deps
 		./deploy.sh x86_64 --docker
 
 Docker builds up a new container and pushes it in registry.
@@ -27,13 +29,13 @@ Get started a Docker shell, and build through local Circle CLI:
 		.circleci/build.sh
 
 ### [developers] Update the Docker deployment image
-Rebuild image registry from deployment folder if you make change to the primary. E.g. change of Linux distribution. Edit the file deployment/images/primary/Dockerfile.template to your needs and perform a build from the a Docker client machine. If you make use of [Balena OS base image list](https://www.balena.io/docs/reference/base-images/base-images-ref/) repository you can use blocks to cross build for ARM ```# [ "cross-build-start" ] # [ "cross-build-end" ]``` command lines in the Dockerfile.template files. For instance, in a Terminal with Docker installed :
+Rebuild image registry from deployment folder if you make change to the primary. E.g. change of Linux distribution. Edit the file deployment/images/primary/Dockerfile.template to your needs and perform a build from the a Docker client machine. If you make use of [Balena OS base image list](https://www.balena.io/docs/reference/base-images/base-images-ref/) repository you can use blocks to cross build for ARM ```# [ "cross-build-start" ] # [ "cross-build-end" ]``` command lines in the Dockerfile.template files. For instance, in a Terminal with Docker installed, at first dependencies may be built :
 
-		./deployment/images/build.sh primary betothreeprod/raspberrypi3-php armhf
+    ./deploy.sh armhf --build-deps
 
 To deploy a Raspberry Pi with Docker or Balena Cloud.
 
-		./deploy.sh armhf
+		./deploy.sh armhf --balena
 
 ### Requirements
 - Broadband Internet access to the Worldwide Web, to download the packages and container images dependencies from the remote Docker registries.
