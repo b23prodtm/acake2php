@@ -155,7 +155,13 @@ RUN a2enmod rewrite \
   && a2enmod ssl \
   && service apache2 restart
 
-# Install all PHP dependencies
+# Helper packages
+RUN install_packages \
+  npm \
+  && rm node_modules/balena-cloud || true \
+  && npm install --no-optional \
+  && npm link balena-cloud
+
 WORKDIR /var/www/html/
 
 RUN chmod 0755 *.sh
