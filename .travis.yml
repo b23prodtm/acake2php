@@ -66,6 +66,7 @@ before_install:
   - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
   - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then build/custom_php_ini.sh; fi
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_SSL}" "latest";
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "npm" "latest";
   - if [[ "${TRAVIS_OS_NAME}" != "windows" ]]; then [ $(which c_rehash) > /dev/null ] && sudo c_rehash; fi
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "curl" "latest" "--with-openssl" | tail
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-homebrew-curl"
@@ -82,7 +83,7 @@ before_install:
   - npm install --no-optional
   - npm link balena-cloud
 install:
-  - source ./deploy.sh "${DKR_ARCH}" --nobuild
+  - ./deploy.sh "${DKR_ARCH}" --nobuild --exit
 
 before_script:
 script:
