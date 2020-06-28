@@ -19,7 +19,7 @@
 	"require": {
 		"php": "^5.6 || ^7",
 		"cakephp/debug_kit": "2.2.*",
-		"betothreeprod/markdown-plugin": "^0.9.1",
+		"betothreeprod/markdown-plugin": "dev-master",
 		"betothreeprod/updateshell": "dev-development",
 		"cakephp/datasources": "2.3.x-dev"
 	},
