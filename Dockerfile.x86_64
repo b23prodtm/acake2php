@@ -65,7 +65,7 @@ ENV HTTPD_LISTEN ${HTTPD_LISTEN:-'0.0.0.0:80'}
 # RUN [ "cross-build-start" ]
 RUN install_packages \
     git \
-    ssh \
+    openssh-client \
     tar \
     gzip \
     ca-certificates \
@@ -81,22 +81,6 @@ RUN install_packages \
 RUN memcached -d -l 127.0.0.1 -p 11211 -u www-data -m 16 \
  && memcached -d -l 127.0.0.1 -p 11212 -u www-data -m 16
 
-RUN pecl config-set php_ini "${PHP_INI_DIR}/php.ini" \
-&& pecl install mysqli \
-    gd \
-    xdebug \
-    mbstring \
-    pcntl opcache \
-    memcached \
-    session
-    # intl
-RUN docker-php-ext-enable mysqli \
-    xdebug \
-    xml \
-    opcache \
-    session
-    # gd \
-    # intl
 WORKDIR /usr/src/
 
 COPY vagrant-shell.sh .
@@ -118,27 +102,17 @@ RUN chmod -R gu+xs deploy.sh configure.sh migrate-database.sh Scripts/
 ENV PATH "${PATH}:/var/www/html/app/Console"
 ENV PATH "${PATH}:/var/www/html/app/Vendor/bin"
 
+# Disable default instance
+RUN mv /etc/apache/httpd.conf /etc/apache2/conf-available/000-default.conf
+
 # Add available site
-RUN Scripts/config_a2ensite.sh
+RUN Scripts/config_a2ensite.sh /var/www/html/app/webroot
 
 # Add to hosts
 RUN echo "127.0.0.1 ${SERVER_NAME}" | tee -a /etc/hosts
 
-# Disable default instance
-RUN a2dissite 000-default \
-  && a2disconf 000-default
-#  && service apache2 reload
-
 # Password Hash Verbose
 # RUN cat app/webroot/php_cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
-
-# Change uid and gid of apache to docker user uid/gid
-RUN usermod -u ${PUID} www-data && groupmod -g ${PGID} www-data \
-  && chown -R :www-data . \
-  && chmod -R 755 . \
-  && chmod -R g+s . \
-  && chmod -R 750 app \
-  && checkgid www-data
 
 # Set default working directory
 WORKDIR app
@@ -149,18 +123,10 @@ RUN mkdir -p \
     tmp/cache/persistent \
     tmp/cache/long \
     tmp/logs \
-  && chown -R www-data:www-data tmp \
   && chmod -R 1777 tmp
 
-# Enable Apache modules and restart
-RUN a2enmod rewrite \
-  && a2enmod ssl \
-  && apachectl restart
-
 # Helper packages
-RUN install_packages \
-  npm \
-  && rm -rf node_modules/balena-cloud \
+RUN rm -rf node_modules/balena-cloud \
   && npm install --no-optional \
   && npm link balena-cloud
 

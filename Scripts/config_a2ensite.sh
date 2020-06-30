@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 set -eu
-CNF="${1:-/etc/apache2/sites-available/}"
+CNF="/etc/apache/httpd.conf"
+WWW="${1:-/var/www/localhost/htdocs}"
+mkdir -p "$(dirname $CNF)"
 touch site.conf
 echo -e "
 <VirtualHost ${HTTPD_LISTEN}>
-    DocumentRoot /var/www/html/app/webroot/
+    DocumentRoot ${WWW}
     ServerName www.${SERVER_NAME}
     <Directory />
         Options +FollowSymLinks
@@ -12,7 +14,7 @@ echo -e "
         Order Deny,Allow
         Deny from All
     </Directory>
-    <Directory /var/www/html/app/webroot/>
+    <Directory ${WWW}>
         DirectoryIndex index.php
         Options +FollowSymLinks
         AllowOverride All
@@ -27,6 +29,4 @@ ServerName ${SERVER_NAME}
 ServerSignature Off
 ServerTokens Prod" >> site.conf
 cat site.conf
-mapfile -t cnf< <(find $CNF -name "*.conf")
-mv site.conf "$CNF/00${#cnf}-${SERVER_NAME}.conf"
-a2ensite "00${#cnf}-${SERVER_NAME}"
+mv site.conf "$CNF"

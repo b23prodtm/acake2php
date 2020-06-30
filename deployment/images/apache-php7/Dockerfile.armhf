@@ -2,52 +2,75 @@
 # Source DockerFile:  https://github.com/ulsmith/rpi-raspbian-apache-php/blob/master/Dockerfile
 # S6 Overlay:         https://github.com/smebberson/docker-alpine/blob/master/alpine-apache/Dockerfile
 #
-FROM balenalib/raspberrypi3-debian:build
+FROM balenalib/raspberrypi3-alpine:build
 RUN [ "cross-build-start" ]
 ARG PHP_LIB
-ENV PHP_LIB ${PHP_LIB:-7.2}
+ENV PHP_LIB ${PHP_LIB:-7}
 
 ## Install add-apt-repository packages
-RUN install_packages \
-		software-properties-common \
-		dirmngr \
-		apt-transport-https \
-		lsb-release \
-		ca-certificates
+RUN apk update \
+    && apk add \
+		bash \
+		sudo \
+		curl \
+		git \
+		openssh-client \
+		tar \
+		gzip \
+		ca-certificates \
+		zip \
+		unzip \
+		icu-dev \
+		libmcrypt-dev \
+		freetype-dev \
+		libjpeg-turbo-dev \
+		libpng-dev \
+		netcat-openbsd
 
-RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
-RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" \
-		| tee "/etc/apt/sources.list.d/php${PHP_LIB}.list"
+RUN apk update \
+		    && apk add \
+		php${PHP_LIB} \
+		php${PHP_LIB}-curl \
+		php${PHP_LIB}-gd \
+		php${PHP_LIB}-intl \
+		php${PHP_LIB}-json \
+		php${PHP_LIB}-mbstring \
+		php${PHP_LIB}-opcache \
+		php${PHP_LIB}-openssl \
+		php${PHP_LIB}-pcntl \
+		php${PHP_LIB}-xml \
+		php${PHP_LIB}-mysqlnd \
+		php${PHP_LIB}-phar \
+		php${PHP_LIB}-mysqli \
+		php${PHP_LIB}-pdo_mysql \
+		php${PHP_LIB}-dom \
+		php${PHP_LIB}-tokenizer \
+		php${PHP_LIB}-simplexml \
+		php${PHP_LIB}-xmlwriter \
+		php${PHP_LIB}-fpm \
+		php${PHP_LIB}-zlib \
+		mariadb-client \
+		npm \
+    && apk del build-base \
+    && rm -rf /var/cache/apk/*
 
 ## Install base packages
-RUN install_packages \
+RUN apk update \
+    && apk add \
 		apache2 \
+		apache2-ctl \
+    apache2-ssl \
 		php${PHP_LIB}-dev \
-		libapache2-mod-php${PHP_LIB} \
+		php${PHP_LIB}-apache2 \
 		curl \
-		php${PHP_LIB}-curl \
-		php${PHP_LIB}-json \
 		php${PHP_LIB}-odbc \
-		php${PHP_LIB}-sqlite \
-    php${PHP_LIB}-mysql
+		php${PHP_LIB}-pdo_sqlite \
+		php${PHP_LIB}-sqlite3 \
+		php${PHP_LIB}-session \
+    && apk del build-base \
+    && rm -rf /var/cache/apk/*
 
-# https://geekmag.fr/2018/12/20/installer-php-7-3-sur-debian-9-ou-debian-8/
-# https://www.techrepublic.com/article/how-to-install-mcrypt-for-php-7-2/
-COPY --from=library/php /usr/local/bin/docker-php-* /usr/local/bin/
-RUN install_packages \
-    php${PHP_LIB}-cli \
-    php${PHP_LIB}-xml \
-    php-pear \
-    libmcrypt-dev
-# Fixes /usr/bin/phpize: 1: /usr/bin/phpize: /usr/bin/sed: not found
-RUN ln -vsf $(which sed) /usr/bin/sed
-RUN pecl config-set php_ini "${PHP_INI_DIR}/php.ini" \
-  && mkdir -p /conf.d/ \
-  && pecl install mcrypt \
-	&& docker-php-ext-enable mcrypt
-RUN a2enmod php${PHP_LIB} && a2enmod rewrite
-COPY conf/000-default.conf /etc/apache2/conf-available/000-default.conf
-RUN chown -R www-data:www-data /var/www/html
+COPY conf/000-default.conf /etc/apache/httpd.conf
 
 # just containers configuration
 COPY etc /etc
