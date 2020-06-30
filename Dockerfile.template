@@ -103,7 +103,8 @@ ENV PATH "${PATH}:/var/www/html/app/Console"
 ENV PATH "${PATH}:/var/www/html/app/Vendor/bin"
 
 # Disable default instance
-RUN mv /etc/apache/httpd.conf /etc/apache2/conf-available/000-default.conf
+RUN mkdir -p /etc/apache2/conf-available/ \
+  && mv /etc/apache/httpd.conf /etc/apache2/conf-available/000-default.conf
 
 # Add available site
 RUN Scripts/config_a2ensite.sh /var/www/html/app/webroot

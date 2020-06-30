@@ -3,6 +3,7 @@ set -eu
 CNF="/etc/apache/httpd.conf"
 WWW="${1:-/var/www/localhost/htdocs}"
 mkdir -p "$(dirname $CNF)"
+mkdir -p "$(dirname $WWW)"
 touch site.conf
 echo -e "
 <VirtualHost ${HTTPD_LISTEN}>
