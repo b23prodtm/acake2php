@@ -7,10 +7,10 @@
     "lib": "lib",
     "app": "app"
   },
-	"scripts": {
-		"cs-check": "PHP_CS=1 ./test-cake.sh",
-		"test": "./test-cake.sh"
-	},
+  "scripts": {
+    "cs-check": "PHP_CS=1 ./test-cake.sh",
+    "test": "./test-cake.sh"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/b23prodtm/acake2php.git"

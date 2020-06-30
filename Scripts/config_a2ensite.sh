@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-if [ $# -lt 1 ]; then echo "Usage: $0 <ServerName> [wildcard-ip:port]"; fi
-if [ "$#" -gt 1 ]; then HTTPD_LISTEN=$2; fi
-SERVER_NAME=${SERVER_NAME:-$1}
-HTTPD_LISTEN=${HTTPD_LISTEN:-'*:80'}
+set -eu
+CNF="${1:-/etc/apache2/sites-available/}"
+touch site.conf
 echo -e "
 <VirtualHost ${HTTPD_LISTEN}>
     DocumentRoot /var/www/html/app/webroot/
-    ServerAlias www.${SERVER_NAME}
+    ServerName www.${SERVER_NAME}
     <Directory />
         Options +FollowSymLinks
         AllowOverride None
@@ -26,7 +25,8 @@ echo -e "
 ServerAdmin webmaster@${SERVER_NAME}
 ServerName ${SERVER_NAME}
 ServerSignature Off
-ServerTokens Prod
-" > ${SERVER_NAME}.conf
-# change SERVER_NAME environment
-sed -E -i.old -e "/SERVER_NAME/s/(SERVER_NAME=).*/\\1${SERVER_NAME}/g" common.env
+ServerTokens Prod" >> site.conf
+cat site.conf
+mapfile -t cnf< <(find $CNF -name "*.conf")
+mv site.conf "$CNF/00${#cnf}-${SERVER_NAME}.conf"
+a2ensite "00${#cnf}-${SERVER_NAME}"

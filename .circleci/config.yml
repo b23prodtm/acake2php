@@ -7,9 +7,10 @@ aliases:
         apk update \
           && apk add \
             npm \
+            php7-session \
           && apk del build-base \
           && rm -rf /var/cache/apk/*
-        rm node_modules/balena-cloud || true
+        rm -Rf node_modules/balena-cloud || true
         npm install --no-optional
         npm link balena-cloud
 orbs:
