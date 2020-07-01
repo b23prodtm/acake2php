@@ -1,0 +1,7 @@
+#!/usr/bin/with-contenv sh
+# User owner setup
+addgroup -g 82 -S www-data
+adduser -u 82 -D -S -G www-data www-data
+
+memcached -d -l 127.0.0.1 -p 11211 -u www-data -m 16 \
+ && memcached -d -l 127.0.0.1 -p 11212 -u www-data -m 16

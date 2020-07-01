@@ -9,8 +9,9 @@ A typical install script could look like the following script, for instance edit
 		git clone https://github.com/b23prodtm/acake2php.git
 		git submodule sync && git submodule update --init --recursive
 		npm install --no-optional
-		./deploy.sh x86_64 --build-deps
-		./deploy.sh x86_64 --docker
+		# reset architecture flags
+		./deploy.sh x86_64 --nobuild 0
+		./deploy.sh x86_64 --build-deps --docker
 
 Docker builds up a new container and pushes it in registry.
 It will eventually run the container as the startup script succeeds.
@@ -31,7 +32,7 @@ Get started a Docker shell, and build through local Circle CLI:
 ### [developers] Update the Docker deployment image
 Rebuild image registry from deployment folder if you make change to the primary. E.g. change of Linux distribution. Edit the file deployment/images/primary/Dockerfile.template to your needs and perform a build from the a Docker client machine. If you make use of [Balena OS base image list](https://www.balena.io/docs/reference/base-images/base-images-ref/) repository you can use blocks to cross build for ARM ```# [ "cross-build-start" ] # [ "cross-build-end" ]``` command lines in the Dockerfile.template files. For instance, in a Terminal with Docker installed, at first dependencies may be built :
 
-    ./deploy.sh armhf --build-deps
+    ./deploy.sh armhf --nobuild --build-deps
 
 To deploy a Raspberry Pi with Docker or Balena Cloud.
 

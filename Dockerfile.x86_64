@@ -78,8 +78,8 @@ RUN install_packages \
     libmemcached-dev
     # libicu libicu-dev
 
-RUN memcached -d -l 127.0.0.1 -p 11211 -u www-data -m 16 \
- && memcached -d -l 127.0.0.1 -p 11212 -u www-data -m 16
+# just containers configuration
+COPY etc /etc
 
 WORKDIR /usr/src/
 
@@ -123,9 +123,7 @@ RUN mkdir -p \
   && chmod -R 1777 tmp
 
 # Helper packages
-RUN rm -rf node_modules/balena-cloud \
-  && npm install --no-optional \
-  && npm link balena-cloud
+RUN npm link balena-cloud
 
 WORKDIR /var/www/html/
 
