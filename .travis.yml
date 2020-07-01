@@ -11,6 +11,10 @@ os:
     - osx
     - windows
 
+arch:
+    - amd64
+    - arm64
+
 dist: bionic
 addons:
   mariadb: '10.3'
@@ -47,11 +51,16 @@ matrix:
   #fast_finish: true
   include:
     - os: linux
+      arch: arm64
     - os: osx
+      arch: amd64
     - os: windows
+      arch: amd64
   allow_failures:
     - os: windows
+      arch: amd64
     - os: osx
+      arch: amd64
 
 services:
 - mysql
@@ -72,13 +81,13 @@ before_install:
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}-xml" | tail
   - php -i | grep "SSL Version"
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer" "latest" | tail
+  - curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "nodejs" "latest" | tail
   - cd ../..
   #- docker login -u $DOCKER_USER -p $DOCKER_PASS
   - sudo mkdir -p /etc/mysql/conf.d/ && sudo cp -f mysqldb/conf.d/my.cnf /etc/mysql/conf.d/my.cnf
   - sudo sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS:-127.0.0.1}/" /etc/mysql/conf.d/my.cnf
   - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then sudo systemctl restart mysql; fi
-  - rm node_modules/balena-cloud || true
-  - rm node_modules/balena-cli || true
   - npm install --no-optional
   - npm link balena-cloud
 install:
