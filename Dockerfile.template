@@ -102,11 +102,7 @@ RUN chmod -R gu+xs deploy.sh configure.sh migrate-database.sh Scripts/
 ENV PATH "${PATH}:/var/www/html/app/Console"
 ENV PATH "${PATH}:/var/www/html/app/Vendor/bin"
 
-# Disable default instance
-RUN mkdir -p /etc/apache2/conf-available/ \
-  && mv /etc/apache/httpd.conf /etc/apache2/conf-available/000-default.conf
-
-# Add available site
+# Enable site on httpd
 RUN Scripts/config_a2ensite.sh /var/www/html/app/webroot
 
 # Add to hosts

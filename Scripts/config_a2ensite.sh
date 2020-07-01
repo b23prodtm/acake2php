@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -eu
-CNF="/etc/apache/httpd.conf"
+CNF="/etc/apache2/httpd.conf"
 WWW="${1:-/var/www/localhost/htdocs}"
 mkdir -p "$(dirname $CNF)"
 mkdir -p "$(dirname $WWW)"
@@ -25,6 +25,7 @@ echo -e "
     CustomLog /var/log/apache2/access.${SERVER_NAME}.log combined
 </VirtualHost>
 
+Listen ${HTTPD_LISTEN}
 ServerAdmin webmaster@${SERVER_NAME}
 ServerName ${SERVER_NAME}
 ServerSignature Off

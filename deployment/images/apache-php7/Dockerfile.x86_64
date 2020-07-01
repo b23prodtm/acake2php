@@ -70,7 +70,9 @@ RUN apk update \
     && apk del build-base \
     && rm -rf /var/cache/apk/*
 
-COPY conf/000-default.conf /etc/apache/httpd.conf
+# Backup default instance
+RUN mkdir -p /etc/apache2/conf-available/ \
+  && cp /etc/apache2/*.conf /etc/apache2/conf-available/
 
 # just containers configuration
 COPY etc /etc
