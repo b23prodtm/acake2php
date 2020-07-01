@@ -8,9 +8,9 @@ touch site.conf
 echo -e "
 <VirtualHost ${HTTPD_LISTEN}>
     DocumentRoot ${WWW}
-    ServerName www.${SERVER_NAME}
     ServerAdmin webmaster@${SERVER_NAME}
-    ServerName ${SERVER_NAME}
+    ServerName www.${SERVER_NAME}
+    ServerAlias ${SERVER_NAME}
     <Directory />
         Options +FollowSymLinks
         AllowOverride None
@@ -26,8 +26,7 @@ echo -e "
     ErrorLog /var/log/apache2/error.${SERVER_NAME}.log
     CustomLog /var/log/apache2/access.${SERVER_NAME}.log combined
 </VirtualHost>
-
-Listen ${HTTPD_LISTEN}
+ServerName ${SERVER_NAME}
 " >> site.conf
 cat site.conf
 mv site.conf "$CNF"
