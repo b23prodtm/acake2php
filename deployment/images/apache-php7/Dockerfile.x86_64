@@ -2,7 +2,7 @@
 # Source DockerFile:  https://github.com/ulsmith/rpi-raspbian-apache-php/blob/master/Dockerfile
 # S6 Overlay:         https://github.com/smebberson/docker-alpine/blob/master/alpine-apache/Dockerfile
 #
-FROM balenalib/intel-nuc-alpine:build
+FROM balenalib/intel-nuc-alpine-node:build
 # RUN [ "cross-build-start" ]
 ARG PHP_LIB
 ENV PHP_LIB ${PHP_LIB:-7}
