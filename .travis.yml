@@ -5,6 +5,8 @@ cache:
   - "$HOME/.composer/cache/files"
 # language: php # linux only
 language: node_js # cross-platform
+node_js:
+    - "14.5"
 
 os:
     - linux
@@ -58,9 +60,7 @@ matrix:
       arch: amd64
   allow_failures:
     - os: windows
-      arch: amd64
     - os: osx
-      arch: amd64
 
 services:
 - mysql
@@ -81,8 +81,6 @@ before_install:
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}-xml" | tail
   - php -i | grep "SSL Version"
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer" "latest" | tail
-  - curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "nodejs" "latest" | tail
   - cd ../..
   #- docker login -u $DOCKER_USER -p $DOCKER_PASS
   - sudo mkdir -p /etc/mysql/conf.d/ && sudo cp -f mysqldb/conf.d/my.cnf /etc/mysql/conf.d/my.cnf
