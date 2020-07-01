@@ -23,7 +23,7 @@ usage=("" \
 "Usage: $0 [-m] [--openshift] [-c] [-h [-p password -s salt [-f filename]]]" \
 "          [-m] [--openshift] [-c][[-d|--mig-database] [options]]" \
 "          --openshift -d Using real environment variables to migrate database" \
-"          -c,--const     Reset to app/webroot/php_cms/etc/constantes-template.properties" \
+"          -c,--const     Reset to $TOPDIR/app/webroot/php_cms/etc/constantes-template.properties" \
 "          -h,--hash      Reset administrator password hash:" \
 "               -p <password> -s <salt> [-f <save-filename>]" \
 "                         Set administrator <password> with md5 <salt>. Optional file to save a shell script export." \

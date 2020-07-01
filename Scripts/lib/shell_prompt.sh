@@ -23,7 +23,7 @@ shell_prompt() {
     case $answer in
       [yY]* ) echo -e "Yes."
         # shellcheck disable=SC1090
-        exec "$script" || true
+        exec $script || true
         break;;
       [nN]* ) echo -e "No.\n"
         break;;
