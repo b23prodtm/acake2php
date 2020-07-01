@@ -83,15 +83,14 @@ if [ -n "$(parse_arg_exists "server" $ck_args)" ]; then
   run_ps cakephp $ck_args
 elif [ -n "$(parse_arg_exists "test" "$(parse_arg_trim "--connection*" $ck_args)")" ]; then
   slogger -st $0 "$(printf "Passed Cake Args: %s" "$ck_args")"
-  if [[ "${COLLECT_COVERAGE}" == "true" ]]; then
+  if [ "${COLLECT_COVERAGE}" = "true" ]; then
     run_ps "$TOPDIR/app/Vendor/bin/phpunit" --log-junit ~/phpunit/junit.xml --coverage-clover \
 		app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist \
 		app/Test/Case/AllTestsTest.php
-  elif [ "${PHPCS}" != '1' ]; then
-      run_ps cakephp $ck_args  --coverage-clover app/build/logs/clover.xml
-  else
-		  run_ps "$TOPDIR/app/Vendor/vendor/bin/phpcs" --colors -p -s --extensions=php \
-			$TOPDIR/lib/Cake ${ck_args}
+  elif [ "${PHPCS}" = '1' ]; then
+		run_ps "$TOPDIR/app/Vendor/bin/phpcs" --colors -p -s --extensions=php .
+	else
+		run_ps cakephp $ck_args  --coverage-clover app/build/logs/clover.xml
   fi
 elif [ -n "$(parse_arg_exists "update" $ck_args)" ]; then
   #; cakephp shell

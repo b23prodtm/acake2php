@@ -11,15 +11,16 @@ config_args="-c -h -p pass -s word --development"
 db_data="db-data:/config/databases/"
 usage=("" \
 "${cyan}Notice:${nc}The test script." \
-"Usage: $0 [--travis|--docker|--openshift|--circle [--cov]] [-p <password>] [-t <password>] " \
+"Usage: $0 [--travis|--docker|--openshift|--circle [--cov|--phpcs]] [-p <password>] [-t <password>] " \
 "           --travis, --circle  Travis or Circle CI Local Test Workflow" \
 "                               also disables Docker Image" \
-"           --cov               Coverage All Tests" \
 "           -o, --openshift     [path to a file with a list of variables], " \
 "                               also disables Docker Image" \
 "           --docker            [enabled] Startup with Docker Image DATABASE" \
 "           -p <password>       Exports MYSQL_ROOT_PASSWORD" \
 "           -t <password>       Exports MYSQL_PASSWORD" \
+"           --cov               Coverage All Tests" \
+"           --phpcs             PHP Code Sniffer" \
 "" \
 "Notice:                        Use environment variables from open container/pod" \
 "                               and a file if it exists" \
@@ -31,6 +32,8 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     migrate=$(parse_arg_trim "--docker" $migrate)
     config_args=$(parse_arg_trim "--docker" $config_args)
     ;;
+  --phpcs )
+    export PHPCS=1;;
   --cov )
     export COLLECT_COVERAGE=true;;
   -[hH]*|--help )
