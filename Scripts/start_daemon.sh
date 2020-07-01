@@ -7,9 +7,9 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 # shellcheck source=lib/parsing.sh
 . "$TOPDIR/Scripts/lib/parsing.sh"
 docker=$(parse_arg_exists "--docker" "$@")
-ck_args=$(parse_arg_trim "-[oO]+|--openshift|--docker" "$@")
 travis=$(parse_arg_exists "--travis" "$@")
 openshift=$(parse_arg_exists "-[oO]+|--openshift"  "$@")
+ck_args=$(parse_arg_trim "-[oO]+|--openshift|--docker|--travis" "$@")
 LOG=$(new_cake_log $travis $docker $openshift) && slogger -st $0 $LOG
 MARIADB_SHORT_NAME=$(echo $SECONDARY_HUB | awk -F/ '{ print $2 }' | awk -F: '{ print $1 }')
 MARIADB_CONT_NAME=betothreeprod/${MARIADB_SHORT_NAME}-${BALENA_MACHINE_NAME:-intel-nuc}

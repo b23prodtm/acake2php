@@ -45,7 +45,6 @@ env:
     - PHPENV_ROOT=/usr/local/bin/phpenv
     - _SSL=openssl
     - MYPHPCMS_LOG=app/tmp/logs
-    - DKR_ARCH=x86_64
     - WEBHOOK_URL=https://discordapp.com/api/webhooks/479745392880386058/YOO7Nnn1IFWUtXX0n0qAZYeMDeV-SLa0lSzjGpNnKGTzG-xA0T3dplVGzSM4ObKLeMWg
     - secure: C39DQ1zYpSAOy33Sb8NP89o6k4HUnjHnQ+bQkgbo3WH7WtiN76dGeO9jm1DjMn5np6oKbDi41/fxonaTUIjb9YMksG2YB+NBDYXHyV1H7/xAeC6uTxwUObrLXh8aOUwiiuLPllMdtOLX8JSPxl1Ixc6KyeFywPiMvwuOe4QZW6sVG4sqhZC/UUycYKRSMaOthtuTDPYKjBLaDPiEzkUmdBIo9IhAsidEFAHj4jEmw9gBtac0B2x7GbvvoDivdH3KdNSoPt2SkD0RLX51Qf7AYeAV4fw65cuCp/Aat/uk55x3lN5g18Ww9khY/cFSwPC0JXGQnnJvdcDP2diZNkqE41Yc/Mw3xwfrvp3/v8js3VIBzsGINKiSdXZ/yXqI9iRzvzlfmXRHvd4sFXRzUpi8ZB4PXaboMndbNRoh4PcoRNFtXhyebQCEgZv2x3oiKXw38WT5cga03uMH4E5z5afS3n7NP1tsuiNWd499dJzAkW8OPeLDPqY3a/b5qLeZIK1bo23mvCjPtbm+B2g2QocKcd1oQ+XANCyuT3M/+AIypdMabGOSon2fDKrUUN+SqIX4FcYaHi1sG3qUp23870u9YcT4hK2LCKBcBPkFpxqEZLwdHbJmjHPo6uRyAKOD7r/k1DtIRqkcJ+5BpU4emo6rM9rdh5mWjLtK7vdY8Y/tvP8=
 
@@ -59,12 +58,14 @@ matrix:
     - os: windows
       arch: amd64
   allow_failures:
+    - os: linux
+      arch: arm64
     - os: windows
     - os: osx
 
 services:
 - mysql
-#- docker
+- docker
 - memcached
 
 before_install:
@@ -90,13 +91,13 @@ before_install:
   - npm install --no-optional
   - npm link balena-cloud
 install:
-  - ./deploy.sh "${DKR_ARCH}" --nobuild --exit
+  - ./deploy.sh "$(arch)" --nobuild --exit
 
 before_script:
 script:
   - if [[ "${TRAVIS_OS_NAME}" = "linux" &&  "${COVERITY_SCAN_BRANCH:-0}" != 1 ]]; then ./test-cake.sh --travis; fi
   - if [[ "${TRAVIS_OS_NAME}" != "linux" &&  "${COVERITY_SCAN_BRANCH:-0}" != 1 ]]; then ./test-cake.sh --travis --docker; fi
-  - cat ${MYPHPCMS_LOG}/travis.${TRAVIS_BUILD_NUMBER}.log
+  - cat ${MYPHPCMS_LOG}/travis.${TRAVIS_BUILD_NUMBER}.log || true
 after_success:
   - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh

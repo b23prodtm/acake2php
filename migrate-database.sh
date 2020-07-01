@@ -236,9 +236,9 @@ if [[ $import_identities -eq 1 ]]; then
   check_log $LOG
 fi
 if [[ $update_checked -eq 1 ]]; then
-  bash -c "./Scripts/start_daemon.sh ${docker} update ${ck_args}"
+  bash -c "./Scripts/start_daemon.sh${travis} ${docker} update ${ck_args}"
 fi
 if [[ $test_checked -eq 1 ]]; then
-  bash -c "./Scripts/bootstrap.sh ${docker} test ${test_args}"
+  bash -c "./Scripts/bootstrap.sh ${travis} ${docker} test ${test_args}"
   check_log $LOG
 fi

@@ -49,16 +49,16 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     migrate="-v ${migrate}"
     echo "Passed params :  $0 ${saved[*]}";;
   -[oO]*|--openshift )
-    migrate=$(parse_arg_trim "--docker" $migrate)" --openshift"
-    config_args=$(parse_arg_trim "--docker" $config_args)" --openshift"
+    migrate="$(parse_arg_trim "--docker" $migrate) --openshift"
+    config_args="$(parse_arg_trim "--docker" $config_args) --openshift"
     ;;
   --travis)
     export MYSQL_HOST=${MYSQL_HOST:-'127.0.0.1'}
     export MYSQL_USER='travis'
     export MYSQL_PASSWORD=''
     export MYSQL_ROOT_PASSWORD=''
-    migrate=$(parse_arg_trim "--docker" $migrate)" --travis"
-    config_args=$(parse_arg_trim "--docker" $config_args)" --travis"
+    migrate="$(parse_arg_trim "--docker" $migrate) --travis"
+    config_args="$(parse_arg_trim "--docker" $config_args) --travis"
     ;;
   --docker )
     config_args="--docker ${config_args}"
