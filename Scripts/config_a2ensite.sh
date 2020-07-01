@@ -1,23 +1,20 @@
 #!/usr/bin/env bash
 set -eu
-CNF="/etc/apache2/conf.d"
+CNF="/etc/apache2"
 WWW="${1:-/var/www/localhost/htdocs}"
 mkdir -p "$(dirname $CNF)"
 mkdir -p "$(dirname $WWW)"
 touch site.conf
 echo -e "
+<Directory \"/\">
+    Require all denied
+</Directory>
 <VirtualHost ${HTTPD_LISTEN}>
     DocumentRoot ${WWW}
     ServerAdmin webmaster@${SERVER_NAME}
-    ServerName www.${SERVER_NAME}
-    ServerAlias ${SERVER_NAME}
-    <Directory />
-        Options +FollowSymLinks
-        AllowOverride None
-        Order Deny,Allow
-        Deny from All
-    </Directory>
-    <Directory ${WWW}>
+    ServerName ${SERVER_NAME}
+    ServerAlias www.${SERVER_NAME}
+    <Directory \"${WWW}\">
         DirectoryIndex index.php
         Options +FollowSymLinks
         AllowOverride All
@@ -29,4 +26,6 @@ echo -e "
 ServerName ${SERVER_NAME}
 " >> site.conf
 cat site.conf
-mv site.conf "$CNF"
+mv site.conf "${CNF}/conf.d/"
+sed -i.old -E -e "/mod_rewrite.so/s/^#+//g" "${CNF}/httpd.conf"
+grep mod_rewrite.so < "${CNF}/httpd.conf"
