@@ -68,11 +68,10 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   *) echo "Unknown parameter, passed $0: $1"; exit 1;;
 esac; shift; done
 # shellcheck source=configure.sh
-. "${TOPDIR}/configure.sh" $config_args
+"${TOPDIR}/configure.sh" $config_args
 if bash -c "${TOPDIR}/migrate-database.sh ${migrate}"; then
   printf "[SUCCESS] CakePHP Test Suite successfully finished, go on with the job...\n"
 else
   printf "[FAILED] CakePHP Test Suite had errors. Quit the job thread.\n\
 [INFO] Only continuous integration scripts may run tests.\n"
-  exit 1
 fi

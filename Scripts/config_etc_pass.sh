@@ -9,7 +9,7 @@ pwd=$(pwd)
 pass=""
 salt=""
 hash_file=""
-dir="$MYPHPCMS_DIR/e13/etc/"
+dir="$TOPDIR/$MYPHPCMS_DIR/e13/etc/"
 cd "$dir" || log_failure_msg "No such directory %s\n" "$dir" && exit 1
 # passed args from shell_prompt
 while [ "$#" -gt 0 ]; do case $1 in

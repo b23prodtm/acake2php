@@ -26,7 +26,7 @@ wait_for_host() {
 	return 1
 }
 run_ps() {
-	if "$@" >> $LOG 2>&1; then
+	if "$@" >> "$LOG" 2>&1; then
 		log_success_msg "SUCCESS"
 	else
 		log_failure_msg "FAILED"

@@ -1,7 +1,15 @@
 #!/usr/bin/with-contenv sh
-# User owner setup
-addgroup -g 82 -S www-data || true
-adduser -u 82 -D -S -G www-data www-data || true
+
+if grep www-data < /etc/group; then
+   id www-data
+else
+   addgroup -g 33 --system www-data
+fi
+if grep www-data < /etc/passwd; then
+   id www-data
+else
+   adduser --ingroup www-data --system www-data
+fi
 
 memcached -d -l 127.0.0.1 -p 11211 -u www-data -m 16 \
  && memcached -d -l 127.0.0.1 -p 11212 -u www-data -m 16

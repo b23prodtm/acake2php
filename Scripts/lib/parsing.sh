@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 banner=("" "[$0] BASH ${BASH_SOURCE[0]}" ""); printf "%s\n" "${banner[@]}"
 #; colorize shell script
 nc="\033[0m"

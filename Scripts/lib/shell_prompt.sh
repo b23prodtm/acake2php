@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
-. init_functions
+TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+. init_functions .
 shell_prompt() {
   [ $# -lt 2 ] && printf "Usage: %s <file> <name> [-y|n]" "${FUNCNAME[0]}" && exit 1
   script=$1
@@ -22,7 +23,7 @@ shell_prompt() {
     case $answer in
       [yY]* ) echo -e "Yes."
         # shellcheck disable=SC1090
-        bash -c "$script" || true
+        exec "$script" || true
         break;;
       [nN]* ) echo -e "No.\n"
         break;;
@@ -38,8 +39,8 @@ show_password_status() {
 }
 #; export -f show_password_status
 cakephp() {
-  CAKE="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/lib/Cake"
-  APP="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/app"
+  CAKE="$TOPDIR/lib/Cake"
+  APP="$TOPDIR/app"
   slogger -st "${FUNCNAME[0]}" "Cake 2.x patch ShellDispatcher.php"
   sed -i.orig -e "s/\$dispatcher->_stop\((.*)\);/\\1;/g" "${CAKE}/Console/ShellDispatcher.php"
   exec php -q "${APP}/Console/cake.php" -working "$APP" "$@"

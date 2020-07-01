@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -eu
-CNF="/etc/apache2/httpd.conf"
+CNF="/etc/apache2/conf.d"
 WWW="${1:-/var/www/localhost/htdocs}"
 mkdir -p "$(dirname $CNF)"
 mkdir -p "$(dirname $WWW)"
@@ -9,6 +9,8 @@ echo -e "
 <VirtualHost ${HTTPD_LISTEN}>
     DocumentRoot ${WWW}
     ServerName www.${SERVER_NAME}
+    ServerAdmin webmaster@${SERVER_NAME}
+    ServerName ${SERVER_NAME}
     <Directory />
         Options +FollowSymLinks
         AllowOverride None
@@ -26,9 +28,6 @@ echo -e "
 </VirtualHost>
 
 Listen ${HTTPD_LISTEN}
-ServerAdmin webmaster@${SERVER_NAME}
-ServerName ${SERVER_NAME}
-ServerSignature Off
-ServerTokens Prod" >> site.conf
+" >> site.conf
 cat site.conf
 mv site.conf "$CNF"

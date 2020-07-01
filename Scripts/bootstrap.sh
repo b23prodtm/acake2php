@@ -24,14 +24,14 @@ fi
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;
 if [ ! -f "$TOPDIR/$MYPHPCMS_DIR/e13/etc/constantes.properties" ] && [ -z "$openshift" ]; then
-  shell_prompt "$TOPDIR/configure.sh -c" "missing file creation constantes.properties"
+  shell_prompt "$TOPDIR/configure.sh -c" "missing file creation constantes.properties" ${DEBIAN_FRONTEND:-}
 fi
 slogger -st $0 "Auto configuration..."
 #; hash file that is stored in webroot to allow administrator privileges
 if [ -z ${GET_HASH_PASSWORD:-''} ] && [ -z "$openshift" ]; then
   hash="$TOPDIR/${MYPHPCMS_DIR}/e13/etc/export_hash_password.sh"
   if [ ! -f $hash ]; then
-    shell_prompt "$TOPDIR/configure.sh -h " "define a value for missing GET_HASH_PASSWORD"
+    shell_prompt "$TOPDIR/configure.sh -h " "define a value for missing GET_HASH_PASSWORD" ${DEBIAN_FRONTEND:-}
   fi
   # shellcheck source=app/webroot/php_cms/e13/etc/export_hash_password.sh
   . "$hash"
