@@ -2,8 +2,8 @@
 set -eu
 CNF="/etc/apache2"
 WWW="${1:-/var/www/localhost/htdocs}"
-mkdir -p "$(dirname $CNF)"
-mkdir -p "$(dirname $WWW)"
+mkdir -p "$(dirname "$CNF")"
+mkdir -p "$(dirname "$WWW")"
 touch site.conf
 echo -e "
 <Directory \"/\">

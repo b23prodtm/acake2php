@@ -40,8 +40,9 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     parse_and_export "-p" "CAKE_TCP_PORT" "specify -p <port>" "$@"
     break;;
   --disable-docker )
-    command=$(parse_arg_trim "--docker" $command)
+    # shellcheck disable=SC2086
+    command=$(parse_arg_trim --docker $command)
     ;;
   *);;
 esac; shift; done
-./Scripts/bootstrap.sh $command
+bash -c "./Scripts/bootstrap.sh $command"

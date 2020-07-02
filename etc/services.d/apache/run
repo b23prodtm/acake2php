@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv sh
 
 if [ -e ./setup ]; then
-  exec ./setup
+  sh -c "./setup"
 fi
 
 # start apache

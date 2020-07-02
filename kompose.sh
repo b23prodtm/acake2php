@@ -21,6 +21,6 @@ chmod 0755 kompose
 sudo mv -f kompose /usr/local/bin
 source common.env
 for d in "${BALENA_PROJECTS[@]}"; do
-  rm -fv $d/.env
+  rm -fv "$d/.env"
 done
 exec kompose "$@"

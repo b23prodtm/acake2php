@@ -23,7 +23,7 @@ shell_prompt() {
     case $answer in
       [yY]* ) echo -e "Yes."
         # shellcheck disable=SC1090
-        exec $script || true
+        bash -c "$script" || log_failure_msg "FAILED $script"
         break;;
       [nN]* ) echo -e "No.\n"
         break;;
@@ -35,7 +35,7 @@ shell_prompt() {
 #; export -f shell_prompt
 show_password_status() {
   [ "$#" -lt 3 ] && echo "Usage: ${FUNCNAME[0]} '<VAR_USER>' '<VAR_PASSWORD>' <action-description>" && exit 1
-  slogger -st "${FUNCNAME[0]}" "User ${1} (using password: $([ -z $2 ] && echo "NO" || echo "YES")) $3..."
+  slogger -st "${FUNCNAME[0]}" "User ${1} (using password: $([ -z "$2" ] && echo "NO" || echo "YES")) $3..."
 }
 #; export -f show_password_status
 cakephp() {
@@ -45,3 +45,9 @@ cakephp() {
   sed -i.orig -e "s/\$dispatcher->_stop\((.*)\);/\\1;/g" "${CAKE}/Console/ShellDispatcher.php"
   exec php -q "${APP}/Console/cake.php" -working "$APP" "$@"
 }
+#; export -f cakephp
+docker_name() {
+  [ "$#" -lt 1 ] && echo "Usage: ${FUNCNAME[0]} 'DOCKER_HUB_NAME'" && exit 1
+  echo "$1" | awk -F/ '{ print $2 }' | awk -F: '{ print $1 }'
+}
+#; export -f docker_name

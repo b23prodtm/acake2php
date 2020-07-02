@@ -6,8 +6,8 @@ TOPDIR+="deployment/images/mariadb"
 mkdir -p $TOPDIR
 cd $TOPDIR || exit 1
 MARIADB_MAJOR=${MARIADB_MAJOR:-10.4}
-curl -L https://raw.githubusercontent.com/docker-library/mariadb/master/$MARIADB_MAJOR/docker-entrypoint.sh -o docker-entrypoint.sh
-curl -L https://raw.githubusercontent.com/docker-library/mariadb/master/$MARIADB_MAJOR/Dockerfile -o Dockerfile.template
+curl -L "https://raw.githubusercontent.com/docker-library/mariadb/master/$MARIADB_MAJOR/docker-entrypoint.sh" -o docker-entrypoint.sh
+curl -L "https://raw.githubusercontent.com/docker-library/mariadb/master/$MARIADB_MAJOR/Dockerfile" -o Dockerfile.template
 # patch Dockerfile with balenalib and cross-compilers
 # shellcheck disable=SC1004
 sed -i.orig -E -e 's/FROM\ ubuntu:bionic/FROM\ balenalib\/%%BALENA_MACHINE_NAME%%-ubuntu:bionic-build\
@@ -17,6 +17,6 @@ ARG\ DEBIAN_FRONTEND=noninteractive/' \
 \1/' \
 Dockerfile.template
 MARIADB_VERSION=$(awk '/ENV MARIADB_VERSION/' < Dockerfile.template | awk 'BEGIN{ FS=" " }{ print $3 }' )
-printf "Mariadb: %s\nImage: %s" $MARIADB_MAJOR $MARIADB_VERSION | tee VERSION
+printf "Mariadb: %s\nImage: %s" "$MARIADB_MAJOR" "$MARIADB_VERSION" | tee VERSION
 printf "[Experimental] build of MariaDB for ARM (deployment/images/secondary)"
 printf "Find a stable build at lsioarmhf/mariadb."

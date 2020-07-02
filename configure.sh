@@ -7,15 +7,15 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/parsing.sh"
 # shellcheck source=Scripts/lib/test/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
-openshift=$(parse_arg_exists "-[oO]+|--openshift"  "$@")
-docker=$(parse_arg_exists "--docker" "$@")
+openshift=$(parse_arg "-[oO]+|--openshift"  "$@")
+docker=$(parse_arg "--docker" "$@")
 pargs=$(parse_arg_trim "--docker|-[oO]+|--openshift" "$@")
 if [ -n "$openshift" ]; then
-  slogger -st $0 "Bootargs...: ${pargs}"
+  slogger -st "$0" "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
   . "$TOPDIR/Scripts/bootargs.sh" "$@"
 else
-  slogger -st $0 "Locally Testing values, bootargs...: ${pargs}"
+  slogger -st "$0" "Locally Testing values, bootargs...: ${pargs}"
   # shellcheck source=Scripts/fooargs.sh
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi
@@ -67,8 +67,8 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   -[oO]*|--openshift|--travis )
     ;;
   --docker )
-    slogger -st docker "check database container status"
-    bash -c "docker ps -q -f name=maria"
+    slogger -st docker "check database container id"
+    docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
     ;;
   --development )
     composer_args="require --no-interaction"

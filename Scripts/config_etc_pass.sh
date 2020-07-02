@@ -10,7 +10,7 @@ pass=""
 salt=""
 hash_file=""
 dir="$TOPDIR/$MYPHPCMS_DIR/e13/etc/"
-cd "$dir" || log_failure_msg "No such directory %s\n" "$dir" && exit 1
+cd "$dir" || log_failure_msg "No such directory %s\n" "$dir"
 # passed args from shell_prompt
 while [ "$#" -gt 0 ]; do case $1 in
   -[pP]* )
@@ -22,7 +22,7 @@ while [ "$#" -gt 0 ]; do case $1 in
   *);;
 esac; shift; done
 #; read password if not set
-if [ -z $pass ]; then while true; do
+if [ -z "$pass" ]; then while true; do
    read -sp -r "Please enter a password :" pass
    echo -e "\n"
    read -sp -r "Please re-enter the password :" confirmpass
@@ -36,17 +36,17 @@ if [ -z $pass ]; then while true; do
 done; fi
 
 # read salt if not set
-if [ -z $salt ]; then while [ "$salt" = "" ]; do
+if [ -z "$salt" ]; then while [ "$salt" = "" ]; do
    read -p -r "Please enter the salt word :" salt
 done; fi
 # read filename if not set
-if [ -z $hash_file ]; then
+if [ -z "$hash_file" ]; then
     hash_file="export_hash_password.sh"
 fi
-php -f getHashPassword.php -- -p $pass -s $salt -f $hash_file
+php -f getHashPassword.php -- -p "$pass" -s "$salt" -f "$hash_file"
 #; so that the shell can execute export file
 chmod 777 $hash_file
 # shellcheck source=../app/webroot/php_cms/e13/etc/getHashPassword.php
 . "$hash_file"
-slogger -st $0 "Saved in $hash_file .\n"
-cd $pwd || log_failure_msg "No such directory %s\n" "$dir" && exit 1
+slogger -st "$0" "Saved in $hash_file .\n"
+cd "$pwd" || log_failure_msg "No such directory %s\n" "$dir"

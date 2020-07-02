@@ -5,4 +5,4 @@ wd="${TOPDIR}/${MYPHPCMS_DIR}/e13/etc/"
 src="constantes_template.properties"
 dst="constantes.properties"
 # shellcheck source=cp_bkp_old.sh
-. "${TOPDIR}/Scripts/cp_bkp_old.sh" $wd $src $dst
+. "${TOPDIR}/Scripts/cp_bkp_old.sh" "$wd" "$src" "$dst"

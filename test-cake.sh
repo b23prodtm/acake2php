@@ -29,11 +29,16 @@ usage=("" \
 "")
 while [[ "$#" -gt 0 ]]; do case $1 in
   --circle )
-    migrate=$(parse_arg_trim "--docker" $migrate)
-    config_args=$(parse_arg_trim "--docker" $config_args)
+    # shellcheck disable=SC2086
+    migrate=$(parse_arg_trim --docker $migrate)
+    # shellcheck disable=SC2086
+    config_args=$(parse_arg_trim --docker $config_args)
     ;;
   --phpcs )
-    export PHPCS=1;;
+    export PHPCS=1
+    migrate=""
+    config_args=""
+    ;;
   --cov )
     export COLLECT_COVERAGE=true;;
   -[hH]*|--help )
@@ -52,16 +57,20 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     migrate="-v ${migrate}"
     echo "Passed params :  $0 ${saved[*]}";;
   -[oO]*|--openshift )
-    migrate="$(parse_arg_trim "--docker" $migrate) --openshift"
-    config_args="$(parse_arg_trim "--docker" $config_args) --openshift"
+    # shellcheck disable=SC2086
+    migrate="$(parse_arg_trim --docker $migrate) --openshift"
+    # shellcheck disable=SC2086
+    config_args="$(parse_arg_trim --docker $config_args) --openshift"
     ;;
   --travis)
     export MYSQL_HOST=${MYSQL_HOST:-'127.0.0.1'}
     export MYSQL_USER='travis'
     export MYSQL_PASSWORD=''
     export MYSQL_ROOT_PASSWORD=''
-    migrate="$(parse_arg_trim "--docker" $migrate) --travis"
-    config_args="$(parse_arg_trim "--docker" $config_args) --travis"
+    # shellcheck disable=SC2086
+    migrate="$(parse_arg_trim --docker $migrate) --travis"
+    # shellcheck disable=SC2086
+    config_args="$(parse_arg_trim --docker $config_args) --travis"
     ;;
   --docker )
     config_args="--docker ${config_args}"
@@ -70,8 +79,12 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     ;;
   *) echo "Unknown parameter, passed $0: $1"; exit 1;;
 esac; shift; done
+if [ "$PHPCS" = 1 ]; then
+  bash -c "./Scripts/start_daemon.sh test ${saved[*]}" || exit 1
+  exit 0
+fi
 # shellcheck source=configure.sh
-"${TOPDIR}/configure.sh" $config_args
+bash -c "${TOPDIR}/configure.sh $config_args"
 if bash -c "${TOPDIR}/migrate-database.sh ${migrate}"; then
   printf "[SUCCESS] CakePHP Test Suite successfully finished, go on with the job...\n"
 else

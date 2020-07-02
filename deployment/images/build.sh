@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-docker_build ${BASH_SOURCE[0]} "$@"
+docker_build "${BASH_SOURCE[0]}" "$@"

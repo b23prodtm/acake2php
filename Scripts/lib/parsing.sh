@@ -42,8 +42,8 @@ parse_arg_export() {
   [ $# -lt 3 ] && printf "%s\n" \
   "Usage: ${FUNCNAME[0]} <environment-variable> <description> -<arg> <val>" \
   && exit 1
-  evar=$1
-  desc=$2
+  evar="$1"
+  desc="$2"
   shift 2
   zval=$(echo "$@" | awk 'BEGIN{ FS="[ =]+" }{ print $2 }')
   while true; do case "$zval" in
@@ -64,7 +64,8 @@ parse_arg_exists() {
   "Usage: ${FUNCNAME[0]} <match_case> list-or-\$*" \
   "Prints the argument index that's matched in the regex-arg-case (~ patn|patn2)" \
   && exit 1
-  export arg_case=$1
+  # add mask case |---- to avoid unknown state in split when $# = 1
+  export arg_case="$1|----"
   shift
   echo "$@" | awk 'BEGIN{FS=" "; ORS=" "; split(ENVIRON["arg_case"], a, "|")} {
     n=-1
@@ -142,3 +143,9 @@ parse_and_export() {
   export OPTIND
 }
 #; export -f parse_and_export()
+parse_arg() {
+  ret=$(parse_arg_exists "$@")
+  # shellcheck disable=SC2015
+  [ -n "$ret" ] && shift 1 && echo "${*:$ret:1}" || true
+}
+#; export -f parse_arg()

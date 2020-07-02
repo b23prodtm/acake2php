@@ -7,20 +7,20 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/parsing.sh"
 # shellcheck source=Scripts/lib/test/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
-openshift=$(parse_arg_exists "-[oO]+|--openshift" "$@")
-docker=$(parse_arg_exists "--docker" "$@")
-travis=$(parse_arg_exists "--travis" "$@")
-pargs=$(parse_arg_trim "-[oO]+|--openshift|--docker" "$@")
+openshift=$(parse_arg "-[oO]+|--openshift" "$@")
+docker=$(parse_arg "--docker" "$@")
+travis=$(parse_arg "--travis" "$@")
+pargs=$(parse_arg_trim "-[oO]+|--openshift|--docker|--travis" "$@")
 if [ -n "$openshift" ]; then
-  slogger -st $0 "Bootargs...: ${pargs}"
+  slogger -st "$0" "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
   . "$TOPDIR/Scripts/bootargs.sh" "$@"
 else
-  slogger -st $0 "Locally Testing values, bootargs...: ${pargs}"
+  slogger -st "$0" "Locally Testing values, bootargs...: ${pargs}"
   # shellcheck source=Scripts/fooargs.sh
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi
-LOG=$(new_cake_log $travis $openshift $docker) && slogger -st $0 $LOG
+LOG=$(new_cake_log "$travis" "$openshift" "$docker") && slogger -st "$0" "$LOG"
 usage=("" \
 "Usage: $0 [-u] [-y|n] [-o] [-p <word>] [-t <word>] [-i] [--sql-password=<password>] [--test-sql-password=<password>]" \
 "          -u          Update the database in app/Config/Schema/" \
@@ -60,15 +60,15 @@ mysql_host="%"
 ck_args="--connection=default"
 # test_args="app AllTests --stderr"
 test_args="app Controller/PagesController --stderr >> $LOG"
-MARIADB_SHORT_NAME=$(echo $SECONDARY_HUB | awk -F/ '{ print $2 }' | awk -F: '{ print $1 }')
+MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
 while [ "$#" -gt 0 ]; do case "$1" in
   --enable-authentication-plugin*)
-    slogger -st $0 "Enabled auth_ed25519 plugin..."
+    slogger -st "$0" "Enabled auth_ed25519 plugin..."
     authentication_plugin=1;;
   --docker )
     bash -c "./Scripts/start_daemon.sh ${docker}"
     # Running docker ... mysql's allowed to connect without any local mysql installation
-    docker exec $MARIADB_SHORT_NAME hostname 2>> $LOG
+    docker exec "$MARIADB_SHORT_NAME" hostname 2>> "$LOG"
     sql_connect="docker exec $MARIADB_SHORT_NAME mysql"
     sockfile="$(pwd)/mysqldb/mysqld/mysqld.sock"
     ;;
@@ -152,19 +152,17 @@ while [ "$#" -gt 0 ]; do case "$1" in
   esac
 shift; #echo "$@";
 done
-#; check unbound variables, exits scripts and inform user on the standard output.
-: ${MYSQL_DATABASE?} ${DATABASE_USER?} ${MYSQL_ROOT_PASSWORD?} ${MYSQL_TCP_PORT?}
-: ${TEST_DATABASE_NAME?} ${MYSQL_USER?} ${MYSQL_PASSWORD?} ${MYSQL_HOST?} ${MYSQL_TCP_PORT?}
 # configure user application database and eventually alter user database access
 # shellcheck disable=SC2154
-shell_prompt "$TOPDIR/Scripts/config_app_database.sh ${dbfile} ${schemafile} ${sockfile} ${docker}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
+shell_prompt "$TOPDIR/Scripts/config_app_database.sh ${dbfile} ${schemafile} ${sockfile} ${docker}" \
+"${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
 if [[ $import_identities -eq 1 ]]; then
   #; ---------------------------------- set MYSQL_ROOT_PASSWORD
   export set_DATABASE_PASSWORD=${set_DATABASE_PASSWORD:-$MYSQL_ROOT_PASSWORD}
   # shellcheck disable=SC2154
   log_warning_msg "${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}"
   prompt="-Y"
-  if [ -z ${set_DATABASE_PASSWORD} ]; then
+  if [ -z "${set_DATABASE_PASSWORD}" ]; then
     # shellcheck disable=SC2154
      log_warning_msg "${orange}WARNING: Using blank password for ${DATABASE_USER} !!${nc}"
     prompt=${DEBIAN_FRONTEND:-''}
@@ -192,19 +190,19 @@ if [[ $import_identities -eq 1 ]]; then
 "-e \"select plugin from user where user='${DATABASE_USER}';\"" \
 "-e \"show databases;\"" \
 "")
-  slogger -st $0 "Forked script to keep hidden table user secrets..."
+  slogger -st "$0" "Forked script to keep hidden table user secrets..."
   password=""
   if [ -n "${MYSQL_ROOT_PASSWORD:-}" ]; then
     password="--password=${MYSQL_ROOT_PASSWORD}"
   fi
-  shell_prompt "exec ${sql_connect} ${sql_connect_host} -u ${DATABASE_USER} ${password} \
+  shell_prompt "${sql_connect} ${sql_connect_host} -u ${DATABASE_USER} ${password} \
   ${args[*]} >> $LOG 2>&1" "Import default identities" "$prompt"\
   && export MYSQL_ROOT_PASSWORD=${set_DATABASE_PASSWORD}
   #; ---------------------------------- set MYSQL_PASSWORD
-  slogger -st $0 "\r${red}WARNING: You will modify SQL ${MYSQL_USER} password !${nc}"
+  slogger -st "$0" "\r${red}WARNING: You will modify SQL ${MYSQL_USER} password !${nc}"
   export set_MYSQL_PASSWORD=${set_MYSQL_PASSWORD:-$MYSQL_PASSWORD}
   if [ -z "${set_MYSQL_PASSWORD}" ]; then
-    slogger -st $0 "\r${orange}WARNING: Using blank password for ${MYSQL_USER} !!${nc}"
+    slogger -st "$0" "\r${orange}WARNING: Using blank password for ${MYSQL_USER} !!${nc}"
     prompt=${DEBIAN_FRONTEND:-''}
   fi
   if [ $authentication_plugin = 1 ]; then
@@ -230,15 +228,16 @@ if [[ $import_identities -eq 1 ]]; then
   if [ -n "${MYSQL_ROOT_PASSWORD:-}" ]; then
     password="--password=${MYSQL_ROOT_PASSWORD}"
   fi
-  shell_prompt "exec ${sql_connect} ${sql_connect_host} -u ${DATABASE_USER} ${password} \
+  shell_prompt "${sql_connect} ${sql_connect_host} -u ${DATABASE_USER} ${password} \
   ${args[*]} >> $LOG 2>&1" "Import test identities" "$prompt" \
   && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}
-  check_log $LOG
+  check_log "$LOG"
 fi
 if [[ $update_checked -eq 1 ]]; then
-  bash -c "./Scripts/start_daemon.sh${travis} ${docker} update ${ck_args}"
+  bash -c "./Scripts/start_daemon.sh ${travis} ${docker} update ${ck_args}"
 fi
 if [[ $test_checked -eq 1 ]]; then
+  echo "GOAL $travis $docker $test_args"
   bash -c "./Scripts/bootstrap.sh ${travis} ${docker} test ${test_args}"
-  check_log $LOG
+  check_log "$LOG"
 fi
