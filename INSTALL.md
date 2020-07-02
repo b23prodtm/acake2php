@@ -5,17 +5,20 @@ A typical install script could look like the following script, for instance edit
 		#!/usr/bin/env bash
 		set -u
 
-		cd myphpcms
-		git pull
-		git submodule update --init --recursive
-		./deploy.sh x86_64 --docker
+		cd acake2php
+		git clone https://github.com/b23prodtm/acake2php.git
+		git submodule sync && git submodule update --init --recursive
+		npm install --no-optional
+		# reset architecture flags
+		./deploy.sh x86_64 --nobuild 0
+		./deploy.sh x86_64 --build-deps --docker
 
 Docker builds up a new container and pushes it in registry.
 It will eventually run the container as the startup script succeeds.
 
 ## Configuration to test localhost
 
-		DB=Mysql ./configure.sh --docker --mig-database -u
+		./configure.sh --docker --mig-database -u -i
 
 ## Circle CI
 The current project is a full php with mariadb container for the Docker Virtual Machine (VM) manager, or Docker-CE, or even a ```Dockerfile``` compatible container interface. We choose Circle CI because it's able to achieve full remote tests with docker :whale: before we deploy to a Cloud Provider, Kubernetes Cluster, OpenShift, etc.
@@ -27,18 +30,18 @@ Get started a Docker shell, and build through local Circle CLI:
 		.circleci/build.sh
 
 ### [developers] Update the Docker deployment image
-Rebuild image registry from deployment folder if you make change to the primary. E.g. change of Linux distribution. Edit the file deployment/images/primary/Dockerfile.template to your needs and perform a build from the a Docker client machine. If you make use of [Balena OS base image list](https://www.balena.io/docs/reference/base-images/base-images-ref/) repository you can use blocks to cross build for ARM ```# [ "cross-build-start" ] # [ "cross-build-end" ]``` command lines in the Dockerfile.template files. For instance, in a Terminal with Docker installed :
+Rebuild image registry from deployment folder if you make change to the primary. E.g. change of Linux distribution. Edit the file deployment/images/primary/Dockerfile.template to your needs and perform a build from the a Docker client machine. If you make use of [Balena OS base image list](https://www.balena.io/docs/reference/base-images/base-images-ref/) repository you can use blocks to cross build for ARM ```# [ "cross-build-start" ] # [ "cross-build-end" ]``` command lines in the Dockerfile.template files. For instance, in a Terminal with Docker installed, at first dependencies may be built :
 
-		./deployment/images/build.sh primary betothreeprod/raspberrypi3-php armhf
+    ./deploy.sh armhf --nobuild --build-deps
 
 To deploy a Raspberry Pi with Docker or Balena Cloud.
 
-		./deploy.sh armhf
+		./deploy.sh armhf --balena
 
 ### Requirements
 - Broadband Internet access to the Worldwide Web, to download the packages and container images dependencies from the remote Docker registries.
 - The [VBoxmanager](https://www.virtualbox.org/wiki/Downloads) package.
-- The Docker VM described with the Dockerfile. >:whale: [Get Started](https://docs.docker.com/machine/get-started/) application.
+- The Docker CE described with the Dockerfile. >:whale: [Get Started](https://docs.docker.com/machine/get-started/) application.
 - The CircleCI Client installed in ```$PATH```. [CLI Configuration](https://circleci.com/docs/2.0/local-cli/#section=configuration) shell command line :
 
 		curl -fLSs https://circle.ci/cli | bash
@@ -46,7 +49,45 @@ To deploy a Raspberry Pi with Docker or Balena Cloud.
 Once everything is installed, please reboot your system.
 
 ### Startup
-Everyting is ready to launch a container in real cluster environment. The process is described further. [Kubespray with Ansible and Kubernetes cluster](https://github.com/b23prodtm/kubesrpay).
+Everyting is ready to launch a container in real cluster environment. The process is described further. [Balena Cloud](https://www.balena.io/docs/learn/getting-started/raspberrypi3/nodejs/)
+[Kubespray with Ansible and Kubernetes cluster](https://github.com/b23prodtm/kubespray)
+...
+
+### Webserver configuration
+A few variables are defined in containers environment provides client-server communication.
+
+		# Persistent ROOT connection credentials
+		MYSQL_HOST: localhost
+		DATABASE_USER: root
+		MYSQL_ROOT_PASSWORD: mariadb
+		# CakePHP secrets
+		CAKEPHP_SECRET_TOKEN:<secret-token>
+		CAKEPHP_SECRET_SALT:<secret-salt>
+		CAKEPHP_SECURITY_CIPHER_SEED:<cipher-seed>
+
+Some configuration changes may broke the installation with Docker and on file permissions. The following default variables may be setup as your server preferences, set in open source:
+
+		# The following values are options to change if needed
+		# Binding a mysql container to a specific (public) IP address or all (0.0.0.0)
+		MYSQL_BIND_ADDRESS=0.0.0.0
+
+		# Run as a different user space ($ id -u $USER)
+		PUID=0
+		# Run as a different user-group space ($ id -g $USER)
+		PGID=0
+
+		# MariaDB Timezone
+		TZ=Europe/Paris
+
+		# Persistent USER connection credentials
+		MYSQL_USER=maria
+		MYSQL_PASSWORD=maria-abc
+
+		# staff credentials (url=/index/admin) given $ ./configure.sh -h -p pass -w word
+		GET_HASH_PASSWORD=<HaSheD-PasSwoRd>
+
+    # Apache 2 httpd, or DNS CNAME of the host machine ($ hostname)
+		SERVER_NAME=www-machine.local
 
 ### License
    Copyright 2016 www.b23prodtm.info

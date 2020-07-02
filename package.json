@@ -1,0 +1,30 @@
+{
+  "name": "myphpcms",
+  "version": "1.0.0",
+  "description": "A CakePHP and MariaDB website",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "app": "app"
+  },
+  "scripts": {
+    "cs-check": "PHP_CS=1 ./test-cake.sh",
+    "test": "./test-cake.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/b23prodtm/acake2php.git"
+  },
+  "keywords": [],
+  "author": "Tiana Rakoto Arimanana <5566338+b23prodtm@users.noreply.github.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/b23prodtm/acake2php/issues"
+  },
+  "homepage": "https://github.com/b23prodtm/acake2php#readme",
+  "dependencies": {
+    "balena-cloud": "stable",
+    "node": "^14.4.0"
+  },
+  "devDependencies": {}
+}

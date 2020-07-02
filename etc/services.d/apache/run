@@ -1,0 +1,14 @@
+#!/usr/bin/with-contenv sh
+
+if [ -e ./setup ]; then
+  sh -c "./setup"
+fi
+
+# start apache
+exec /usr/sbin/apachectl -DFOREGROUND;
+
+# Restarting Apache
+# Execute the command s6-svc -h /etc/services.d/apache to send a SIGHUP
+# to Apache and have it reload configuration, launching new worker process(es)
+# using this new configuration, while gracefully shutting down the old worker
+# processes.

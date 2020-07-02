@@ -1,8 +1,24 @@
-version: 2
+version: 2.1
+aliases:
+  - &deps
+    run:
+      name: Install dependencies
+      command: |
+        apk update \
+          && apk add \
+            npm \
+            php7-session \
+          && apk del build-base \
+          && rm -rf /var/cache/apk/*
+        rm -Rf node_modules/balena-cloud || true
+        npm install --no-optional
+        npm link balena-cloud
+orbs:
+  shellcheck: circleci/shellcheck@1.3.16
 jobs:
   build:
     docker:
-    - image: betothreeprod/dind-php7
+    - image: betothreeprod/intel-nuc-node-php7
     - image: betothreeprod/mariadb-intel-nuc
       environment:
         PUID: 0
@@ -27,24 +43,16 @@ jobs:
     - run:
         command: git submodule update --init --recursive
     - restore_cache:
-        keys:
-        - v1-dependencies-{{ checksum "composer.lock" }}
-        - v1-dependencies-
+        key: v1-dependencies-{{ checksum "package-lock.json" }}
+    - restore_cache:
+        key: v1-dependencies-{{ checksum "composer.lock" }}
     - setup_remote_docker:
         docker_layer_caching: false
-    - run:
-        name: Install dependencies
-        command: |
-          apk update \
-            && apk add \
-              php7-session \
-              mariadb-connector-c \
-            && apk del build-base \
-            && rm -rf /var/cache/apk/*
+    - *deps
     - run:
         name: Set architecture and Setup Environment Variables
         command: |
-          source ./deploy.sh $DKR_ARCH --nobuild
+          balena_deploy . $DKR_ARCH --nobuild --exit
     - run:
         name: Waiting for Mysql to be ready
         command: |
@@ -58,23 +66,27 @@ jobs:
           echo 'Failed waiting for Mysql' && exit 1
     - run:
         command: |
-          set -x
+          set -u
           mkdir -p ./app/build/logs
           mkdir -p ~/phpunit
-          source ./test-cake.sh --circle
-          cat $PHP_CMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
+          ./test-cake.sh --circle
+          . common.env && cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
         when: always
     - save_cache:
         key: v1-dependencies-{{ checksum "composer.lock" }}
         paths:
-        - ./app/Vendor/
-        - ./app/webroot/
-    - persist_to_workspace:
-        root: app
+        - app/Vendor
+    - save_cache:
+        key: v1-dependencies-{{ checksum "package-lock.json" }}
         paths:
-        - Config
-        - webroot
-        - Vendor
+        - node_modules
+    - persist_to_workspace:
+        root: .
+        paths:
+        - node_modules
+        - app/Config
+        - app/webroot
+        - app/Vendor
   compose:
     docker:
     - image: betothreeprod/dind-php7
@@ -89,13 +101,14 @@ jobs:
     - run:
         command: git submodule update --init --recursive
     - attach_workspace:
-        at: app
+        at: .
     - setup_remote_docker:
         docker_layer_caching: false
+    - *deps
     - run:
         name: Set architecture and Setup Environment Variables
         command: |
-          source ./deploy.sh $DKR_ARCH --nobuild
+          balena_deploy . $DKR_ARCH --nobuild --exit
     - run:
         command: |
           set -u
@@ -106,6 +119,10 @@ jobs:
     - store_artifacts:
         path: ~/phpunit
 workflows:
+  cleanup:
+    jobs:
+    - shellcheck/check:
+        ignore: 'SC1091,SC2034'
   build-and-compose:
     jobs:
     - build

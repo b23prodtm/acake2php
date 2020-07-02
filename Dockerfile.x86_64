@@ -2,35 +2,41 @@
 # Make changes to the Dockefile.template
 # Docker architecture (x86_64, armhf, aarch64 )
 ARG IMG_TAG
-ARG BALENA_MACHINE_NAME
+ARG DKR_ARCH
 ARG PRIMARY_HUB
 # Primary image is a Linux PHP with Apache 2 server pre-installed
-FROM ${PRIMARY_HUB:-betothreeprod/intel-nuc-php}:${IMG_TAG:-latest}
+FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${IMG_TAG:-latest}-${DKR_ARCH:-x86_64}
 
 ENV INITSYSTEM off
 ENV UDEV off
-ARG DEBUG
-ENV DEBUG ${DEBUG:-0}
-
+# ----------------------
+# About Dockerfile ARGS:
+# ALL the following ARGS are DUPLICATED in common.env and $DKR_ARCH.env
+# and Scripts/fooargs.sh for development phase.
+# If not set in common.env, it must be set in the host machine environment
+# when ./start.sh or ./test.sh or in development phase.
+# ----------------------
+#                        Values in default (no-arg) production mode
+#                        May be overriden in docker-compose.yml
+#-----------------------
+ARG CAKEPHP_DEBUG_LEVEL
+ENV CAKEPHP_DEBUG_LEVEL ${CAKEPHP_DEBUG_LEVEL:-2}
 ENV BALENA_MACHINE_NAME ${BALENA_MACHINE_NAME:-intel-nuc}
-ARG DKR_ARCH
+ARG SECONDARY_HUB
+ENV SECONDARY_HUB ${SECONDARY_HUB:-betothreeprod/mariadb-intel-nuc}
 ENV DKR_ARCH ${DKR_ARCH:-x86_64}
 ARG COLLECT_COVERAGE
 ENV COLLECT_COVERAGE ${COLLECT_COVERAGE:-'False'}
 ARG DB
 ENV DB ${DB:-Mysql}
-ARG DATABASE_ENGINE
-ENV DATABASE_ENGINE ${DATABASE_ENGINE:-MysqlCms}
-ARG DATABASE_SERVICE_NAME
-ENV DATABASE_SERVICE_NAME ${DATABASE_SERVICE_NAME:-MYSQL}
 ARG MYSQL_HOST
 ENV MYSQL_HOST ${MYSQL_HOST:-db}
 ARG MYSQL_TCP_PORT
 ENV MYSQL_TCP_PORT ${MYSQL_TCP_PORT:-3306}
-ARG DATABASE_SERVICE_NAME
-ENV DATABASE_SERVICE_NAME ${DATABASE_SERVICE_NAME:-MYSQL}
-ARG PHP_CMS_DIR
-ENV PHP_CMS_DIR ${PHP_CMS_DIR:-'app/webroot/php_cms'}
+ARG MYPHPCMS_DIR
+ENV MYPHPCMS_DIR ${MYPHPCMS_DIR:-'app/webroot/php_cms'}
+ARG MYPHPCMS_LOG
+ENV MYPHPCMS_LOG ${MYPHPCMS_LOG:-'app/tmp/logs'}
 ARG DATABASE_USER
 ENV DATABASE_USER ${DATABASE_USER:-'root'}
 ARG MYSQL_DATABASE
@@ -44,14 +50,22 @@ ENV MYSQL_USER ${MYSQL_USER:-'maria'}
 ARG MYSQL_PASSWORD
 ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'maria-abc'}
 ARG SERVER_NAME
-ENV SERVER_NAME ${SERVER_NAME:-'localhost.local'}
+ENV SERVER_NAME ${SERVER_NAME:-'acake2php.local'}
+# Change uid and gid of apache to docker user uid/gid
+ARG PUID
+ENV PUID ${PUID:-0}
+ARG PGID
+ENV PGID ${PGID:-0}
+# Must own the ip address
+ARG HTTPD_LISTEN
+ENV HTTPD_LISTEN ${HTTPD_LISTEN:-'0.0.0.0:80'}
 
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 # RUN [ "cross-build-start" ]
 RUN install_packages \
     git \
-    ssh \
+    openssh-client \
     tar \
     gzip \
     ca-certificates \
@@ -60,28 +74,12 @@ RUN install_packages \
     mariadb-client
 
 RUN install_packages \
-#   libicu libicu-dev
     memcached \
     libmemcached-dev
+    # libicu libicu-dev
 
-RUN memcached -d -l 127.0.0.1 -p 11211 -u www-data -m 16 \
- && memcached -d -l 127.0.0.1 -p 11212 -u www-data -m 16
-
-RUN pecl config-set php_ini "${PHP_INI_DIR}/php.ini" \
-&& pecl install mysqli \
-    gd \
-    xdebug \
-    # intl \
-    mbstring \
-    pcntl opcache \
-    memcached
-
-RUN docker-php-ext-enable mysqli \
-    # gd \
-    xdebug \
-    # intl \
-    xml \
-    opcache
+# just containers configuration
+COPY etc /etc
 
 WORKDIR /usr/src/
 
@@ -101,34 +99,17 @@ WORKDIR /var/www/html/
 RUN chmod -R gu+xs deploy.sh configure.sh migrate-database.sh Scripts/
 
 # Add cake and composer command to system path
-ENV PATH "${PATH}:/var/www/html/lib/Cake/Console"
+ENV PATH "${PATH}:/var/www/html/app/Console"
 ENV PATH "${PATH}:/var/www/html/app/Vendor/bin"
 
-# add available site
-RUN Scripts/configure-available-site.sh ${SERVER_NAME}
-RUN cp -f ${SERVER_NAME}.conf /etc/apache2/conf-available/${SERVER_NAME}.conf
+# Enable site on httpd
+RUN Scripts/config_a2ensite.sh /var/www/html/app/webroot
 
 # Add to hosts
 RUN echo "127.0.0.1 ${SERVER_NAME}" | tee -a /etc/hosts
 
-# Add site conf to available domains, disable default instance
-RUN a2enconf ${SERVER_NAME} \
-  && a2disconf 000-default
-#  && service apache2 reload
-
 # Password Hash Verbose
 # RUN cat app/webroot/php_cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
-
-# Change uid and gid of apache to docker user uid/gid
-RUN usermod -u 1000 www-data && groupmod -g 1000 www-data \
-  && chown -R :www-data . \
-  && chmod -R 755 . \
-  && chmod -R g+s . \
-  && chmod -R 750 app \
-  && checkgid www-data
-
-# set architecture
-RUN ./deploy.sh ${DKR_ARCH} --nobuild
 
 # Set default working directory
 WORKDIR app
@@ -138,19 +119,17 @@ RUN mkdir -p \
     tmp/cache/models \
     tmp/cache/persistent \
     tmp/cache/long \
-  && chown -R www-data:www-data tmp \
-  && chmod -R 660 tmp
+    tmp/logs \
+  && chmod -R 1777 tmp
 
-# Enable Apache modules and restart
-RUN a2enmod rewrite \
-  && a2enmod ssl \
-  && service apache2 restart
+# Helper packages
+RUN npm link balena-cloud
 
-# Install all PHP dependencies
 WORKDIR /var/www/html/
 
-RUN git submodule sync && git submodule update --init
-RUN ./configure.sh --openshift -c -h -p pass -s word --development
+RUN chmod 0755 *.sh
+RUN ./deploy.sh ${DKR_ARCH} --nobuild --exit \
+  && ./configure.sh --openshift -m -c -h -p pass -s word --development
 # RUN [ "cross-build-end" ]
-ENTRYPOINT [ "/bin/bash", "-c", "./migrate-database.sh -u -o -i --test-sql-password=${MYSQL_PASSWORD}"]
-CMD [ "apache2 -D FOREGROUND" ]
+
+ENTRYPOINT ./migrate-database.sh -o -u -i --enable-authentication-plugin && /init

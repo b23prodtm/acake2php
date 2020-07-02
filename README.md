@@ -13,8 +13,10 @@
 <!-- tocstop -->
 > We are moving to Kubernetes to host our website... See more about that project in [Kubespray](http://www.github.com/b23prodtm/kubespray).
 
-CakePHP for [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) on OpenShift [![Build Status](https://travis-ci.org/b23prodtm/myphpcms.svg?branch=development)](https://travis-ci.org/b23prodtm/myphpcms)
+CakePHP for [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) on Docker
 ===============================
+[![TravisCI Status](https://travis-ci.org/b23prodtm/acake2php.svg?branch=development)](https://travis-ci.org/b23prodtm/acake2php)
+[![CircleCI Status](https://circleci.com/gh/b23prodtm/acake2php.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/acake2php)
 
 This is a quickstart CakePHP application for OpenShift v3 that you ''can'' use as a starting point to develop your own application and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
 
@@ -29,10 +31,10 @@ However, if these files exist they will affect the behavior of the build process
 
 * **submodules**
 
-  The myphpcms folder includes modules that need to be pulled in order to install locally.
-  After the first checkout browse to myphpcms folder and do
+  The acake2php folder includes modules that need to be pulled in order to install locally.
+  After the first checkout browse to acake2php folder and do
   ```git submodule sync && git submodule update --init --recursive```
-  You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the myphpcms folder and start over.
+  You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the acake2php folder and start over.
   > After a sucessful ```git checkout```each time, run once ```git submodule update --init --recursive``` to ensure submodules are downloaded from git. Otherwise your build may fail.
 
 * **composer.json**
@@ -70,30 +72,19 @@ However, if these files exist they will affect the behavior of the build process
 
   Set environment variables as the following arguments, for instance on MacOS X:
 
-        ./deploy.sh amd64
+      ./deploy.sh amd64 --nobuild
 
-.env" -> amd64.env
+  Use a .env file in shell to configure up with RaspberryPI3 hosts :
 
-        ./Scripts/docker-compose-alias.sh --domain=b23prodtm.info -v up -d --build cakephp --openshift
+      ./deploy.sh arm32 --nobuild
 
-  Use a .env file in shell to push up into the cloud BalenaOS, with RaspberryPI3 hosts :
+  .env -> arm32v7.env
 
-	./deploy.sh arm32
-
-.env" -> arm32v7.env
-
-	balena push <cloud-application-name>
-
+      ./deploy.sh arm32 --balena
 ### Compatibility
 
-* PHP 5.6 and higher, but PHP 7 's recommended, excluding any alpha or beta versions.
 * CakePHP 2.X application also supports Docker CE 18.03 and later
-* Container builder: docker-compose 1.19 and DockerFile version 2.1
-* Mysql 5.7 and later (or MariaDB)
-* Cloud Platforms:
-  + Openshift 3
-  + BalenaOS
-  + Kubernetes (not provided)
+* MariaDB 10.1 and later
 
 ### Local built-in server (cake) and dockerized database in a local container
 CAKE includes a server application that´s only made for local tests on port 9000.
@@ -122,13 +113,12 @@ When deployment happens on server-side or is triggered by a git push event, 'sou
 
 The following variables must be set up as server environment, provided by your **database administrator**:
 
-    # SqliteCms, PostgresCms
-    DATABASE_ENGINE:MysqlCms
+    # Sqlite, Postgres
+    DB:Mysql
 
->Note: DB Engine selects CakePhp Model/Datasource/Database DBOSource class to configure SQL connections.    
+>Note: DB selects CakePhp Model/Datasource/Database DBOSource class to configure SQL connections.    
 
     MYSQL_DATABASE:default
-    DATABASE_SERVICE_NAME:MYSQL
     # a hostname or IP address
     MYSQL_HOST:mysql
 
@@ -158,7 +148,7 @@ An SQL server (must match remote server version) must be reachable by hostname o
 Configure it as a service and configure the login ACL with the user shell.
 * __Mysql__ database automatic configuration:
 
-    ./configure.sh -d -y
+    ./configure.sh -d -u -i
 
 * __Optional__ To Setup MYSQL_ROOT_PASSWORD at prompt:
 
@@ -172,7 +162,7 @@ Configure it as a service and configure the login ACL with the user shell.
 
 * Run the configuration script:
 
-    ./configure.sh -d -p=<root-password> -u
+    ./configure.sh -d -p <root-password> -i --sql-password=<new-password>
 
 * More about configuration:
 
@@ -232,11 +222,11 @@ to do a reset with environment root and user password.
 >Note: A temporary password is generated for root@localhost. Now import identities.
 
     brew services restart mysql@5.7
-    ./configure.sh --mig-database -p=$(cat app/tmp/nupwd) -i --sql-password
+    ./configure.sh --mig-database -p $(cat app/tmp/nupwd) -i --sql-password
 
 >You have now configured a new SQL root password and a test password. Local SQL access and server is ready to run tests:
 
-    ./test-cake.sh -p -t=<test-password>
+    ./test-cake.sh -p -t <test-password>
 
 Go on to development phase with the [Local Built-in server](#local-built-in-server).
 
@@ -246,7 +236,7 @@ Upgrade your phpcms database within a (secure)shell:
 
     mysql_upgrade -u root --password=<password>
 
-4. I've made changes to mysql database tables, I've made changes to Config/Schema/myschema.php, as Config/database.php defines it, what should I do ?
+4. I've made changes to mysql database tables, I've made changes to Config/Schema/schema.cms.php, as Config/database.php defines it, what should I do ?
 
 Migrate all your tables:
 
@@ -270,9 +260,9 @@ If not, do a reset of your passwords:
 If it isn't possible to login:
   + Check your environment variables (common.env and docker-compose.yml) settings). Use one or the other, and see which works for you:
 
-    MYSQL_HOST=127.0.0.1 (Unix/OSX platforms)
-            or if docker mysql service containers:
-    MYSQL_HOST=localhost
+    MYSQL_HOST=$(hostname) (Unix/OSX platforms)
+            or if docker-compose services are the following name:
+    MYSQL_HOST=db
     ..
 
     MYSQL_TCP_PORT=3306
@@ -284,20 +274,20 @@ If it isn't possible to login:
 
   + Try resetting privileges
 
-    ./configure.sh --mig-database -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} -i -y
+    ./configure.sh --mig-database -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} -i
 
-  Don't miss the parameter in container environment :
+  Don't miss the parameter to startup a local container database :
 
     ./migrate-database.sh -u --docker -i or ./configure.sh --mig-database -u --docker -i
 
   + Note that localhost is a special value. Using 127.0.0.1 is not the same thing. The latter will connect to the mysqld server through tcpip.
   + Try the [secure_installation](#database-configuration).
 
-6. How to fix up ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/mysql/mysql.sock' (2) ?
+6. How to fix up ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysql.sock' (2) ?
 
 Run the socket fixup script with arguments:
 
-    ./migrate-database.sh -y
+    ./migrate-database.sh /tmp/mysqld.sock
     brew services restart mysql@5.7
 
 7. I'm testing with ./start_cake.sh and I cannot add any new post on Updates section, what should I do ?
@@ -354,7 +344,7 @@ class Mysql_cms extends Mysql
 }
 ?>
 ```
-Ensure it is set as DATABASE_ENGINE in `app/Config/database.cms.php`,`./Scripts/fooargs.sh`, `.travis.yml` and update the database schema:
+Ensure it is set as $identities[DB]['datasource'] in `app/Config/database.cms.php`,`./Scripts/fooargs.sh`, `.travis.yml` and update the database schema:
 
     ./migrate-database.sh -u
 

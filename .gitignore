@@ -13,10 +13,12 @@ Dockerfile.*
 docker-compose.*
 !docker-compose.yml
 !docker-compose.x86_64
+!docker-compose.armhf
 .circleci/config-compat.yml
-myphpcms*.zip
+acake2php*.zip
 /app/Config/database.php*
 /app/Config/database.sql*
+/app/Config/Schema/schema_*.php
 /app/tmp
 /app/Vendor/
 !/app/Vendor/autoload.php
@@ -36,6 +38,9 @@ myphpcms*.zip
 *.mo
 **/composer*.phar
 mysqldb/config/
+mysqldb/conf.d/custom.cnf
+node_modules
+*.log
 
 # IDE and editor specific files #
 #################################
@@ -55,4 +60,5 @@ Icon?
 ehthumbs.db
 Thumbs.db
 /nbproject/private/
-mysqldb/config/mysqld/mysqld.sock
+mysqldb/mysqld/
+mysqld/conf.d/custom.cnf

@@ -14,7 +14,7 @@
       "template.openshift.io/support-url": "https://access.redhat.com"
     }
   },
-  "message": "The following service(s) have been created in your project: ${NAME}, ${DATABASE_SERVICE_NAME}.\n\nFor more information about using this template, including OpenShift considerations, see https://github.com/openshift/cake-ex/blob/master/README.md.",
+  "message": "The following service(s) have been created in your project: ${NAME}, ${DB}.\n\nFor more information about using this template, including OpenShift considerations, see https://github.com/openshift/cake-ex/blob/master/README.md.",
   "labels": {
     "template": "cakephp-mysql-example"
   },
@@ -40,7 +40,7 @@
         "name": "${NAME}",
         "annotations": {
           "description": "Exposes and load balances the application pods",
-          "service.alpha.openshift.io/dependencies": "[{\"name\": \"${DATABASE_SERVICE_NAME}\", \"kind\": \"Service\"}]"
+          "service.alpha.openshift.io/dependencies": "[{\"name\": \"${DB}\", \"kind\": \"Service\"}]"
         }
       },
       "spec": {
@@ -225,12 +225,8 @@
                 },
                 "env": [
                   {
-                    "name": "DATABASE_SERVICE_NAME",
-                    "value": "${DATABASE_SERVICE_NAME}"
-                  },
-                  {
-                    "name": "DATABASE_ENGINE",
-                    "value": "${DATABASE_ENGINE}"
+                    "name": "DB",
+                    "value": "${DB}"
                   },
                   {
                     "name": "MYSQL_DATABASE",
@@ -301,7 +297,7 @@
       "kind": "Service",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${DATABASE_SERVICE_NAME}",
+        "name": "${DB}",
         "annotations": {
           "description": "Exposes the database server"
         }
@@ -315,7 +311,7 @@
           }
         ],
         "selector": {
-          "name": "${DATABASE_SERVICE_NAME}"
+          "name": "${DB}"
         }
       }
     },
@@ -323,7 +319,7 @@
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${DATABASE_SERVICE_NAME}",
+        "name": "${DB}",
         "annotations": {
           "description": "Defines how to deploy the database",
           "template.alpha.openshift.io/wait-for-ready": "true"
@@ -354,13 +350,13 @@
         ],
         "replicas": 1,
         "selector": {
-          "name": "${DATABASE_SERVICE_NAME}"
+          "name": "${DB}"
         },
         "template": {
           "metadata": {
-            "name": "${DATABASE_SERVICE_NAME}",
+            "name": "${DB}",
             "labels": {
-              "name": "${DATABASE_SERVICE_NAME}"
+              "name": "${DB}"
             }
           },
           "spec": {
@@ -495,17 +491,10 @@
       "from": "[a-zA-Z0-9]{40}"
     },
     {
-      "name": "DATABASE_SERVICE_NAME",
+      "name": "DB",
       "displayName": "Database Service Name",
       "required": true,
-      "value": "mysql"
-    },
-    {
-      "name": "DATABASE_ENGINE",
-      "displayName": "Database Engine",
-      "description": "Database engine: postgresql, mysql or sqlite (default).",
-      "required": true,
-      "value": "mysql"
+      "value": "Mysql"
     },
     {
       "name": "MYSQL_DATABASE",

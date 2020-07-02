@@ -11,29 +11,37 @@ services:
         MYSQL_ROOT_PASSWORD: mariadb
         MYSQL_HOST: localhost
         MYSQL_DATABASE: aria_db
-        MYSQL_USER: abc
+        MYSQL_USER: maria
         MYSQL_PASSWORD: maria-abc
     image: betothreeprod/mariadb-intel-nuc
     volumes:
       - db-data:/config
       - db-socket:/var/run/mysqld
+      - data:/var/www/html
     ports:
       - "3306:3306"
     restart: unless-stopped
     networks:
       - cake
-    env_file: common.env
+    env_file:
+      - common.env
+      - .env
     labels:
       io.balena.features.dbus: "1"
-  myphpcms:
-    env_file: common.env
+  acake2php:
+    env_file:
+      - common.env
+      - .env
     build:
       context: .
       dockerfile: Dockerfile.x86_64
       args:
-        DEBUG: "1"
-        DATABASE_USER: "root"
-    image: betothreeprod/myphpcms-intel-nuc
+        CAKEPHP_DEBUG_LEVEL: "2"
+        MYSQL_HOST: "db"
+        PUID: 1000
+        PGID: 1000
+        HTTPD_LISTEN: "127.0.0.1:80"
+    image: betothreeprod/acake2php-intel-nuc
     labels:
       io.balena.features.dbus: "1"
     volumes:
@@ -42,7 +50,7 @@ services:
     ports:
       #Dockerfile's exposed 80 (through apache2), forward 8000 as of CakePHP default port setting
       - "80:8000"
-    links:
+    depends_on:
       - db
     networks:
       - cake

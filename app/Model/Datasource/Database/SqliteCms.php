@@ -33,7 +33,12 @@ class SqliteCms extends Sqlite
 			if (Configure::read('debug') > 1) {
 				var_dump($this->config);
 			}
-			parent::connect();
+			try {
+					parent::connect();
+			} catch(MissingConnectionException $e) {
+					print_r($e->getAttributes());
+					throw $e;
+			}
 		}
 }
 ?>

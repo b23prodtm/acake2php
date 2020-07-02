@@ -1,5 +1,5 @@
 ARG SECONDARY_HUB
-FROM ${SECONDARY_HUB:-linuxserver/mariadb:amd64-latest}
+FROM ${SECONDARY_HUB:-betothreeprod/mariadb-intel-nuc}
 
 # When using volumes (-v flags) permissions issues can arise
 # between the host OS and the container, we avoid this issue
@@ -11,7 +11,6 @@ ARG PGID
 ENV PGID ${PGID:-0}
 ARG MYSQL_ROOT_PASSWORD
 ENV MYSQL_ROOT_PASSWORD ${MYSQL_ROOT_PASSWORD:-'mariadb'}
-# bind-address = '127.0.0.1' > conf.d/my.cnf
 ARG MYSQL_HOST
 ENV MYSQL_HOST ${MYSQL_HOST:-'localhost'}
 ENV TZ ${TZ:-'Europe/Paris'}
@@ -34,12 +33,13 @@ ENV MYSQL_BIND_ADDRESS ${MYSQL_BIND_ADDRESS:-0.0.0.0}
 # 3. "~/.my.cnf" User
 COPY conf.d/my.cnf /etc/mysql/conf.d/my.cnf
 RUN sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS}/" /etc/mysql/conf.d/my.cnf
+RUN sed -i.user "/user/s/=.*$/= ${USER}/" /etc/mysql/conf.d/my.cnf
 
 RUN apt update && apt install -y \
   expect \
   # auth_ed25519 support package
   libmariadbclient18 \
-  \
+  #\
  && echo "**** cleanup ****" && \
  rm -rf \
   /tmp/* \
@@ -53,7 +53,10 @@ RUN ./mysql_secure_shell
 RUN echo "***** Fix PASSWORD, PRIVILEGES and CREATE ${MYSQL_USER}..." \
   && echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'% WITH GRANT OPTION;" | tee -a p.sql \
   && echo "CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';" | tee -a p.sql \
+  && echo "FLUSH PRIVILEGES;" | tee -a p.sql \
   && mkdir -p /config/initdb.d/ && mv p.sql /config/initdb.d/patch.sql
 
 COPY mariadb.ans .
 RUN cat mariadb.ans
+
+VOLUME /var/run/mysqld

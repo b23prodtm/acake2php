@@ -1,36 +1,43 @@
 #!/usr/bin/env bash
 set -e
-source ./Scripts/lib/test/parsing.sh
-test=("test_parse_and_export" "test_parse_sql_password" "test_arg_exists" "test_arg_trim")
-for t in "${test[@]}"; do printf "TEST CASES : %s\n" "$t" && eval "$t"; done; sleep 5
-bootargs="--docker"
-migrate="-i -u --connection=test" 
-# BUG ISSUE
-#\  --enable-authentication-plugin"
+TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=Scripts/lib/test/parsing.sh
+. "$TOPDIR/Scripts/lib/test/parsing.sh"
+migrate="--connection=test -v -u -i --enable-authentication-plugin"
+# default arg --docker, is enabled
 saved=("$@")
+set -- "--docker" "$@"
 config_args="-c -h -p pass -s word --development"
-config_work_dir=""
+db_data="db-data:/config/databases/"
 usage=("" \
 "${cyan}Notice:${nc}The test script." \
-"Usage: $0 [-p <password>] [-t <password>] [--travis,--circle [--cov]]" \
+"Usage: $0 [--travis|--docker|--openshift|--circle [--cov|--phpcs]] [-p <password>] [-t <password>] " \
+"           --travis, --circle  Travis or Circle CI Local Test Workflow" \
+"                               also disables Docker Image" \
+"           -o, --openshift     [path to a file with a list of variables], " \
+"                               also disables Docker Image" \
+"           --docker            [enabled] Startup with Docker Image DATABASE" \
 "           -p <password>       Exports MYSQL_ROOT_PASSWORD" \
 "           -t <password>       Exports MYSQL_PASSWORD" \
-"           --travis, --circle  Travis or Circle CI Local Test Workflow" \
 "           --cov               Coverage All Tests" \
-"           -o, --openshift     [path to a file with a list of variables]" \
-"           --socket            Symlink socket /tmp/mysql.sock" \
-"           --docker            Startup Docker Image DATABASE" \
-"Notice:    Use environment variables from open container/pod and a file if it exists" \
+"           --phpcs             PHP Code Sniffer" \
+"" \
+"Notice:                        Use environment variables from open container/pod" \
+"                               and a file if it exists" \
+"Default arguments:   " \
+"           --docker" \
 "")
-while [[ "$#" > 0 ]]; do case $1 in
-  --travis )
-    #; Test values
-    export TRAVIS_OS_NAME="osx"
-    export TRAVIS_PHP_VERSION=$(php -v | grep -E "[5-7]\.\\d+\.\\d+" | cut -d " " -f 2 | cut -c 1-3)
-    # Abort tests
-    ;;
+while [[ "$#" -gt 0 ]]; do case $1 in
   --circle )
-    bootargs=$(parse_arg_trim "--docker" $bootargs)
+    # shellcheck disable=SC2086
+    migrate=$(parse_arg_trim --docker $migrate)
+    # shellcheck disable=SC2086
+    config_args=$(parse_arg_trim --docker $config_args)
+    ;;
+  --phpcs )
+    export PHPCS=1
+    migrate=""
+    config_args=""
     ;;
   --cov )
     export COLLECT_COVERAGE=true;;
@@ -47,20 +54,40 @@ while [[ "$#" > 0 ]]; do case $1 in
     ;;
   -[vV]*|--verbose )
     set -x
-    bootargs="-v ${bootargs}"
+    migrate="-v ${migrate}"
     echo "Passed params :  $0 ${saved[*]}";;
   -[oO]*|--openshift )
-    bootargs=$(parse_arg_trim "--docker" $bootargs)
-    bootargs="${bootargs} --openshift"
-    config_args="--openshift ${config_args}"
+    # shellcheck disable=SC2086
+    migrate="$(parse_arg_trim --docker $migrate) --openshift"
+    # shellcheck disable=SC2086
+    config_args="$(parse_arg_trim --docker $config_args) --openshift"
+    ;;
+  --travis)
+    export MYSQL_HOST=${MYSQL_HOST:-'127.0.0.1'}
+    export MYSQL_USER='travis'
+    export MYSQL_PASSWORD=''
+    export MYSQL_ROOT_PASSWORD=''
+    # shellcheck disable=SC2086
+    migrate="$(parse_arg_trim --docker $migrate) --travis"
+    # shellcheck disable=SC2086
+    config_args="$(parse_arg_trim --docker $config_args) --travis"
     ;;
   --docker )
     config_args="--docker ${config_args}"
-    bootargs="--docker ${bootargs}"
+    migrate="--docker ${migrate}"
+    db_data="$(pwd)/mysqld$(echo ${db_data} | cut -d : -f 2)"
     ;;
-  --socket )
-    migrate="-Y ${migrate}";;
   *) echo "Unknown parameter, passed $0: $1"; exit 1;;
 esac; shift; done
-source ./configure.sh ${config_args}
-bash -c "./migrate-database.sh ${migrate} ${bootargs}"
+if [ "$PHPCS" = 1 ]; then
+  bash -c "./Scripts/start_daemon.sh test ${saved[*]}" || exit 1
+  exit 0
+fi
+# shellcheck source=configure.sh
+bash -c "${TOPDIR}/configure.sh $config_args"
+if bash -c "${TOPDIR}/migrate-database.sh ${migrate}"; then
+  printf "[SUCCESS] CakePHP Test Suite successfully finished, go on with the job...\n"
+else
+  printf "[FAILED] CakePHP Test Suite had errors. Quit the job thread.\n\
+[INFO] Only continuous integration scripts may run tests.\n"
+fi

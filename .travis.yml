@@ -4,64 +4,68 @@ cache:
   - ".autoconf"
   - "$HOME/.composer/cache/files"
 # language: php # linux only
-language: bash # cross-platform
+language: node_js # cross-platform
+node_js:
+    - "14.5"
 
 os:
     - linux
     - osx
     - windows
 
-dist: trusty
+arch:
+    - amd64
+    - arm64
 
-env:
-  matrix:
-    - _PHP=latest _PKG=hhvm PHPENV_ROOT=~/.phpenv # developed by facebook, trusty only
-    - _PHP=7.2 _PKG=php PHPENV_ROOT=~/.phpenv
-    - _PHP=7.3 _PKG=php PHPENV_ROOT=~/.phpenv
-
-  global:
-    - COLLECT_COVERAGE=false
-    - PHPENV_ROOT=/usr/local/bin/phpenv
-    - _SSL=openssl
-    - PHP_CMS_DIR=app/webroot/php_cms
-    - DB=Mysql
-    - PHPUNIT=4
-    - PHPCS=3
-    - COLLECT_COVERAGE=false
-    - DKR_ARCH=x86_64
-    - WEBHOOK_URL=https://discordapp.com/api/webhooks/479745392880386058/YOO7Nnn1IFWUtXX0n0qAZYeMDeV-SLa0lSzjGpNnKGTzG-xA0T3dplVGzSM4ObKLeMWg
-    - secure: C39DQ1zYpSAOy33Sb8NP89o6k4HUnjHnQ+bQkgbo3WH7WtiN76dGeO9jm1DjMn5np6oKbDi41/fxonaTUIjb9YMksG2YB+NBDYXHyV1H7/xAeC6uTxwUObrLXh8aOUwiiuLPllMdtOLX8JSPxl1Ixc6KyeFywPiMvwuOe4QZW6sVG4sqhZC/UUycYKRSMaOthtuTDPYKjBLaDPiEzkUmdBIo9IhAsidEFAHj4jEmw9gBtac0B2x7GbvvoDivdH3KdNSoPt2SkD0RLX51Qf7AYeAV4fw65cuCp/Aat/uk55x3lN5g18Ww9khY/cFSwPC0JXGQnnJvdcDP2diZNkqE41Yc/Mw3xwfrvp3/v8js3VIBzsGINKiSdXZ/yXqI9iRzvzlfmXRHvd4sFXRzUpi8ZB4PXaboMndbNRoh4PcoRNFtXhyebQCEgZv2x3oiKXw38WT5cga03uMH4E5z5afS3n7NP1tsuiNWd499dJzAkW8OPeLDPqY3a/b5qLeZIK1bo23mvCjPtbm+B2g2QocKcd1oQ+XANCyuT3M/+AIypdMabGOSon2fDKrUUN+SqIX4FcYaHi1sG3qUp23870u9YcT4hK2LCKBcBPkFpxqEZLwdHbJmjHPo6uRyAKOD7r/k1DtIRqkcJ+5BpU4emo6rM9rdh5mWjLtK7vdY8Y/tvP8=
-
-matrix:
-  #fast_finish: true
-  exclude:
-    - os: windows
-  include:
-    - os: linux
-    - os: osx
-    - os: windows
-      env: _PHP=7.2 _PKG=php _SSL=openssl.light
-    - os: windows
-      env: _PHP=7.3 _PKG=php _SSL=openssl.light
-  allow_failures:
-    - os: windows
-    - os: linux
-    - os: osx
-
+dist: bionic
 addons:
+  mariadb: '10.3'
+  apt:
+    sources:
+    - sourceline: ppa:ondrej/php
   coverity_scan:
     project:
-      name: b23prodtm/myphpcms
+      name: b23prodtm/acake2php
       description: 'This PHP CMS is featuring well-known functionalities as cool as
         posting some web contents with pictures stored in a database. Developer Note
         : This is the Cake PHP cartridge repository. A submodule is included in app/webroot.'
     notification_email: b23prodtm@users.sourceforge.net
     build_command_prepend: ""
-    build_command: "./test-cake.sh --cov --travis -o .env common.env --docker"
+    build_command: "./test-cake.sh --travis --cov"
     branch_pattern: coverity_scan
-    update: true
+
+env:
+  matrix:
+    - _PHP=7.2 _PKG=php PHPENV_ROOT=~/.phpenv
+    - _PHP=7.3 _PKG=php PHPENV_ROOT=~/.phpenv
+
+  global:
+    - DEBIAN_FRONTEND=noninteractive
+    - COLLECT_COVERAGE=false
+    - PHPENV_ROOT=/usr/local/bin/phpenv
+    - _SSL=openssl
+    - MYPHPCMS_LOG=app/tmp/logs
+    - WEBHOOK_URL=https://discordapp.com/api/webhooks/479745392880386058/YOO7Nnn1IFWUtXX0n0qAZYeMDeV-SLa0lSzjGpNnKGTzG-xA0T3dplVGzSM4ObKLeMWg
+    - secure: C39DQ1zYpSAOy33Sb8NP89o6k4HUnjHnQ+bQkgbo3WH7WtiN76dGeO9jm1DjMn5np6oKbDi41/fxonaTUIjb9YMksG2YB+NBDYXHyV1H7/xAeC6uTxwUObrLXh8aOUwiiuLPllMdtOLX8JSPxl1Ixc6KyeFywPiMvwuOe4QZW6sVG4sqhZC/UUycYKRSMaOthtuTDPYKjBLaDPiEzkUmdBIo9IhAsidEFAHj4jEmw9gBtac0B2x7GbvvoDivdH3KdNSoPt2SkD0RLX51Qf7AYeAV4fw65cuCp/Aat/uk55x3lN5g18Ww9khY/cFSwPC0JXGQnnJvdcDP2diZNkqE41Yc/Mw3xwfrvp3/v8js3VIBzsGINKiSdXZ/yXqI9iRzvzlfmXRHvd4sFXRzUpi8ZB4PXaboMndbNRoh4PcoRNFtXhyebQCEgZv2x3oiKXw38WT5cga03uMH4E5z5afS3n7NP1tsuiNWd499dJzAkW8OPeLDPqY3a/b5qLeZIK1bo23mvCjPtbm+B2g2QocKcd1oQ+XANCyuT3M/+AIypdMabGOSon2fDKrUUN+SqIX4FcYaHi1sG3qUp23870u9YcT4hK2LCKBcBPkFpxqEZLwdHbJmjHPo6uRyAKOD7r/k1DtIRqkcJ+5BpU4emo6rM9rdh5mWjLtK7vdY8Y/tvP8=
+
+matrix:
+  #fast_finish: true
+  include:
+    - os: linux
+      arch: arm64
+    - os: osx
+      arch: amd64
+    - os: windows
+      arch: amd64
+  allow_failures:
+    - os: linux
+      arch: arm64
+    - os: osx
+    - os: windows
 
 services:
+- mysql
+- docker
 - memcached
 
 before_install:
@@ -70,40 +74,42 @@ before_install:
   - source build/prepare_${TRAVIS_OS_NAME}_env.sh #; source exports
   - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${_PHP}" = 7* ]]; then COLLECT_COVERAGE=true ; fi
   - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then phpenv config-rm xdebug.ini || true ; fi
-  - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then source build/custom_php_ini.sh; fi
-  - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
+  - if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then build/custom_php_ini.sh; fi
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_SSL}" "latest";
+  - if [[ "${TRAVIS_OS_NAME}" != "windows" ]]; then [ $(which c_rehash) > /dev/null ] && sudo c_rehash; fi
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "curl" "latest" "--with-openssl" | tail
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-homebrew-curl"
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}-xml" | tail
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}-fpm" | tail
+  - php -i | grep "SSL Version"
+  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer" "latest" | tail
   - cd ../..
-  - source ./Scripts/configure_tmp.sh
-  - source ./deploy.sh "${DKR_ARCH}" --nobuild
+  #- docker login -u $DOCKER_USER -p $DOCKER_PASS
+  - sudo mkdir -p /etc/mysql/conf.d/ && sudo cp -f mysqldb/conf.d/my.cnf /etc/mysql/conf.d/my.cnf
+  - sudo sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS:-127.0.0.1}/" /etc/mysql/conf.d/my.cnf
+  - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then sudo systemctl restart mysql; fi
+  - npm install --no-optional
+  - npm link balena-cloud
 install:
-  - cd .travis/TravisCI-OSX-PHP
-  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_SSL}" "latest"; [ $(which c_rehash) > /dev/null ] && c_rehash
-  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}" "--with-openssl"
-  - build/handle_${TRAVIS_OS_NAME}_pkg.sh "${_PKG}" "${_PHP}-xml"
-  - cd ../..
-  - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then curl -s http://getcomposer.org/installer | php && php composer.phar install --dev --no-interaction; fi
+  - ./deploy.sh "$(arch)" --nobuild --exit
 
 before_script:
-- if [[ "${TRAVIS_OS_NAME}" = "linux" && "${_PHP}" = "hhvm" ]]; then curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar; fi
-- mkdir -p build/logs
-
 script:
-- docker login -u $DOCKER_USER -p $DOCKER_PASS
-- if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then ./test-cake.sh --travis -o .env common.env --docker; fi
-after_script:
-- if [[ ("${COLLECT_COVERAGE}" = "true") && ("${COVERITY_SCAN_BRANCH}" != 1) ]];
-  then travis_retry php app/Vendor/bin/php-coveralls -v -r ./app/; fi
+  - if [[ "${TRAVIS_OS_NAME}" != "linux" && "${COVERITY_SCAN_BRANCH:-0}" != 1 ]]; then ./test-cake.sh --travis --phpcs || true; fi
+  - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COVERITY_SCAN_BRANCH:-0}" != 1 ]]; then ./test-cake.sh --travis; fi
+  - cat ${MYPHPCMS_LOG}/travis.${TRAVIS_BUILD_NUMBER}.log || true
 after_success:
-- wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
-- chmod +x send.sh
-- "./send.sh success $WEBHOOK_URL"
-- zip -r myphpcms.zip *
-- git tag --force "v${GIT_RELEASE_VERSION}.${TRAVIS_BUILD_NUMBER}"
+  - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
+  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - "./send.sh success $WEBHOOK_URL"
+  - zip -r acake2php.zip * > /dev/null
+  - git tag --force "v${GIT_RELEASE_VERSION}.${TRAVIS_BUILD_NUMBER}"
 deploy:
   provider: releases
   api_key:
     secure: UmXoq0sFQQixpMH12MG1Q3+pQhw05SuN919FgnKCru3X3RTCpXnZB8hgXvQHZn5Hhunq5eBPZ7C/bvk5wkzPXrwpAXyA7wj7PhGn6QbksU6xtkNOQVera/pMoTJW2VtNA2GcWvUvCnht3m73Tp2lguaI3Q6Yt8qq1vHJlDO5hbgvC0LdDrRFLIAA95jA9DWZRCWanHV5aepVNkX0qjQm25BIAwvQtfxkj/DipDYy2eIMh8brh6aZamE3cBv8sXP8b2b89GB670E35Otfseu58a6HxqmLD4dI5kIEzhSFjuelPJne0tmebFKww+mPn7v2SKJZR9xVfQM+mZHAp7SiozEvi1nqhUN31Z64mpDQDPnAB6eO36rGSdxDyYN7Ab24lJuLTcNkRbNOaJzn88q9d5DqGGQRJl6875cJmPFOjUwNteJIvLhDmPX3oHSPvWx3AtpEUtWeCrVt1yc7tyG0kdW8MmzoWvgDhbyvqAefKO3bEzVZeQQy/7LKy1i42+B/7N57oR6sgFX2N/zvdckFKjwHNiydds67Wj++EuJRXr2AhxdraW3iwDBTmkrZ3TjOsxcySbMBJHCOwHF9yAmLklbk4h1haCohkQrQxBp6Rhm3vKJGDOR3rOkjqIzqgHgo3pcXDdBULMpfB3/IbDeh3/RMuTEOXvv7FUNRjb4JIdI=
-  file: myphpcms.zip
+  file: acake2php.zip
   on:
-    repo: b23prodtm/myphpcms
+    repo: b23prodtm/acake2php
     branch: feature/gh-releases
