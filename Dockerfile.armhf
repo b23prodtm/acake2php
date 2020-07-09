@@ -58,7 +58,7 @@ ARG PGID
 ENV PGID ${PGID:-0}
 # Must own the ip address
 ARG HTTPD_LISTEN
-ENV HTTPD_LISTEN ${HTTPD_LISTEN:-'0.0.0.0:80'}
+ENV HTTPD_LISTEN ${HTTPD_LISTEN:-'*:80'}
 
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
@@ -89,24 +89,24 @@ RUN ./vagrant-shell.sh php-settings-update extension memcached.so \
  && ./vagrant-shell.sh php-settings-update session.save_handler memcached \
  && ./vagrant-shell.sh php-settings-update session.save_path '127.0.0.1:11211,127.0.0.1:11212'
 
-# Copy the source code into /var/www/html/ inside the image
-COPY . /var/www/html/
+# Copy the source code into /var/www/localhost/htdocs/ inside the image
+COPY . /var/www/localhost/htdocs/
 
 # Configure the application
-WORKDIR /var/www/html/
+WORKDIR /var/www/localhost/htdocs/
 
 # Change mode of bash Scripts
 RUN chmod -R gu+xs deploy.sh configure.sh migrate-database.sh Scripts/
 
 # Add cake and composer command to system path
-ENV PATH "${PATH}:/var/www/html/app/Console"
-ENV PATH "${PATH}:/var/www/html/app/Vendor/bin"
+ENV PATH "${PATH}:/var/www/localhost/htdocs/app/Console"
+ENV PATH "${PATH}:/var/www/localhost/htdocs/app/Vendor/bin"
 
 # Enable site on httpd
-RUN Scripts/config_a2ensite.sh /var/www/html/app/webroot
+RUN Scripts/config_a2ensite.sh /var/www/localhost/htdocs/app/webroot
 
 # Add to hosts
-RUN echo "127.0.0.1 ${SERVER_NAME}" | tee -a /etc/hosts
+RUN echo "127.0.0.1 ${SERVER_NAME} www.${SERVER_NAME}" >> /etc/hosts
 
 # Password Hash Verbose
 # RUN cat app/webroot/php_cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
@@ -125,7 +125,7 @@ RUN mkdir -p \
 # Helper packages
 RUN npm link balena-cloud
 
-WORKDIR /var/www/html/
+WORKDIR /var/www/localhost/htdocs/
 
 RUN chmod 0755 *.sh
 RUN ./deploy.sh ${DKR_ARCH} --nobuild --exit \

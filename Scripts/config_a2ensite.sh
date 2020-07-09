@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 set -eu
 CNF="/etc/apache2"
+# DO
 WWW="${1:-/var/www/localhost/htdocs}"
 mkdir -p "$(dirname "$CNF")"
 mkdir -p "$(dirname "$WWW")"
 touch site.conf
 echo -e "
 <Directory \"/\">
+    AllowOverride All
     Require all denied
 </Directory>
 <VirtualHost ${HTTPD_LISTEN}>
@@ -20,8 +22,8 @@ echo -e "
         AllowOverride All
         Require all granted
     </Directory>
-    ErrorLog /var/log/apache2/error.${SERVER_NAME}.log
-    CustomLog /var/log/apache2/access.${SERVER_NAME}.log combined
+    ErrorLog log/error.${SERVER_NAME}.log
+    CustomLog log/access.${SERVER_NAME}.log combined
 </VirtualHost>
 ServerName ${SERVER_NAME}
 " >> site.conf
