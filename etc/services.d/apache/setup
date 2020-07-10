@@ -1,5 +1,4 @@
 #!/usr/bin/with-contenv sh
-
 if grep www-data < /etc/group; then
    id www-data
 else
@@ -10,8 +9,9 @@ if grep www-data < /etc/passwd; then
 else
    adduser --ingroup www-data --system www-data
 fi
-chown -R www-data:www-data /var/www \
- && chmod -R g+s /var/www
-mkdir -p /var/www/log
+SERVER_ROOT=$(grep "^ServerRoot" < /etc/apache2/httpd.conf | awk '{ print $2 }' | sed "s/\"//g")
+chown -R www-data:www-data "$SERVER_ROOT" \
+ && chmod -R g+s "$SERVER_ROOT"
+bash -c "${SERVER_ROOT}/localhost/htdocs/Scripts/config_a2ensite.sh localhost/htdocs/app/webroot"
 memcached -d -l 127.0.0.1 -p 11211 -u www-data -m 16 \
  && memcached -d -l 127.0.0.1 -p 11212 -u www-data -m 16

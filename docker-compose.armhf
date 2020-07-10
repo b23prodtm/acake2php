@@ -17,7 +17,7 @@ services:
     volumes:
       - db-data:/config
       - db-socket:/var/run/mysqld
-      - data:/var/www/
+      - data:/var/www
     ports:
       - "3306:3306"
     restart: unless-stopped

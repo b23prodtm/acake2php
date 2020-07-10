@@ -102,12 +102,6 @@ RUN chmod -R gu+xs deploy.sh configure.sh migrate-database.sh Scripts/
 ENV PATH "${PATH}:/var/www/localhost/htdocs/app/Console"
 ENV PATH "${PATH}:/var/www/localhost/htdocs/app/Vendor/bin"
 
-# Enable site on httpd
-RUN Scripts/config_a2ensite.sh /var/www/localhost/htdocs/app/webroot
-
-# Add to hosts
-RUN echo "127.0.0.1 ${SERVER_NAME} www.${SERVER_NAME}" >> /etc/hosts
-
 # Password Hash Verbose
 # RUN cat app/webroot/php_cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
 
@@ -133,3 +127,4 @@ RUN ./deploy.sh ${DKR_ARCH} --nobuild --exit \
 # RUN [ "cross-build-end" ]
 
 ENTRYPOINT ./migrate-database.sh -o -u -i --enable-authentication-plugin && /init
+EXPOSE 80 443
