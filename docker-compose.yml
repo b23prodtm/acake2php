@@ -48,6 +48,7 @@ services:
       - db-socket:/var/run/mysqld
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - db
     networks:

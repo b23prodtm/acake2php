@@ -47,8 +47,8 @@ services:
       - data:/var/www
       - db-socket:/var/run/mysqld
     ports:
-      #Dockerfile's exposed 80 (through apache2), forward 8000 as of CakePHP default port setting
-      - "80:8000"
+      - "80:80"
+      - "443:443"
     depends_on:
       - db
     networks:
