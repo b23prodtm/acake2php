@@ -1,0 +1,31 @@
+{
+  "kind": "Service",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "db",
+    "creationTimestamp": null,
+    "labels": {
+      "io.kompose.service": "db"
+    },
+    "annotations": {
+      "io.balena.features.dbus": "1",
+      "kompose.cmd": "kompose convert --build build-config --controller deployment -o openshift/templates/ -f docker-compose.x86_64 -j",
+      "kompose.version": "1.21.0 (992df58d8)"
+    }
+  },
+  "spec": {
+    "ports": [
+      {
+        "name": "3306",
+        "port": 3306,
+        "targetPort": 3306
+      }
+    ],
+    "selector": {
+      "io.kompose.service": "db"
+    }
+  },
+  "status": {
+    "loadBalancer": {}
+  }
+}
