@@ -62,7 +62,7 @@ ENV HTTPD_LISTEN ${HTTPD_LISTEN:-'*:80'}
 
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
-# RUN [ "cross-build-start" ]
+RUN [ "cross-build-start" ]
 RUN install_packages \
     git \
     openssh-client \
@@ -78,9 +78,6 @@ RUN install_packages \
     libmemcached-dev
     # libicu libicu-dev
 
-# just containers configuration
-COPY etc /etc
-
 WORKDIR /usr/src/
 
 COPY vagrant-shell.sh .
@@ -89,42 +86,51 @@ RUN ./vagrant-shell.sh php-settings-update extension memcached.so \
  && ./vagrant-shell.sh php-settings-update session.save_handler memcached \
  && ./vagrant-shell.sh php-settings-update session.save_path '127.0.0.1:11211,127.0.0.1:11212'
 
-# Copy the source code into /var/www/localhost/htdocs/ inside the image
-COPY . /var/www/localhost/htdocs/
-
-# Configure the application
 WORKDIR /var/www/localhost/htdocs/
 
-# Change mode of bash Scripts
-RUN chmod -R gu+xs deploy.sh configure.sh migrate-database.sh Scripts/
+# Copy the app source code inside the image
+COPY app app
 
-# Add cake and composer command to system path
-ENV PATH "${PATH}:/var/www/localhost/htdocs/app/Console"
-ENV PATH "${PATH}:/var/www/localhost/htdocs/app/Vendor/bin"
-
-# Password Hash Verbose
-# RUN cat app/webroot/php_cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
-
-# Set default working directory
-WORKDIR app
-
-# Create tmp directory and make it writable by the web server
-RUN mkdir -p \
-    tmp/cache/models \
-    tmp/cache/persistent \
-    tmp/cache/long \
-    tmp/logs \
-  && chmod -R 1777 tmp
+COPY package.json .
+COPY package-lock.json .
 
 # Helper packages
 RUN npm link balena-cloud
 
+# Create tmp directory and make it writable by the web server
+RUN mkdir -p \
+   app/tmp/cache/models \
+   app/tmp/cache/persistent \
+   app/tmp/cache/long \
+   app/tmp/logs \
+ && chmod -R 1777 app/tmp
+
+# Add cake and composer command to system path
+COPY composer.json .
+COPY composer.lock .
+ENV PATH "${PATH}:/var/www/localhost/htdocs/app/Console"
+ENV PATH "${PATH}:/var/www/localhost/htdocs/app/Vendor/bin"
+
+# Configure the application
 WORKDIR /var/www/localhost/htdocs/
+
+# Copy the scripts code inside the image
+COPY . .
+
+# Change mode of bash Scripts
+RUN chmod -R gu+xs deploy.sh configure.sh migrate-database.sh Scripts/
+
+# Password Hash Verbose
+# RUN cat app/webroot/php_cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
 
 RUN chmod 0755 *.sh
 RUN ./deploy.sh ${DKR_ARCH} --nobuild --exit \
   && ./configure.sh --openshift -m -c -h -p pass -s word --development
-# RUN [ "cross-build-end" ]
+
+# just containers configuration
+COPY etc /etc
+
+RUN [ "cross-build-end" ]
 
 ENTRYPOINT ./migrate-database.sh -o -u -i --enable-authentication-plugin && /init
 EXPOSE 80 443
