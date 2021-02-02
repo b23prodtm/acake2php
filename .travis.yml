@@ -23,16 +23,6 @@ addons:
   apt:
     sources:
     - sourceline: ppa:ondrej/php
-  coverity_scan:
-    project:
-      name: b23prodtm/acake2php
-      description: 'This PHP CMS is featuring well-known functionalities as cool as
-        posting some web contents with pictures stored in a database. Developer Note
-        : This is the Cake PHP cartridge repository. A submodule is included in app/webroot.'
-    notification_email: b23prodtm@users.sourceforge.net
-    build_command_prepend: ""
-    build_command: "./test-cake.sh --travis --cov"
-    branch_pattern: coverity_scan
 
 env:
   matrix:
@@ -41,7 +31,6 @@ env:
 
   global:
     - DEBIAN_FRONTEND=noninteractive
-    - COLLECT_COVERAGE=false
     - PHPENV_ROOT=/usr/local/bin/phpenv
     - _SSL=openssl
     - MYPHPCMS_LOG=app/tmp/logs
@@ -96,14 +85,11 @@ install:
 before_script:
   - true
 script:
-  - if [[ "${TRAVIS_OS_NAME}" != "linux" && "${COVERITY_SCAN_BRANCH:-0}" != 1 ]]; then ./test-cake.sh --travis --phpcs || true; fi
-  - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COVERITY_SCAN_BRANCH:-0}" != 1 ]]; then ./test-cake.sh --travis; fi
+  - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then ./test-cake.sh --travis --phpcs || true; fi
+  - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then ./test-cake.sh --travis; fi
   - cat "${MYPHPCMS_LOG}/travis.${TRAVIS_BUILD_NUMBER}.log" || true
 after_success:
-  - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
-  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
-  - chmod +x send.sh
-  - "./send.sh success $WEBHOOK_URL"
+  - "./discord.sh success $WEBHOOK_URL"
   - zip -r acake2php.zip * > /dev/null
   - git tag --force "v${GIT_RELEASE_VERSION}.${TRAVIS_BUILD_NUMBER}"
 deploy:
