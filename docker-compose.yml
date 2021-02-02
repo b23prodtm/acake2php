@@ -3,7 +3,7 @@ services:
   db:
     build:
       context: mysqldb
-      dockerfile: Dockerfile.template
+      dockerfile: Dockerfile.armhf
       args:
         PUID: 0
         PGID: 0
@@ -13,11 +13,11 @@ services:
         MYSQL_DATABASE: aria_db
         MYSQL_USER: maria
         MYSQL_PASSWORD: maria-abc
-    image: betothreeprod/mariadb-%%BALENA_MACHINE_NAME%%
+    image: betothreeprod/mariadb-raspberrypi3
     volumes:
       - db-data:/config
       - db-socket:/var/run/mysqld
-      - data:/var/www/html
+      - data:/var/www
     ports:
       - "3306:3306"
     restart: unless-stopped
@@ -34,22 +34,21 @@ services:
       - .env
     build:
       context: .
-      dockerfile: Dockerfile.template
+      dockerfile: Dockerfile.armhf
       args:
         CAKEPHP_DEBUG_LEVEL: "2"
         MYSQL_HOST: "db"
         PUID: 1000
         PGID: 1000
-        HTTPD_LISTEN: "0.0.0.0:80"
-    image: betothreeprod/acake2php-%%BALENA_MACHINE_NAME%%
+    image: betothreeprod/acake2php-raspberrypi3
     labels:
       io.balena.features.dbus: "1"
     volumes:
-      - data:/var/www/html
+      - data:/var/www
       - db-socket:/var/run/mysqld
     ports:
-      #Dockerfile's exposed 80 (through apache2), forward 8000 as of CakePHP default port setting
-      - "80:8000"
+      - "80:80"
+      - "443:443"
     depends_on:
       - db
     networks:
