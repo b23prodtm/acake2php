@@ -15,7 +15,7 @@
 
 CakePHP for [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) on Docker
 ===============================
-[![TravisCI Status](https://travis-ci.org/b23prodtm/acake2php.svg?branch=development)](https://travis-ci.org/b23prodtm/acake2php)
+[![TravisCI Status](https://travis-ci.com/b23prodtm/acake2php.svg?branch=development)](https://travis-ci.com/b23prodtm/acake2php)
 [![CircleCI Status](https://circleci.com/gh/b23prodtm/acake2php.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/acake2php)
 
 This is a quickstart CakePHP application for OpenShift v3 that you ''can'' use as a starting point to develop your own application and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
