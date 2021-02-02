@@ -83,7 +83,7 @@ install:
   - ./deploy.sh "$(arch)" --nobuild --exit
 
 before_script:
-  - true
+  - mkdir -p ${MYPHPCMS_LOG}
 script:
   - if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then ./test-cake.sh --travis --phpcs || true; fi
   - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then ./test-cake.sh --travis; fi
@@ -91,7 +91,7 @@ script:
 after_success:
   - "./discord.sh success $WEBHOOK_URL"
   - zip -r acake2php.zip * > /dev/null
-  - git tag --force "v${GIT_RELEASE_VERSION}.${TRAVIS_BUILD_NUMBER}"
+  - git tag --force "${GIT_RELEASE_VERSION}.${TRAVIS_BUILD_NUMBER}"
 deploy:
   provider: releases
   api_key:
