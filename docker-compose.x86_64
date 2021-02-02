@@ -40,7 +40,7 @@ services:
         MYSQL_HOST: "db"
         PUID: 1000
         PGID: 1000
-        HTTPD_LISTEN: "127.0.0.1:80"
+        HTTPD_LISTEN: "0.0.0.0:80"
     image: betothreeprod/acake2php-intel-nuc
     labels:
       io.balena.features.dbus: "1"

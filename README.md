@@ -68,6 +68,12 @@ However, if these files exist they will affect the behavior of the build process
          RewriteRule    (.*) webroot/$1    [L]
       </IfModule>
 
+* **NodeJs dependencies**
+
+  This project depends on npmjs [balena-cloud](https://www.npmjs.com/package/balena-cloud). Please call
+  `npm update`
+  whenever the system complains about `balena_deploy` not found.
+
 * **.env files**
 
   Set environment variables as the following arguments, for instance on MacOS X:
@@ -81,6 +87,7 @@ However, if these files exist they will affect the behavior of the build process
   .env -> arm32v7.env
 
       ./deploy.sh arm32 --balena
+
 ### Compatibility
 
 * CakePHP 2.X application also supports Docker CE 18.03 and later
@@ -359,6 +366,15 @@ A recent `git checkout ` made the submodule disappear from disk, that can happen
 You need to configure development environment from Composer dependencies.
 
     ./configure.sh --development
+
+11. balena_deploy or init_functions: No such file or directory
+
+You need to export the `node_modules/.bin` for this shell to find npmjs installed binaries.
+
+```
+    echo "export PATH=\"node_modules/.bin:$PATH\"" >> ~/.bash_profile
+    exec $SHELL -l
+```
 
 ### License
    Copyright 2016 www.b23prodtm.info
