@@ -94,10 +94,11 @@ install:
   - ./deploy.sh "$(arch)" --nobuild --exit
 
 before_script:
+  - true
 script:
   - if [[ "${TRAVIS_OS_NAME}" != "linux" && "${COVERITY_SCAN_BRANCH:-0}" != 1 ]]; then ./test-cake.sh --travis --phpcs || true; fi
   - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COVERITY_SCAN_BRANCH:-0}" != 1 ]]; then ./test-cake.sh --travis; fi
-  - cat ${MYPHPCMS_LOG}/travis.${TRAVIS_BUILD_NUMBER}.log || true
+  - cat "${MYPHPCMS_LOG}/travis.${TRAVIS_BUILD_NUMBER}.log" || true
 after_success:
   - if [[ "${TRAVIS_OS_NAME}" = "linux" && "${COLLECT_COVERAGE}" != "true" ]]; then echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
