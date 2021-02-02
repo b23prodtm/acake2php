@@ -389,14 +389,21 @@ You need to configure development environment from Composer dependencies.
 
     ./configure.sh --development
 
-11. balena_deploy or init_functions: No such file or directory
+11. Undefined functins balena_deploy or init_functions: No such file or directory
 
 You need to export the `node_modules/.bin` for this shell to find npmjs installed binaries.
 
 ```
-    echo "export PATH=\"node_modules/.bin:$PATH\"" >> ~/.bash_profile
+    echo "export PATH=\"node_modules/.bin:\$PATH\"" >> ~/.bash_profile
     exec $SHELL -l
 ```
+
+12. Any message "saved[@]: unbound variable" on Darwin (OSX)
+
+Your BASH doesn't handle array in scripts and uses version 3. Please upgrade to v.4 or later.
+Check your bash version and upgrade OpenSSL Cacert as well:
+
+    .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh
 
 ### License
    Copyright 2016 www.b23prodtm.info
