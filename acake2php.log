@@ -1,0 +1,94 @@
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+* Found 3 flags set BALENA_PROJECTS_FLAGS
+* Found 4 projects set BALENA_PROJECTS
+Identity added: /Users/wwwb23prodtminfo/.ssh/id_rsa (wwwb23prodtminfo@iMac.local)
+* node_modules/.bin/balena_deploy x86_64 --nobuild
+* docker
+* Allow cross-build
++ RUN [^a-z]*cross-build-start[^a-z]*
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./mysqldb/.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./mysqldb/common.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/common.env
+[hotfix/cakeroute 2da76ce] x86_64 pushed ./mysqldb
+ 6 files changed, 6326 insertions(+), 8255 deletions(-)
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./deployment/images/node-php7/.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./deployment/images/node-php7/common.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/common.env
+[hotfix/cakeroute d008f88] x86_64 pushed ./deployment/images/node-php7
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./deployment/images/apache-php7/.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./deployment/images/apache-php7/common.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/common.env
+[hotfix/cakeroute 807d156] x86_64 pushed ./deployment/images/apache-php7
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+On branch hotfix/cakeroute
+Your branch is ahead of 'origin/hotfix/cakeroute' by 3 commits.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+Identity added: /Users/wwwb23prodtminfo/.ssh/id_rsa (wwwb23prodtminfo@iMac.local)
+* node_modules/.bin/balena_deploy x86_64 
+Identity added: /Users/wwwb23prodtminfo/.ssh/id_rsa (wwwb23prodtminfo@iMac.local)
+* node_modules/.bin/balena_deploy x86_64 2
++ RUN [^a-z]*cross-build-end[^a-z]*
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./mysqldb/.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./mysqldb/common.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/common.env
+On branch hotfix/cakeroute
+Your branch is ahead of 'origin/hotfix/cakeroute' by 3 commits.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./deployment/images/node-php7/.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./deployment/images/node-php7/common.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/common.env
+On branch hotfix/cakeroute
+Your branch is ahead of 'origin/hotfix/cakeroute' by 3 commits.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./deployment/images/apache-php7/.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./deployment/images/apache-php7/common.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/common.env
+On branch hotfix/cakeroute
+Your branch is ahead of 'origin/hotfix/cakeroute' by 3 commits.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+On branch hotfix/cakeroute
+Your branch is ahead of 'origin/hotfix/cakeroute' by 3 commits.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+Identity added: /Users/wwwb23prodtminfo/.ssh/id_rsa (wwwb23prodtminfo@iMac.local)
+* node_modules/.bin/balena_deploy x86_64 
+Identity added: /Users/wwwb23prodtminfo/.ssh/id_rsa (wwwb23prodtminfo@iMac.local)
+* node_modules/.bin/balena_deploy x86_64 3
+* docker
+* Allow cross-build
++ RUN [^a-z]*cross-build-start[^a-z]*
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./mysqldb/.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./mysqldb/common.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/common.env
+[hotfix/cakeroute 7a84fcf] x86_64 pushed ./mysqldb
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./deployment/images/node-php7/.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./deployment/images/node-php7/common.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/common.env
+On branch hotfix/cakeroute
+Your branch is ahead of 'origin/hotfix/cakeroute' by 4 commits.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./deployment/images/apache-php7/.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/x86_64.env
+/Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/./deployment/images/apache-php7/common.env -> /Users/wwwb23prodtminfo/NetBeansProjects/OpenShift/acake2php/common.env
+On branch hotfix/cakeroute
+Your branch is ahead of 'origin/hotfix/cakeroute' by 4 commits.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+On branch hotfix/cakeroute
+Your branch is ahead of 'origin/hotfix/cakeroute' by 4 commits.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+Identity added: /Users/wwwb23prodtminfo/.ssh/id_rsa (wwwb23prodtminfo@iMac.local)
+* node_modules/.bin/balena_deploy x86_64 
+Identity added: /Users/wwwb23prodtminfo/.ssh/id_rsa (wwwb23prodtminfo@iMac.local)
+* node_modules/.bin/balena_deploy x86_64 0
+* deploy's exiting...
