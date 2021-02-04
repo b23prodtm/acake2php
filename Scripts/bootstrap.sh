@@ -33,7 +33,7 @@ if [ -z "${GET_HASH_PASSWORD:-}" ] && [ -z "$openshift" ]; then
   if [ ! -f "$hash" ]; then
     shell_prompt "$TOPDIR/configure.sh -h " "define a value for missing GET_HASH_PASSWORD" "${DEBIAN_FRONTEND:-}"
   fi
-  # shellcheck source=app/webroot/php_cms/e13/etc/export_hash_password.sh
+  # shellcheck source=app/webroot/php-cms/e13/etc/export_hash_password.sh
   . "$hash"
 fi
 # shellcheck disable=SC2154

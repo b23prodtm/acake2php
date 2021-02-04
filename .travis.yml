@@ -89,7 +89,7 @@ script:
   - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then ./test-cake.sh --travis; fi
   - cat "${MYPHPCMS_LOG}/travis.${TRAVIS_BUILD_NUMBER}.log" || true
 after_success:
-  - "./discord.sh success $WEBHOOK_URL"
+  - ./discord.sh success "$WEBHOOK_URL"
   - zip -r acake2php.zip * > /dev/null
   - git tag --force "${GIT_RELEASE_VERSION}.${TRAVIS_BUILD_NUMBER}"
 deploy:
