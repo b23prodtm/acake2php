@@ -62,7 +62,7 @@ ENV HTTPD_LISTEN ${HTTPD_LISTEN:-'*:80'}
 
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
-RUN [ "cross-build-start" ]
+# RUN [ "cross-build-start" ]
 RUN install_packages \
     git \
     openssh-client \
@@ -94,7 +94,7 @@ COPY app app
 COPY package.json .
 COPY package-lock.json .
 
-# Helper packages
+# Helper packages (just a long node process...)
 RUN npm link balena-cloud
 
 # Create tmp directory and make it writable by the web server
@@ -130,7 +130,7 @@ RUN ./deploy.sh ${DKR_ARCH} --nobuild --exit \
 # just containers configuration
 COPY etc /etc
 
-RUN [ "cross-build-end" ]
+# RUN [ "cross-build-end" ]
 
 ENTRYPOINT ./migrate-database.sh -o -u -i --enable-authentication-plugin && /init
 EXPOSE 80 443

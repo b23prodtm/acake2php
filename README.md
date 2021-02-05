@@ -394,8 +394,7 @@ You need to configure development environment from Composer dependencies.
 You need to export the `node_modules/.bin` for this shell to find npmjs installed binaries.
 
 ```
-    echo "export PATH=\"node_modules/.bin:\$PATH\"" >> ~/.bash_profile
-    exec $SHELL -l
+    export PATH="`pwd`/node_modules/.bin:\$PATH"
 ```
 
 12. Any message "saved[@]: unbound variable" on Darwin (OSX)
