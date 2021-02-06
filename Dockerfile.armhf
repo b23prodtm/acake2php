@@ -95,7 +95,7 @@ COPY package.json .
 COPY package-lock.json .
 
 # Helper packages (just a long node process...)
-RUN npm link balena-cloud
+RUN npm install --no-optional && npm link balena-cloud
 
 # Create tmp directory and make it writable by the web server
 RUN mkdir -p \
