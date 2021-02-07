@@ -54,7 +54,7 @@ spec:
         - name: IMG_TAG
           value: latest
         - name: MYPHPCMS_DIR
-          value: app/webroot/php_cms
+          value: app/webroot/php-cms
         - name: MYPHPCMS_LOG
           value: app/tmp/logs
         - name: PGID

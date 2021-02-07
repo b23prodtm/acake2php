@@ -46,7 +46,7 @@ fi
 php -f getHashPassword.php -- -p "$pass" -s "$salt" -f "$hash_file"
 #; so that the shell can execute export file
 chmod 777 $hash_file
-# shellcheck source=../app/webroot/php_cms/e13/etc/getHashPassword.php
+# shellcheck source=../app/webroot/php-cms/e13/etc/getHashPassword.php
 . "$hash_file"
 slogger -st "$0" "Saved in $hash_file .\n"
 cd "$pwd" || log_failure_msg "No such directory %s\n" "$dir"

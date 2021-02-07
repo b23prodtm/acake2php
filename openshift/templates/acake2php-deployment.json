@@ -86,7 +86,7 @@
               },
               {
                 "name": "MYPHPCMS_DIR",
-                "value": "app/webroot/php_cms"
+                "value": "app/webroot/php-cms"
               },
               {
                 "name": "MYPHPCMS_LOG",

@@ -14,7 +14,7 @@ PHP (more exactly spl_autoload) does the rest for you
 and is even quicker than a semantically equal self-defined autoload function like this one
 */
 App::build(array(
-  'Cms' => array(WWW_ROOT . 'php_cms' . DS . 'e13' . DS . 'include' . DS)
+  'Cms' => array(WWW_ROOT . 'php-cms' . DS . 'e13' . DS . 'include' . DS)
 ), App::REGISTER);
 /**
  * Load DebugKit plugin
