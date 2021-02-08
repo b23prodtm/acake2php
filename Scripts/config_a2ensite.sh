@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -eu
+TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . init_functions .
-log_daemon_msg "Add VirtualHost $HTTPD_LISTEN"
+log_daemon_msg "To add more VirtualHost $HTTPD_LISTEN, ${BASH_SOURCE[0]} <directory>"
 CNF="/etc/apache2"
-WWW="${1:-localhost/htdocs}"
+WWW="${1:-$TOPDIR/app/webroot}"
 mkdir -p "$(dirname "$CNF")"
 mkdir -p "$(dirname "$WWW")"
 touch site.conf
@@ -59,5 +60,5 @@ mv ssl_site.conf "${CNF}/conf.d/"
 log_daemon_msg "Enable mod_rewrite"
 sed -i.old -E -e "/mod_rewrite.so/s/^#+//g" "${CNF}/httpd.conf"
 grep mod_rewrite.so < "${CNF}/httpd.conf"
-log_daemon_msg "Add www hosts $SERVER_NAME"
+log_daemon_msg "Add /etc/hosts $SERVER_NAME"
 sed -i "/127.0.0.1/s/(localhost)/\\1 ${SERVER_NAME} www.${SERVER_NAME}/" /etc/hosts

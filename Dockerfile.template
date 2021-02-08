@@ -75,7 +75,8 @@ RUN install_packages \
 
 RUN install_packages \
     memcached \
-    libmemcached-dev
+    libmemcached-dev \
+    php7-pecl-xdebug
     # libicu libicu-dev
 
 WORKDIR /usr/src/
@@ -103,7 +104,7 @@ RUN mkdir -p \
    app/tmp/cache/persistent \
    app/tmp/cache/long \
    app/tmp/logs \
- && chmod -R 1777 app/tmp
+ && chmod -R 1775 app/tmp
 
 # Add cake and composer command to system path
 COPY composer.json .

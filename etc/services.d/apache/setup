@@ -12,6 +12,6 @@ fi
 SERVER_ROOT=$(grep "^ServerRoot" < /etc/apache2/httpd.conf | awk '{ print $2 }' | sed "s/\"//g")
 chown -R www-data:www-data "$SERVER_ROOT" \
  && chmod -R g+s "$SERVER_ROOT"
-bash -c "${SERVER_ROOT}/localhost/htdocs/Scripts/config_a2ensite.sh localhost/htdocs/app/webroot"
+bash -c "${SERVER_ROOT}/localhost/htdocs/Scripts/config_a2ensite.sh"
 memcached -d -l 127.0.0.1 -p 11211 -u www-data -m 16 \
  && memcached -d -l 127.0.0.1 -p 11212 -u www-data -m 16
