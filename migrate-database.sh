@@ -62,9 +62,9 @@ ck_args="--connection=default"
 test_args="app Controller/PagesController --stderr >> $LOG"
 MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
 while [ "$#" -gt 0 ]; do case "$1" in
-  --enable-authentication-plugin*)
+  --enable-ed25519-plugin*)
     slogger -st "$0" "Enabled auth_ed25519 plugin..."
-    authentication_plugin=1;;
+    authentication_plugin="ed25519";;
   --docker )
     bash -c "./Scripts/start_daemon.sh ${docker}"
     # Running docker ... mysql's allowed to connect without any local mysql installation
@@ -167,7 +167,7 @@ if [[ $import_identities -eq 1 ]]; then
      log_warning_msg "${orange}WARNING: Using blank password for ${DATABASE_USER} !!${nc}"
     prompt=${DEBIAN_FRONTEND:-''}
   fi
-  if [ $authentication_plugin = 1 ]; then
+  if [ $authentication_plugin = "ed25519" ]; then
     identifiedby="IDENTIFIED VIA ed25519 USING '${set_DATABASE_PASSWORD}'"
   else
     identifiedby="identified by '${set_DATABASE_PASSWORD}'"
@@ -205,7 +205,7 @@ if [[ $import_identities -eq 1 ]]; then
     slogger -st "$0" "\r${orange}WARNING: Using blank password for ${MYSQL_USER} !!${nc}"
     prompt=${DEBIAN_FRONTEND:-''}
   fi
-  if [ $authentication_plugin = 1 ]; then
+  if [ $authentication_plugin = "ed25519" ]; then
     identifiedby="IDENTIFIED VIA ed25519 USING '${set_MYSQL_PASSWORD}'"
   else
     identifiedby="identified by '${set_MYSQL_PASSWORD}'"
@@ -216,10 +216,7 @@ if [[ $import_identities -eq 1 ]]; then
 # ALTER USER is MariaDB 10.2 and above waiting for ARM binary
 # "-e \"alter user '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
 "-e \"SET PASSWORD FOR '${MYSQL_USER}'@'${mysql_host}' = PASSWORD('${set_MYSQL_PASSWORD}');\"" \
-"-e \"grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
-"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
-"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
-"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_3.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant SELECT, INSERT, UPDATE, DELETE on *.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
 # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
 "-e \"select plugin from user where user='${MYSQL_USER}';\"" \
