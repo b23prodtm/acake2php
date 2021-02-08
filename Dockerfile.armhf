@@ -98,14 +98,6 @@ COPY package-lock.json .
 # Helper packages (just a long node process...)
 RUN npm install --no-optional && npm link balena-cloud
 
-# Create tmp directory and make it writable by the web server
-RUN mkdir -p \
-   app/tmp/cache/models \
-   app/tmp/cache/persistent \
-   app/tmp/cache/long \
-   app/tmp/logs \
- && chmod -R 1775 app/tmp
-
 # Add cake and composer command to system path
 COPY composer.json .
 COPY composer.lock .
