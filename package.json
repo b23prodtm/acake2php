@@ -9,7 +9,8 @@
   },
   "scripts": {
     "cs-check": "PHP_CS=1 ./test-cake.sh",
-    "test": "./test-cake.sh"
+    "test": "./test-cake.sh",
+    "start": "./start-cake.sh"
   },
   "repository": {
     "type": "git",

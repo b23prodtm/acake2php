@@ -42,8 +42,14 @@ cakephp() {
   CAKE="$TOPDIR/lib/Cake"
   APP="$TOPDIR/app"
   slogger -st "${FUNCNAME[0]}" "Cake 2.x patch ShellDispatcher.php"
-  sed -i.orig -e "s/\$dispatcher->_stop\((.*)\);/\\1;/g" "${CAKE}/Console/ShellDispatcher.php"
-  exec php -q "${APP}/Console/cake.php" -working "$APP" "$@"
+  #; patches
+  printf "%s\n" "s/\\\$dispatcher->_stop(\\(.*\\));/\\1;/g" > "${CAKE}/Console/ShellDispatcher.php.sed"
+  printf "%s\n" "s/implode\\((\\\$styleInfo),(.*)\\)/implode\\(\\2,\\1\\)/g" > "${CAKE}/Console/ConsoleOutput.php.sed"
+  files=("${CAKE}/Console/ShellDispatcher.php" "${CAKE}/Console/ConsoleOutput.php")
+  for f in "${files[@]}"; do
+    sed -i.old -E -f "$f.sed" "$f"
+  done
+  php -q "${APP}/Console/cake.php" -working "$APP" "$@"
 }
 #; export -f cakephp
 docker_name() {
