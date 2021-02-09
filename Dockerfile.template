@@ -128,5 +128,6 @@ COPY etc /etc
 
 # RUN [ "cross-build-end" ]
 
-ENTRYPOINT ./migrate-database.sh -o -u -i ${MIGRATE_OPTION} && /init
+ENTRYPOINT ./migrate-database.sh -o -u -i ${MIGRATE_OPTION} \
+  && ./migrate-database.sh -o -u ${MIGRATE_OPTION} --connection=test && /init
 EXPOSE 80 443
