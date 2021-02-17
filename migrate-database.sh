@@ -38,8 +38,8 @@ usage=("" \
 "                      Exports MYSQL_DATABASE" \
 "          --testunitbase=<name>" \
 "                      Exports TEST_DATABASE_NAME" \
-"          --enable-authentication-plugin" \
-"                      Disables https://mariadb.com/kb/en/authentication-plugin-ed25519/" \
+"          --enable-ed25519-plugin" \
+"                      Enable MariaDB plugin https://mariadb.com/kb/en/authentication-plugin-ed25519/" \
 "          -v, --verbose" \
 "                      Outputs more debug information" \
 "          -h, --help  Displays this help" \
@@ -216,7 +216,7 @@ if [[ $import_identities -eq 1 ]]; then
 # ALTER USER is MariaDB 10.2 and above waiting for ARM binary
 # "-e \"alter user '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
 "-e \"SET PASSWORD FOR '${MYSQL_USER}'@'${mysql_host}' = PASSWORD('${set_MYSQL_PASSWORD}');\"" \
-"-e \"grant SELECT, INSERT, UPDATE, DELETE on *.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant SELECT, INSERT, UPDATE, DELETE, CREATE on *.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
 # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
 "-e \"select plugin from user where user='${MYSQL_USER}';\"" \

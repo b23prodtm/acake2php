@@ -22,6 +22,7 @@ shell_prompt() {
     # (2) run a script if the user answered Y (yes) or N (no) quit the script
     case $answer in
       [yY]* ) echo -e "Yes."
+        # FIXME: bash -c might mask shell syntax errors (e.g. long filenames)
         # shellcheck disable=SC1090
         bash -c "$script" || log_failure_msg "FAILED $script"
         break;;
