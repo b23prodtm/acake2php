@@ -102,4 +102,5 @@ ADD "https://raw.githubusercontent.com/b23prodtm/docker-systemctl-replacement/ma
 RUN chmod g+xs /bin/systemctl
 
 ENTRYPOINT /init
+RUN node -v && npm -v
 # RUN [ "cross-build-end" ]

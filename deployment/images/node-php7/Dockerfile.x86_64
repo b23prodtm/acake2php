@@ -57,3 +57,4 @@ RUN apk update \
 # RUN rc-update add php-fpm7 default
 # RUN rc-service php-fpm7 start
 WORKDIR /var/www/html/
+RUN node -v && npm -v

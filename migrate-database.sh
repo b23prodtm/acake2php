@@ -63,7 +63,8 @@ test_args="app Controller/PagesController --stderr >> $LOG"
 MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
 while [ "$#" -gt 0 ]; do case "$1" in
   --enable-ed25519-plugin*)
-    slogger -st "$0" "Enabled auth_ed25519 plugin..."
+    slogger -st "$0" "Enabled auth_ed25519 plugin for passwords..."
+    log_warning_msg "Plugin Not available from PHP PDO connect (you should avoid using it)"
     authentication_plugin="ed25519";;
   --docker )
     bash -c "./Scripts/start_daemon.sh ${docker}"
@@ -216,11 +217,14 @@ if [[ $import_identities -eq 1 ]]; then
 # ALTER USER is MariaDB 10.2 and above waiting for ARM binary
 # "-e \"alter user '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
 "-e \"SET PASSWORD FOR '${MYSQL_USER}'@'${mysql_host}' = PASSWORD('${set_MYSQL_PASSWORD}');\"" \
-"-e \"grant SELECT, INSERT, UPDATE, DELETE, CREATE on *.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_3.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"flush PRIVILEGES;\"" \
 # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
 # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
-"-e \"select plugin from user where user='${MYSQL_USER}';\"" \
-"-e \"flush PRIVILEGES;\"")
+"-e \"select plugin from user where user='${MYSQL_USER}';\"")
   password=""
   if [ -n "${MYSQL_ROOT_PASSWORD:-}" ]; then
     password="--password=${MYSQL_ROOT_PASSWORD}"

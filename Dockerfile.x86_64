@@ -59,6 +59,9 @@ ENV PGID ${PGID:-0}
 # Must own the ip address
 ARG HTTPD_LISTEN
 ENV HTTPD_LISTEN ${HTTPD_LISTEN:-'*:80'}
+# Enable migrate-database.sh options
+ARG MIGRATE_OPTION
+ENV MIGRATE_OPTION ${MIGRATE_OPTION:-'-v'}
 
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
@@ -75,7 +78,8 @@ RUN install_packages \
 
 RUN install_packages \
     memcached \
-    libmemcached-dev
+    libmemcached-dev \
+    php7-pecl-xdebug
     # libicu libicu-dev
 
 WORKDIR /usr/src/
@@ -96,14 +100,6 @@ COPY package-lock.json .
 
 # Helper packages (just a long node process...)
 RUN npm install --no-optional && npm link balena-cloud
-
-# Create tmp directory and make it writable by the web server
-RUN mkdir -p \
-   app/tmp/cache/models \
-   app/tmp/cache/persistent \
-   app/tmp/cache/long \
-   app/tmp/logs \
- && chmod -R 1777 app/tmp
 
 # Add cake and composer command to system path
 COPY composer.json .
@@ -132,5 +128,6 @@ COPY etc /etc
 
 # RUN [ "cross-build-end" ]
 
-ENTRYPOINT ./migrate-database.sh -o -u -i --enable-authentication-plugin && /init
+ENTRYPOINT ./migrate-database.sh -o -u -i ${MIGRATE_OPTION} \
+  && ./migrate-database.sh -o -u ${MIGRATE_OPTION} --connection=test && /init
 EXPOSE 80 443

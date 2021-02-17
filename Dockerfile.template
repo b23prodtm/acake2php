@@ -61,7 +61,7 @@ ARG HTTPD_LISTEN
 ENV HTTPD_LISTEN ${HTTPD_LISTEN:-'*:80'}
 # Enable migrate-database.sh options
 ARG MIGRATE_OPTION
-ENV MIGRATE_OPTION ${MIGRATE_OPTION:-'--enable-ed25519-plugin'}
+ENV MIGRATE_OPTION ${MIGRATE_OPTION:-'-v'}
 
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
