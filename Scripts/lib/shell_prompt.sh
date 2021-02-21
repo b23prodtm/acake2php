@@ -41,14 +41,17 @@ show_password_status() {
 #; export -f show_password_status
 patches() {
   for f in "$@"; do
-    sed -i.old -E -f "$(dirname "${BASH_SOURCE[0]}")/../$f.sed" "$TOPDIR/$f"
+    file="$(basename "${f}")"
+    dir="$(dirname "${f}")"
+    [ ! -f "$dir/$file" ] && file="${file,,}"
+    [ ! -f "$dir/$file" ] && dir="${dir,,}"
+    sed -i.old -E -f "$(dirname "${BASH_SOURCE[0]}")/../${f}.sed" "$dir/$file"
   done
 }
 #; export -f patches
 cakephp() {
-  CAKE="lib/Cake"
-  APP="app"
-  php -q "$TOPDIR/${APP}/Console/cake.php" -working "$TOPDIR/$APP" "$@"
+  APP="$TOPDIR/app/Console/cake.php"
+  php -q "${CAKE,,}" -working "$TOPDIR/app" "$@"
 }
 #; export -f cakephp
 docker_name() {

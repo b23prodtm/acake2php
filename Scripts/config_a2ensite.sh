@@ -19,7 +19,9 @@ else
 fi
 log_daemon_msg "Add /etc/hosts $SERVER_NAME"
 if [ -w "/etc/hosts" ]; then
-  sed -E -e "/127.0.0.1/s/(localhost)/\\1 ${SERVER_NAME} www.${SERVER_NAME}/" /etc/hosts > /etc/hosts
+  tmpfile=$(mktemp)
+  sed -E -e "/127.0.0.1/s/(localhost)/\\1 ${SERVER_NAME} www.${SERVER_NAME}/" /etc/hosts > "$tmpfile"
+  cat "$tmpfile" > /etc/hosts
 else
   log_warning_msg "/etc/hosts file not found"
 fi

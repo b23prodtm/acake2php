@@ -31,7 +31,7 @@ usage=("" \
 "          -d, --mig-database [options]" \
 "                         Migrate Database (see $0 --mig-database --help)" \
 "          --development  Install composer dependencies" \
-"           -a, --apache2  Make apache2 VirtualHost configuration from templates: etc/apache2/site.tpl..." \
+"          -a, --apache2  Make apache2 VirtualHost configuration from templates: etc/apache2/site.tpl..." \
 "")
 composer_args="require --no-interaction --update-no-dev"
 saved=("$@")

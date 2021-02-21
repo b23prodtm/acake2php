@@ -1,8 +1,8 @@
-<VirtualHost ${HTTPD_LISTEN/:80/:443}>
+<VirtualHost ${HTTPD_LISTEN_SSL}>
     DocumentRoot ${WWW}
     ServerAdmin webmaster@${SERVER_NAME}
-    ServerName ${SERVER_NAME}:443
-    ServerAlias www.${SERVER_NAME}:443
+    ServerName ${SERVER_NAME}:${SSL_PORT}
+    ServerAlias www.${SERVER_NAME}:${SSL_PORT}
     <Directory \"${WWW}\">
         DirectoryIndex index.php
         Options +FollowSymLinks
