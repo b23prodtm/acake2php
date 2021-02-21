@@ -31,9 +31,11 @@ usage=("" \
 "          -d, --mig-database [options]" \
 "                         Migrate Database (see $0 --mig-database --help)" \
 "          --development  Install composer dependencies" \
+"           -a, --apache2  Make apache2 VirtualHost configuration from templates: etc/apache2/site.tpl..." \
 "")
 composer_args="require --no-interaction --update-no-dev"
 saved=("$@")
+show_password_status "${DATABASE_USER}" "${MYSQL_ROOT_PASSWORD}" "is configuring ${openshift} ${docker}..."
 #; if the full set of the arguments exists, there won't be any prompt in the shell
 while [[ "$#" -gt 0 ]]; do case $1 in
   -[cC]*|--const)
@@ -65,6 +67,10 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     printf "%s\n" "${usage[@]}"
     exit 0;;
   -[oO]*|--openshift|--travis )
+    # shellcheck disable=SC2154
+    echo -e "${green}Fixing some file permissions...${nc}"
+    # shellcheck source=Scripts/configure_tmp.sh
+    bash -c "$TOPDIR/Scripts/configure_tmp.sh"
     ;;
   --docker )
     slogger -st docker "check database container id"
@@ -73,15 +79,19 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   --development )
     composer_args="require --no-interaction"
     ;;
+  -[aA]*|--apache )
+    # shellcheck disable=SC2154
+    echo -e "${green}Adding VirtualHost...${nc}"
+    # shellcheck source=Scripts/config_a2ensite.sh
+    bash -c "$TOPDIR/Scripts/config_a2ensite.sh $TOPDIR/app/webroot $TOPDIR/etc/apache2"
+    ;;
   -[vV]*|--verbose )
     set -x
     echo "Passed params : ${BASH_SOURCE[*]} ${saved[*]}";;
     *) echo "Unknown parameter passed: ${BASH_SOURCE[0]} $1"; exit 1;;
 esac; shift; done
-show_password_status "${DATABASE_USER}" "${MYSQL_ROOT_PASSWORD}" "is configuring ${openshift} ${docker}..."
-# shellcheck disable=SC2154
-echo -e "${green}Fixing some file permissions...${nc}"
-# shellcheck source=Scripts/configure_tmp.sh
-if [ -n "$openshift" ]; then echo "None."; else . "$TOPDIR/Scripts/configure_tmp.sh"; fi
+slogger -st sed "Cake 2.x patches"
+#; patches
+patches "lib/Cake/Console/ShellDispatcher.php" "lib/Cake/Console/ConsoleOutput.php" "app/Config/Core.php"
 #; update plugins and dependencies
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"

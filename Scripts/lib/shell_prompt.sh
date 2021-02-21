@@ -39,18 +39,16 @@ show_password_status() {
   slogger -st "${FUNCNAME[0]}" "User ${1} (using password: $([ -z "$2" ] && echo "NO" || echo "YES")) $3..."
 }
 #; export -f show_password_status
-cakephp() {
-  CAKE="$TOPDIR/lib/Cake"
-  APP="$TOPDIR/app"
-  slogger -st "${FUNCNAME[0]}" "Cake 2.x patch ShellDispatcher.php"
-  #; patches
-  printf "%s\n" "s/\\\$dispatcher->_stop(\\(.*\\));/\\1;/g" > "${CAKE}/Console/ShellDispatcher.php.sed"
-  printf "%s\n" "s/implode\\((\\\$styleInfo),(.*)\\)/implode\\(\\2,\\1\\)/g" > "${CAKE}/Console/ConsoleOutput.php.sed"
-  files=("${CAKE}/Console/ShellDispatcher.php" "${CAKE}/Console/ConsoleOutput.php")
-  for f in "${files[@]}"; do
-    sed -i.old -E -f "$f.sed" "$f"
+patches() {
+  for f in "$@"; do
+    sed -i.old -E -f "$(dirname "${BASH_SOURCE[0]}")/../$f.sed" "$TOPDIR/$f"
   done
-  php -q "${APP}/Console/cake.php" -working "$APP" "$@"
+}
+#; export -f patches
+cakephp() {
+  CAKE="lib/Cake"
+  APP="app"
+  php -q "$TOPDIR/${APP}/Console/cake.php" -working "$TOPDIR/$APP" "$@"
 }
 #; export -f cakephp
 docker_name() {

@@ -79,7 +79,8 @@ RUN install_packages \
 RUN install_packages \
     memcached \
     libmemcached-dev \
-    php7-pecl-xdebug
+    php7-pecl-xdebug \
+    gettext
     # libicu libicu-dev
 
 WORKDIR /usr/src/
@@ -121,7 +122,7 @@ RUN chmod -R gu+xs deploy.sh configure.sh migrate-database.sh Scripts/
 
 RUN chmod 0755 *.sh
 RUN ./deploy.sh ${DKR_ARCH} --nobuild --exit \
-  && ./configure.sh --openshift -m -c -h -p pass -s word --development
+  && ./configure.sh --openshift -a -m -c -h -p pass -s word --development
 
 # just containers configuration
 COPY etc /etc
