@@ -67,7 +67,7 @@ Some configuration changes may broke the installation with Docker and on file pe
 		MYSQL_USER=maria
 		MYSQL_PASSWORD=maria-abc
 
-		# staff credentials (url=/index/admin) given $ ./configure.sh -h -p pass -w word
+		# staff credentials (url=/admin/index.php) given $ ./configure.sh -h -p pass -s salt
 		GET_HASH_PASSWORD=<HaSheD-PasSwoRd>
 
     # Apache 2 httpd, or DNS CNAME of the host machine ($ hostname)
