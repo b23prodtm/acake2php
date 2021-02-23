@@ -92,6 +92,6 @@ while [[ "$#" -gt 0 ]]; do case $1 in
 esac; shift; done
 slogger -st sed "Cake 2.x patches"
 #; patches
-patches "lib/Cake/Console/ShellDispatcher.php" "lib/Cake/Console/ConsoleOutput.php" "app/Config/Core.php"
+patches "lib/Cake/Console/ShellDispatcher.php" "lib/Cake/Console/ConsoleOutput.php" "app/Config/core.php"
 #; update plugins and dependencies
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
