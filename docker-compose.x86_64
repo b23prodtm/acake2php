@@ -17,7 +17,7 @@ services:
     volumes:
       - db-data:/config
       - db-socket:/var/run/mysqld
-      - db-config:/var/www/htdocs/localhost/app/Config
+      - db-config:/var/www/htdocs/localhost/app/Config/Schema
     ports:
       - "3306:3306"
     restart: unless-stopped
@@ -44,7 +44,7 @@ services:
     labels:
       io.balena.features.dbus: "1"
     volumes:
-      - db-config:/var/www/htdocs/localhost/app/Config
+      - db-config:/var/www/htdocs/localhost/app/Config/Schema
       - db-socket:/var/run/mysqld
     ports:
       - "80:80"
