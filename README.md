@@ -2,14 +2,15 @@
 
 - [CakePHP Sample App on OpenShift](#cakephp-sample-app-on-openshift)
     + [Quickstart](#quickstart)
-    + [Plugins](#plugins)
-    + [NodeJs dependencies](#nodejs-dependencies)
+    - [Plugins](#plugins)
+      + [CakePHP Plugins](#cakephp-plugins)
+      + [NodeJs dependencies](#nodejs-dependencies)
     + [Compatibility](#compatibility)
-    + [PHP Unit Test](#php-unit-test)
-    + [Server-side environment](#server-side-environment)
-    + [Database terminal](#database-terminal)
-    + [Database configuration](#database-configuration)
-    + [Generate new administrator password](#generate-new-administrator-password)
+    + [PHPUnit Test](#phpunit-test)
+    + [Device pod environment](#device-pod-environment)
+    - [Database terminal](#database-terminal)
+      + [Database Configuration](#database-configuration)
+      + [Generate new administrator password](#generate-new-administrator-password)
     + [Common Issues](#common-issues)
     + [License](#license)
 
@@ -45,7 +46,7 @@ However, if these files exist they will affect the behavior of the build process
 
   List of dependencies to be installed with `composer`[here](https://packagist.org).
 
-### CakePHP Plugins 
+#### CakePHP Plugins 
 
    Plugins are registered in both _git submodule_ and _composer.json_. To allow a plugin to accept ```composer update```, edit _composer.json_ according to the available released tags. 
    In the plugin's home repository (`app/Vendor/<package-name>` or `app/Plugin/<plugin-name>/`)
@@ -74,7 +75,7 @@ However, if these files exist they will affect the behavior of the build process
          RewriteRule    (.*) webroot/$1    [L]
       </IfModule>
 
-### NodeJs dependencies
+#### NodeJs dependencies
 
   This project depends on npmjs [balena-cloud](https://www.npmjs.com/package/balena-cloud). Please call
   `npm update`
@@ -110,7 +111,7 @@ Open a Terminal window:
 
     ./start-cake.sh --help
 
-### PHP Unit Test
+### PHPUnit Test
 JUNIT tests are available with the following call to CAKE server:
 Open a Terminal window:
 
@@ -120,7 +121,7 @@ There are options (--travis, --openshift, --circle) dedicated to continuous inte
 
 See [below](#common-issues) to allow access on the built-in local server.
 
-### Server-side environment
+### Device pod environment
 
 When deployment happens on server-side or is triggered by a git push event, 'source-to-image (s2i)', the httpd-server  or pod needs proper environment variables to be set ready. Otherwise the scripts will fail with an error state, unable to connect to the database
 
@@ -180,7 +181,7 @@ The following additional variables must be set up as server secrets environment,
 Inside container **db** :
 ```mysql -uroot --password=${MYSQL_ROOT_PASSWORD}```
 
-### Database Configuration
+#### Database Configuration
 
 An SQL server (must match remote server version) must be reachable by hostname or via its socket. If it's the 1st time you use this connection,
 
@@ -213,7 +214,7 @@ Configure it as a service and configure the login ACL with the user shell.
 
     ./migrate-database.sh -p -i -p --test-sql-password
 
-### Generate new administrator password
+#### Generate new administrator password
 To sign in with staff rights, at http://localhost/admin/index.php, somebody needs a unique password stored in `GET_HASH_PASSWORD`. One way to generate this hashed password with "salted“ encryption and setup:
 
 		./configure.sh -h -p <password> -w <salt>
