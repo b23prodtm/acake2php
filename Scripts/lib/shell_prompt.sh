@@ -50,8 +50,7 @@ patches() {
 }
 #; export -f patches
 cakephp() {
-  APP="$TOPDIR/app/Console/cake.php"
-  php -q "${CAKE,,}" -working "$TOPDIR/app" "$@"
+  "${TOPDIR}/app/Console/cake" -working "${TOPDIR}/app" "$@"
 }
 #; export -f cakephp
 docker_name() {
