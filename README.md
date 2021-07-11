@@ -2,6 +2,9 @@
 
 - [CakePHP Sample App on OpenShift](#cakephp-sample-app-on-openshift)
     + [Source repository layout](#source-repository-layout)
+    + [Deploy and Test](#deploy-and-test)
+    + [Plugins](#plugins)
+    + [NodeJs dependencies](#nodejs-dependencies)
     + [Compatibility](#compatibility)
     + [Local Built-in Server](#local-built-in-server)
     + [PHP Unit Test](#php-unit-test)
@@ -14,36 +17,39 @@
 <!-- tocstop -->
 > We are moving to Kubernetes to host our website... See more about that project in [Kubespray](http://www.github.com/b23prodtm/kubespray).
 
-CakePHP for [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) on Docker
+A CakePHP 2.x implementation [including PHP-CMS ex-Pohse](https://sourceforge.net/projects/pohse/)
 ===============================
 [![TravisCI Status](https://travis-ci.com/b23prodtm/acake2php.svg?branch=development)](https://travis-ci.com/b23prodtm/acake2php)
 [![CircleCI Status](https://circleci.com/gh/b23prodtm/acake2php.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/acake2php)
 
-This is a quickstart CakePHP application for OpenShift v3 that you ''can'' use as a starting point to develop your own application and deploy it on an [OpenShift](https://github.com/openshift/origin) cluster.
+### Quickstart
+Using the basic container orchestrator or engine to deploy and test, is straitforward.
+Currently the deployment script 
+```. deploy.sh```
+Based on [Balena engine](http://www.balena.io). See more about [NodeJs dependencies](#nodejs-dependencies)
 
-If you'd like to install it, follow [these directions](https://github.com/openshift/cakephp-ex/blob/master/README.md#installation).  
-
-It includes a link to [PHP-CMS Pohse](https://sourceforge.net/projects/pohse/) and its [GIT cake-php release](https://bitbucket.org/b23prodtm/php-cms/branch/cake-php). The latter PHP CMS is featuring well-known functionalities as cool as posting some web contents with pictures stored in a database. More features do come thank to the powerful [Cake PHP framework](http://www.cakephp.org).
-
-### Source repository layout
+### Plugins
 
 You do not need to change anything in your existing PHP project's repository.
 However, if these files exist they will affect the behavior of the build process:
 
-* **submodules**
+* Git **submodules**
 
   The acake2php folder includes modules that need to be pulled in order to install locally.
   After the first checkout browse to acake2php folder and do
   ```git submodule sync && git submodule update --init --recursive```
   You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the acake2php folder and start over.
   > After a sucessful ```git checkout```each time, run once ```git submodule update --init --recursive``` to ensure submodules are downloaded from git. Otherwise your build may fail.
+  > _DEVELOPER TIP:_ To push tags : ```git tag`<version> && git push --tags```.   
 
-* **composer.json**
+* Packagist **composer.json**
 
-  List of dependencies to be installed with `composer`. The format is documented
-  [here](https://getcomposer.org/doc/04-schema.md).
-  Plugins are registered in both _git submodule_ and _composer.json_. To allow a plugin to accept ```composer update```, edit _composer.json_ according to the available released tags. In the plugin's home repository (app/Plugin/<plugin-name>/), call```git tag``` or  ``git log``` for more information.
-  >_DEVELOPER TIP:_ To push tags : ```git tag`<version> && git push --tags```.   
+  List of dependencies to be installed with `composer`[here](https://packagist.org).
+
+### CakePHP Plugins 
+
+   Plugins are registered in both _git submodule_ and _composer.json_. To allow a plugin to accept ```composer update```, edit _composer.json_ according to the available released tags. 
+   In the plugin's home repository (`app/Vendor/<package-name>` or `app/Plugin/<plugin-name>/`)
 
 * **.htaccess**
 
@@ -69,7 +75,7 @@ However, if these files exist they will affect the behavior of the build process
          RewriteRule    (.*) webroot/$1    [L]
       </IfModule>
 
-* **NodeJs dependencies**
+### NodeJs dependencies
 
   This project depends on npmjs [balena-cloud](https://www.npmjs.com/package/balena-cloud). Please call
   `npm update`
