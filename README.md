@@ -181,8 +181,14 @@ The following additional variables must be set up as server secrets environment,
 
 Database terminal
 -----------------
-Inside container **db** :
+Container engines provides provide a confined environment, with persistent storage. Check that last database deployment was successful, open a pod shell :
+Inside pod **db**:
 ```mysql -uroot --password=${MYSQL_ROOT_PASSWORD}```
+Issue some SQL statements, for instance :
+```ùse aria_db; show tables;``` should list tables
+Inside pod **acake2php**:
+```cake schema update --connection=default``` should build the databases
+```cake schema update --connection=test``` should build the test databases
 
 #### Database Configuration
 
