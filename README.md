@@ -7,6 +7,7 @@
     + [PHP Unit Test](#php-unit-test)
     + [Server-side environment](#server-side-environment)
     + [Database configuration](#database-configuration)
+    + [Generate new administrator password](#generate-new-administrator-password)
     + [Common Issues](#common-issues)
     + [License](#license)
 
@@ -203,6 +204,14 @@ Configure it as a service and configure the login ACL with the user shell.
 
     ./migrate-database.sh -p -i -p --test-sql-password
 
+### Generate new administrator password
+To sign in with staff rights, at http://localhost/admin/index.php, somebody needs a unique password stored in `GET_HASH_PASSWORD`. One way to generate this hashed password with "salted“ encryption and setup:
+
+		./configure.sh -h -p <password> -w <salt>
+
+To regenerate or read the current password hash again, simply browse to http://localhost/php-cms/e13/etc/getHashPassword.php
+
+`GET_HASH_PASSWORD=<HaSheD/PasSwoRd!>` must be stored in the local server environment as a system readable variable.
 
 ### Common Issues
 

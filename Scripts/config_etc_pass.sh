@@ -9,6 +9,7 @@ pwd=$(pwd)
 pass=""
 salt=""
 hash_file=""
+MYPHPCMS_DIR=${MYPHPCMS_DIR:-'app/webroot/php-cms'}
 dir="$TOPDIR/$MYPHPCMS_DIR/e13/etc/"
 cd "$dir" || log_failure_msg "No such directory %s\n" "$dir"
 # passed args from shell_prompt
