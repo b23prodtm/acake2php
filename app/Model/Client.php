@@ -9,7 +9,7 @@ class Client extends AppModel {
     public $validationDomain = 'formulaire';
     public $name = 'Client';
     public $belongsTo = array(
-       'MotDePasse' => array(
+       'motdepasse' => array(
            'foreignKey' => 'id_motdepasse'
        )
    );
@@ -18,47 +18,53 @@ class Client extends AppModel {
         'id' => array(
             'required' => array(
                 'rule' => 'alphaNumericDashUnderscore',
-                'message' => "Un nom d'utilisateur est requis",
+                'message' => 'Username required',
                 'allowEmpty' => false
             ),
             'unique' => array(
               'rule' => 'isUnique',
-              'message' => "Le nom existe déjà et n'est pas disponible."
+              'message' => 'Name already exists'
             )
         ),
         'nom' => array(
             'required' => array(
                 'rule' => 'alphaDash',
-                'message' => "Un nom de famille est requis",
+                'message' => 'Last name required',
                 'allowEmpty' => false
             )
         ),
         'prenom' => array(
             'required' => array(
                 'rule' => 'alphaDash',
-                'message' => "Un prénom est requis",
+                'message' => 'First name required',
                 'allowEmpty' => false
             )
         ),
         'ville' => array(
             'required' => array(
                 'rule' => 'alphaDash',
-                'message' => "Un nom de ville est requis",
+                'message' => 'City required',
                 'allowEmpty' => false
             )
         ),
         'codepostal' => array(
             'required' => array(
                 'rule' => array('postal', '/^[0-9]+$/', 'eu'),
-                'message' => "Un code postal est requis",
+                'message' => 'City code required',
                 'allowEmpty' => false
             )
         ),
         'role' => array(
             'valid' => array(
                 'rule' => array('inList', array('admin', 'visiteur')),
-                'message' => "Merci d'entrer un rôle valide",
+                'message' => 'Please choose a valid role',
                 'allowEmpty' => false
+            )
+        ),
+        'telephone' => array(
+            'valid' => array(
+              'rule' => 'numeric',
+              'message' => 'e.g. +999 8811 2022'
             )
         )
     );
@@ -69,6 +75,11 @@ class Client extends AppModel {
     public function alphaDash($check) {
             $valeur = array_values($check);
             return !preg_match('/^[a-zA-Z-\',\s]*$/', $valeur[0]);
+    }
+
+    public function numeric($check) {
+            $valeur = array_values($check);
+            return !preg_match('/^[0-9\+\(\)\s]*$/', $valeur[0]);
     }
 
     public function isOwnedBy($client, $motdepasse) {

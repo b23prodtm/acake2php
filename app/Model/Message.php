@@ -22,20 +22,20 @@ class Message extends AppModel {
      'titre' => array(
          'rule2' => array(
            'rule' => 'notags',
-           'message' => 'Ne peut pas contenir de tags HTML.',
+           'message' => 'No HTML tags',
            'last' => true),
       'Requis' => array('rule' => 'notBlank')
       ),
      'texte' => array(
         'rule3' => array(
            'rule' => 'notags',
-           'message'=>'Ne peut pas contenir de tags HTML tags.',
+           'message'=>'No HTML tags',
            'last' => true),
        'Requis' => array('rule' => 'notBlank')
       ),
      'id_client' => array(
         'rule' => 'alphaNumericDashUnderscore',
-        'message' => "L'id ne peut contenir que des lettres, des nombres, des tirets ou des underscores."
+        'message' => "Only alphabetic or numerical characters or dash or underscores."
         )
     );
 

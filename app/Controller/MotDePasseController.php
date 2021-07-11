@@ -30,12 +30,12 @@ class MotDePasseController extends AppController {
 		if ($this->request->is('post')) {
 					$this->MotDePasse->create();
 					if ($this->MotDePasse->save($this->request->data)) {
-							$this->Flash->success(__('Le mot de passe a été sauvegardé'));
+							$this->Flash->success(__('Password was NOT saved'));
 							if(!isset($id)) {
 									$id = $this->Auth->user('id');
 							}
-							$client = Client::findById($id); 
-							$this->Flash->message(__('Enregistrement du profil %s...', $client));
+							$client = Client::findById($id);
+							$this->Flash->message(__('Subscription saving %s...', $client));
 							/* Desaffectaction du 'password' en requete,
 							pour éviter la sauvegarde en session en clair du mot de passe en appelant login. */
 							unset($this->request->data['MotDePasse']['password']);
@@ -46,7 +46,7 @@ class MotDePasseController extends AppController {
 										return $this->redirect(array('controller' => 'MotDePasse', 'action' => 'index'));
 							}
 					} else {
-							$this->Flash->error(__('Le mot de passe n\'a pas été sauvegardé. Merci de réessayer.'));
+							$this->Flash->error(__('Password could NOT be saved. Please try again'));
 					}
 			}
 			$this->set('pIndex', 'users__add');
@@ -56,7 +56,7 @@ class MotDePasseController extends AppController {
 	public function edit($id = null, $id = null) {
 			$this->MotDePasse->id = $id;
 			if (!$this->MotDePasse->exists()) {
-					throw new NotFoundException(__('Mot de passe Invalide'));
+					throw new NotFoundException(__('Invalid password'));
 			}
 			if ($this->request->is('post') || $this->request->is('put')) {
 				if(!isset($id)) {
@@ -64,10 +64,10 @@ class MotDePasseController extends AppController {
 				}
 				$client = Client::findById($id);
 				if ($client !== false && $client->isOwnedBy($this->MotDePasse->id, $id) && $this->MotDePasse->save($this->request->data)) {
-							$this->Flash->success(__('Le mot de passe a été sauvegardé'));
+							$this->Flash->success(__('Password was saved'));
 							return $this->redirect(array('action' => 'index'));
 					} else {
-							$this->Flash->error(__('Le mot de passe n\'a pas été sauvegardé. Merci de réessayer.'));
+							$this->Flash->error(__('Password could NOT be saved. Please try again'));
 					}
 			} else {
 					$this->request->data = $this->MotDePasse->findById($id);
@@ -86,22 +86,22 @@ class MotDePasseController extends AppController {
 
 			$this->MotDePasse->id = $id;
 			if (!$this->MotDePasse->exists()) {
-					throw new NotFoundException(__('Mot de passe invalide'));
+					throw new NotFoundException(__('Invalid password'));
 			}
 			if(!isset($id)) {
 					$id = $this->Auth->user('id');
 			}
 			$client = Client::findById($id);
 			if ($client !== false && $client->isOwnedBy($this->MotDePasse->id, $id) && $this->MotDePasse->delete()) {
-					$this->Flash->success(__('Mot de passe supprimé'));
+					$this->Flash->success(__('Password was removed'));
 					return $this->redirect(array('action' => 'add', $id));
 			}
 			if(!$client) {
-					$this->Flash->error(__("L'id client '%s' est invalide.", $id));
+					$this->Flash->error(__("Invalid '%s' subscription", $id));
 			} else {
-				$this->Flash->error(__("Le client '%s' n'est pas l'auteur du mot de passe.", $id));
+				$this->Flash->error(__("Subscription '%s' doesn\'t match the password", $id));
 			}
-			$this->Flash->error(__('Le mot de passe n\'a pas été supprimé'));
+			$this->Flash->error(__('Password could NOT be removed'));
 			return $this->redirect(array('action' => 'index'));
 	}
 }

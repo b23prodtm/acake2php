@@ -13,15 +13,457 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: Controller/ArticleController.php:52
-msgid "Invalid article"
+#: Controller/ClientController.php:29
+msgid "Invalid username or password"
 msgstr ""
 
-#: Controller/ArticleController.php:62
-msgid "Your article has been saved."
+#: Controller/ClientController.php:63;101;134
+msgid "Invalid username"
 msgstr ""
 
-#: Controller/ArticleController.php:65
-msgid "Unable to add your article."
+#: Controller/ClientController.php:76
+msgid "Subscription success"
+msgstr ""
+
+#: Controller/ClientController.php:89
+msgid "Failed to subscribe. Please try again"
+msgstr ""
+
+#: Controller/ClientController.php:108
+msgid "Saved changes success!"
+msgstr ""
+
+#: Controller/ClientController.php:111
+msgid "Failed to save changes. Please try again"
+msgstr ""
+
+#: Controller/ClientController.php:137
+msgid "Subscription was removed"
+msgstr ""
+
+#: Controller/ClientController.php:140
+msgid "Subscription could NOT be removed"
+msgstr ""
+
+#: Controller/MessageController.php:39;44;76
+msgid "Invalid message"
+msgstr ""
+
+#: Controller/MessageController.php:58
+msgid "Message posted"
+msgstr ""
+
+#: Controller/MessageController.php:61
+msgid "Unable to post the message"
+msgstr ""
+
+#: Controller/MessageController.php:82
+msgid "Message was successfully updated"
+msgstr ""
+
+#: Controller/MessageController.php:85
+msgid "Impossible to modify the message"
+msgstr ""
+
+#: Controller/MessageController.php:102
+msgid "Message %s was successfully removed."
+msgstr ""
+
+#: Controller/MessageController.php:106
+msgid "Message %s could NOT be removed"
+msgstr ""
+
+#: Controller/MotDePasseController.php:33
+msgid "Password was NOT saved"
+msgstr ""
+
+#: Controller/MotDePasseController.php:38
+msgid "Subscription saving %s..."
+msgstr ""
+
+#: Controller/MotDePasseController.php:49;70
+msgid "Password could NOT be saved. Please try again"
+msgstr ""
+
+#: Controller/MotDePasseController.php:59;89
+msgid "Invalid password"
+msgstr ""
+
+#: Controller/MotDePasseController.php:67
+msgid "Password was saved"
+msgstr ""
+
+#: Controller/MotDePasseController.php:96
+msgid "Password was removed"
+msgstr ""
+
+#: Controller/MotDePasseController.php:100
+msgid "Invalid '%s' subscription"
+msgstr ""
+
+#: Controller/MotDePasseController.php:102
+msgid "Subscription '%s' doesn't match the password"
+msgstr ""
+
+#: Controller/MotDePasseController.php:104
+msgid "Password could NOT be removed"
+msgstr ""
+
+#: Plugin/Datasources/Model/Datasource/ArraySource.php:125
+msgid "No records found in model."
+msgstr ""
+
+#: Plugin/Datasources/Model/Datasource/CouchdbSource.php:80
+msgid "CouchDB Error: connection failed"
+msgstr ""
+
+#: Plugin/Datasources/Model/Datasource/XmlrpcSource.php:133
+msgid "Transport error - could not open socket"
+msgstr ""
+
+#: Plugin/Datasources/Model/Datasource/XmlrpcSource.php:136
+msgid "Transport error - HTTP status code was not 200"
+msgstr ""
+
+#: Plugin/Datasources/Model/Datasource/XmlrpcSource.php:180
+msgid "Parse error. Not well formed"
+msgstr ""
+
+#: View/Client/add.ctp:4
+msgid "Add a new subscription"
+msgstr ""
+
+#: View/Client/add.ctp:6
+#: View/Client/edit.ctp:6
+#: View/Client/view.ctp:4
+msgid "My username"
+msgstr ""
+
+#: View/Client/add.ctp:7
+#: View/Client/edit.ctp:7
+#: View/Client/view.ctp:9
+msgid "My email address"
+msgstr ""
+
+#: View/Client/add.ctp:9
+#: View/Client/edit.ctp:9
+#: View/Client/view.ctp:14
+msgid "My first name"
+msgstr ""
+
+#: View/Client/add.ctp:10
+#: View/Client/edit.ctp:10
+#: View/Client/view.ctp:19
+msgid "My name"
+msgstr ""
+
+#: View/Client/add.ctp:11
+#: View/Client/edit.ctp:11
+#: View/Client/view.ctp:24
+msgid "My birthday"
+msgstr ""
+
+#: View/Client/add.ctp:12
+#: View/Client/edit.ctp:12
+#: View/Client/view.ctp:29
+msgid "My street address"
+msgstr ""
+
+#: View/Client/add.ctp:13
+#: View/Client/edit.ctp:13
+#: View/Client/view.ctp:34
+msgid "My city code"
+msgstr ""
+
+#: View/Client/add.ctp:14
+#: View/Client/edit.ctp:14
+#: View/Client/view.ctp:39
+msgid "My city"
+msgstr ""
+
+#: View/Client/add.ctp:15
+#: View/Client/edit.ctp:15
+#: View/Client/view.ctp:44
+msgid "My country"
+msgstr ""
+
+#: View/Client/add.ctp:26
+#: View/Client/edit.ctp:26
+msgid "Continue"
+msgstr ""
+
+#: View/Client/add.ctp:29
+#: View/Client/admin_index.ctp:20;70
+#: View/Client/edit.ctp:29
+#: View/Client/index.ctp:5
+#: View/Client/login.ctp:14
+#: View/Client/view.ctp:72
+#: View/Emails/html/recovery.ctp:5
+#: View/Emails/text/recovery.ctp:5
+#: View/MotDePasse/add.ctp:19
+#: View/MotDePasse/edit.ctp:19
+#: View/MotDePasse/index.ctp:4
+#: View/MotDePasse/view.ctp:32
+msgid "Actions"
+msgstr ""
+
+#: View/Client/add.ctp:31
+msgid "My subscription"
+msgstr ""
+
+#: View/Client/admin_index.ctp:2
+msgid "Profils clients"
+msgstr ""
+
+#: View/Client/admin_index.ctp:45
+msgid "View"
+msgstr ""
+
+#: View/Client/admin_index.ctp:46
+msgid "Modify"
+msgstr ""
+
+#: View/Client/admin_index.ctp:47
+#: View/Client/edit.ctp:32
+msgid "Unsubscribe"
+msgstr ""
+
+#: View/Client/admin_index.ctp:49
+#: View/Client/view.ctp:78
+msgid "Are you sure to unsubscribe # %s?"
+msgstr ""
+
+#: View/Client/admin_index.ctp:58
+msgid "Page {:page} of {:pages}, display from {:current} records out of {:count}, starting from record {:start}, until {:end}"
+msgstr ""
+
+#: View/Client/admin_index.ctp:63
+msgid "previous"
+msgstr ""
+
+#: View/Client/admin_index.ctp:65
+msgid "next"
+msgstr ""
+
+#: View/Client/admin_index.ctp:72
+msgid "Subscribe"
+msgstr ""
+
+#: View/Client/edit.ctp:4
+msgid "Modify my profile information"
+msgstr ""
+
+#: View/Client/edit.ctp:31
+#: View/Client/view.ctp:81
+msgid "Change my password"
+msgstr ""
+
+#: View/Client/edit.ctp:32
+msgid "Are you sure you want to remove # %s?"
+msgstr ""
+
+#: View/Client/edit.ctp:33
+msgid "Member list"
+msgstr ""
+
+#: View/Client/index.ctp:2
+msgid "Dashboard"
+msgstr ""
+
+#: View/Client/index.ctp:7
+msgid "Connect"
+msgstr ""
+
+#: View/Client/index.ctp:8
+#: View/Client/login.ctp:15
+msgid "New subscription"
+msgstr ""
+
+#: View/Client/login.ctp:6
+msgid "Please enter an username"
+msgstr ""
+
+#: View/Client/login.ctp:12
+msgid "Sign in"
+msgstr ""
+
+#: View/Client/login.ctp:16
+msgid "Forgot my password ?"
+msgstr ""
+
+#: View/Client/view.ctp:2
+msgid "Client"
+msgstr ""
+
+#: View/Client/view.ctp:49
+msgid "My phone number"
+msgstr ""
+
+#: View/Client/view.ctp:54
+msgid "My role"
+msgstr ""
+
+#: View/Client/view.ctp:59
+msgid "Created on"
+msgstr ""
+
+#: View/Client/view.ctp:64
+msgid "Modified on"
+msgstr ""
+
+#: View/Client/view.ctp:74
+msgid "Modify subscription"
+msgstr ""
+
+#: View/Client/view.ctp:75
+msgid "Remove subscription"
+msgstr ""
+
+#: View/Emails/html/recovery.ctp:1
+#: View/Emails/text/recovery.ctp:1
+msgid "Cher utilisateur %s"
+msgstr ""
+
+#: View/Emails/html/recovery.ctp:2
+#: View/Emails/text/recovery.ctp:2
+msgid "Vous avez demandé la récupération de votre mot de passe. Par sécurité, nous vous recommandons de réinitialiser celui-ci."
+msgstr ""
+
+#: View/Emails/html/recovery.ctp:3
+#: View/Emails/text/recovery.ctp:3
+msgid "Si vous n'êtes pas l'auteur de cette demande, vous pouvez ignorer ce message."
+msgstr ""
+
+#: View/Emails/html/recovery.ctp:7
+#: View/Emails/text/recovery.ctp:6
+msgid "Réinitialiser le mot de passe"
+msgstr ""
+
+#: View/Emails/html/recovery.ctp:12
+#: View/Emails/text/recovery.ctp:9
+msgid "Ce message est généré à la demande de l'utilisateur."
+msgstr ""
+
+#: View/Message/add.ctp:4
+#: View/Message/edit.ctp:4
+msgid "Sujet de votre message"
+msgstr ""
+
+#: View/Message/add.ctp:7
+#: View/Message/edit.ctp:7
+msgid "Contenu du message"
+msgstr ""
+
+#: View/Message/add.ctp:9
+msgid "Auteur"
+msgstr ""
+
+#: View/Message/add.ctp:11
+#: View/Message/edit.ctp:11
+msgid "Date"
+msgstr ""
+
+#: View/Message/add.ctp:13
+msgid "Poster un ticket"
+msgstr ""
+
+#: View/Message/edit.ctp:2
+#: View/Message/index.ctp:20
+msgid "Modifier un message"
+msgstr ""
+
+#: View/Message/edit.ctp:9
+msgid "Pseudonyme"
+msgstr ""
+
+#: View/Message/edit.ctp:14
+msgid "Sauvegarder"
+msgstr ""
+
+#: View/Message/index.ctp:5
+msgid "Poster un message"
+msgstr ""
+
+#: View/Message/index.ctp:8
+msgid "Tableau de bord"
+msgstr ""
+
+#: View/Message/index.ctp:9
+#: View/Message/view.ctp:5
+msgid "date"
+msgstr ""
+
+#: View/Message/index.ctp:9
+#: View/Message/view.ctp:5
+msgid "titre"
+msgstr ""
+
+#: View/Message/index.ctp:9
+msgid "id"
+msgstr ""
+
+#: View/Message/index.ctp:24
+msgid "Supprimer"
+msgstr ""
+
+#: View/Message/view.ctp:4
+msgid "Ticket view"
+msgstr ""
+
+#: View/MotDePasse/add.ctp:4
+msgid "Créer mon mot de passe"
+msgstr ""
+
+#: View/MotDePasse/add.ctp:16
+#: View/MotDePasse/edit.ctp:16
+msgid "Soumettre"
+msgstr ""
+
+#: View/MotDePasse/add.ctp:21
+#: View/MotDePasse/edit.ctp:28
+msgid "Mon profil"
+msgstr ""
+
+#: View/MotDePasse/edit.ctp:4
+#: View/MotDePasse/index.ctp:6
+#: View/MotDePasse/view.ctp:34
+msgid "Modifier mon mot de passe"
+msgstr ""
+
+#: View/MotDePasse/edit.ctp:22
+#: View/MotDePasse/index.ctp:7
+#: View/MotDePasse/view.ctp:35
+msgid "Réinitialiser mon mot de passe"
+msgstr ""
+
+#: View/MotDePasse/edit.ctp:26
+#: View/MotDePasse/index.ctp:11
+#: View/MotDePasse/view.ctp:39
+msgid "Êtes-vous certain de réinitialiser votre mot de passe ?"
+msgstr ""
+
+#: View/MotDePasse/index.ctp:2
+#: View/MotDePasse/view.ctp:2;9
+msgid "Mot de passe"
+msgstr ""
+
+#: View/MotDePasse/index.ctp:13
+msgid "Modifier le profil"
+msgstr ""
+
+#: View/MotDePasse/view.ctp:4
+msgid "Id"
+msgstr ""
+
+#: View/MotDePasse/view.ctp:14
+msgid "Confirmation du mot de passe"
+msgstr ""
+
+#: View/MotDePasse/view.ctp:19
+msgid "Créé le"
+msgstr ""
+
+#: View/MotDePasse/view.ctp:24
+msgid "Modifié le"
 msgstr ""
 

@@ -42,11 +42,11 @@
 		<td><?php echo h($client['Client']['cree']); ?>&nbsp;</td>
 		<td><?php echo h($client['Client']['modifie']); ?>&nbsp;</td>
 		<td class="actions">
-			<?php echo $this->Html->link(__('Visualiser'), array('action' => 'view', $client['Client']['id'])); ?>
-			<?php echo $this->Html->link(__('Modifier'), array('action' => 'edit', $client['Client']['id'])); ?>
-			<?php echo $this->Form->postLink(__('Supprimer'), array(
+			<?php echo $this->Html->link(__('View'), array('action' => 'view', $client['Client']['id'])); ?>
+			<?php echo $this->Html->link(__('Modify'), array('action' => 'edit', $client['Client']['id'])); ?>
+			<?php echo $this->Form->postLink(__('Unsubscribe'), array(
 				'action' => 'delete', $client['Client']['id']), array(
-					'confirm' => __('Êtes-vous certain de supprimer # %s?', $client['Client']['id']))); ?>
+					'confirm' => __('Are you sure to unsubscribe # %s?', $client['Client']['id']))); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
@@ -55,20 +55,20 @@
 	<p>
 	<?php
 	echo $this->Paginator->counter(array(
-		'format' => __('Page {:page} de {:pages}, affichage de {:current} enregistrements sur un total de {:count}, starting on record {:start}, se termine à {:end}')
+		'format' => __('Page {:page} of {:pages}, display from {:current} records out of {:count}, starting from record {:start}, until {:end}')
 	));
 	?>	</p>
 	<div class="paging">
 	<?php
-		echo $this->Paginator->prev('< ' . __('précédent'), array(), null, array('class' => 'prev disabled'));
+		echo $this->Paginator->prev('< ' . __('previous'), array(), null, array('class' => 'prev disabled'));
 		echo $this->Paginator->numbers(array('separator' => ''));
-		echo $this->Paginator->next(__('suivant') . ' >', array(), null, array('class' => 'next disabled'));
+		echo $this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));
 	?>
 	</div>
 </div>
 <div class="actions">
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
-		<li><?php echo $this->Html->link(__('Nouveau client'), array('action' => 'add')); ?></li>
+		<li><?php echo $this->Html->link(__('Subscribe'), array('action' => 'add')); ?></li>
 	</ul>
 </div>

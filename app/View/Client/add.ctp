@@ -1,33 +1,33 @@
 <div class="clients form">
 <?php echo $this->Form->create('Client'); ?>
 	<fieldset>
-		<legend><?php echo __('Ajoutez votre profil client'); ?></legend>
+		<legend><?php echo __('Add a new subscription'); ?></legend>
 	<?php
-		echo $this->Form->input('id', array('label' => __('Votre id')));
-		echo $this->Form->input('email', array('label' => __('Une adresse email')));
+		echo $this->Form->input('id', array('label' => __('My username')));
+		echo $this->Form->input('email', array('label' => __('My email address')));
 		echo $this->Form->hidden('id_motdepasse');
-		echo $this->Form->input('nom', array('label' => __('Votre nom')));
-		echo $this->Form->input('prenom', array('label' => __('Votre prénom')));
-		echo $this->Form->input('annee_de_naissance', array('label' => __('Votre date de naissance')));
-		echo $this->Form->input('adresse', array('label' => __('N°, Nom de la voie')));
-		echo $this->Form->input('codepostal', array('label' => __('Code postal')));
-		echo $this->Form->input('ville', array('label' => __('Localité')));
-		echo $this->Form->input('pays', array('label' => __('Pays')));
-		echo $this->Form->input('telephone', array('label' => 'Un numéro de téléphone'));
+		echo $this->Form->input('prenom', array('label' => __('My first name')));
+		echo $this->Form->input('nom', array('label' => __('My name')));
+		echo $this->Form->input('annee_de_naissance', array('label' => __('My birthday')));
+		echo $this->Form->input('adresse', array('label' => __('My street address')));
+		echo $this->Form->input('codepostal', array('label' => __('My city code')));
+		echo $this->Form->input('ville', array('label' => __('My city')));
+		echo $this->Form->input('pays', array('label' => __('My country')));
+		echo $this->Form->input('telephone', array('label' => 'My phone number'));
 		echo $this->Form->input('role', array(
-				'label' => 'Séléctionner votre rôle',
-        'options' => array('admin' => 'Admin', 'visiteur' => 'Visiteur')
+				'label' => 'Choose a role',
+        'options' => array('admin' => 'Member', 'visiteur' => 'Free')
         )
 		);
-		echo $this->Form->input('cree', array('label' => 'Date de création du profil'));
-		echo $this->Form->input('modifie', array('label' => 'Date de modification du profil'));
+		echo $this->Form->input('cree', array('label' => 'Profile creation date'));
+		echo $this->Form->input('modifie', array('label' => 'Profile modification date'));
 	?>
 	</fieldset>
-<?php echo $this->Form->end(__('Soumettre')); ?>
+<?php echo $this->Form->end(__('Continue')); ?>
 </div>
 <div class="actions">
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
-		<li><?php echo $this->Html->link(__('Mon profil'), array('action' => 'index')); ?></li>
+		<li><?php echo $this->Html->link(__('My subscription'), array('action' => 'index')); ?></li>
 	</ul>
 </div>

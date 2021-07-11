@@ -20,14 +20,14 @@ class Motdepasse extends AppModel {
     'password' => array(
         'required' => array(
             'rule' => 'alphaNumericDashUnderscore',
-            'message' => 'Un mot de passe est requis',
+            'message' => 'Pasword required',
             'allowEmpty' => false
         )
     ),
     'password_confirm' => array(
   			'confirme' => array(
           'rule' => 'fieldIsConfirmed',
-          'message' => 'Veuillez confirmer votre mot de passe'
+          'message' => 'Confirm password'
         )
   	),
 		'cree' => array(

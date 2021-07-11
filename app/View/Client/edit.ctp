@@ -1,35 +1,35 @@
 <div class="clients form">
 <?php echo $this->Form->create('Client'); ?>
 	<fieldset>
-		<legend><?php echo __('Modifiez votre profil client'); ?></legend>
-	<?php
-	echo $this->Form->input('id', array('label' => __('Votre id')));
-	echo $this->Form->input('email', array('label' => __('Une adresse email')));
-	echo $this->Form->hidden('motdepasse');
-	echo $this->Form->input('nom', array('label' => __('Votre nom')));
-	echo $this->Form->input('prenom', array('label' => __('Votre prénom')));
-	echo $this->Form->input('annee_de_naissance', array('label' => __('Votre date de naissance')));
-	echo $this->Form->input('adresse', array('label' => __('N°, Nom de la voie')));
-	echo $this->Form->input('codepostal', array('label' => __('Code postal')));
-	echo $this->Form->input('ville', array('label' => __('Localité')));
-	echo $this->Form->input('pays', array('label' => __('Pays')));
-	echo $this->Form->input('telephone', array('label' => 'Un numéro de téléphone'));
-	echo $this->Form->input('role',  array(
-			'label' => 'Séléctionner votre rôle',
-			'options' => array('admin' => 'Admin', 'visiteur' => 'Visiteur')
-			)
-	);
-	echo $this->Form->input('cree', array('label' => 'Date de création du profil'));
-	echo $this->Form->input('modifie', array('label' => 'Date de modification du profil'));
-	?>
+		<legend><?php echo __('Modify my profile information'); ?></legend>
+		<?php
+			echo $this->Form->input('id', array('label' => __('My username')));
+			echo $this->Form->input('email', array('label' => __('My email address')));
+			echo $this->Form->hidden('id_motdepasse');
+			echo $this->Form->input('prenom', array('label' => __('My first name')));
+			echo $this->Form->input('nom', array('label' => __('My name')));
+			echo $this->Form->input('annee_de_naissance', array('label' => __('My birthday')));
+			echo $this->Form->input('adresse', array('label' => __('My street address')));
+			echo $this->Form->input('codepostal', array('label' => __('My city code')));
+			echo $this->Form->input('ville', array('label' => __('My city')));
+			echo $this->Form->input('pays', array('label' => __('My country')));
+			echo $this->Form->input('telephone', array('label' => 'My phone number'));
+			echo $this->Form->input('role', array(
+					'label' => 'Choose a role',
+	        'options' => array('admin' => 'Member', 'visiteur' => 'Free')
+	        )
+			);
+			echo $this->Form->input('cree', array('label' => 'Profile creation date'));
+			echo $this->Form->input('modifie', array('label' => 'Profile modification date'));
+		?>
 	</fieldset>
-<?php echo $this->Form->end(__('Soumettre')); ?>
+<?php echo $this->Form->end(__('Continue')); ?>
 </div>
 <div class="actions">
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
-		<li><?php echo $this->Html->link(__('Modifier mon mot de passe'), array('controller' = > 'Motdepasse', 'action' => 'edit', $client['Motdepasse']['id'])); ?> </li>
-		<li><?php echo $this->Form->postLink(__('Supprimer'), array('action' => 'delete', $this->Form->value('Client.id')), array('confirm' => __('Are you sure you want to delete # %s?', $this->Form->value('Client.id')))); ?></li>
-		<li><?php echo $this->Html->link(__('Liste des profils clients'), array('action' => 'index')); ?></li>
+		<li><?php echo $this->Html->link(__('Change my password'), array('controller' = > 'Motdepasse', 'action' => 'edit', $client['Motdepasse']['id'])); ?> </li>
+		<li><?php echo $this->Form->postLink(__('Unsubscribe'), array('action' => 'delete', $this->Form->value('Client.id')), array('confirm' => __('Are you sure you want to remove # %s?', $this->Form->value('Client.id')))); ?></li>
+		<li><?php echo $this->Html->link(__('Member list'), array('action' => 'index')); ?></li>
 	</ul>
 </div>

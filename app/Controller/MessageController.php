@@ -36,12 +36,12 @@ class MessageController extends AppController {
 
 	public function view($id) {
 		if (!$id) {
-			throw new NotFoundException(__('Message invalide'));
+			throw new NotFoundException(__('Invalid message'));
 		}
 
 		$message = $this->Message->findById($id);
 		if (!$message) {
-			throw new NotFoundException(__('Message invalide'));
+			throw new NotFoundException(__('Invalid message'));
 		}
 		$this->set("pIndex","contactus__view");
 		$this->set('message', $message);
@@ -55,10 +55,10 @@ class MessageController extends AppController {
 	    $this->Message->create();
 			$this->request->data['Message']['id'] = $this->Auth->user('id');
 			if ($this->Message->save($this->request->data)) {
-	        $this->Flash->success(__('Votre message est enregistré.'));
+	        $this->Flash->success(__('Message posted'));
 	        return $this->redirect(array('action' => 'index'));
 	    }
-	    $this->Flash->error(__('Impossible d\'ajouter votre message.'));
+	    $this->Flash->error(__('Unable to post the message'));
     }
 		$this->set("pIndex","contactus__write");
 		$this->render(null, "default-e14");
@@ -67,22 +67,22 @@ class MessageController extends AppController {
 
 	public function edit($id = null) {
 	    if (!$id) {
-/*	        throw new NotFoundException(__('Message invalide'));*/
+/*	        throw new NotFoundException(__('Invalid message'));*/
 			return $this->redirect(array('action' => 'add'));
 	    }
 
 	    $post = $this->Message->findById($id);
 	    if (!$post) {
-	        throw new NotFoundException(__('Message invalide'));
+	        throw new NotFoundException(__('Invalid message'));
 	    }
 
 	    if ($this->request->is(array('post', 'put'))) {
 	        $this->Message->id = $id;
 	        if ($this->Message->save($this->request->data)) {
-	            $this->Flash->success(__('Votre message a été mis à jour.'));
+	            $this->Flash->success(__('Message was successfully updated'));
 	            return $this->redirect(array('action' => 'index'));
 	        }
-	        $this->Flash->error(__('Impossible de mettre à jour votre message.'));
+	        $this->Flash->error(__('Impossible to modify the message'));
 	    }
 
 	    if (!$this->request->data) {
@@ -99,11 +99,11 @@ class MessageController extends AppController {
 
 	    if ($this->Message->delete($id)) {
 	        $this->Flash->success(
-	            __('Le message avec id : %s a été supprimé.', h($id))
+	            __('Message %s was successfully removed.', h($id))
 	        );
 	    } else {
 	        $this->Flash->error(
-	            __('Le message avec l\'id: %s n\'a pas pu être supprimé.', h($id))
+	            __('Message %s could NOT be removed', h($id))
 	        );
 	    }
 

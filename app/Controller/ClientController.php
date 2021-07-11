@@ -26,7 +26,7 @@ class ClientController extends AppController {
             if ($this->Auth->login()) {
                 return $this->redirect($this->Auth->redirectUrl());
             } else {
-                $this->Flash->error(__("Nom d'user ou mot de passe invalide, réessayer"));
+                $this->Flash->error(__("Invalid username or password"));
             }
         }
         $this->set('pIndex', 'users__login');
@@ -60,7 +60,7 @@ class ClientController extends AppController {
           return $this->redirect(array("action" => "index"));
         }
         if (!$this->Client->exists($id)) {
-            throw new NotFoundException(__('Client invalide'));
+            throw new NotFoundException(__('Invalid username'));
         }
         $this->set('client', $this->Client->findById($id));
         $this->set('pIndex', 'users__view');
@@ -73,7 +73,7 @@ class ClientController extends AppController {
         if ($this->request->is('post')) {
             $this->Client->create();
             if ($this->Client->save($this->request->data)) {
-                $this->Flash->success(__('Le client a été sauvegardé'));
+                $this->Flash->success(__('Subscription success'));
                 $id = $this->Client->id;
                 $this->request->data['Client'] = array_merge(
                     $this->request->data['Client'],
@@ -86,7 +86,7 @@ class ClientController extends AppController {
                 /* Le mot de passe sera cree ensuite */
                 return $this->redirect(array('controller' => 'MotDePasse', 'action' => 'add', $id));
             } else {
-                $this->Flash->error(__('Le client n\'a pas été sauvegardé. Merci de réessayer.'));
+                $this->Flash->error(__('Failed to subscribe. Please try again'));
             }
         }
         $this->set('pIndex', 'users__add');
@@ -98,17 +98,17 @@ class ClientController extends AppController {
     public function edit($id = null, $id_motdepasse = null) {
         $this->Client->id = $id;
         if (!$this->Client->exists()) {
-            throw new NotFoundException(__('Client Invalide'));
+            throw new NotFoundException(__('Invalid username'));
         }
         if(isset($id_motdepasse)) {
             $this->Client->id_motdepasse = $id_motdepasse;
         }
         if ($this->request->is('post') || $this->request->is('put')) {
             if ($this->Client->save($this->request->data)) {
-                $this->Flash->success(__('Le client a été sauvegardé'));
+                $this->Flash->success(__('Saved changes success!'));
                 return $this->redirect(array('action' => 'index'));
             } else {
-                $this->Flash->error(__('Le client n\'a pas été sauvegardé. Merci de réessayer.'));
+                $this->Flash->error(__('Failed to save changes. Please try again'));
             }
         } else {
             $this->request->data = $this->Client->findById($id);
@@ -131,13 +131,13 @@ class ClientController extends AppController {
 
         $this->Client->id = $id;
         if (!$this->Client->exists()) {
-            throw new NotFoundException(__('Client invalide'));
+            throw new NotFoundException(__('Invalid username'));
         }
         if ($this->Client->delete()) {
-            $this->Flash->success(__('Client supprimé'));
+            $this->Flash->success(__('Subscription was removed'));
             return $this->redirect(array('action' => 'index'));
         }
-        $this->Flash->error(__('Le client n\'a pas été supprimé'));
+        $this->Flash->error(__('Subscription could NOT be removed'));
         return $this->redirect(array('action' => 'index'));
     }
 
