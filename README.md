@@ -9,7 +9,7 @@
     + [PHPUnit Test](#phpunit-test)
     + [Device pod environment](#device-pod-environment)
     - [Database terminal](#database-terminal)
-      + [Database Configuration](#database-configuration)
+      + [More Database Configuration](#more-database-configuration)
       + [Generate new administrator password](#generate-new-administrator-password)
     + [Common Issues](#common-issues)
     + [License](#license)
@@ -182,26 +182,37 @@ The following additional variables must be set up as server secrets environment,
 Database terminal
 -----------------
 Container engines provides provide a confined environment, with persistent storage. Check that last database deployment was successful, open a pod shell :
-Inside pod **db**:
+
+Inside **db** pod:
+
 ```mysql -uroot --password=${MYSQL_ROOT_PASSWORD}```
+
 Issue some SQL statements, for instance :
+
 ```ùse aria_db; show tables;``` should list tables
-Inside pod **acake2php**:
+
+Inside **acake2php** pod:
+
 ```cake schema update --connection=default``` should build the databases
+
 ```cake schema update --connection=test``` should build the test databases
 
-#### Database Configuration
+#### More Database Configuration
 
 An SQL server (must match remote server version) must be reachable by hostname or via its socket. If it's the 1st time you use this connection,
 
 Configure it as a service and configure the login ACL with the user shell.
-* __Mysql__ database automatic configuration:
+* __Optional__ database automatic configuration:
 
-    ./configure.sh -d -u -i
+```acake2php
+./configure.sh -d -u -i
+```
 
 * __Optional__ To Setup MYSQL_ROOT_PASSWORD at prompt:
 
-    mysql_secure_installation
+```db
+mysql_secure_installation
+```
 
 * __Optional__ Edit `./app/Config/database.cms.php` if you wish to modify the DATABASE_CONFIG class.
 
@@ -211,11 +222,15 @@ Configure it as a service and configure the login ACL with the user shell.
 
 * Run the configuration script:
 
-    ./configure.sh -d -p <root-password> -i --sql-password=<new-password>
+```acake2php
+./configure.sh -d -p <root-password> -i --sql-password=<new-password>
+```
 
 * More about configuration:
 
-    ./configure.sh --help && ./migrate-database.sh --help
+```acake2php
+./configure.sh --help && ./migrate-database.sh --help
+```
 
 * More [common issues](#common-issues)
 
@@ -232,139 +247,134 @@ To regenerate or read the current password hash again, simply browse to http://l
 
 `GET_HASH_PASSWORD=<HaSheD/PasSwoRd!>` must be stored in the local server environment as a system readable variable.
 
-### Common Issues
-
+Common Issues
+-------------
 1. How to fix the following error?
 
-Index page displays:
-
+  Index page displays:
+```
     errno : 1146
     sqlstate : 42S02
     error : Table 'phpcms.info' doesn't exist
-
-Try the following to migrate (update) all database tables, answer 'y' when prompted:
-
+```
+  Try the following to migrate (update) all database tables, answer 'y' when prompted:
+```acake2php
     ./migrate-database.sh -u
-
+```
 2. ACCESS DENIED appears with other information complaining about database connection, what does that mean ?
 
-You probably have modified user privileges on your server:
-
+  You probably have modified user privileges on your server:
+```db
     mysql -u root
     use mysql;
     grant all PRIVILEGES on $TEST_DATABASE_NAME.* to '$MYSQL_USER'@'$MYSQL_HOST';
     exit
+```acake2php
     ./configure.sh -c
+```
+  This will reset the connection profile in ..etc/ properties file with the template.
+  More about environment variables are located in the remote pod (OpenShift) settings and locally in ./Scripts/fooargs.sh.  
 
-This will reset the connection profile in ..etc/ properties file with the template.
-More about environment variables are located in the remote pod (OpenShift) settings and locally in ./Scripts/fooargs.sh.  
-
->Note:
-
+  > Note:
+```acake2php
     ./configure.sh --mig-database -p -i --sql-password
-
-to do a reset with environment root and user password.
+```
+  to do a reset with environment root and user password.
 
 3. ACCESS DENIED for root@'127.0.0.1' or root@'localhost' appears with other information complaining about database connection, what does that mean ?
 
-(automatic) This looks like a first installation of mysql. You have to secure or reset your mysql root access:
-
+  (automatic) This looks like a first installation of mysql. You have to secure or reset your mysql root access:
+```acake2php
     MYSQL_ROOT_PASSWORD=<password> sudo bash mysqldb/mysql_secure_shell
-
-(manual) The Linux shell way to reinitialize sql root password:
-
+```
+  (manual) The Linux shell way to reinitialize sql root password:
+```db
     sudo rm -rf /usr/local/var/mysql
     mysqld --initialize | grep "temporary password" | cut -f4  -d ":" | cut -c 2-  > app/tmp/nupwd
-
->Note: A temporary password is generated for root@localhost. Now import identities.
-
+```
+  > Note: A temporary password is generated for root@localhost. Now import identities.
+```acake2php
     brew services restart mysql@5.7
     ./configure.sh --mig-database -p $(cat app/tmp/nupwd) -i --sql-password
-
->You have now configured a new SQL root password and a test password. Local SQL access and server is ready to run tests:
-
+```
+  > You have now configured a new SQL root password and a test password. Local SQL access and server is ready to run tests:
+```acake2php
     ./test-cake.sh -p -t <test-password>
-
-Go on to development phase with the [Local Built-in server](#local-built-in-server).
-
-4. My mysql server's upgraded to another version, what should I do ?
-
-Upgrade your phpcms database within a (secure)shell:
-
-    mysql_upgrade -u root --password=<password>
+```
+  Go on to development phase with the [Local Built-in server](#local-built-in-server).
 
 4. I've made changes to mysql database tables, I've made changes to Config/Schema/schema.cms.php, as Config/database.php defines it, what should I do ?
 
-Migrate all your tables:
-
+  Migrate all your tables:
+```acake2php
     ./migrate-database.sh -u
-
-Answer 'y' when prompted.
+```
+  Answer 'y' when prompted.
 
 5. How to fix up 'Database connection "Mysql" or could not be created ?
-PHP mysql extensions must be installed.
-
+  PHP mysql extensions must be installed.
+```acake2php
     php -i | grep Extensions
-
-Log in with root privileges should work:
-
-    mysql -u root --password=<password>
-
-If not, do a reset of your passwords:
-
+```
+  Log in with root privileges should work:
+```db
+    mysql -u root --password=${MYSQL_ROOT_PASSWORD}
+```
+  If not, do a reset of your passwords:
+```db
     mysqladmin -uroot password
-
-If it isn't possible to login:
-  + Check your environment variables (common.env and docker-compose.yml) settings). Use one or the other, and see which works for you:
-
-    MYSQL_HOST=$(hostname) (Unix/OSX platforms)
+```
+  If it isn't possible to login:
+    + Check your environment variables (common.env and docker-compose.yml) settings). Use one or the other, and see which works for you:
+```
+    MYSQL_HOST=$(hostname)
+```(Unix/OSX platforms)
             or if docker-compose services are the following name:
+```
     MYSQL_HOST=db
-    ..
-
     MYSQL_TCP_PORT=3306
-
+```
   + Debug the local configuration, look for unbound VARIABLES, add verbosity level information (add `-o` if you are in a remote shell):
-
+```acake2php
     set -u
     ./configure.sh --verbose -d -u
-
+```
   + Try resetting privileges
-
+```acake2php
     ./configure.sh --mig-database -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} -i
-
+```
   Don't miss the parameter to startup a local container database :
-
+```acake2php
     ./migrate-database.sh -u --docker -i or ./configure.sh --mig-database -u --docker -i
-
-  + Note that localhost is a special value. Using 127.0.0.1 is not the same thing. The latter will connect to the mysqld server through tcpip.
+```
+  + Note that localhost is a special value. Using 127.0.0.1 is not the same thing. The latter will connect to the mysqld server through tcpip.
   + Try the [secure_installation](#database-configuration).
 
 6. How to fix up ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysql.sock' (2) ?
 
-Run the socket fixup script with arguments:
-
+  Run the socket fixup script with arguments:
+```acake2php
     ./migrate-database.sh /tmp/mysqld.sock
     brew services restart mysql@5.7
-
+```
 7. I'm testing with ./start_cake.sh and I cannot add any new post on Updates section, what should I do ?
 
-With the CLI, you may ctrl-X ctrl-C to exit server and migrate your database:
-
+  With the CLI, you may ctrl-X ctrl-C to exit server and migrate your database:
+```acake2php
     ./migrate-database.sh -u
     ./start_cake.sh
-
-Answer 'y' when prompted.
+```
+  Answer 'y' when prompted.
 
 8. I cannot upload any picture, why ?
 
-The Mysql.php Datasource must define binary and mediumbinary storage types. Please look at the file  __app/Model/Datasource/Mysql_cms.php__ if it exists and if you experienced the following error:
-
+  The Mysql.php Datasource must define binary and mediumbinary storage types. Please look at the file  __app/Model/Datasource/Mysql_cms.php__ if it exists and if you experienced the following error:
+```
     errno : 1054
     sqlstate : 42S22
     error : Unknown column 'image' in 'field list'
-
-Add the *__mediumbinary__* storage, extending the original Datasource class:
+```
+  Add the *__mediumbinary__* storage, extending the original Datasource class:
 
 ```
 <?php
@@ -401,25 +411,25 @@ class Mysql_cms extends Mysql
 }
 ?>
 ```
-Ensure it is set as $identities[DB]['datasource'] in `app/Config/database.cms.php`,`./Scripts/fooargs.sh`, `.travis.yml` and update the database schema:
-
+  Ensure it is set as $identities[DB]['datasource'] in `app/Config/database.cms.php`,`./Scripts/fooargs.sh`, `.travis.yml` and update the database schema:
+```acake2php
     ./migrate-database.sh -u
-
+```
 9. It looks like submodule folders have disappeared, why ?
 
-A recent `git checkout ` made the submodule disappear from disk, that can happen on master/development branch.  Recall or add the shell configure script to your workflow:
-
+  A recent `git checkout ` made the submodule disappear from disk, that can happen on master/development branch.  Recall or add the shell configure script to your workflow:
+```acake2php
     ./configure.sh -m
-
+```
 10. Error: Please install PHPUnit framework v3.7 (http://www.phpunit.de)
 
-You need to configure development environment from Composer dependencies.
-
+  You need to configure development environment from Composer dependencies.
+```acake2php
     ./configure.sh --development
-
+```
 11. Undefined functins balena_deploy or init_functions: No such file or directory
 
-You need to export the `node_modules/.bin` for this shell to find npmjs installed binaries.
+  You need to export the `node_modules/.bin` for this shell to find npmjs installed binaries.
 
 ```
     export PATH="`pwd`/node_modules/.bin:\$PATH"
@@ -427,11 +437,11 @@ You need to export the `node_modules/.bin` for this shell to find npmjs installe
 
 12. Any message "saved[@]: unbound variable" on Darwin (OSX)
 
-Your BASH doesn't handle array in scripts and uses version 3. Please upgrade to v.4 or later.
-Check your bash version and upgrade OpenSSL Cacert as well:
-
+  Your BASH doesn't handle array in scripts and uses version 3. Please upgrade to v.4 or later.
+  Check your bash version and upgrade OpenSSL Cacert as well:
+```
     .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh
-
+```
 License
 -------
 	Copyright 2016 www.b23prodtm.info
