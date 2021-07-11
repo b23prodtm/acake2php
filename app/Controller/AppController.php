@@ -21,7 +21,7 @@
  */
 App::uses('Controller', 'Controller');
 App::uses('Index', 'Cms');
-
+App::uses('AuthComponent', 'Controller/Component/');
 /**
  * Application Controller
  *
@@ -38,12 +38,44 @@ class AppController extends Controller {
          */
         public $components = array('DebugKit.Toolbar',
             'Flash' => array(
-                'className' => 'MyFlash'));
+                'className' => 'MyFlash'
+              ),
+            'Auth' => array(
+                  'loginRedirect' => array('controller' => 'clients', 'action' => 'index'),
+                  'logoutRedirect' => array('controller' => 'e14', 'action' => 'index'),
+                  'authError' => "Veuillez vous authentifier, s'il-vous-plaît.",
+                  'authenticate' => array(
+                      AuthComponent::ALL => array(
+                        'userModel' => 'Client',
+                        'fields' => array(
+                            'username' => 'id', // 'username' par défaut
+                            'password' => 'id_motdepasse'  // 'password' par défaut
+                        )
+                      ),
+                      'Basic',
+                      'Form'
+                  ),
+                  'authorize' => array('Controller')
+            )
+        );
+
+        /** Gestion simple des acces controlés par role. Un 'controller' dépendant de cette méthode pour
+          * définir l'autorisation Client pour une action donnée
+          */
+        public function isAuthorized($user) {
+            /* Admin peut accéder à toute action */
+            if (isset($user['role']) && $user['role'] === 'admin') {
+                return true;
+            }
+
+            /* Refus par défaut */
+            return false;
+        }
         public $helpers = array('Info' => array(
                 'index' => null,
                 'countPerPage' => '10',
                 'md' => true
-              ), 'Markdown.Markdown' => true, 'Form', 'Html', 'Js', 'Time', 'Flash');
+              ), 'Markdown.Markdown' => true, 'Text', 'Form', 'Html', 'Js', 'Time', 'Flash');
         protected $_r;
 
         public function __construct($request = null, $response = null) {
@@ -55,8 +87,13 @@ class AppController extends Controller {
         }
 
         public function beforeFilter() {
+                parent::beforeFilter();
                 /* internationalisation (i18n) */
                 Configure::write('Config.language', $this->_r->getLanguage());
+                /* AuthComponent de ne pas exiger un login pour toutes les actions index et view*/
+                $this->Auth->allow(
+                  'index',
+                  'view');
         }
 
         /**

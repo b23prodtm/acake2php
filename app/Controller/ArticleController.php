@@ -40,11 +40,11 @@ class ArticleController extends AppController {
             )
         );
 
-        public function index($fk_reference_categorie = null) {
-                if ($fk_reference_categorie === null) {
+        public function index($id__categorie = null) {
+                if ($id__categorie === null) {
                         $this->set('articles', $this->Article->find('all'));
                 } else {
-                        $this->set('articles', $this->Article->find($fk_reference_categorie));
+                        $this->set('articles', $this->Article->find($id__categorie));
                 }
                 $this->set("pIndex", "activites__index");
                 $this->render(null, "default-e14");

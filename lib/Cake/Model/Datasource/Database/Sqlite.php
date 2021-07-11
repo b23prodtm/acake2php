@@ -81,6 +81,7 @@ class Sqlite extends DboSource {
 		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
 		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'blob'),
+		'mediumbinary' => array('name' => 'mediumblob'),
 		'boolean' => array('name' => 'boolean')
 	);
 
@@ -288,6 +289,9 @@ class Sqlite extends DboSource {
 		}
 		if (in_array($col, array('blob', 'clob'))) {
 			return 'binary';
+		}
+		if (in_array($col, array('mebiumblob', 'mediumclob'))) {
+			return 'mediumbinary';
 		}
 		if (strpos($col, 'numeric') !== false || strpos($col, 'decimal') !== false) {
 			return 'decimal';

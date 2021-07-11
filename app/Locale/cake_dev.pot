@@ -19,6 +19,7 @@ msgstr ""
 
 #: Plugin/Markdown/View/Errors/missing_markdown.ctp:3;7
 #: View/Errors/fatal_error.ctp:19
+#: View/Errors/pdo_error.ctp:19
 msgid "Error"
 msgstr ""
 
@@ -48,6 +49,18 @@ msgstr ""
 
 #: View/Errors/fatal_error.ctp:25
 msgid "Line"
+msgstr ""
+
+#: View/Errors/pdo_error.ctp:17
+msgid "Database Error"
+msgstr ""
+
+#: View/Errors/pdo_error.ctp:24
+msgid "SQL Query"
+msgstr ""
+
+#: View/Errors/pdo_error.ctp:29
+msgid "SQL Query Params"
 msgstr ""
 
 #: View/Layouts/default.ctp:8

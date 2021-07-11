@@ -13,18 +13,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: View/Errors/error400.ctp:10
-#: View/Errors/error500.ctp:10
-#: View/Errors/missing_connection.ctp:2
-#: View/Errors/missing_datasource_config.ctp:2
-msgid "Error"
+#: View/Errors/missing_connection.ctp:5
+#: View/Errors/missing_datasource_config.ctp:5
+msgid "Please review your configuration file "
 msgstr ""
 
-#: View/Errors/error400.ctp:12
-msgid "The requested address %s was not found on this server."
+#: View/Errors/missing_connection.ctp:6
+#: View/Errors/missing_datasource_config.ctp:6
+#: View/Errors/pdo_error.ctp:33
+msgid "In a server shell prompt"
 msgstr ""
 
-#: View/Errors/error500.ctp:11
-msgid "An Internal Error Has Occurred."
+#: View/Errors/pdo_error.ctp:32
+msgid "Please review your configuration ("
 msgstr ""
 

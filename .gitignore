@@ -17,7 +17,7 @@ docker-compose.*
 acake2php*.zip
 /app/Config/database.php*
 /app/Config/database.sql*
-/app/Config/Schema/schema_*.php
+/app/Config/Schema/schema.php*
 /app/tmp
 /app/Vendor/
 !/app/Vendor/autoload.php

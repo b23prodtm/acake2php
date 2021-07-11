@@ -8,7 +8,7 @@ $t->setContenu_Ligne(0, array(__d('article', "categorie"), __d('article', "artic
 
 for ($i = 1; $i < count($articles) + 1; $i++) {
         $article = $articles[$i - 1];
-        $t->setContenu_Cellule($i, 0, $article['Article']['fk_reference_categorie']);
+        $t->setContenu_Cellule($i, 0, $article['Article']['id__categorie']);
         $t->setContenu_Cellule($i, 1, $this->Html->link($article['Article']['id'], array('controller' => 'article',
                     'action' => 'view',
                     array($article['Article']['id'])))

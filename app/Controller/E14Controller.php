@@ -22,6 +22,9 @@ class E14Controller extends AppController {
                 $route = Router::currentRoute();
                 i_debug($route);
         }
+        public function beforeFilter() {
+          $this->Auth->allow();
+        }
         /** @param string $p page filename.php (optional)
          */
         public function index($p = NULL, $images = NULL) {

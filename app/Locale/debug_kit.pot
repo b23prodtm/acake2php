@@ -13,31 +13,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:41
+#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:38
 msgid "-> Testing :url"
 msgstr ""
 
-#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:67
+#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:64
 msgid "Total Requests made: :requests"
 msgstr ""
 
-#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:68
+#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:65
 msgid "Total Time elapsed: :duration (seconds)"
 msgstr ""
 
-#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:72
+#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:69
 msgid "Requests/Second: :rps req/sec"
 msgstr ""
 
-#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:76
+#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:73
 msgid "Average request time: :average-time seconds"
 msgstr ""
 
-#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:80
+#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:77
 msgid "Standard deviation of average request time: :std-dev"
 msgstr ""
 
-#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:84
+#: Plugin/DebugKit/Console/Command/BenchmarkShell.php:81
 msgid "Longest/shortest request: :longest sec/:shortest sec"
 msgstr ""
 
@@ -54,7 +54,7 @@ msgid "Number of iterations to perform."
 msgstr ""
 
 #: Plugin/DebugKit/Console/Command/BenchmarkShell.php:148
-msgid "Maximum total time for all iterations, in seconds.If a single iteration takes more than the tiemout, only one request will be made"
+msgid "Maximum total time for all iterations, in seconds.If a single iteration takes more than the timeout, only one request will be made"
 msgstr ""
 
 #: Plugin/DebugKit/Console/Command/BenchmarkShell.php:152
@@ -89,19 +89,19 @@ msgstr ""
 msgid "Could not load DebugToolbar panel %s"
 msgstr ""
 
-#: Plugin/DebugKit/Lib/DebugTimer.php:133
+#: Plugin/DebugKit/Lib/DebugTimer.php:127
 msgid "Core Processing (Derived from $_SERVER[\"REQUEST_TIME\"])"
 msgstr ""
 
-#: Plugin/DebugKit/Lib/FireCake.php:315
+#: Plugin/DebugKit/Lib/FireCake.php:309
 msgid "Headers already sent in %s on line %s. Cannot send log data to FirePHP."
 msgstr ""
 
-#: Plugin/DebugKit/Lib/FireCake.php:336
+#: Plugin/DebugKit/Lib/FireCake.php:330
 msgid "Incorrect parameter count for FireCake::fb()"
 msgstr ""
 
-#: Plugin/DebugKit/Lib/FireCake.php:415
+#: Plugin/DebugKit/Lib/FireCake.php:409
 msgid "Maximum number (99,999) of messages reached!"
 msgstr ""
 
@@ -109,19 +109,19 @@ msgstr ""
 msgid "There are no active panels. You must enable a panel to see its output."
 msgstr ""
 
-#: Plugin/DebugKit/View/Elements/environment_panel.ctp:20
+#: Plugin/DebugKit/View/Elements/environment_panel.ctp:21
 msgid "App Constants"
 msgstr ""
 
-#: Plugin/DebugKit/View/Elements/environment_panel.ctp:36
+#: Plugin/DebugKit/View/Elements/environment_panel.ctp:37
 msgid "CakePHP Constants"
 msgstr ""
 
-#: Plugin/DebugKit/View/Elements/environment_panel.ctp:52
+#: Plugin/DebugKit/View/Elements/environment_panel.ctp:53
 msgid "PHP Environment"
 msgstr ""
 
-#: Plugin/DebugKit/View/Elements/environment_panel.ctp:70
+#: Plugin/DebugKit/View/Elements/environment_panel.ctp:71
 msgid "Hidef Environment"
 msgstr ""
 
@@ -186,19 +186,31 @@ msgstr ""
 msgid "Sql Logs"
 msgstr ""
 
-#: Plugin/DebugKit/View/Elements/sql_log_panel.ctp:38
+#: Plugin/DebugKit/View/Elements/sql_log_panel.ctp:39
+msgid "No query logs when debug < 2."
+msgstr ""
+
+#: Plugin/DebugKit/View/Elements/sql_log_panel.ctp:41
+msgid "No query logs."
+msgstr ""
+
+#: Plugin/DebugKit/View/Elements/sql_log_panel.ctp:58
 msgid "Total Time: %s ms <br />Total Queries: %s queries"
 msgstr ""
 
-#: Plugin/DebugKit/View/Elements/sql_log_panel.ctp:47
+#: Plugin/DebugKit/View/Elements/sql_log_panel.ctp:67
+msgid "%s duplicate queries run."
+msgstr ""
+
+#: Plugin/DebugKit/View/Elements/sql_log_panel.ctp:70
 msgid "Query Explain:"
 msgstr ""
 
-#: Plugin/DebugKit/View/Elements/sql_log_panel.ctp:50
+#: Plugin/DebugKit/View/Elements/sql_log_panel.ctp:73
 msgid "Click an \"Explain\" link above, to see the query explanation."
 msgstr ""
 
-#: Plugin/DebugKit/View/Elements/sql_log_panel.ctp:55
+#: Plugin/DebugKit/View/Elements/sql_log_panel.ctp:79
 msgid "No active database connections"
 msgstr ""
 
@@ -238,7 +250,7 @@ msgstr ""
 msgid "View Variables"
 msgstr ""
 
-#: Plugin/DebugKit/View/Helper/DebugTimerHelper.php:45
+#: Plugin/DebugKit/View/Helper/DebugTimerHelper.php:44
 msgid "Rendering View"
 msgstr ""
 
@@ -246,11 +258,11 @@ msgstr ""
 msgid "Rendering %s"
 msgstr ""
 
-#: Plugin/DebugKit/View/Helper/DebugTimerHelper.php:86
+#: Plugin/DebugKit/View/Helper/DebugTimerHelper.php:88
 msgid "View render complete"
 msgstr ""
 
-#: Plugin/DebugKit/View/Helper/HtmlToolbarHelper.php:205
+#: Plugin/DebugKit/View/Helper/HtmlToolbarHelper.php:231
 msgid "Explain"
 msgstr ""
 
@@ -262,7 +274,7 @@ msgstr ""
 msgid "No markup errors found"
 msgstr ""
 
-#: Plugin/DebugKit/View/Helper/ToolbarHelper.php:189
+#: Plugin/DebugKit/View/Helper/ToolbarHelper.php:190
 msgid "maybe slow"
 msgstr ""
 
