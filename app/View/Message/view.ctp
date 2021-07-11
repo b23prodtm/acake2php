@@ -3,7 +3,7 @@
 	require APP . $r->r['include__php_tbl.class.inc'];
 	$t = new Tableau(3, 2, __('Ticket view'));
 	$t->setContenu_Colonne(0, array(__('date'), __('titre'),
-	 		$this->Text->autoLinkEmails($message['fk_identifiant'])
+	 		$this->Text->autoLinkEmails($message['id'])
 	));
 	$t->setContenu_Cellule(0, 1, $message['Message']['date']);
 	$t->setContenu_Cellule(1, 1, $message['Message']['titre']);

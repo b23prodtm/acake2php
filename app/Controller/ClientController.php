@@ -52,14 +52,17 @@ class ClientController extends AppController {
         $this->render(null, 'admin_default-e14');
     }
 
-    public function admin_view($identifiant = null) {
-        return $this->redirect(array('action' => 'view', 'admin' => false));
+    public function admin_view($id = 0) {
+        return $this->redirect(array('action' => 'view', 'admin' => false, $id));
     }
-    public function view($identifiant = null) {
-        if (!$this->Client->exists($identifiant)) {
+    public function view($id = 0) {
+        if (!$id) {
+          return $this->redirect(array("action" => "index"));
+        }
+        if (!$this->Client->exists($id)) {
             throw new NotFoundException(__('Client invalide'));
         }
-        $this->set('client', $this->Client->findById($identifiant));
+        $this->set('client', $this->Client->findById($id));
         $this->set('pIndex', 'users__view');
         $this->render(null, 'default-e14');
     }
@@ -71,14 +74,14 @@ class ClientController extends AppController {
             $this->Client->create();
             if ($this->Client->save($this->request->data)) {
                 $this->Flash->success(__('Le client a été sauvegardé'));
-                $id = $this->Client->identifiant;
+                $id = $this->Client->id;
                 $this->request->data['Client'] = array_merge(
                     $this->request->data['Client'],
                     array('id' => $id)
                 );
                 /* Desaffectaction du 'password' en requete,
                 pour éviter la sauvegarde en session en clair du mot de passe en appelant login.
-                unset($this->request->data['Client']['fk_motdepasse']);*/
+                unset($this->request->data['Client']['id_motdepasse']);*/
                 $this->Auth->login($this->request->data['Client']);
                 /* Le mot de passe sera cree ensuite */
                 return $this->redirect(array('controller' => 'MotDePasse', 'action' => 'add', $id));
@@ -89,16 +92,16 @@ class ClientController extends AppController {
         $this->set('pIndex', 'users__add');
         $this->render(null, 'default-e14');
     }
-    public function admin_edit($identifiant = null, $fk_motdepasse = null) {
-        return $this->redirect(array('action' => 'edit', 'admin' => false));
+    public function admin_edit($id = null, $id_motdepasse = null) {
+        return $this->redirect(array('action' => 'edit', 'admin' => false, $id, $id_motdepasse));
     }
-    public function edit($identifiant = null, $fk_motdepasse = null) {
-        $this->Client->identifiant = $identifiant;
+    public function edit($id = null, $id_motdepasse = null) {
+        $this->Client->id = $id;
         if (!$this->Client->exists()) {
             throw new NotFoundException(__('Client Invalide'));
         }
-        if(isset($fk_motdepasse)) {
-            $this->Client->fk_motdepasse = $fk_motdepasse;
+        if(isset($id_motdepasse)) {
+            $this->Client->id_motdepasse = $id_motdepasse;
         }
         if ($this->request->is('post') || $this->request->is('put')) {
             if ($this->Client->save($this->request->data)) {
@@ -108,25 +111,25 @@ class ClientController extends AppController {
                 $this->Flash->error(__('Le client n\'a pas été sauvegardé. Merci de réessayer.'));
             }
         } else {
-            $this->request->data = $this->Client->findById($identifiant);
+            $this->request->data = $this->Client->findById($id);
             /* Desaffectaction du 'password' en requete,
             pour éviter la sauvegarde en session en clair du mot de passe en appelant login. */
-            unset($this->request->data['Client']['fk_motdepasse']);
+            unset($this->request->data['Client']['id_motdepasse']);
         }
         $this->set('pIndex', 'users__edit');
         $this->render(null, 'default-e14');
     }
-    public function admin_delete($identifiant = null) {
+    public function admin_delete($id = null) {
         return $this->redirect(array('action' => 'delete', 'admin' => false));
     }
 
-    public function delete($identifiant = null) {
+    public function delete($id = null) {
         // Avant 2.5, utilisez
         // $this->request->onlyAllow('post');
 
         $this->request->allowMethod('post');
 
-        $this->Client->identifiant = $identifiant;
+        $this->Client->id = $id;
         if (!$this->Client->exists()) {
             throw new NotFoundException(__('Client invalide'));
         }

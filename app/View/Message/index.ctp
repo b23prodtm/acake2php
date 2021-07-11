@@ -6,7 +6,7 @@ echo $this->Html->link(
     array('controller' => 'message', 'action' => 'add')
 );
 $t = new Tableau(count($messages) + 1, 5, __('Tableau de bord'));
-$t->setContenu_Ligne(0, array(__('date'), __('titre'), __('identifiant')));
+$t->setContenu_Ligne(0, array(__('date'), __('titre'), __('id')));
 
 /* On fait un tour des $messages array */
 
@@ -16,7 +16,7 @@ for ($i = 1; $i < count($messages) + 1; $i++) {
 		$t->setContenu_Cellule($i, 1, $this->Html->link($message['Message']['titre'], array(
 			'action' => 'view', $message['Message']['id']))
 		);
-		$t->setContenu_Cellule($i, 2, $this->Text->autoLinkEmails($message['Message']['fk_identifiant']));
+		$t->setContenu_Cellule($i, 2, $this->Text->autoLinkEmails($message['Message']['id']));
 		$t->setContenu_Cellule($i, 3, $this->Html->link(__('Modifier un message'), array(
 			'action' => 'edit', $message['Message']['id']))
 		);

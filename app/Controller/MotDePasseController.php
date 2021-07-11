@@ -26,22 +26,22 @@ class MotDePasseController extends AppController {
 			$this->set('pIndex', 'users__index');
 			$this->render(null, 'default-e14');
 	}
-	public function add($identifiant = null) {
+	public function add($id = null) {
 		if ($this->request->is('post')) {
 					$this->MotDePasse->create();
 					if ($this->MotDePasse->save($this->request->data)) {
 							$this->Flash->success(__('Le mot de passe a été sauvegardé'));
-							if(!isset($identifiant)) {
-									$identifiant = $this->Auth->user('identifiant');
+							if(!isset($id)) {
+									$id = $this->Auth->user('id');
 							}
-							$client = Client::findById($identifiant); 
+							$client = Client::findById($id); 
 							$this->Flash->message(__('Enregistrement du profil %s...', $client));
 							/* Desaffectaction du 'password' en requete,
 							pour éviter la sauvegarde en session en clair du mot de passe en appelant login. */
 							unset($this->request->data['MotDePasse']['password']);
 							unset($this->request->data['MotDePasse']['password_confirm']);
 							if($client !== false) {
-										return $this->redirect(array('controller' => 'Client', 'action' => 'edit', $identifiant, $this->MotDePasse->id));
+										return $this->redirect(array('controller' => 'Client', 'action' => 'edit', $id, $this->MotDePasse->id));
 							} else {
 										return $this->redirect(array('controller' => 'MotDePasse', 'action' => 'index'));
 							}
@@ -53,17 +53,17 @@ class MotDePasseController extends AppController {
 			$this->render(null, 'default-e14');
 	}
 
-	public function edit($id = null, $identifiant = null) {
+	public function edit($id = null, $id = null) {
 			$this->MotDePasse->id = $id;
 			if (!$this->MotDePasse->exists()) {
 					throw new NotFoundException(__('Mot de passe Invalide'));
 			}
 			if ($this->request->is('post') || $this->request->is('put')) {
-				if(!isset($identifiant)) {
-						$identifiant = $this->Auth->user('identifiant');
+				if(!isset($id)) {
+						$id = $this->Auth->user('id');
 				}
-				$client = Client::findById($identifiant);
-				if ($client !== false && $client->isOwnedBy($this->MotDePasse->id, $identifiant) && $this->MotDePasse->save($this->request->data)) {
+				$client = Client::findById($id);
+				if ($client !== false && $client->isOwnedBy($this->MotDePasse->id, $id) && $this->MotDePasse->save($this->request->data)) {
 							$this->Flash->success(__('Le mot de passe a été sauvegardé'));
 							return $this->redirect(array('action' => 'index'));
 					} else {
@@ -78,7 +78,7 @@ class MotDePasseController extends AppController {
 			$this->render(null, 'default-e14');
 	}
 
-	public function delete($id = null, $identifiant = null) {
+	public function delete($id = null, $id = null) {
 			// Avant 2.5, utilisez
 			// $this->request->onlyAllow('post');
 
@@ -88,18 +88,18 @@ class MotDePasseController extends AppController {
 			if (!$this->MotDePasse->exists()) {
 					throw new NotFoundException(__('Mot de passe invalide'));
 			}
-			if(!isset($identifiant)) {
-					$identifiant = $this->Auth->user('identifiant');
+			if(!isset($id)) {
+					$id = $this->Auth->user('id');
 			}
-			$client = Client::findById($identifiant);
-			if ($client !== false && $client->isOwnedBy($this->MotDePasse->id, $identifiant) && $this->MotDePasse->delete()) {
+			$client = Client::findById($id);
+			if ($client !== false && $client->isOwnedBy($this->MotDePasse->id, $id) && $this->MotDePasse->delete()) {
 					$this->Flash->success(__('Mot de passe supprimé'));
-					return $this->redirect(array('action' => 'add', $identifiant));
+					return $this->redirect(array('action' => 'add', $id));
 			}
 			if(!$client) {
-					$this->Flash->error(__("L'identifiant client '%s' est invalide.", $identifiant));
+					$this->Flash->error(__("L'id client '%s' est invalide.", $id));
 			} else {
-				$this->Flash->error(__("Le client '%s' n'est pas l'auteur du mot de passe.", $identifiant));
+				$this->Flash->error(__("Le client '%s' n'est pas l'auteur du mot de passe.", $id));
 			}
 			$this->Flash->error(__('Le mot de passe n\'a pas été supprimé'));
 			return $this->redirect(array('action' => 'index'));

@@ -15,7 +15,7 @@ class Message extends AppModel {
   public $validationDomain = 'formulaire';
   public $belongsTo = array(
      'Client' => array(
-         'foreignKey' => 'fk_client'
+         'foreignKey' => 'id_client'
      )
  );
   public $validate = array(
@@ -33,9 +33,9 @@ class Message extends AppModel {
            'last' => true),
        'Requis' => array('rule' => 'notBlank')
       ),
-     'fk_client' => array(
+     'id_client' => array(
         'rule' => 'alphaNumericDashUnderscore',
-        'message' => "L'identifiant ne peut contenir que des lettres, des nombres, des tirets ou des underscores."
+        'message' => "L'id ne peut contenir que des lettres, des nombres, des tirets ou des underscores."
         )
     );
 
@@ -50,6 +50,6 @@ class Message extends AppModel {
     }
 
     public function isOwnedBy($message, $client) {
-        return $this->field('id', array('id' => $message, 'fk_client' => $client)) !== false;
+        return $this->field('id', array('id' => $message, 'id_client' => $client)) !== false;
     }
 }

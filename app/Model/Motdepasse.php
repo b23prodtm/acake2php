@@ -9,7 +9,7 @@ App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
 class Motdepasse extends AppModel {
   public $validationDomain = 'formulaire';
   public $hasOne = array('Client' => array(
-      'foreignKey' => 'fk_motdepasse'
+      'foreignKey' => 'id_motdepasse'
   ));
 /**
  * Validation rules

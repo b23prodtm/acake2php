@@ -3,9 +3,9 @@
 	<fieldset>
 		<legend><?php echo __('Ajoutez votre profil client'); ?></legend>
 	<?php
-		echo $this->Form->input('identifiant', array('label' => __('Votre identifiant')));
+		echo $this->Form->input('id', array('label' => __('Votre id')));
 		echo $this->Form->input('email', array('label' => __('Une adresse email')));
-		echo $this->Form->hidden('fk_motdepasse');
+		echo $this->Form->hidden('id_motdepasse');
 		echo $this->Form->input('nom', array('label' => __('Votre nom')));
 		echo $this->Form->input('prenom', array('label' => __('Votre prénom')));
 		echo $this->Form->input('annee_de_naissance', array('label' => __('Votre date de naissance')));

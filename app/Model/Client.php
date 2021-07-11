@@ -10,12 +10,12 @@ class Client extends AppModel {
     public $name = 'Client';
     public $belongsTo = array(
        'MotDePasse' => array(
-           'foreignKey' => 'fk_motdepasse'
+           'foreignKey' => 'id_motdepasse'
        )
    );
     public $displayField = 'email';
     public $validate = array(
-        'identifiant' => array(
+        'id' => array(
             'required' => array(
                 'rule' => 'alphaNumericDashUnderscore',
                 'message' => "Un nom d'utilisateur est requis",
@@ -72,7 +72,7 @@ class Client extends AppModel {
     }
 
     public function isOwnedBy($client, $motdepasse) {
-        return $this->field('identifiant', array('identifiant' => $client, 'fk_motdepasse' => $motdepasse)) !== false;
+        return $this->field('id', array('id' => $client, 'id_motdepasse' => $motdepasse)) !== false;
     }
 }
 ?>

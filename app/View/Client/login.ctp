@@ -3,9 +3,9 @@
 <?php echo $this->Form->create('Client'); ?>
     <fieldset>
         <legend>
-            <?php echo __("Veuillez entrer un identifiant et un mot de passe s'il-vous-plaît."); ?>
+            <?php echo __("Veuillez entrer un id et un mot de passe s'il-vous-plaît."); ?>
         </legend>
-        <?php echo $this->Form->input('identifiant');
+        <?php echo $this->Form->input('id');
         echo $this->Form->input('motdepasse', array('type' => 'password'));
     ?>
     </fieldset>

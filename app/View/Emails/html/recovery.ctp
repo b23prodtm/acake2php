@@ -1,4 +1,4 @@
-<p><?php echo __('Cher utilisateur %s', $client['Client']['identifiant']); ?>,<br>
+<p><?php echo __('Cher utilisateur %s', $client['Client']['id']); ?>,<br>
   <?php echo __('Vous avez demandé la récupération de votre mot de passe. Par sécurité, nous vous recommandons de réinitialiser celui-ci.');?></p>
 <p><?php echo __("Si vous n'êtes pas l'auteur de cette demande, vous pouvez ignorer ce message."); ?></p>
 <div class="actions">

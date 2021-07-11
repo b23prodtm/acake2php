@@ -48,8 +48,8 @@ class AppController extends Controller {
                       AuthComponent::ALL => array(
                         'userModel' => 'Client',
                         'fields' => array(
-                            'username' => 'identifiant', // 'username' par défaut
-                            'password' => 'fk_motdepasse'  // 'password' par défaut
+                            'username' => 'id', // 'username' par défaut
+                            'password' => 'id_motdepasse'  // 'password' par défaut
                         )
                       ),
                       'Basic',

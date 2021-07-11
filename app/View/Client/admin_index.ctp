@@ -3,9 +3,9 @@
 	<table cellpadding="0" cellspacing="0">
 	<thead>
 	<tr>
-			<th><?php echo $this->Paginator->sort('identifiant'); ?></th>
+			<th><?php echo $this->Paginator->sort('id'); ?></th>
 			<th><?php echo $this->Paginator->sort('email'); ?></th>
-			<th><?php echo $this->Paginator->sort('fk_motdepasse'); ?></th>
+			<th><?php echo $this->Paginator->sort('id_motdepasse'); ?></th>
 			<th><?php echo $this->Paginator->sort('nom'); ?></th>
 			<th><?php echo $this->Paginator->sort('prenom'); ?></th>
 			<th><?php echo $this->Paginator->sort('annee_de_naissance'); ?></th>
@@ -23,7 +23,7 @@
 	<tbody>
 	<?php foreach ($clients as $client): ?>
 	<tr>
-		<td><?php echo h($client['Client']['identifiant']); ?>&nbsp;</td>
+		<td><?php echo h($client['Client']['id']); ?>&nbsp;</td>
 		<td><?php echo h($client['Client']['email']); ?>&nbsp;</td>
 		<td>
 			<?php echo $this->Html->link(strlen($client['MotDePasse']['password']), array(
@@ -42,11 +42,11 @@
 		<td><?php echo h($client['Client']['cree']); ?>&nbsp;</td>
 		<td><?php echo h($client['Client']['modifie']); ?>&nbsp;</td>
 		<td class="actions">
-			<?php echo $this->Html->link(__('Visualiser'), array('action' => 'view', $client['Client']['identifiant'])); ?>
-			<?php echo $this->Html->link(__('Modifier'), array('action' => 'edit', $client['Client']['identifiant'])); ?>
+			<?php echo $this->Html->link(__('Visualiser'), array('action' => 'view', $client['Client']['id'])); ?>
+			<?php echo $this->Html->link(__('Modifier'), array('action' => 'edit', $client['Client']['id'])); ?>
 			<?php echo $this->Form->postLink(__('Supprimer'), array(
-				'action' => 'delete', $client['Client']['identifiant']), array(
-					'confirm' => __('Êtes-vous certain de supprimer # %s?', $client['Client']['identifiant']))); ?>
+				'action' => 'delete', $client['Client']['id']), array(
+					'confirm' => __('Êtes-vous certain de supprimer # %s?', $client['Client']['id']))); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

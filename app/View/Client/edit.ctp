@@ -3,7 +3,7 @@
 	<fieldset>
 		<legend><?php echo __('Modifiez votre profil client'); ?></legend>
 	<?php
-	echo $this->Form->input('identifiant', array('label' => __('Votre identifiant')));
+	echo $this->Form->input('id', array('label' => __('Votre id')));
 	echo $this->Form->input('email', array('label' => __('Une adresse email')));
 	echo $this->Form->hidden('motdepasse');
 	echo $this->Form->input('nom', array('label' => __('Votre nom')));

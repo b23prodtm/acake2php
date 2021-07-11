@@ -18,11 +18,11 @@ class AppSchema extends CakeSchema {
 	}
 
 	public $achat = array(
-		'fk_reference_commande' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'key' => 'primary'),
-		'fk_reference_facture' => array('type' => 'string', 'null' => false, 'length' => 32, 'key' => 'primary'),
-		'fk_reference_magasin' => array('type' => 'string', 'null' => false, 'length' => 4, 'key' => 'primary'),
+		'id_commande' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'key' => 'primary'),
+		'id_facture' => array('type' => 'string', 'null' => false, 'length' => 32, 'key' => 'primary'),
+		'id_magasin' => array('type' => 'string', 'null' => false, 'length' => 4, 'key' => 'primary'),
 		'indexes' => array(
-			'PRIMARY' => array('column' => array('fk_reference_commande', 'fk_reference_facture', 'fk_reference_magasin'), 'unique' => 1)
+			'PRIMARY' => array('column' => array('id_commande', 'id_facture', 'id_magasin'), 'unique' => 1)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
@@ -50,57 +50,55 @@ class AppSchema extends CakeSchema {
 	);
 
 	public $classification = array(
-		'reference_classe' => array('type' => 'string', 'null' => false, 'length' => 4, 'key' => 'primary'),
+		'id' => array('type' => 'string', 'null' => false, 'length' => 4, 'key' => 'primary'),
 		'nom' => array('type' => 'string', 'null' => false, 'length' => 30),
-		'fk_reference_categorie' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
+		'id_categorie' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
 		'indexes' => array(
-			'PRIMARY' => array('column' => 'reference_classe', 'unique' => 1)
+			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
 	public $clients = array(
-		'identifiant' => array('type' => 'string', 'null' => false, 'length' => 50, 'key' => 'primary'),
+		'id' => array('type' => 'string', 'null' => false, 'length' => 50, 'key' => 'primary'),
 		'email' => array('type' => 'string', 'null' => false, 'length' => 255),
-		'fk_motdepasse' => array('type' => 'string', 'null' => true, 'length' => 255),
+		'id_motdepasse' => array('type' => 'string', 'null' => true, 'length' => 255),
 		'nom' => array('type' => 'string', 'null' => false, 'length' => 30),
 		'prenom' => array('type' => 'string', 'null' => false, 'length' => 30),
 		'annee_de_naissance' => array('type' => 'text', 'null' => false, 'length' => 4),
 		'adresse' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 30),
 		'codepostal' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10, 'unsigned' => false),
-		'ville' => array('type' => 'string', 'null' => false, 'length' => 20),
+		'ville' => array('type' => 'string', 'null' => false, 'length' => 40),
 		'pays' => array('type' => 'string', 'null' => false, 'length' => 20),
 		'telephone' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 20, 'unsigned' => false),
 		'role' => array('type' => 'string', 'null' => false, 'length' => 20),
 		'cree' => array('type' => 'date', 'null' => false),
 		'modifie' => array('type' => 'date', 'null' => false),
 		'indexes' => array(
-			'PRIMARY' => array('column' => 'identifiant', 'unique' => 1),
-			'fk_id_mdp' => array('column' => 'fk_id_mdp', 'unique' => 1),
-			'fk_id_mdp_2' => array('column' => 'fk_id_mdp', 'unique' => 1)
+			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
 	public $commande = array(
-		'reference' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'date_de_commande' => array('type' => 'date', 'null' => false, 'key' => 'index'),
-		'fk_reference_produit' => array('type' => 'string', 'null' => false, 'length' => 20),
-		'fk_reference_promotion' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
+		'id_produit' => array('type' => 'string', 'null' => false, 'length' => 20),
+		'id_promotion' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
 		'indexes' => array(
-			'PRIMARY' => array('column' => 'reference', 'unique' => 1),
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'date_de_commande' => array('column' => 'date_de_commande', 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
 	public $compte = array(
-		'fk_identifiant' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'primary'),
+		'id' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'primary'),
 		'nb_de_produits_achetes' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'key' => 'index'),
 		'montant_d_achat_total' => array('type' => 'decimal', 'null' => false, 'default' => '0.0', 'length' => '6,1', 'unsigned' => false),
 		'date_ouverture_du_compte' => array('type' => 'date', 'null' => false),
 		'indexes' => array(
-			'PRIMARY' => array('column' => 'fk_identifiant', 'unique' => 1),
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'nb_de_produits_achetes' => array('column' => array('nb_de_produits_achetes', 'montant_d_achat_total', 'date_ouverture_du_compte'), 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
@@ -109,7 +107,7 @@ class AppSchema extends CakeSchema {
 	public $articles = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
                 'entete' => array('type' => 'string', 'null' => false, 'length' => 250),
-		'fk_reference_categorie' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'id_categorie' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 		'corps' => array('type' => 'text', 'null' => false, 'length' => 4),
 		'date' => array('type' => 'date', 'null' => false),
     'published' => array('type' => 'date', 'null' => false),
@@ -120,10 +118,10 @@ class AppSchema extends CakeSchema {
 	);
 
 	public $disponibilite = array(
-		'fk_id_produit' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 5, 'unsigned' => false, 'key' => 'primary'),
-		'fk_reference_exemplaire' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 5, 'unsigned' => false, 'key' => 'primary'),
+		'id_exemplaire' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'primary'),
 		'indexes' => array(
-			'PRIMARY' => array('column' => array('fk_id_produit', 'fk_reference_exemplaire'), 'unique' => 1)
+			'PRIMARY' => array('column' => array('id', 'id_exemplaire'), 'unique' => 1)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
@@ -141,7 +139,7 @@ class AppSchema extends CakeSchema {
 	public $exemplaire = array(
 		'code_reference' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'primary'),
 		'date_de_livraison' => array('type' => 'date', 'null' => false),
-		'fk_id_produit' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 5, 'unsigned' => false),
+		'id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 5, 'unsigned' => false),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'code_reference', 'unique' => 1)
 		),
@@ -153,10 +151,10 @@ class AppSchema extends CakeSchema {
 		'montant_facture' => array('type' => 'decimal', 'null' => true, 'default' => null, 'length' => '6,1', 'unsigned' => false),
 		'date_de_facturation' => array('type' => 'date', 'null' => false),
 		'mode_de_paiement' => array('type' => 'string', 'null' => false, 'length' => 4, 'key' => 'index'),
-		'fk_identifiant' => array('type' => 'string', 'null' => false, 'length' => 20),
+		'id' => array('type' => 'string', 'null' => false, 'length' => 20),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'reference', 'unique' => 1),
-			'mode_de_paiement' => array('column' => array('mode_de_paiement', 'fk_identifiant'), 'unique' => 0)
+			'mode_de_paiement' => array('column' => array('mode_de_paiement', 'id'), 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
@@ -207,7 +205,7 @@ class AppSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'titre' => array('type' => 'string', 'null' => false, 'length' => 250),
 		'texte' => array('type' => 'text', 'null' => false, 'default' => null),
-		'fk_client' => array('type' => 'string', 'null' => false, 'length' => 255),
+		'id_client' => array('type' => 'string', 'null' => false, 'length' => 255),
 		'date' => array('type' => 'date', 'null' => false),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
@@ -216,7 +214,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $motDePasses = array(
+	public $motdepasses = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'autoIncrement' => true),
 		'password' => array('type' => 'string', 'null' => false, 'length' => 255),
 		'password_confirm' => array('type' => 'string', 'null' => false, 'length' => 255),

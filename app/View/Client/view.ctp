@@ -1,9 +1,9 @@
 <div class="clients view">
 <h2><?php echo __('Client'); ?></h2>
 	<dl>
-		<dt><?php echo __('Identifiant'); ?></dt>
+		<dt><?php echo __('id'); ?></dt>
 		<dd>
-			<?php echo h($client['Client']['identifiant']); ?>
+			<?php echo h($client['Client']['id']); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Email'); ?></dt>

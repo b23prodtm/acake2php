@@ -15,11 +15,11 @@ class MessageController extends AppController {
 		parent::__construct($request, $response);
 	}
 
-	public function index($fk_identifiant = null) {
-		if ($fk_identifiant === null) {
+	public function index($id = null) {
+		if ($id === null) {
 			$this->set('messages', $this->Message->find('all'));
 		} else {
-			$this->set('messages', $this->Message->find($fk_identifiant));
+			$this->set('messages', $this->Message->find($id));
 		}
 		$this->set("pIndex","contactus__index");
 		$this->render(null, "default-e14");
@@ -53,7 +53,7 @@ class MessageController extends AppController {
 			$this->request->data = $this->Message->findById($id);
 		} else if ($this->request->is('post')) {
 	    $this->Message->create();
-			$this->request->data['Message']['fk_identifiant'] = $this->Auth->user('identifiant');
+			$this->request->data['Message']['id'] = $this->Auth->user('id');
 			if ($this->Message->save($this->request->data)) {
 	        $this->Flash->success(__('Votre message est enregistré.'));
 	        return $this->redirect(array('action' => 'index'));
@@ -109,7 +109,7 @@ class MessageController extends AppController {
 
 	    return $this->redirect(array('action' => 'index'));
 	}
-	
+
 	public function isAuthorized($client) {
     /* Tous les users inscrits peuvent ajouter les posts */
     if ($this->action === 'add') {
@@ -119,7 +119,7 @@ class MessageController extends AppController {
     /* Le propriétaire du post peut l'éditer et le supprimer */
     if (in_array($this->action, array('edit', 'delete'))) {
         $messageId = (int) $this->request->params['pass'][0];
-        if ($this->Message->isOwnedBy($messageId, $client['identifiant'])) {
+        if ($this->Message->isOwnedBy($messageId, $client['id'])) {
             return true;
         }
     }

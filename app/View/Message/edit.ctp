@@ -6,7 +6,7 @@ echo $this->Form->input('titre', array('label' => __('Sujet de votre message'),
 echo $this->Form->input('texte', array(
     'label' => __('Contenu du message'),
       'required' => true));
-echo $this->Form->input('fk_identifiant', array('label' => __('Pseudonyme'),
+echo $this->Form->input('id', array('label' => __('Pseudonyme'),
       'required' => true));
 echo $this->Form->input('date', array('label' => __('Date'),
             'required' => true));
