@@ -1,0 +1,28 @@
+{
+  "kind": "NetworkPolicy",
+  "apiVersion": "extensions/v1beta1",
+  "metadata": {
+    "name": "acake2php_cake",
+    "creationTimestamp": null
+  },
+  "spec": {
+    "podSelector": {
+      "matchLabels": {
+        "io.kompose.network/acake2php_cake": "true"
+      }
+    },
+    "ingress": [
+      {
+        "from": [
+          {
+            "podSelector": {
+              "matchLabels": {
+                "io.kompose.network/acake2php_cake": "true"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

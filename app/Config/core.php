@@ -47,7 +47,7 @@ if (!function_exists('make_secure_key')) {
     }
 
     // Convert the hash to an int to seed the RNG
-    srand(hexdec(substr($hash,0,8)));
+    srand((int)(float)hexdec(substr($hash,0,8)));
     // Create a random string the same length as the default
     $val = '';
     for($i = 1; $i <= strlen($original); $i++){

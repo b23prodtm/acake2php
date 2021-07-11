@@ -75,8 +75,8 @@ define('unix_socket', '/var/run/mysqld/mysqld.sock');
 * Defines a constant expression from environment variables
 * @param define default value if environment isn't found
 */
-function defEnv($varEnv, $default=FALSE, $override=FALSE) {
-  if ($override || !getenv($varEnv))
+function defEnv($varEnv, $default=FALSE) {
+  if ($default)
   define($varEnv, $default);
   else
   define($varEnv, getenv($varEnv));

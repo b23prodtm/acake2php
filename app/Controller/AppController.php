@@ -81,7 +81,7 @@ class AppController extends Controller {
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
                 /* initialise les $GLOBALS et le sitemap */
-                $this->_r = new Index($this->View, APP . 'index.php', true, WWW_ROOT . 'php_cms');
+                $this->_r = new Index($this->View, APP . 'index.php', true, WWW_ROOT . 'php-cms');
                 $this->helpers['Info']['index'] = $this->_r;
                 $this->set("r", $this->_r);
         }

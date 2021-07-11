@@ -19,6 +19,8 @@ class E14Controller extends AppController {
 
         public function __construct($request = null, $response = null) {
                 parent::__construct($request, $response);
+                $route = Router::currentRoute();
+                i_debug($route);
         }
         public function beforeFilter() {
           $this->Auth->allow();

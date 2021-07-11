@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: NetworkPolicy
+metadata:
+  creationTimestamp: null
+  name: acake2php_cake
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          io.kompose.network/acake2php_cake: "true"
+  podSelector:
+    matchLabels:
+      io.kompose.network/acake2php_cake: "true"

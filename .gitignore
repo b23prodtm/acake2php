@@ -2,7 +2,6 @@
 #################################################
 .env
 *.old
-*.yaml
 *.armhf
 *.aarch64
 *.x86_64
@@ -41,6 +40,8 @@ mysqldb/config/
 mysqldb/conf.d/custom.cnf
 node_modules
 *.log
+etc/apache2/conf.d/site.conf
+etc/apache2/conf.d/ssl_site.conf
 
 # IDE and editor specific files #
 #################################

@@ -38,8 +38,8 @@ usage=("" \
 "                      Exports MYSQL_DATABASE" \
 "          --testunitbase=<name>" \
 "                      Exports TEST_DATABASE_NAME" \
-"          --enable-authentication-plugin" \
-"                      Disables https://mariadb.com/kb/en/authentication-plugin-ed25519/" \
+"          --enable-ed25519-plugin" \
+"                      Enable MariaDB plugin https://mariadb.com/kb/en/authentication-plugin-ed25519/" \
 "          -v, --verbose" \
 "                      Outputs more debug information" \
 "          -h, --help  Displays this help" \
@@ -62,9 +62,10 @@ ck_args="--connection=default"
 test_args="app Controller/PagesController --stderr >> $LOG"
 MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
 while [ "$#" -gt 0 ]; do case "$1" in
-  --enable-authentication-plugin*)
-    slogger -st "$0" "Enabled auth_ed25519 plugin..."
-    authentication_plugin=1;;
+  --enable-ed25519-plugin*)
+    slogger -st "$0" "Enabled auth_ed25519 plugin for passwords..."
+    log_warning_msg "Plugin Not available from PHP PDO connect (you should avoid using it)"
+    authentication_plugin="ed25519";;
   --docker )
     bash -c "./Scripts/start_daemon.sh ${docker}"
     # Running docker ... mysql's allowed to connect without any local mysql installation
@@ -167,7 +168,7 @@ if [[ $import_identities -eq 1 ]]; then
      log_warning_msg "${orange}WARNING: Using blank password for ${DATABASE_USER} !!${nc}"
     prompt=${DEBIAN_FRONTEND:-''}
   fi
-  if [ $authentication_plugin = 1 ]; then
+  if [ $authentication_plugin = "ed25519" ]; then
     identifiedby="IDENTIFIED VIA ed25519 USING '${set_DATABASE_PASSWORD}'"
   else
     identifiedby="identified by '${set_DATABASE_PASSWORD}'"
@@ -205,7 +206,7 @@ if [[ $import_identities -eq 1 ]]; then
     slogger -st "$0" "\r${orange}WARNING: Using blank password for ${MYSQL_USER} !!${nc}"
     prompt=${DEBIAN_FRONTEND:-''}
   fi
-  if [ $authentication_plugin = 1 ]; then
+  if [ $authentication_plugin = "ed25519" ]; then
     identifiedby="IDENTIFIED VIA ed25519 USING '${set_MYSQL_PASSWORD}'"
   else
     identifiedby="identified by '${set_MYSQL_PASSWORD}'"
@@ -220,10 +221,10 @@ if [[ $import_identities -eq 1 ]]; then
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_3.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"flush PRIVILEGES;\"" \
 # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
 # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
-"-e \"select plugin from user where user='${MYSQL_USER}';\"" \
-"-e \"flush PRIVILEGES;\"")
+"-e \"select plugin from user where user='${MYSQL_USER}';\"")
   password=""
   if [ -n "${MYSQL_ROOT_PASSWORD:-}" ]; then
     password="--password=${MYSQL_ROOT_PASSWORD}"
