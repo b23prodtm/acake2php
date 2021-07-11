@@ -1,6 +1,6 @@
 <!-- toc -->
 
-- [CakePHP Sample App on OpenShift](#cakephp-sample-app-on-openshift)
+- [A CakePHP 2.x application ](#a-cakephp-2.x-application)
     + [Quickstart](#quickstart)
     - [Plugins](#plugins)
       + [CakePHP Plugins](#cakephp-plugins)
@@ -17,19 +17,22 @@
 <!-- tocstop -->
 > We are moving to Kubernetes to host our website... See more about that project in [Kubespray](http://www.github.com/b23prodtm/kubespray).
 
-A CakePHP 2.x application [including PHP-CMS ex-Pohse](https://sourceforge.net/projects/pohse/)
-===============================
+A CakePHP 2.x application 
+=========================
 [![TravisCI Status](https://travis-ci.com/b23prodtm/acake2php.svg?branch=development)](https://travis-ci.com/b23prodtm/acake2php)
 [![CircleCI Status](https://circleci.com/gh/b23prodtm/acake2php.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/acake2php)
 
-### Quickstart
+> [Including PHP-CMS ex-Pohse](https://sourceforge.net/projects/pohse/)
+
+Quickstart
+----------
 Using the basic container orchestrator or engine to deploy and test, is straitforward.
 Currently the deployment script 
 ```. deploy.sh```
 Based on [Balena engine](http://www.balena.io). See more about [NodeJs dependencies](#nodejs-dependencies)
 
-### Plugins
-
+Plugins
+-------
 You do not need to change anything in your existing PHP project's repository.
 However, if these files exist they will affect the behavior of the build process:
 
@@ -95,19 +98,18 @@ However, if these files exist they will affect the behavior of the build process
 
       ./deploy.sh arm32 --balena
 
-### Compatibility
-
+Compatibility
+-------------
 * CakePHP 2.X application also supports Docker CE 18.03 and later
 * MariaDB 10.1 and later
 
-### Local built-in server (cake) and dockerized database in a local container
 CAKE includes a server application that´s only made for local tests on port 9000.
 Open a Terminal window:
 
     DB=Mysql ./configure.sh --mig-database -u
     ./start-cake.sh --docker -c server -p 9000
 
->Ctrl-click the URLs to open them in the browser. To get more help about the command line interface :
+> Ctrl-click the URLs to open them in the browser. To get more help about the command line interface :
 
     ./start-cake.sh --help
 
@@ -121,22 +123,22 @@ There are options (--travis, --openshift, --circle) dedicated to continuous inte
 
 See [below](#common-issues) to allow access on the built-in local server.
 
-### Device pod environment
-
-When deployment happens on server-side or is triggered by a git push event, 'source-to-image (s2i)', the httpd-server  or pod needs proper environment variables to be set ready. Otherwise the scripts will fail with an error state, unable to connect to the database
+Device pod environment
+----------------------
+When deployment happens on device or is triggered by a git push event, 'source-to-image (s2i)', the httpd-server  or pod needs proper environment variables to be set ready. Otherwise the scripts will fail with an error state, unable to connect to the database
 
 The following variables must be set up as server environment, provided by your **database administrator**:
 
     # Sqlite, Postgres
     DB:Mysql
 
->Note: DB selects CakePhp Model/Datasource/Database DBOSource class to configure SQL connections.    
+> Note: DB selects CakePhp Model/Datasource/Database DBOSource class to configure SQL connections.    
 
     MYSQL_DATABASE:default
     # a hostname or IP address
     MYSQL_HOST:mysql
 
->Note: Prefixed with *TEST_* they are used by the index.php?test=1 URLs and ./test-cake.sh (--travis)
+> Note: Prefixed with *TEST_* they are used by the index.php?test=1 URLs and ./test-cake.sh (--travis)
 
 The following additional variables must be set up as server secrets environment, provided by your database administrator:
 
@@ -177,7 +179,8 @@ The following additional variables must be set up as server secrets environment,
     <Domain-Name>
 
 
-### Database terminal
+Database terminal
+-----------------
 Inside container **db** :
 ```mysql -uroot --password=${MYSQL_ROOT_PASSWORD}```
 
@@ -423,8 +426,9 @@ Check your bash version and upgrade OpenSSL Cacert as well:
 
     .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh
 
-### License
-   Copyright 2016 www.b23prodtm.info
+License
+-------
+	Copyright 2016 www.b23prodtm.info
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
