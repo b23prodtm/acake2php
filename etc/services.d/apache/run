@@ -3,7 +3,8 @@
 if [ -e ./setup ]; then
   sh -c "./setup"
 fi
-
+server_root=$(grep "^ServerRoot" < /etc/apache2/httpd.conf | awk '{ print $2 }' | sed "s/\"//g")
+echo "CakePHP LOG: $server_root/localhost/htdocs/app/tmp/logs/error.log"
 # start apache
 exec /usr/sbin/apachectl -DFOREGROUND;
 

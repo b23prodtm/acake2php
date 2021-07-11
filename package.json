@@ -9,7 +9,8 @@
   },
   "scripts": {
     "cs-check": "PHP_CS=1 ./test-cake.sh",
-    "test": "./test-cake.sh"
+    "test": "./test-cake.sh",
+    "start": "./start-cake.sh"
   },
   "repository": {
     "type": "git",
@@ -22,9 +23,9 @@
     "url": "https://github.com/b23prodtm/acake2php/issues"
   },
   "homepage": "https://github.com/b23prodtm/acake2php#readme",
+  "optionalDependencies": {},
   "dependencies": {
-    "balena-cloud": "stable",
-    "node": "^14.4.0"
+    "balena-cloud": "stable"
   },
   "devDependencies": {}
 }

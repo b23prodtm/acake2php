@@ -54,7 +54,7 @@ Router::connect('/contactus/**', array('controller' => 'message', 'action' => 'i
  */
 Router::connect('/admin/contactus/:action/*', array('controller' => 'message', 'admin' => true));
 /**
- ***************************************************             default routing 
+ ***************************************************             default routing
  */
 Router::connect('/admin/*', array('controller' => 'e14', 'action' => 'index', 'admin' => true));
 /**
@@ -67,7 +67,7 @@ Router::connect('/:action/*', array('controller' => 'e14'));
 Router::connect('/', array('controller' => 'e14', 'action' => 'index'));
 
 
-/* all URLs /(somename).php parsed to (somename) as :action or passed argument e.g. index/image.php => e14/index/_image => _image.php as included script */
+/* all URLs /(somename).php parsed to (somename) as :action or passed argument e.g. index/_image.php => e14/index/_image => _image.php as included script */
 Router::parseExtensions('php');
 /**
  * Load all plugin routes. See the CakePlugin documentation on
@@ -80,4 +80,3 @@ CakePlugin::routes();
  * the built-in default routes.
  * */
 include CAKE . 'Config' . DS . 'routes.php';
-
