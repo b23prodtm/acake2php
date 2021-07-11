@@ -1,14 +1,13 @@
 <!-- toc -->
 
 - [CakePHP Sample App on OpenShift](#cakephp-sample-app-on-openshift)
-    + [Source repository layout](#source-repository-layout)
-    + [Deploy and Test](#deploy-and-test)
+    + [Quickstart](#quickstart)
     + [Plugins](#plugins)
     + [NodeJs dependencies](#nodejs-dependencies)
     + [Compatibility](#compatibility)
-    + [Local Built-in Server](#local-built-in-server)
     + [PHP Unit Test](#php-unit-test)
     + [Server-side environment](#server-side-environment)
+    + [Database terminal](#database-terminal)
     + [Database configuration](#database-configuration)
     + [Generate new administrator password](#generate-new-administrator-password)
     + [Common Issues](#common-issues)
@@ -17,7 +16,7 @@
 <!-- tocstop -->
 > We are moving to Kubernetes to host our website... See more about that project in [Kubespray](http://www.github.com/b23prodtm/kubespray).
 
-A CakePHP 2.x implementation [including PHP-CMS ex-Pohse](https://sourceforge.net/projects/pohse/)
+A CakePHP 2.x application [including PHP-CMS ex-Pohse](https://sourceforge.net/projects/pohse/)
 ===============================
 [![TravisCI Status](https://travis-ci.com/b23prodtm/acake2php.svg?branch=development)](https://travis-ci.com/b23prodtm/acake2php)
 [![CircleCI Status](https://circleci.com/gh/b23prodtm/acake2php.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/acake2php)
@@ -176,6 +175,10 @@ The following additional variables must be set up as server secrets environment,
     SERVER_NAME
     <Domain-Name>
 
+
+### Database terminal
+Inside container **db** :
+```mysql -uroot --password=${MYSQL_ROOT_PASSWORD}```
 
 ### Database Configuration
 
