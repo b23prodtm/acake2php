@@ -101,7 +101,6 @@ jobs:
           - v1-dependencies-{{ checksum "composer.lock" }}
     - setup_remote_docker:
         docker_layer_caching: false
-    - *deps
     - run:
         name: Set architecture and Setup Environment Variables
         command: |
