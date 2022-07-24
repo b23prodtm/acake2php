@@ -1,9 +1,6 @@
 [submodule "app/webroot/php-cms"]
 	path = app/webroot/php-cms
 	url = https://bitbucket.org/b23prodtm/php-cms.git
-[submodule ".travis/TravisCI-OSX-PHP"]
-	path = .travis/TravisCI-OSX-PHP
-	url = https://github.com/b23prodtm/TravisCI-OSX-PHP.git
 [submodule "python-wifi-connect"]
 	path = python-wifi-connect
 	url = https://github.com/b23prodtm/python-wifi-connect.git

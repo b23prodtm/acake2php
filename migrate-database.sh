@@ -176,12 +176,12 @@ if [[ $initialize_databases -eq 1 ]]; then
   else
     identifiedby="identified by '${set_DATABASE_PASSWORD}'"
   fi
+  # ALTER USER is MariaDB 10.2 and above waiting for ARM binary
+  # "-e \"alter user '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
   args=(\
 "-e \"select version();\"" \
 "-e \"use mysql;\"" \
 "-e \"create user if not exists '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
-# ALTER USER is MariaDB 10.2 and above waiting for ARM binary
-# "-e \"alter user '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
 "-e \"SET PASSWORD FOR '${DATABASE_USER}'@'${mysql_host}' = PASSWORD('${set_DATABASE_PASSWORD}');\"" \
 "-e \"grant all PRIVILEGES on *.* to '${DATABASE_USER}'@'${mysql_host}' WITH GRANT OPTION;\"" \
 "-e \"flush PRIVILEGES;\"" \
@@ -189,11 +189,11 @@ if [[ $initialize_databases -eq 1 ]]; then
 "-e \"create database if not exists ${TEST_DATABASE_NAME};\"" \
 "-e \"create database if not exists ${TEST_DATABASE_NAME}_2;\"" \
 "-e \"create database if not exists ${TEST_DATABASE_NAME}_3;\"" \
-# enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
-# "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
 "-e \"select plugin from user where user='${DATABASE_USER}';\"" \
 "-e \"show databases;\"" \
 "")
+  # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days:
+  # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\""
   slogger -st "$0" "Forked script to keep hidden table user secrets..."
   password=""
   user="${DATABASE_USER}"
@@ -216,20 +216,20 @@ if [[ $initialize_databases -eq 1 ]]; then
   else
     identifiedby="identified by '${set_MYSQL_PASSWORD}'"
   fi
+  # ALTER USER is MariaDB 10.2 and above waiting for ARM binary
+  # "-e \"alter user '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
   args=(\
 "-e \"use mysql;\"" \
 "-e \"create user if not exists '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
-# ALTER USER is MariaDB 10.2 and above waiting for ARM binary
-# "-e \"alter user '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
 "-e \"SET PASSWORD FOR '${MYSQL_USER}'@'${mysql_host}' = PASSWORD('${set_MYSQL_PASSWORD}');\"" \
 "-e \"grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_3.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"flush PRIVILEGES;\"" \
-# enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
-# "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
 "-e \"select plugin from user where user='${MYSQL_USER}';\"")
+  # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days:
+  # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\""
   shell_prompt "${sql_connect} ${sql_connect_host} -u ${user} ${password} \
   ${args[*]} >> $LOG 2>&1" "Import test identities" "$prompt" \
   && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}
