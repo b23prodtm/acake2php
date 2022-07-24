@@ -1,8 +1,25 @@
 # User specific & automatically generated files #
 #################################################
-myphpcms*.zip
+.env
+*.old
+*.armhf
+*.aarch64
+*.x86_64
+Dockerfile.*
+!Dockerfile.template
+!Dockerfile.armhf
+!Dockerfile.x86_64
+docker-compose.*
+!docker-compose.yml
+!docker-compose.x86_64
+!docker-compose.armhf
+.circleci/config-compat.yml
+acake2php*.zip
 /app/Config/database.php*
+!/app/Config/database.php
 /app/Config/database.sql*
+/app/Config/Schema/schema.php*
+!/app/Config/Schema/schema.php
 /app/tmp
 /app/Vendor/
 !/app/Vendor/autoload.php
@@ -20,7 +37,13 @@ myphpcms*.zip
 /dist
 /tags
 *.mo
-/bin/composer.phar
+**/composer*.phar
+mysqldb/config/
+mysqldb/conf.d/custom.cnf
+node_modules
+*.log
+etc/apache2/conf.d/site.conf
+etc/apache2/conf.d/ssl_site.conf
 
 # IDE and editor specific files #
 #################################
@@ -40,3 +63,5 @@ Icon?
 ehthumbs.db
 Thumbs.db
 /nbproject/private/
+mysqldb/mysqld/
+mysqld/conf.d/custom.cnf

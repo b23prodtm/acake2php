@@ -1,0 +1,71 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: Model/Client.php:validation for field id
+msgid "Username required"
+msgstr ""
+
+#: Model/Client.php:validation for field id
+msgid "Name already exists"
+msgstr ""
+
+#: Model/Client.php:validation for field nom
+msgid "Last name required"
+msgstr ""
+
+#: Model/Client.php:validation for field prenom
+msgid "First name required"
+msgstr ""
+
+#: Model/Client.php:validation for field ville
+msgid "City required"
+msgstr ""
+
+#: Model/Client.php:validation for field codepostal
+msgid "City code required"
+msgstr ""
+
+#: Model/Client.php:validation for field role
+msgid "Please choose a valid role"
+msgstr ""
+
+#: Model/Client.php:validation for field telephone
+msgid "e.g. +999 8811 2022"
+msgstr ""
+
+#: Model/Message.php:validation for field titre;validation for field texte
+msgid "No HTML tags"
+msgstr ""
+
+#: Model/Message.php:validation for field titre;validation for field texte
+msgid "Requis"
+msgstr ""
+
+#: Model/Message.php:validation for field id_client
+msgid "Only alphabetic or numerical characters or dash or underscores."
+msgstr ""
+
+#: Model/Motdepasse.php:validation for field password
+msgid "Pasword required"
+msgstr ""
+
+#: Model/Motdepasse.php:validation for field password_confirm
+msgid "Confirm password"
+msgstr ""
+
+#: Model/Motdepasse.php:validation for field cree;validation for field modifie
+msgid "date"
+msgstr ""
+

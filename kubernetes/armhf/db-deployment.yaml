@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    io.balena.features.dbus: "1"
+    kompose.cmd: kompose convert --controller deployment -o kubernetes/armhf/ -f docker-compose.armhf
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: db
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        io.balena.features.dbus: "1"
+        kompose.cmd: kompose convert --controller deployment -o kubernetes/armhf/
+          -f docker-compose.armhf
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/acake2php_cake: "true"
+        io.kompose.service: db
+    spec:
+      containers:
+      - env:
+        - name: BALENA_MACHINE_NAME
+          value: raspberrypi3
+        - name: BALENA_PROJECTS
+          value: '(. ./mysqldb ./deployment/images/node-php7 ./deployment/images/apache-php7)
+            #(submodule deployment/images/primary'
+        - name: BALENA_PROJECTS_FLAGS
+          value: (IMG_TAG PRIMARY_HUB SECONDARY_HUB)
+        - name: CAKEPHP_DEBUG_LEVEL
+          value: "1"
+        - name: CAKEPHP_SECURITY_CIPHER_SEED
+          value: "01234"
+        - name: CAKEPHP_SECURITY_SALT
+          value: Word
+        - name: COLLECT_COVERAGE
+          value: "false"
+        - name: DATABASE_USER
+          value: root
+        - name: DKR_ARCH
+          value: armhf
+        - name: HTTPD_LISTEN
+          value: '*:80'
+        - name: IMG_TAG
+          value: latest
+        - name: MYPHPCMS_DIR
+          value: app/webroot/php-cms
+        - name: MYPHPCMS_LOG
+          value: app/tmp/logs
+        - name: PGID
+          value: "1000"
+        - name: PRIMARY_HUB
+          value: betothreeprod/apache-php7
+        - name: PUID
+          value: "1000"
+        - name: SECONDARY_HUB
+          value: betothreeprod/mariadb-raspberrypi3
+        - name: SERVER_NAME
+          value: acake2php.local
+        - name: TZ
+          value: Europe/Paris
+        image: betothreeprod/mariadb-raspberrypi3
+        imagePullPolicy: ""
+        name: db
+        ports:
+        - containerPort: 3306
+        resources: {}
+        volumeMounts:
+        - mountPath: /config
+          name: acake2php-db-data
+        - mountPath: /var/run/mysqld
+          name: acake2php-db-socket
+        - mountPath: /var/www
+          name: acake2php-data
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: acake2php-db-data
+        persistentVolumeClaim:
+          claimName: acake2php-db-data
+      - name: acake2php-db-socket
+        persistentVolumeClaim:
+          claimName: acake2php-db-socket
+      - name: acake2php-data
+        persistentVolumeClaim:
+          claimName: acake2php-data
+status: {}

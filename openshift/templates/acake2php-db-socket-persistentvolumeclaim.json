@@ -1,0 +1,22 @@
+{
+  "kind": "PersistentVolumeClaim",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "acake2php-db-socket",
+    "creationTimestamp": null,
+    "labels": {
+      "io.kompose.service": "acake2php-db-socket"
+    }
+  },
+  "spec": {
+    "accessModes": [
+      "ReadWriteOnce"
+    ],
+    "resources": {
+      "requests": {
+        "storage": "100Mi"
+      }
+    }
+  },
+  "status": {}
+}

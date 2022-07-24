@@ -1,0 +1,137 @@
+# THIS file was generated for $DKR_ARCH raspberrypi3
+# Make changes to the Dockefile.template
+# Docker architecture (x86_64, armhf, aarch64 )
+ARG IMG_TAG
+ARG DKR_ARCH
+ARG PRIMARY_HUB
+# Primary image is a Linux PHP with Apache 2 server pre-installed
+FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${IMG_TAG:-latest}-${DKR_ARCH:-armhf}
+
+ENV INITSYSTEM off
+ENV UDEV off
+# ----------------------
+# About Dockerfile ARGS:
+# ALL the following ARGS are DUPLICATED in common.env and $DKR_ARCH.env
+# and Scripts/fooargs.sh for development phase.
+# If not set in common.env, it must be set in the host machine environment
+# when ./start.sh or ./test.sh or in development phase.
+# ----------------------
+#                        Values in default (no-arg) production mode
+#                        May be overriden in docker-compose.yml
+#-----------------------
+ARG CAKEPHP_DEBUG_LEVEL
+ENV CAKEPHP_DEBUG_LEVEL ${CAKEPHP_DEBUG_LEVEL:-2}
+ENV BALENA_MACHINE_NAME ${BALENA_MACHINE_NAME:-raspberrypi3}
+ARG SECONDARY_HUB
+ENV SECONDARY_HUB ${SECONDARY_HUB:-betothreeprod/mariadb-raspberrypi3}
+ENV DKR_ARCH ${DKR_ARCH:-armhf}
+ARG COLLECT_COVERAGE
+ENV COLLECT_COVERAGE ${COLLECT_COVERAGE:-'False'}
+ARG DB
+ENV DB ${DB:-Mysql}
+ARG MYSQL_HOST
+ENV MYSQL_HOST ${MYSQL_HOST:-db}
+ARG MYSQL_TCP_PORT
+ENV MYSQL_TCP_PORT ${MYSQL_TCP_PORT:-3306}
+ARG MYPHPCMS_DIR
+ENV MYPHPCMS_DIR ${MYPHPCMS_DIR:-'app/webroot/php-cms'}
+ARG MYPHPCMS_LOG
+ENV MYPHPCMS_LOG ${MYPHPCMS_LOG:-'app/tmp/logs'}
+ARG DATABASE_USER
+ENV DATABASE_USER ${DATABASE_USER:-'root'}
+ARG MYSQL_DATABASE
+ENV MYSQL_DATABASE ${MYSQL_DATABASE:-'aria_db'}
+ARG MYSQL_ROOT_PASSWORD
+ENV MYSQL_ROOT_PASSWORD ${MYSQL_ROOT_PASSWORD:-'mariadb'}
+ARG TEST_DATABASE_NAME
+ENV TEST_DATABASE_NAME ${TEST_DATABASE_NAME:-'test'}
+ARG MYSQL_USER
+ENV MYSQL_USER ${MYSQL_USER:-'maria'}
+ARG MYSQL_PASSWORD
+ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'maria-abc'}
+ARG SERVER_NAME
+ENV SERVER_NAME ${SERVER_NAME:-'acake2php.local'}
+# Change uid and gid of apache to docker user uid/gid
+ARG PUID
+ENV PUID ${PUID:-0}
+ARG PGID
+ENV PGID ${PGID:-0}
+# Must own the ip address
+ARG HTTPD_LISTEN
+ENV HTTPD_LISTEN ${HTTPD_LISTEN:-'*:80'}
+ARG SSL_PORT
+ENV SSL_PORT ${SSL_PORT:-'443'}
+ARG HTTPD_LISTEN_SSL
+ENV HTTPD_LISTEN_SSL ${HTTPD_LISTEN_SSL:-'*:443'}
+# Enable migrate-database.sh options
+ARG MIGRATE_OPTION
+ENV MIGRATE_OPTION ${MIGRATE_OPTION:-'-v'}
+
+# Use the default production configuration
+#COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
+RUN [ "cross-build-start" ]
+RUN install_packages \
+    git \
+    openssh-client \
+    tar \
+    gzip \
+    ca-certificates \
+    zip \
+    unzip \
+    mariadb-client
+
+RUN install_packages \
+    memcached \
+    libmemcached-dev \
+    php7-pecl-xdebug \
+    gettext
+    # libicu libicu-dev
+
+WORKDIR /usr/src/
+
+COPY vagrant-shell.sh .
+RUN chmod 0755 vagrant-shell.sh
+RUN ./vagrant-shell.sh php-settings-update extension memcached.so \
+ && ./vagrant-shell.sh php-settings-update session.save_handler memcached \
+ && ./vagrant-shell.sh php-settings-update session.save_path '127.0.0.1:11211,127.0.0.1:11212'
+
+WORKDIR /var/www/localhost/htdocs/
+
+# Copy the app source code inside the image
+COPY app app
+
+COPY package.json .
+COPY package-lock.json .
+
+# Helper packages (just a long node process...)
+RUN npm install --no-optional && npm link balena-cloud
+
+# Add cake and composer command to system path
+COPY composer.json .
+COPY composer.lock .
+ENV PATH "${PATH}:/var/www/localhost/htdocs/app/Console"
+ENV PATH "${PATH}:/var/www/localhost/htdocs/app/Vendor/bin"
+
+# Configure the application
+WORKDIR /var/www/localhost/htdocs/
+
+# Copy the scripts code inside the image
+COPY . .
+
+# Change mode of bash Scripts
+RUN chmod -R gu+xs deploy.sh configure.sh migrate-database.sh Scripts/
+
+# Password Hash Verbose
+# RUN cat app/webroot/php-cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
+
+# just containers configuration
+COPY etc /etc
+RUN chmod 0755 *.sh
+RUN ./deploy.sh ${DKR_ARCH} --nobuild --exit \
+  && ./configure.sh --openshift -a -m -c -h -p pass -s word --development
+
+RUN [ "cross-build-end" ]
+
+ENTRYPOINT ./migrate-database.sh -o -u -i ${MIGRATE_OPTION} \
+  && ./migrate-database.sh -o -u ${MIGRATE_OPTION} --connection=test && /init
+EXPOSE 80 443

@@ -1,38 +1,52 @@
-#!/bin/bash
-source ./Scripts/lib/parsing.sh
-source ./Scripts/lib/shell_prompt.sh
-command="server -p 8080"
-saved=("$*")
-while [[ "$#" > 0 ]]; do case $1 in
-  --help )
-    echo "Usage: $0 [-p|--sql-password=<password>] [--test-sql-password=<password>] [-c <command>] [options]
-            Default command is lib/Cake/Console/cake server -p 8080
-        -p, --sql-password=<password>
-            Exports DATABASE_PASSWORD to bootargs.
-        -t,--test-sql-password=<password>
-            Exports TEST_DATABASE_PASSWORD
-        -c <command> <options> [--help]
-            lib/Cake/Console/cake <command> <options>
-            E.g. $0 -c server --help
-        "
-        exit 0;;
-  -[pP]*|--sql-password*)
-    parse_sql_password "$1" "DATABASE_PASSWORD" "current ${DATABASE_USER}";;
-  -[tT]*|--test-sql-password*)
-    parse_sql_password "$1" "TEST_DATABASE_PASSWORD" "current ${TEST_DATABASE_USER}";;
+#!/usr/bin/env bash
+set -e
+TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=Scripts/lib/test/parsing.sh
+. "$TOPDIR/Scripts/lib/parsing.sh"
+# shellcheck source=Scripts/lib/test/shell_prompt.sh
+. "$TOPDIR/Scripts/lib/shell_prompt.sh"
+command="--docker -c server -p 8000 -H 0.0.0.0"
+saved=("$@")
+export COLLECT_COVERAGE="false"
+usage=("" \
+"Usage: $0 [-p <password>] [-t <password>] [-c <command>] [options]" \
+"          -p <password>        Exports MYSQL_ROOT_PASSWORD to bootargs." \
+"          -t <password>        Exports MYSQL_PASSWORD" \
+"          -c <command> <options> [--help]" \
+"                               Set parameters to lib/Cake/Console/cake" \
+"                               E.g. $0 -c --docker server --help" \
+"                               Default command is " \
+"                               lib/Cake/Console/cake server -p 8000 -H 0.0.0.0" \
+"           --disable-docker    Don't start Docker Image DATABASE" \
+"")
+while [[ "$#" -gt 0 ]]; do case $1 in
+  -[hH]*|--help )
+    printf "%s\n" "${usage[@]}"
+    exit 0;;
+  -[vV]*|--verbose )
+    set -x
+    command="${command} $1"
+    echo "Passed params : $0 ${saved[*]}";;
+  -[pP]*)
+    parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
+    shift $((OPTIND -1))
+    ;;
+  -[tT]*)
+    parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER} password" "$@"
+    shift $((OPTIND -1))
+    ;;
   -[cC]*)
-    command=$2
-    shift; shift; command="${command} $*";;
+    docker=$(parse_arg "--docker" "$command")
+    command="$docker ${*:2}"
+    parse_and_export "-p" "CAKE_TCP_PORT" "specify -p <port>" "$@"
+    break;;
+  --disable-docker )
+    # shellcheck disable=SC2086
+    command=$(parse_arg_trim --docker $command)
+    ;;
+  --docker )
+    command="$command $1"
+    ;;
   *);;
 esac; shift; done
-source ./Scripts/bootstrap.sh $saved
-show_password_status "$DATABASE_USER" "$DATABASE_PASSWORD" "is running development server"
-url="http://localhost:8080"
-echo -e "Welcome homepage ${cyan}${url}${nc}"
-echo -e "Administrator login ${cyan}${url}/admin/index${nc}"
-echo -e "Debugging echoes ${cyan}${url}${orange}?debug=1&verbose=1${nc}"
-echo -e "Another Test configuration ${cyan}${url}/admin/index.php${orange}?test=1${nc}"
-echo -e "Unit tests ${cyan}${url}/test.php${nc}"
-echo -e "Turnoff flags (fix captcha)${cyan}${url}/admin/logoff.php${nc}"
-echo -e "==============================================="
-lib/Cake/Console/cake $command
+bash -c "./Scripts/bootstrap.sh $command"

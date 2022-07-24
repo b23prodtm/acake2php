@@ -13,28 +13,104 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: View/Article/add.ctp:3
+#: Controller/ArticleController.php:70;97;102
+msgid "Invalid article"
+msgstr ""
+
+#: Controller/ArticleController.php:85
+msgid "Your article has been saved."
+msgstr ""
+
+#: Controller/ArticleController.php:89
+msgid "Unable to add your article."
+msgstr ""
+
+#: Controller/ArticleController.php:109
+msgid "Your article has been updated."
+msgstr ""
+
+#: Controller/ArticleController.php:113
+msgid "Unable to update your article."
+msgstr ""
+
+#: Controller/ArticleController.php:130
+msgid "Article with id : %s was deleted."
+msgstr ""
+
+#: Controller/ArticleController.php:134
+msgid "Article with id: %s couldn't be deleted."
+msgstr ""
+
+#: View/Article/add.ctp:9
+msgid "Upload some images"
+msgstr ""
+
+#: View/Article/add.ctp:15;20
+#: View/Article/edit.ctp:11;16
+msgid "Upload"
+msgstr ""
+
+#: View/Article/add.ctp:17
+#: View/Article/edit.ctp:13
+msgid "file format image/%s"
+msgstr ""
+
+#: View/Article/add.ctp:24
 #: View/Article/index.ctp:22
 msgid "Add an article"
 msgstr ""
 
-#: View/Article/add.ctp:6
+#: View/Article/add.ctp:26
+#: View/Article/edit.ctp:22
 msgid "Header"
 msgstr ""
 
-#: View/Article/add.ctp:7
+#: View/Article/add.ctp:27
+#: View/Article/edit.ctp:23
 msgid "Published"
 msgstr ""
 
-#: View/Article/add.ctp:8
+#: View/Article/add.ctp:28
+#: View/Article/edit.ctp:24
 msgid "Body"
 msgstr ""
 
-#: View/Article/add.ctp:9
-msgid "Created"
+#: View/Article/add.ctp:30
+msgid "Save and continue with images"
 msgstr ""
 
-#: View/Article/add.ctp:10
-msgid "Save an article"
+#: View/Article/add.ctp:15
+#: View/Article/edit.ctp:11
+msgid "%s image"
+msgid_plural "images"
+msgstr[0] ""
+msgstr[1] ""
+
+#: View/Article/edit.ctp:8
+msgid "Upload more images"
+msgstr ""
+
+#: View/Article/edit.ctp:20
+msgid "Edit an article"
+msgstr ""
+
+#: View/Article/edit.ctp:26
+msgid "Save this article"
+msgstr ""
+
+#: View/Article/index.ctp:4
+msgid "db_articles"
+msgstr ""
+
+#: View/Article/index.ctp:5
+msgid "categorie"
+msgstr ""
+
+#: View/Article/index.ctp:5
+msgid "article"
+msgstr ""
+
+#: View/Article/index.ctp:5
+msgid "published"
 msgstr ""
 

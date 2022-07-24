@@ -1,8 +1,8 @@
 <?php
 App::uses(array('SQL', 'Page', 'Formulaire'), 'Cms');
-require APP . $r->r['include__php_constantes.inc'];
-require APP . $r->r['include__php_module_html.inc'];
-require APP . $r->r['include__php_module_cat.inc'];
+include_once APP . $r->r['include__php_constantes.inc'];
+include_once APP . $r->r['include__php_module_html.inc'];
+include_once APP . $r->r['include__php_module_cat.inc'];
 
 $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 

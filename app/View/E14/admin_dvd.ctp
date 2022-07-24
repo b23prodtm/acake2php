@@ -1,8 +1,8 @@
 <?php
 
 App::uses('Page', 'Cms');
-require APP . $r->r["include__php_module_html.inc"];
-require APP . $r->r["include__php_module_DVD.inc"];
+include_once APP . $r->r["include__php_module_html.inc"];
+include_once APP . $r->r["include__php_module_DVD.inc"];
 
 $clefPage = "admin__";
 $ajouter = $r->sitemap[$clefPage . 'ajouter'];

@@ -1,14 +1,14 @@
 <?php
-	$r = new Index($this);
  /* Vue Message add.ctp */
-	echo $this->Form->create('Message'); 
-	echo $this->Form->input('titre', array('label' => $r->lang('titre', 'contactus'),
+	echo $this->Form->create('Message');
+	echo $this->Form->input('titre', array('label' => __('Sujet de votre message'),
 			'required' => true));
-	echo $this->Form->input('texte', array('label' => $r->lang('texte', 'contactus'),
+	echo $this->Form->input('texte', array(
+			'label' => __('Contenu du message'),
 				'required' => true));
-	echo $this->Form->input('fk_identifiant', array('label' => $r->lang('identifiant', 'contactus'),
+	echo $this->Form->input('id', array('label' => __('Auteur'),
 				'required' => true));
-	echo $this->Form->input('date', array('label' => $r->lang('date', 'contactus'),
+	echo $this->Form->input('date', array('label' => __('Date'),
 				'required' => true));
-	echo $this->Form->end($r->lang('write', 'contactus'));
+	echo $this->Form->end(__('Poster un ticket'));
 ?>

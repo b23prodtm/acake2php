@@ -31,18 +31,23 @@ class MyFlashComponent extends FlashComponent {
 
         public function shutDown(Controller $controller) {
                 parent::shutdown($controller);
-                
+
         }
 
         public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {
                 parent::beforeRedirect($controller, $url, $status, $exit);
         }
-        
-        public function success($message) {                
+
+        public function success($message) {
                 $this->set($message, array('params' => array('class' => 'success')));
         }
-        
+
         public function error($message) {
                 $this->set($message, array('params' => array('class' => 'error')));
         }
+
+        public function notice($message) {
+                $this->set($message, array('params' => array('class' => 'notice')));
+        }
+
 }

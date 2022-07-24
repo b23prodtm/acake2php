@@ -69,6 +69,7 @@ class Postgres extends DboSource {
 		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
 		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'bytea'),
+		'mediumbinary' => array('name' => 'bytea'),
 		'boolean' => array('name' => 'boolean'),
 		'number' => array('name' => 'numeric'),
 		'inet' => array('name' => 'inet'),
@@ -251,7 +252,7 @@ class Postgres extends DboSource {
 					'default' => preg_replace(
 						"/^'(.*)'$/",
 						"$1",
-						preg_replace('/::.*/', '', $c->default)
+						preg_replace('/::[\w\s]+/', '', $c->default)
 					),
 					'length' => $length,
 				);
@@ -765,10 +766,10 @@ class Postgres extends DboSource {
 /**
  * resultSet method
  *
- * @param array &$results The results
+ * @param PDOStatement $results The results
  * @return void
  */
-	public function resultSet(&$results) {
+	public function resultSet($results) {
 		$this->map = array();
 		$numFields = $results->columnCount();
 		$index = 0;

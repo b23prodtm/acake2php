@@ -1,135 +1,245 @@
-#!/bin/bash
-set -e
-source ./Scripts/lib/shell_prompt.sh
-source ./Scripts/lib/parsing.sh
-openshift=$(parse_arg_exists "-[oO]*|--openshift" $*)
-if [ $openshift 2> /dev/null ]; then
-  echo "Real environment bootargs..."
+#!/usr/bin/env bash
+set -eu
+TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=Scripts/lib/test/logging.sh
+. "$TOPDIR/Scripts/lib/logging.sh"
+# shellcheck source=Scripts/lib/test/parsing.sh
+. "$TOPDIR/Scripts/lib/parsing.sh"
+# shellcheck source=Scripts/lib/test/shell_prompt.sh
+. "$TOPDIR/Scripts/lib/shell_prompt.sh"
+openshift=$(parse_arg "-[oO]+|--openshift" "$@")
+docker=$(parse_arg "--docker" "$@")
+travis=$(parse_arg "--travis" "$@")
+pargs=$(parse_arg_trim "-[oO]+|--openshift|--docker|--travis" "$@")
+if [ -n "$openshift" ]; then
+  slogger -st "$0" "Bootargs...: ${pargs}"
+  # shellcheck source=Scripts/bootargs.sh
+  . "$TOPDIR/Scripts/bootargs.sh" "$@"
 else
-  echo "Provided local/test bootargs..."
-  source ./Scripts/bootargs.sh $*
+  slogger -st "$0" "Locally Testing values, bootargs...: ${pargs}"
+  # shellcheck source=Scripts/fooargs.sh
+  . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi
-dbfile=database.cms.php
-fix_socket="-Y"
-config_app_checked=""
+LOG=$(new_cake_log "$travis" "$openshift" "$docker") && slogger -st "$0" "$LOG"
+usage=("" \
+"Usage: $0 [sockfile.sock] [-u] [-y|n] [-o] [-p <word>] [-t <word>] [-i] [--sql-password=<password>] [--test-sql-password=<password>]" \
+"          To initialize the databases, enter in the ${MYSQL_HOST} host terminal: $0 -u -i" \
+"          -------------" \
+"          file.sock   Set the socket file to connect SQL database" \
+"          -u          Update the database in app/Config/Schema/" \
+"          -y          Overwrite database.php and default socket file" \
+"          -n          Doesn't overwrite database.php and socket" \
+"          -i --sql-password=<word> --test-sql-password=<word>" \
+"                      Initialize databases with new passwords and reset MYSQL_DATABASE and TEST_DATABASE_NAME privileges" \
+"          -o, --openshift, --travis" \
+"                      Resets database.php, keep socket and update the database" \
+"          -p=<password>" \
+"                      Exports MYSQL_ROOT_PASSWORD" \
+"          -t=<password>" \
+"                      Exports MYSQL_PASSWORD" \
+"          --database=<name>" \
+"                      Exports MYSQL_DATABASE" \
+"          --testunitbase=<name>" \
+"                      Exports TEST_DATABASE_NAME" \
+"          --enable-ed25519-plugin" \
+"                      Enable MariaDB plugin https://mariadb.com/kb/en/authentication-plugin-ed25519/" \
+"          -v, --verbose" \
+"                      Outputs more debug information" \
+"          -h, --help  Displays this help" \
+"")
+sql_connect="mysql"
+# shellcheck disable=SC2153
+sql_connect_host="-h ${MYSQL_HOST} -P ${MYSQL_TCP_PORT}"
+dbfile=database.php
+schemafile=Schema/schema.php
+sockfile=/tmp/mysqld.sock
+config_app_checked="-Y"
+test_checked=0
 update_checked=0
-import_identities=0
-identities=app/Config/database.sql
-new_pass=""
-new_test_pass=""
-saved=("$*")
-sql_source=""
-while [[ "$#" > 0 ]]; do case $1 in
+initialize_databases=0
+saved=("$@")
+authentication_plugin=0
+mysql_host="%"
+ck_args="--connection=default"
+# test_args="app AllTests --stderr"
+test_args="app Controller/PagesController --stderr >> $LOG"
+MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
+while [ "$#" -gt 0 ]; do case "$1" in
+  --enable-ed25519-plugin*)
+    slogger -st "$0" "Enabled auth_ed25519 plugin for passwords..."
+    log_warning_msg "Plugin Not available from PHP PDO connect (you should avoid using it)"
+    authentication_plugin="ed25519";;
   --docker )
-      sql_source="docker exec mysql ";;
+    bash -c "./Scripts/start_daemon.sh ${docker}"
+    # Running docker ... mysql's allowed to connect without any local mysql installation
+    docker exec "$MARIADB_SHORT_NAME" hostname 2>> "$LOG"
+    sql_connect="docker exec $MARIADB_SHORT_NAME mysql"
+    sockfile="$(pwd)/mysqldb/mysqld/mysqld.sock"
+    ;;
   -[uU]* )
-      update_checked=1
-      ;;
-  -[yY]* );;
+    update_checked=1
+    ;;
+  --connection=test )
+    ck_args="$1"
+    test_checked=1
+    ;;
+  --connection* )
+    ck_args="$1";;
+  *.sock ) sockfile=$1;;
   -[nN]* )
-      fix_socket="-N"
-      dbfile=""
-      config_app_checked="-N"
-      ;;
+    sockfile=""
+    config_app_checked="-N";;
   -[iI]* )
-      import_identities=1
-      new_pass=$2
-      new_test_pass=$3
-      shift;shift;;
+    initialize_databases=1
+    ;;
+  --sql-password*)
+    OPTIND=1
+    parse_sql_password "set_DATABASE_PASSWORD" "Altering ${DATABASE_USER} password" "$@"
+    shift $((OPTIND -1))
+    ;;
+  --test-sql-password*)
+    test_checked=1
+    ck_args="--connection=test"
+    OPTIND=1
+    parse_sql_password "set_MYSQL_PASSWORD" "Altering ${MYSQL_USER} password" "$@"
+    shift $((OPTIND -1))
+    ;;
   -[vV]*|--verbose )
-    [ -f $identities ] && cat $identities
     # Reset passed args (shift reset)
-    echo "Passed params : $0 ${saved}
-    and environment VARIABLES:"
-    export -p | grep "DATABASE\|MYSQL";;
+    text=("" \
+"Passed params : $0 ${saved[*]}" \
+"and environment VARIABLES:" \
+"$(export -p | grep "DATABASE\|MYSQL")" \
+"")
+    printf "%s\n" "${text[@]}"
+    ck_args="${ck_args} -v"
+    test_args="${test_args} -v"
+    ;;
   -[hH]*|--help )
-    echo "Usage: $0 [-u] [-y|n] [-o] [-p|--sql-password=<password>] [-t,--test-sql-password=<password>] [-i] [-p|--new-sql-password=<password>] [-t,--new-test-sql-password=<password>]
-        -u
-            Update the database in app/Config/Schema/
-        -y
-            Reset ${dbfile} and default socket file
-        -n
-            Doesn't reset ${dbfile} and socket
-        -i -p=<new-password> -t=<new-password>
-            Import SQL identities
-        -o, --openshift
-            Resets ${dbfile}, keep socket and update the database
-        -p, --sql-password=<password>
-            Exports DATABASE_PASSWORD
-        -t,--test-sql-password=<password>
-            Exports TEST_DATABASE_PASSWORD
-        -dbase=<name>
-            Exports DATABASE_NAME
-        -tbase=<name>
-            Exports TEST_DATABASE_NAME
-        -v, --verbose
-            Outputs more debug information
-        -h, --help
-            Displays this help"
-        exit 0;;
-  -[oO]*|--openshift )
-    fix_socket="-N"
-    update_checked=1;;
-  -[pP]*|--sql-password*)
-    parse_sql_password "$1" "DATABASE_PASSWORD" "current ${DATABASE_USER}";;
-  -[tT]*|--test-sql-password*)
-    parse_sql_password "$1" "TEST_DATABASE_PASSWORD" "current ${TEST_DATABASE_USER}";;
-  -dbase*|-DBASE*)
-    parse_arg_export "$1" "-dbase*|-DBASE*" "DATABASE_NAME" "${DATABASE_USER} database";;
-  -tbase*|-TBASE*)
-    parse_arg_export "$1" "-tbase*|-TBASE*" "TEST_DATABASE_NAME" "${TEST_DATABASE_USER} database";;
-  *) echo "Unknown parameter passed: $0 $1"; exit 1;;
+    printf "%s\n" "${usage[@]}"
+    exit 0;;
+  -[oO]*|--openshift);;
+  --travis)
+    ;;
+  -[pP]* )
+    parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
+    shift $((OPTIND -1))
+    ;;
+  -[tT]* )
+    test_checked=1
+    ck_args="--connection=test"
+    printf "Testing %s Unit..." $test_checked
+    parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER} password" "$@"
+    shift $((OPTIND -1))
+    ;;
+  --database*)
+    # Transform long options to short ones
+    arg=$1; shift
+    # shellcheck disable=SC2046
+    set -- $(echo "${arg}" \
+    | awk 'BEGIN{ FS="[ =]+" }{ print "-d " $2 }') "$@"
+    parse_and_export "d" "MYSQL_DATABASE" "${DATABASE_USER} database name" "$@"
+    shift $((OPTIND -1))
+    ;;
+  --testunitbase*)
+    # Transform long options to short ones
+    arg=$1; shift
+    # shellcheck disable=SC2046
+    set -- $(echo "${arg}" \
+    | awk 'BEGIN{ FS="[ =]+" }{ print "-u " $2 }') "$@"
+    test_checked=1
+    ck_args="--connection=test"
+    parse_and_export "u" "TEST_DATABASE_NAME" "${MYSQL_USER} database name" "$@"
+    shift $((OPTIND -1))
+    ;;
+  *) echo "Invalid parameter: ${BASH_SOURCE[0]} $1" && exit 1;;
   esac
-shift; done
-#; import identities
-[ ! -z $DATABASE_NAME ] && [ ! -z $DATABASE_USER ] && [ ! -z $DATABASE_PASSWORD ] && [ ! -z $MYSQL_SERVICE_HOST ] && [ ! -z $MYSQL_SERVICE_PORT ] || (echo -e "${red}ERROR : Missing Database VARIABLES.${nc}\n" && export -p | grep " DATABASE\| MYSQL");
-[ ! -z $TEST_DATABASE_NAME ] && [ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [ ! -z $TEST_MYSQL_SERVICE_HOST ] && [ ! -z $TEST_MYSQL_SERVICE_PORT ] || (echo -e "${red}ERROR : Missing Test Database VARIABLES.${nc}\n" && export -p | grep "TEST_DATABASE\|TEST_MYSQL");
-if [[ -f $identities ]]; then source ./Scripts/cp_bkp_old.sh . $identities ${identities}.old; fi
+shift; #echo "$@";
+done
 # configure user application database and eventually alter user database access
-[ -z $dbfile ] && [ $fix_socket == "-N" ] && [ -f app/Config/database.php ] || config_app_checked="-Y"
-shell_prompt "./Scripts/config_app_database.sh ${dbfile} ${fix_socket}" "${cyan}Setup ${dbfile} connection and socket\n${nc}" $config_app_checked
-if [[ $import_identities -eq 1 ]]; then
-  echo -e "Importing the mysql ${cyan}${DATABASE_USER}${nc} and ${cyan}${TEST_DATABASE_USER}${nc} users SQL identities..."
-  echo -e "\r${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}" &&
-  parse_sql_password "$new_pass" "set_DATABASE_PASSWORD" "new ${DATABASE_USER}" &&
-  echo -e "\r${red}WARNING: You will modify SQL ${TEST_DATABASE_USER} password !${nc}" &&
-  parse_sql_password "$new_test_pass" "set_TEST_DATABASE_PASSWORD" "new ${TEST_DATABASE_USER}" &&
-  #; $identities file contents
-  echo -e "# WARNING: You will alter SQL users access rights\r
-  # set_DATABASE_PASSWORD
-  alter user '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}' identified by '${set_DATABASE_PASSWORD}';\r
-
-  use mysql;\r
-  select * from user where user = '${DATABASE_USER}';\r
-  grant all on ${DATABASE_NAME}.* to '${DATABASE_USER}'@'${MYSQL_SERVICE_HOST}';\r
-  create database if not exists ${DATABASE_NAME};\r
-
-  create user if not exists '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
-  # set_TEST_DATABASE_PASSWORD
-  alter user '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}' identified by '${set_TEST_DATABASE_PASSWORD}';\r
-
-  use mysql;\r
-  select * from user where user = '${TEST_DATABASE_USER}';\r
-  grant all on ${TEST_DATABASE_NAME}.* to '${TEST_DATABASE_USER}'@'${TEST_MYSQL_SERVICE_HOST}';\r
-  create database if not exists ${TEST_DATABASE_NAME};\r
-  " > $identities
-  ${sql_source} sh -c "echo \"source ${identities}\" | mysql -u $DATABASE_USER --password=$DATABASE_PASSWORD  --connect-expired-password"
-  export DATABASE_PASSWORD=$set_DATABASE_PASSWORD
-  export TEST_DATABASE_PASSWORD=$set_TEST_DATABASE_PASSWORD
+# shellcheck disable=SC2154
+shell_prompt "$TOPDIR/Scripts/config_app_database.sh ${dbfile} ${schemafile} ${sockfile} ${docker}" \
+"${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
+if [[ $initialize_databases -eq 1 ]]; then
+  #; ---------------------------------- set MYSQL_ROOT_PASSWORD
+  export set_DATABASE_PASSWORD=${set_DATABASE_PASSWORD:-$MYSQL_ROOT_PASSWORD}
+  # shellcheck disable=SC2154
+  log_warning_msg "${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}"
+  prompt="-Y"
+  if [ -z "${set_DATABASE_PASSWORD}" ]; then
+    # shellcheck disable=SC2154
+     log_warning_msg "${orange}WARNING: Using blank password for ${DATABASE_USER} !!${nc}"
+    prompt=${DEBIAN_FRONTEND:-''}
+  fi
+  if [ $authentication_plugin = "ed25519" ]; then
+    identifiedby="IDENTIFIED VIA ed25519 USING '${set_DATABASE_PASSWORD}'"
+  else
+    identifiedby="identified by '${set_DATABASE_PASSWORD}'"
+  fi
+  # ALTER USER is MariaDB 10.2 and above waiting for ARM binary
+  # "-e \"alter user '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
+  args=(\
+"-e \"select version();\"" \
+"-e \"use mysql;\"" \
+"-e \"create user if not exists '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
+"-e \"SET PASSWORD FOR '${DATABASE_USER}'@'${mysql_host}' = PASSWORD('${set_DATABASE_PASSWORD}');\"" \
+"-e \"grant all PRIVILEGES on *.* to '${DATABASE_USER}'@'${mysql_host}' WITH GRANT OPTION;\"" \
+"-e \"flush PRIVILEGES;\"" \
+"-e \"create database if not exists ${MYSQL_DATABASE} default character set='utf8' default collate='utf8_bin';\"" \
+"-e \"create database if not exists ${TEST_DATABASE_NAME};\"" \
+"-e \"create database if not exists ${TEST_DATABASE_NAME}_2;\"" \
+"-e \"create database if not exists ${TEST_DATABASE_NAME}_3;\"" \
+"-e \"select plugin from user where user='${DATABASE_USER}';\"" \
+"-e \"show databases;\"" \
+"")
+  # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days:
+  # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\""
+  slogger -st "$0" "Forked script to keep hidden table user secrets..."
+  password=""
+  user="${DATABASE_USER}"
+  if [ -n "${MYSQL_ROOT_PASSWORD:-}" ]; then
+    password="--password=${MYSQL_ROOT_PASSWORD}"
+    user="root"
+  fi
+  shell_prompt "${sql_connect} ${sql_connect_host} -u ${user} ${password} \
+  ${args[*]} >> $LOG 2>&1" "Import default identities" "$prompt"\
+  && export MYSQL_ROOT_PASSWORD=${set_DATABASE_PASSWORD}
+  #; ---------------------------------- set MYSQL_PASSWORD
+  slogger -st "$0" "\r${red}WARNING: You will modify SQL ${MYSQL_USER} password !${nc}"
+  export set_MYSQL_PASSWORD=${set_MYSQL_PASSWORD:-$MYSQL_PASSWORD}
+  if [ -z "${set_MYSQL_PASSWORD}" ]; then
+    slogger -st "$0" "\r${orange}WARNING: Using blank password for ${MYSQL_USER} !!${nc}"
+    prompt=${DEBIAN_FRONTEND:-''}
+  fi
+  if [ $authentication_plugin = "ed25519" ]; then
+    identifiedby="IDENTIFIED VIA ed25519 USING '${set_MYSQL_PASSWORD}'"
+  else
+    identifiedby="identified by '${set_MYSQL_PASSWORD}'"
+  fi
+  # ALTER USER is MariaDB 10.2 and above waiting for ARM binary
+  # "-e \"alter user '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
+  args=(\
+"-e \"use mysql;\"" \
+"-e \"create user if not exists '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
+"-e \"SET PASSWORD FOR '${MYSQL_USER}'@'${mysql_host}' = PASSWORD('${set_MYSQL_PASSWORD}');\"" \
+"-e \"grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_3.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"flush PRIVILEGES;\"" \
+"-e \"select plugin from user where user='${MYSQL_USER}';\"")
+  # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days:
+  # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\""
+  shell_prompt "${sql_connect} ${sql_connect_host} -u ${user} ${password} \
+  ${args[*]} >> $LOG 2>&1" "Import test identities" "$prompt" \
+  && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}
+  check_log "$LOG"
 fi
 if [[ $update_checked -eq 1 ]]; then
-  show_password_status "$DATABASE_USER" "$DATABASE_PASSWORD" "is updating cake schemas"
-  #; update plugins and dependencies
-  source ./Scripts/composer.sh "-o"
-  #; cakephp shell
-  if [ ! -f app/Config/Schema/schema.php ]; then
-    echo "Generating database schema 'cake schema generate'"
-    ./lib/Cake/Console/cake schema generate -f s
-  fi
-  if [ ! -f app/Config/Schema/sessions.php ]; then
-      echo "Generating default Sessions table"
-      ./lib/Cake/Console/cake schema create Sessions -y
-  fi
-  echo "Migrating database 'cake schema update' ..."
-  ./lib/Cake/Console/cake schema update --file myschema.php -y
+  bash -c "./Scripts/start_daemon.sh ${travis} ${docker} update ${ck_args}"
+fi
+if [[ $test_checked -eq 1 ]]; then
+  echo "GOAL $travis $docker $test_args"
+  bash -c "./Scripts/bootstrap.sh ${travis} ${docker} test ${test_args}"
+  check_log "$LOG"
 fi

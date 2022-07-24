@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 export DB=Mysql
-source Scripts/bootstrap.sh $*
+source Scripts/bootstrap.sh "$*"
 cp -v docker/apache/site-default.conf docker/apache/site.conf
 echo -e "
 Set of default Test environment
@@ -27,8 +27,8 @@ optional environment VARIABLES in docker-compose.yml
   ADDITIONAL_PHP_INI='path to a php.ini settings file'
 ==========================
 ";
-[ ! -z $TEST_DATABASE_USER ] && [ ! -z $TEST_DATABASE_PASSWORD ] && [[ (! -z $TEST_MYSQL_SERVICE_HOST) || (! -z $TEST_PGSQL_SERVICE_HOST) ]] || echo "Missing VARIABLES. Please review your settings !"
-if [ ! -z "${ADDITIONAL_PHP_INI}" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
+[ -n "$TEST_DATABASE_USER" ] && [ -n "$TEST_DATABASE_PASSWORD" ] && [[ (-n "$TEST_MYSQL_SERVICE_HOST") || (-n "$TEST_PGSQL_SERVICE_HOST") ]] || echo "Missing VARIABLES. Please review your settings !"
+if [ -n "${ADDITIONAL_PHP_INI}" ]; then /usr/bin/env bash .travis/TravisCI-OSX-PHP/build/custom_php_ini.sh; fi
 mkdir -p build/logs
 echo -e "Database Unit Tests... DB=${DB}"
 if [[ "${DOCKER_OS_NAME}" == "linux" ]]; then
@@ -38,17 +38,17 @@ if [[ "${DOCKER_OS_NAME}" == "linux" ]]; then
   sudo locale-gen de_DE
   sudo locale-gen es_ES
 fi;
-if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
-if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u ${DATABASE_USER} --password=${DATABASE_PASSWORD}; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test;' -u "${DATABASE_USER}" --password="${DATABASE_PASSWORD}"; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test2;' -u "${DATABASE_USER}" --password="${DATABASE_PASSWORD}"; fi
+if [[ ${DB} == 'Mysql' ]]; then mysql -v -e 'CREATE DATABASE IF NOT EXISTS cakephp_test3;' -u "${DATABASE_USER}" --password="${DATABASE_PASSWORD}"; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
 if [[ ${DB} == 'Pgsql' ]]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
 chmod -R 777 ./app/tmp
 if [[ "${DOCKER_OS_NAME}" == "linux" ]]; then
-  echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  echo "extension = memcached.so" >> ~/.phpenv/versions/"$(phpenv version-name)"/etc/php.ini
   echo "yes" | pecl install apcu-5.1.3 || true
-  echo -e "extension = apcu.so\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  echo -e "extension = apcu.so\napc.enable_cli=1" >> ~/.phpenv/versions/"$(phpenv version-name)"/etc/php.ini
   phpenv rehash
 fi
 set +H

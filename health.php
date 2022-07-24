@@ -1,8 +1,8 @@
 <?php
 
-$servername = getenv(strtoupper(getenv("DATABASE_SERVICE_NAME"))."_SERVICE_HOST");
-$username = getenv("DATABASE_USER");
-$password = getenv("DATABASE_PASSWORD");
+$servername = getenv(strtoupper(getenv("DB"))."_SERVICE_HOST");
+$username = getenv("MYSQL_USER");
+$password = getenv("MYSQL_PASSWORD");
 
 // Create connection
 $conn = new mysqli($servername, $username, $password);

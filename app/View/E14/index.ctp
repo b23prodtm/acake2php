@@ -1,8 +1,8 @@
 <?php
 if(isset($p) && isset($r) && array_key_exists("e13__" . $p, $r->r)){
-        include APP . $r->r["e13__" . $p];
+        include_once APP . $r->r["e13__" . $p];
 } else if (isset($r) && isset($offset)) {
-        require APP . $r->r["include__php_constantes.inc"];
+        include_once APP . $r->r["include__php_constantes.inc"];
         App::uses('HTMLHelper', 'Helper');
         $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
         /** test de la connexion */

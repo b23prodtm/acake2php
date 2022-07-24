@@ -1,0 +1,19 @@
+#!/usr/bin/with-contenv sh
+if grep www-data < /etc/group; then
+   id www-data
+else
+   addgroup -g 33 --system www-data
+fi
+if grep www-data < /etc/passwd; then
+   id www-data
+else
+   adduser --ingroup www-data --system www-data
+fi
+server_root=$(grep "^ServerRoot" < /etc/apache2/httpd.conf | awk '{ print $2 }' | sed "s/\"//g")
+document_root="${server_root}/localhost/htdocs"
+chown -R www-data:www-data "$server_root" \
+ && chmod -R g+s "$server_root"
+bash -c "${document_root}/Scripts/configure_tmp.sh"
+bash -c "${document_root}/Scripts/config_a2ensite.sh"
+memcached -d -l 127.0.0.1 -p 11211 -u www-data -m 16 \
+ && memcached -d -l 127.0.0.1 -p 11212 -u www-data -m 16

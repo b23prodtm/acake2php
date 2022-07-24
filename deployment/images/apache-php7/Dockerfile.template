@@ -1,0 +1,106 @@
+#
+# Source DockerFile:  https://github.com/ulsmith/rpi-raspbian-apache-php/blob/master/Dockerfile
+# S6 Overlay:         https://github.com/smebberson/docker-alpine/blob/master/alpine-apache/Dockerfile
+#
+FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-node:run
+# RUN [ "cross-build-start" ]
+ARG PHP_LIB
+ENV PHP_LIB ${PHP_LIB:-7}
+
+## Install add-apt-repository packages
+RUN apk update \
+    && apk add \
+		bash \
+		sudo \
+		curl \
+		git \
+		openssh-client \
+		tar \
+		gzip \
+		ca-certificates \
+		zip \
+		unzip \
+		icu-dev \
+		libmcrypt-dev \
+		freetype-dev \
+		libjpeg-turbo-dev \
+		libpng-dev \
+		netcat-openbsd
+
+RUN apk update \
+		    && apk add \
+		php${PHP_LIB} \
+		php${PHP_LIB}-curl \
+		php${PHP_LIB}-gd \
+		php${PHP_LIB}-intl \
+		php${PHP_LIB}-json \
+		php${PHP_LIB}-mbstring \
+		php${PHP_LIB}-opcache \
+		php${PHP_LIB}-openssl \
+		php${PHP_LIB}-pcntl \
+		php${PHP_LIB}-xml \
+		php${PHP_LIB}-mysqlnd \
+		php${PHP_LIB}-phar \
+		php${PHP_LIB}-mysqli \
+		php${PHP_LIB}-pdo_mysql \
+		php${PHP_LIB}-dom \
+		php${PHP_LIB}-tokenizer \
+		php${PHP_LIB}-simplexml \
+		php${PHP_LIB}-xmlwriter \
+		php${PHP_LIB}-fpm \
+		php${PHP_LIB}-zlib \
+		mariadb-client \
+    && apk del build-base \
+    && rm -rf /var/cache/apk/*
+
+## Install base packages
+RUN apk update \
+    && apk add \
+		apache2 \
+		apache2-ctl \
+    apache2-ssl \
+		php${PHP_LIB}-dev \
+		php${PHP_LIB}-apache2 \
+		curl \
+		php${PHP_LIB}-odbc \
+		php${PHP_LIB}-pdo_sqlite \
+		php${PHP_LIB}-sqlite3 \
+		php${PHP_LIB}-session \
+    && apk del build-base \
+    && rm -rf /var/cache/apk/*
+
+# Backup default instance
+RUN mkdir -p /etc/apache2/conf-available/ \
+  && cp /etc/apache2/*.conf /etc/apache2/conf-available/
+
+# just containers configuration
+COPY etc /etc
+
+# Expose the ports for apache
+EXPOSE 80 443
+
+# Stream apache logs to standard outputs
+RUN ln -sf /dev/stdout /var/log/apache2/access.log && \
+    ln -sf /dev/stderr /var/log/apache2/error.log
+
+# ADD S6 Overlay
+ARG S6_ARCH
+ENV S6_ARCH ${S6_ARCH:-armhf}
+ARG S6_RELEASE
+ENV S6_RELEASE ${S6_RELEASE:-v2.0.0.1}
+ENV S6_REPO https://github.com/just-containers/s6-overlay/releases/download
+ADD ${S6_REPO}/${S6_RELEASE}/s6-overlay-${S6_ARCH}.tar.gz /tmp/
+ADD ${S6_REPO}/${S6_RELEASE}/s6-overlay-${S6_ARCH}.tar.gz.sig /tmp/
+RUN curl https://keybase.io/justcontainers/key.asc | gpg --import
+WORKDIR /
+RUN gunzip -c /tmp/s6-overlay-${S6_ARCH}.tar.gz | tar -xf - -C / && \
+    gpg --verify /tmp/s6-overlay-${S6_ARCH}.tar.gz.sig /tmp/s6-overlay-${S6_ARCH}.tar.gz
+
+ENV UDEV on
+
+ADD "https://raw.githubusercontent.com/b23prodtm/docker-systemctl-replacement/master/files/docker/systemctl3.py" /bin/systemctl
+RUN chmod g+xs /bin/systemctl
+
+ENTRYPOINT /init
+RUN node -v && npm -v
+# RUN [ "cross-build-end" ]

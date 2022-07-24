@@ -1,8 +1,15 @@
 <?php
-App::uses('Mysql', 'Model/Datasource/Database');
+App::uses('MysqlLog', 'Datasources.Model/Datasource/Database');
 
-class MysqlCms extends Mysql
+class MysqlCms extends MysqlLog
 {
+	/**
+	 * Datasource Description
+	 *
+	 * @var string
+	 */
+	public $description = 'MariaDB/MySQL Logging DBO Driver';
+
 	public function __construct($config = null, $autoConnect = true) {
 		parent::__construct($config, $autoConnect);
 		$this->columns['mediumbinary'] = array('name' => 'mediumblob');
@@ -45,10 +52,29 @@ class MysqlCms extends Mysql
 		 * @throws MissingConnectionException
 		 */
 			public function connect() {
-				if (Configure::read('debug') > 1) {
-					var_dump($this->config);
+				if (Configure::read('debug') > 2) {
+					debug($this->config);
 				}
-				parent::connect();
+				try {
+						parent::connect();
+				} catch(MissingConnectionException $e) {
+						if (getenv('TRAVIS_BUILD_NUMBER')) {
+							$this->showError(getenv('MYPHPCMS_LOG').'/migrate-getenv'.('TRAVIS_BUILD_NUMBER').'.log');
+						}
+						$this->showError($e->getAttributes());
+						throw $e;
+				}
 			}
+			/**
+			 * Shows an error message and outputs the MYSQL result if CAKEPHP_DEBUG_LEVEL > 0
+			 *
+			 * @param string $result A MYSQL result
+			 */
+				public function showError($error = null) {
+					if (Configure::read('debug') > 0) {
+							trigger_error('<span style = "color:Red;text-align:left"><b>MYSQL Error:</b> '
+							. print_r($error, TRUE) . '</span>', E_USER_WARNING);
+					}
+				}
 }
 ?>

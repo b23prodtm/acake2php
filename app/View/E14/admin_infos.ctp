@@ -1,6 +1,6 @@
 <?php
 App::uses(array('SQL', 'Page', 'Formulaire', 'Info', 'Image'), 'Cms');
-require APP . $r->r['include__php_constantes.inc'];
+include_once APP . $r->r['include__php_constantes.inc'];
 
 echo "<br><center><b>" . $r->lang("admininfos") . "</b></center><br>";
 $liste = HTML_listeDebut();

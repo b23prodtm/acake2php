@@ -1,6 +1,6 @@
 <?php
 $contenu = $r->lang("contents", "infos");
-require APP . $r->r["include__php_constantes.inc"];
+include_once APP . $r->r["include__php_constantes.inc"];
 // info SQL
 $sql = new SQL(SERVEUR, BASE, CLIENT, CLIENT_MDP);
 if ($sql->connect_succes()) {
