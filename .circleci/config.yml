@@ -92,7 +92,7 @@ jobs:
     - DKR_ARCH: x86_64
     steps:
     - checkout
-    - attach_to_workspace:
+    - attach_workspace:
         at: app
     - restore_cache:
         keys:
