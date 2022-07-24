@@ -40,7 +40,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
 esac; shift; done
 export DB=Mysql
 source Scripts/bootstrap.sh "${bootargs[*]}"
-if [ ! "$(which docker-compose 2> /dev/null)" ]; then Scripts/install-docker-compose.sh; fi
+if [ ! "$(command -v docker-compose 2> /dev/null)" ]; then Scripts/install-docker-compose.sh; fi
 if [ -n "$SERVER_NAME" ]; then
     source Scripts/docker_site_conf.sh "$SERVER_NAME"
 else

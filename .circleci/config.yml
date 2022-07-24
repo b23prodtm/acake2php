@@ -83,6 +83,7 @@ jobs:
         - Config
         - webroot
         - Vendor
+        - webroot/php-cms
   compose:
     docker:
     - image: betothreeprod/dind-php7
