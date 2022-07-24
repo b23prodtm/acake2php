@@ -214,7 +214,7 @@ Configure it as a service and configure the login ACL with the user shell.
 mysql_secure_installation
 ```
 
-* __Optional__ Edit `./app/Config/database.cms.php` if you wish to modify the DATABASE_CONFIG class.
+* __Optional__ Edit `./app/Config/database.php` if you wish to modify the DATABASE_CONFIG class.
 
 * __Optional__ Edit `./app/Model/Datasources/Database` if you wish to modify the DBOSource driver.
 
@@ -303,7 +303,7 @@ Common Issues
 ```
   Go on to development phase with the [Local Built-in server](#local-built-in-server).
 
-4. I've made changes to mysql database tables, I've made changes to Config/Schema/schema.cms.php, as Config/database.php defines it, what should I do ?
+4. I've made changes to mysql database tables, I've made changes to Config/Schema/schema.php, as Config/database.php defines it, what should I do ?
 
   Migrate all your tables:
 ```acake2php
@@ -411,7 +411,7 @@ class Mysql_cms extends Mysql
 }
 ?>
 ```
-  Ensure it is set as $identities[DB]['datasource'] in `app/Config/database.cms.php`,`./Scripts/fooargs.sh`, `.travis.yml` and update the database schema:
+  Ensure it is set as $identities[DB]['datasource'] in `app/Config/database.php`,`./Scripts/fooargs.sh`, `.travis.yml` and update the database schema:
 ```acake2php
     ./migrate-database.sh -u
 ```

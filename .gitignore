@@ -16,8 +16,10 @@ docker-compose.*
 .circleci/config-compat.yml
 acake2php*.zip
 /app/Config/database.php*
+!/app/Config/database.php
 /app/Config/database.sql*
 /app/Config/Schema/schema.php*
+!/app/Config/Schema/schema.php
 /app/tmp
 /app/Vendor/
 !/app/Vendor/autoload.php

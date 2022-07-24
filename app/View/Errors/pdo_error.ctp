@@ -29,7 +29,7 @@
 		<strong><?php echo __d('cake_dev', 'SQL Query Params'); ?>: </strong>
 		<?php echo Debugger::dump($error->params); ?>
 <?php endif; ?>
-<p><strong><?php echo __d('cms','Please review your configuration ('. APP . DS .'Config) :'); ?>: Schema/myschema.php</strong>
+<p><strong><?php echo __d('cms','Please review your configuration ('. APP . DS .'Config) :'); ?>: Schema/schema.php</strong>
 <?php echo __d('cms','In a server shell prompt'); ?>:<pre>./configure.sh -d -u -p&lt;sql-root-password&gt;</pre>
 </p>
 <?php
