@@ -23,9 +23,8 @@
     "url": "https://github.com/b23prodtm/acake2php/issues"
   },
   "homepage": "https://github.com/b23prodtm/acake2php#readme",
-  "optionalDependencies": {},
   "dependencies": {
-    "balena-cloud": "stable"
-  },
-  "devDependencies": {}
+    "balena-cloud-apps": "^1.0.34",
+    "composer": "^4.1.0"
+  }
 }
