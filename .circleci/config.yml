@@ -4,15 +4,16 @@ aliases:
     run:
       name: Install dependencies
       command: |
+        git submodule sync
+        git submodule update --init --recursive
         apk update \
           && apk add \
             npm \
             php7-session \
           && apk del build-base \
           && rm -rf /var/cache/apk/*
-        rm -Rf node_modules/balena-cloud || true
-        npm install --no-optional
-        npm link balena-cloud
+        npm ci
+        npm link balena-cloud-apps
 orbs:
   shellcheck: circleci/shellcheck@1.3.16
 jobs:
@@ -38,17 +39,21 @@ jobs:
     working_directory: /var/www/html/
     steps:
     - checkout
-    - run:
-        command: git submodule sync
-    - run:
-        command: git submodule update --init --recursive
     - restore_cache:
-        key: v1-dependencies-{{ checksum "package-lock.json" }}
-    - restore_cache:
-        key: v1-dependencies-{{ checksum "composer.lock" }}
+        keys:
+          - v1-dependencies-{{ checksum "package-lock.json" }}
+          - v1-dependencies-{{ checksum "composer.lock" }}
     - setup_remote_docker:
         docker_layer_caching: false
     - *deps
+    - save_cache:
+        key: v1-dependencies-{{ checksum "composer.lock" }}
+        paths:
+        - app/Vendor
+    - save_cache:
+        key: v1-dependencies-{{ checksum "package-lock.json" }}
+        paths:
+        - $HOME/.npm
     - run:
         name: Set architecture and Setup Environment Variables
         command: |
@@ -72,18 +77,9 @@ jobs:
           ./test-cake.sh --circle
           . common.env && cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
         when: always
-    - save_cache:
-        key: v1-dependencies-{{ checksum "composer.lock" }}
-        paths:
-        - app/Vendor
-    - save_cache:
-        key: v1-dependencies-{{ checksum "package-lock.json" }}
-        paths:
-        - node_modules
     - persist_to_workspace:
         root: .
         paths:
-        - node_modules
         - app/Config
         - app/webroot
         - app/Vendor
@@ -96,12 +92,11 @@ jobs:
     - DKR_ARCH: x86_64
     steps:
     - checkout
-    - run:
-        command: git submodule sync
-    - run:
-        command: git submodule update --init --recursive
-    - attach_workspace:
-        at: .
+    - restore_cache:
+        keys:
+          - v1-dependencies-{{ checksum "package-lock.json" }}
+          - v1-dependencies-{{ checksum "composer.lock" }}
+    - attach_to_workspace: .
     - setup_remote_docker:
         docker_layer_caching: false
     - *deps
