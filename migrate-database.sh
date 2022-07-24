@@ -22,12 +22,15 @@ else
 fi
 LOG=$(new_cake_log "$travis" "$openshift" "$docker") && slogger -st "$0" "$LOG"
 usage=("" \
-"Usage: $0 [-u] [-y|n] [-o] [-p <word>] [-t <word>] [-i] [--sql-password=<password>] [--test-sql-password=<password>]" \
+"Usage: $0 [sockfile.sock] [-u] [-y|n] [-o] [-p <word>] [-t <word>] [-i] [--sql-password=<password>] [--test-sql-password=<password>]" \
+"          To initialize the databases, enter in the ${MYSQL_HOST} host terminal: $0 -u -i" \
+"          -------------" \
+"          file.sock   Set the socket file to connect SQL database" \
 "          -u          Update the database in app/Config/Schema/" \
-"          -y          Reset database.php and default socket file" \
-"          -n          Doesn't reset database.php and socket" \
+"          -y          Overwrite database.php and default socket file" \
+"          -n          Doesn't overwrite database.php and socket" \
 "          -i --sql-password=<word> --test-sql-password=<word>" \
-"                      Import SQL identities with new passwords and reset MYSQL_DATABASE and TEST_DATABASE_NAME privileges" \
+"                      Initialize databases with new passwords and reset MYSQL_DATABASE and TEST_DATABASE_NAME privileges" \
 "          -o, --openshift, --travis" \
 "                      Resets database.php, keep socket and update the database" \
 "          -p=<password>" \
@@ -53,7 +56,7 @@ sockfile=/tmp/mysqld.sock
 config_app_checked="-Y"
 test_checked=0
 update_checked=0
-import_identities=0
+initialize_databases=0
 saved=("$@")
 authentication_plugin=0
 mysql_host="%"
@@ -87,7 +90,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     sockfile=""
     config_app_checked="-N";;
   -[iI]* )
-    import_identities=1
+    initialize_databases=1
     ;;
   --sql-password*)
     OPTIND=1
@@ -157,7 +160,7 @@ done
 # shellcheck disable=SC2154
 shell_prompt "$TOPDIR/Scripts/config_app_database.sh ${dbfile} ${schemafile} ${sockfile} ${docker}" \
 "${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
-if [[ $import_identities -eq 1 ]]; then
+if [[ $initialize_databases -eq 1 ]]; then
   #; ---------------------------------- set MYSQL_ROOT_PASSWORD
   export set_DATABASE_PASSWORD=${set_DATABASE_PASSWORD:-$MYSQL_ROOT_PASSWORD}
   # shellcheck disable=SC2154
@@ -193,10 +196,12 @@ if [[ $import_identities -eq 1 ]]; then
 "")
   slogger -st "$0" "Forked script to keep hidden table user secrets..."
   password=""
+  user="${DATABASE_USER}"
   if [ -n "${MYSQL_ROOT_PASSWORD:-}" ]; then
     password="--password=${MYSQL_ROOT_PASSWORD}"
+    user="root"
   fi
-  shell_prompt "${sql_connect} ${sql_connect_host} -u ${DATABASE_USER} ${password} \
+  shell_prompt "${sql_connect} ${sql_connect_host} -u ${user} ${password} \
   ${args[*]} >> $LOG 2>&1" "Import default identities" "$prompt"\
   && export MYSQL_ROOT_PASSWORD=${set_DATABASE_PASSWORD}
   #; ---------------------------------- set MYSQL_PASSWORD
@@ -225,11 +230,7 @@ if [[ $import_identities -eq 1 ]]; then
 # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days: \
 # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\"" \
 "-e \"select plugin from user where user='${MYSQL_USER}';\"")
-  password=""
-  if [ -n "${MYSQL_ROOT_PASSWORD:-}" ]; then
-    password="--password=${MYSQL_ROOT_PASSWORD}"
-  fi
-  shell_prompt "${sql_connect} ${sql_connect_host} -u ${DATABASE_USER} ${password} \
+  shell_prompt "${sql_connect} ${sql_connect_host} -u ${user} ${password} \
   ${args[*]} >> $LOG 2>&1" "Import test identities" "$prompt" \
   && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}
   check_log "$LOG"
