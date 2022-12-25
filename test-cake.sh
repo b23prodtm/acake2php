@@ -5,7 +5,7 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/test/parsing.sh"
 migrate="--connection=test -v -u -i --enable-authentication-plugin"
 # default arg --docker, is enabled
-saved=("$@")
+saved=( "$@" )
 set -- "--docker" "$@"
 config_args="-c -h -p pass -s word --development"
 db_data="db-data:/config/databases/"

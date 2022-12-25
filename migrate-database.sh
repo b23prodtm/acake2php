@@ -57,7 +57,7 @@ config_app_checked="-Y"
 test_checked=0
 update_checked=0
 initialize_databases=0
-saved=("$@")
+saved=( "$@" )
 authentication_plugin=0
 mysql_host="%"
 ck_args="--connection=default"
