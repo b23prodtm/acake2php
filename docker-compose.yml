@@ -3,7 +3,7 @@ services:
   db:
     build:
       context: mysqldb
-      dockerfile: Dockerfile.%%BALENA_ARCH%% 
+      dockerfile: Dockerfile.x86_64
       args:
         PUID: 0
         PGID: 0
@@ -13,8 +13,9 @@ services:
         MYSQL_DATABASE: aria_db
         MYSQL_USER: maria
         MYSQL_PASSWORD: maria-abc
-    image: betothreeprod/mariadb-%%BALENA_MACHINE_NAME%%
+    image: betothreeprod/mariadb-intel-nuc
     volumes:
+      - localtime:/etc/localtime:ro
       - db-data:/config
       - db-socket:/var/run/mysqld
       - db-config:/var/www/htdocs/localhost/app/Config/Schema
@@ -34,16 +35,17 @@ services:
       - .env
     build:
       context: .
-      dockerfile: Dockerfile.%%BALENA_ARCH%%
+      dockerfile: Dockerfile.x86_64
       args:
         CAKEPHP_DEBUG_LEVEL: "2"
         MYSQL_HOST: "db"
         PUID: 1000
         PGID: 1000
-    image: betothreeprod/acake2php-%%BALENA_MACHINE_NAME%%
+    image: betothreeprod/acake2php-intel-nuc
     labels:
       io.balena.features.dbus: "1"
     volumes:
+      - localtime:/etc/localtime:ro
       - db-config:/var/www/htdocs/localhost/app/Config/Schema
       - db-socket:/var/run/mysqld
     ports:
@@ -53,6 +55,17 @@ services:
       - db
     networks:
       - cake
+  homeassistant:
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    container_name: hass
+    volumes:
+      - config:/config
+      - localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    devices:
+      - /dev/ttyAMA0
   #docker-compose v3
     #healthcheck:
       #test: ["CMD", "curl", "-f", "http://localhost"]
@@ -69,6 +82,8 @@ volumes:
     external: false
   db-socket:
     external: false
+  config:
+  localtime:
 networks:
   cake:
     external: false

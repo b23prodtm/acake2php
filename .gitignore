@@ -1,18 +1,9 @@
 # User specific & automatically generated files #
 #################################################
-.env
+!Dockerfile.*
+!docker-compose.*
+.sed
 *.old
-*.armhf
-*.aarch64
-*.x86_64
-Dockerfile.*
-!Dockerfile.template
-!Dockerfile.armhf
-!Dockerfile.x86_64
-docker-compose.*
-!docker-compose.yml
-!docker-compose.x86_64
-!docker-compose.armhf
 .circleci/config-compat.yml
 acake2php*.zip
 /app/Config/database.php*
