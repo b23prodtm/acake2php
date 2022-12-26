@@ -6,7 +6,7 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=Scripts/lib/test/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 command="--docker -c server -p 8000 -H 0.0.0.0"
-saved=("$@")
+saved=( "$@" )
 export COLLECT_COVERAGE="false"
 usage=("" \
 "Usage: $0 [-p <password>] [-t <password>] [-c <command>] [options]" \

@@ -34,7 +34,7 @@ usage=("" \
 "          -a, --apache2  Make apache2 VirtualHost configuration from templates: etc/apache2/site.tpl..." \
 "")
 composer_args="require --no-interaction --update-no-dev"
-saved=("$@")
+saved=( "$@" )
 show_password_status "${DATABASE_USER}" "${MYSQL_ROOT_PASSWORD}" "is configuring ${openshift} ${docker}..."
 #; if the full set of the arguments exists, there won't be any prompt in the shell
 while [[ "$#" -gt 0 ]]; do case $1 in
