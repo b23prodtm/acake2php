@@ -3,7 +3,7 @@
 # S6 Overlay:         https://github.com/smebberson/docker-alpine/blob/master/alpine-apache/Dockerfile
 #
 FROM balenalib/raspberrypi3-64-alpine-node:run
-# RUN [ "cross-build-start" ]
+RUN [ "cross-build-start" ]
 ARG PHP_LIB
 ENV PHP_LIB ${PHP_LIB:-7}
 ARG BALENA_ARCH
@@ -108,4 +108,4 @@ ADD "https://raw.githubusercontent.com/b23prodtm/docker-systemctl-replacement/ma
 RUN chmod g+xs /bin/systemctl
 
 RUN node -v && npm -v
-# RUN [ "cross-build-end" ]
+RUN [ "cross-build-end" ]

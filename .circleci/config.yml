@@ -36,7 +36,6 @@ jobs:
     - DKR_ARCH: x86_64
     - MYSQL_HOST: 127.0.0.1
     - MYSQL_TCP_PORT: 3306
-    working_directory: /var/www/html/
     steps:
     - checkout
     - restore_cache:
