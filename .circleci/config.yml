@@ -78,7 +78,7 @@ jobs:
           . common.env && cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
         when: always
     - persist_to_workspace:
-        root: app/
+        root: .
         paths:
         - $HOME/.npm
         - app/Config
