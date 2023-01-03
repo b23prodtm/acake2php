@@ -56,6 +56,8 @@ services:
     networks:
       - cake
   homeassistant:
+    ports:
+      - "8123:8123"
     image: "ghcr.io/home-assistant/home-assistant:stable"
     container_name: hass
     volumes:
