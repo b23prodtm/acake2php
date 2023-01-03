@@ -81,7 +81,10 @@ jobs:
     - persist_to_workspace:
         root: app/
         paths:
-        - Config
+        - $HOME/.npm
+        - app/Config
+        - app/webroot
+        - app/Vendor
   compose:
     docker:
     - image: betothreeprod/dind-php7
@@ -91,8 +94,6 @@ jobs:
     - DKR_ARCH: x86_64
     steps:
     - checkout
-    - attach_workspace:
-        at: app
     - restore_cache:
         keys:
           - v1-dependencies-{{ checksum "package-lock.json" }}
