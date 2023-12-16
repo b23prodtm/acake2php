@@ -8,7 +8,7 @@ A typical install script could look like the following script, for instance edit
 		cd acake2php
 		git clone https://github.com/b23prodtm/acake2php.git
 		git submodule sync && git submodule update --init --recursive
-		npm install --no-optional
+		npm install --omit=optional
 		# reset architecture flags
 		./deploy.sh x86_64 --nobuild 0
 		./deploy.sh x86_64 --build-deps --docker
