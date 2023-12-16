@@ -78,7 +78,7 @@ before_install:
   - sudo sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS:-127.0.0.1}/" /etc/mysql/conf.d/my.cnf
   - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then sudo systemctl restart mysql; fi
   - npm install --no-optional
-  - npm link balena-cloud
+  - npm link balena-cloud-apps
 install:
   - ./deploy.sh "$(arch)" --nobuild --exit
 
