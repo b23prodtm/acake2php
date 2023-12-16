@@ -12,6 +12,7 @@ aliases:
             php7-session \
           && apk del build-base \
           && rm -rf /var/cache/apk/*
+        npm cache clear --force
         npm ci
         npm install --omit=optional
 orbs:
