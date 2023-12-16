@@ -1,0 +1,41 @@
+name: ACake2PHP
+description: >-
+  Using the basic container orchestrator or engine to deploy and test, is straitforward.
+  Currently the deployment script
+  ```. deploy.sh```
+  Based on [Balena engine](http://www.balena.io). See more about [NodeJs dependencies](#nodejs-dependencies)
+version: 1.0.0
+type: sw.application
+assets:
+  repository:
+    type: blob.asset
+    data:
+      url: 'https://github.com/b23prodtm/acake2php'
+  logo:
+    type: blob.asset
+    data:
+      url: >-
+        https://raw.githubusercontent.com/b23prodtm/acake2php/master/acake2php.jpeg
+data:
+  applicationEnvironmentVariables:
+    - AGENT_MODE: "release"
+    - AGENT_USERNAME: "root"
+    - AGENT_PASSWORD: "root"
+  defaultDeviceType: raspberrypi3
+  supportedDeviceTypes:
+    - raspberrypi3
+    - raspberrypi3-64
+    - raspberrypi-4
+    - raspberrypi4-64
+    - raspberrypi400-64
+    - intel-nuc
+post-provisioning: >-
+
+  # A CakePHP 2.x application
+
+  This webserver is featuring well-known functionalities as cool as posting some web contents with pictures stored in a database. Submodules may be installed via Composer packages.
+  - Apache 2.0 License
+  
+  ### How to run this app
+
+  Simple click on the Deploy button, and create or use an existing fleet. Once done you can download the video-surveillance Balena Cloud base image and flash it to your device.

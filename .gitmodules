@@ -17,3 +17,6 @@
 [submodule "app/Plugin/Markdown"]
 	path = app/Plugin/Markdown
 	url = https://github.com/b23prodtm/markdown-plugin.git
+[submodule "app/Plugin/cakephp-backupme"]
+	path = app/Plugin/cakephp-backupme
+	url = https://bitbucket.org/mmahgoub/cakephp-backupme.git
