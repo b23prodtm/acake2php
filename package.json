@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/b23prodtm/acake2php#readme",
   "dependencies": {
-    "balena-cloud-apps": "^1.0.34",
+    "balena-cloud-apps": "^1.0.40",
     "composer": "^4.1.0",
     "shellcheck": "^1.1.0"
   }
