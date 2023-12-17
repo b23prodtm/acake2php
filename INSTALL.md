@@ -42,43 +42,43 @@ A few variables are defined in containers environment provides client-server com
   
   		# Open https://${SERVER_NAME}/etc/getHashPassword.php or type $ ./configure.sh -h -p pass -s salt
   		# Get new staff credentials (url=/admin/index.php)
-		GET_HASH_PASSWORD=<HaSheD-PasSwoRd>
+		- GET_HASH_PASSWORD: <HaSheD-PasSwoRd>
   
 		# Database name
   		MYSQL_DATABASE=aria_db
 		# Persistent ROOT connection credentials
-		MYSQL_HOST: localhost
-		MYSQL_ROOT_PASSWORD: mariadb
+		- MYSQL_HOST: localhost
+		- MYSQL_ROOT_PASSWORD: mariadb
 
 Some optional configuration. The following default variables may be setup as your server preferences, set in open source:
       
 		# CakePHP secrets
-		CAKEPHP_SECRET_TOKEN:<secret-token>
-		CAKEPHP_SECRET_SALT:<secret-salt>
-		CAKEPHP_SECURITY_CIPHER_SEED:<cipher-seed>
+		- CAKEPHP_SECRET_TOKEN:<secret-token>
+		- CAKEPHP_SECRET_SALT:<secret-salt>
+		- CAKEPHP_SECURITY_CIPHER_SEED:<cipher-seed>
   		
     		# Deployed Migration option
-    		MIGRATE_OPTION=-v
+    		- MIGRATE_OPTION: -v
 		
   		# The following values are options to change if needed
 		# Binding a mysql container to a specific (public) IP address or all (0.0.0.0)
-		MYSQL_BIND_ADDRESS=0.0.0.0
-		MYSQL_TCP_PORT=3306
+		- MYSQL_BIND_ADDRESS: 0.0.0.0
+		- MYSQL_TCP_PORT: 3306
 
 		# Persistent USER connection credentials
-		MYSQL_USER=maria
-		MYSQL_PASSWORD=maria-abc
+		- MYSQL_USER: maria
+		- MYSQL_PASSWORD: maria-abc
   
 		# Run as a different user-group space ($ id -g $USER)
-		PGID=0
+		- PGID: 0
 		# Run as a different user space ($ id -u $USER)
-		PUID=0
+		- PUID: 0
 
     		# Apache 2 httpd, or DNS CNAME of the host machine ($ hostname)
-		SERVER_NAME=www-machine.local
+		- SERVER_NAME: www-machine.local
   
 		# MariaDB Timezone
-		TZ=Europe/Paris
+		- TZ: Europe/Paris
   
 ## Validate the configuration
 
