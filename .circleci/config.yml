@@ -20,110 +20,112 @@ orbs:
 jobs:
   build:
     docker:
-    - image: betothreeprod/intel-nuc-node-php7
-    - image: betothreeprod/mariadb-intel-nuc
-      environment:
-        PUID: 0
-        PGID: 0
-        TZ: Europe/Paris
-        MYSQL_ROOT_PASSWORD: mariadb
-        MYSQL_HOST: localhost
-        MYSQL_DATABASE: aria_db
-        MYSQL_USER: maria
-        MYSQL_PASSWORD: maria-abc
+      - image: betothreeprod/intel-nuc-node-php7
+      - image: betothreeprod/mariadb-intel-nuc
+        environment:
+          PUID: 0
+          PGID: 0
+          TZ: Europe/Paris
+          MYSQL_ROOT_PASSWORD: mariadb
+          MYSQL_HOST: localhost
+          MYSQL_DATABASE: aria_db
+          MYSQL_USER: maria
+          MYSQL_PASSWORD: maria-abc
     shell: /bin/bash -leo pipefail
     environment:
-    - BASH_ENV: /etc/profile
-    - DKR_ARCH: x86_64
-    - MYSQL_HOST: 127.0.0.1
-    - MYSQL_TCP_PORT: 3306
+      - BASH_ENV: /etc/profile
+      - DKR_ARCH: x86_64
+      - MYSQL_HOST: 127.0.0.1
+      - MYSQL_TCP_PORT: 3306
     working_directory: /var/www/html/
     steps:
-    - checkout
-    - restore_cache:
-        keys:
-          - v1-dependencies-{{ checksum "package-lock.json" }}
-          - v1-dependencies-{{ checksum "composer.lock" }}
-    - setup_remote_docker:
-        docker_layer_caching: false
-    - *deps
-    - save_cache:
-        key: v1-dependencies-{{ checksum "composer.lock" }}
-        paths:
-        - app/Vendor
-        - webroot/php-cms
-    - save_cache:
-        key: v1-dependencies-{{ checksum "package-lock.json" }}
-        paths:
-        - $HOME/.npm
-    - run:
-        name: Set architecture and Setup Environment Variables
-        command: |
-          balena_deploy . $DKR_ARCH --nobuild --exit
-    - run:
-        name: Waiting for Mysql to be ready
-        command: |
-          set -x
-          for i in `seq 1 10`;
-          do
-            nc -z $MYSQL_HOST $MYSQL_TCP_PORT && echo Success && exit 0
-            echo -n .
-            sleep 1
-          done
-          echo 'Failed waiting for Mysql' && exit 1
-    - run:
-        command: |
-          set -u
-          mkdir -p ./app/build/logs
-          mkdir -p ~/phpunit
-          ./test-cake.sh --circle
-          . common.env && cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
-        when: always
-    - persist_to_workspace:
-        root: app/
-        paths:
-        - Config
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - v1-dependencies-{{ checksum "composer.lock" }}
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - *deps
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.lock" }}
+          paths:
+            - app/Vendor
+            - webroot/php-cms
+      - save_cache:
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+          paths:
+            - $HOME/.npm
+      - run:
+          name: Set architecture and Setup Environment Variables
+          command: |
+            balena_deploy . $DKR_ARCH --nobuild --exit
+      - run:
+          name: Waiting for Mysql to be ready
+          command: |
+            set -x
+            for i in `seq 1 10`;
+            do
+              nc -z $MYSQL_HOST $MYSQL_TCP_PORT && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo 'Failed waiting for Mysql' && exit 1
+      - run:
+          command: |
+            set -u
+            mkdir -p ./app/build/logs
+            mkdir -p ~/phpunit
+            ./test-cake.sh --circle
+            . common.env && cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
+          when: always
+      - persist_to_workspace:
+          root: app/
+          paths:
+            - Config
+    # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
+    resource_class: large
   compose:
     docker:
-    - image: betothreeprod/dind-php7
+      - image: betothreeprod/dind-php7
     shell: /bin/bash -leo pipefail
     environment:
-    - BASH_ENV: /etc/profile
-    - DKR_ARCH: x86_64
+      - BASH_ENV: /etc/profile
+      - DKR_ARCH: x86_64
     steps:
-    - checkout
-    - attach_workspace:
-        at: app
-    - restore_cache:
-        keys:
-          - v1-dependencies-{{ checksum "package-lock.json" }}
-          - v1-dependencies-{{ checksum "composer.lock" }}
-    - setup_remote_docker:
-        docker_layer_caching: false
-    - *deps
-    - run:
-        name: Set architecture and Setup Environment Variables
-        command: |
-          balena_deploy . $DKR_ARCH --nobuild --exit
-    - run:
-        command: |
-          set -u
-          TAG=0.1.$CIRCLE_BUILD_NUM
-          docker-compose -f docker-compose.$DKR_ARCH build
-    - store_test_results:
-        path: ~/phpunit
-    - store_artifacts:
-        path: ~/phpunit
+      - checkout
+      - attach_workspace:
+          at: app
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - v1-dependencies-{{ checksum "composer.lock" }}
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - *deps
+      - run:
+          name: Set architecture and Setup Environment Variables
+          command: |
+            balena_deploy . $DKR_ARCH --nobuild --exit
+      - run:
+          command: |
+            set -u
+            TAG=0.1.$CIRCLE_BUILD_NUM
+            docker-compose -f docker-compose.$DKR_ARCH build
+      - store_test_results:
+          path: ~/phpunit
+      - store_artifacts:
+          path: ~/phpunit
 workflows:
   cleanup:
     jobs:
-    - shellcheck/check:
-        ignore: 'SC1091,SC2034,SC2096,SC2038'
+      - shellcheck/check:
+          ignore: 'SC1091,SC2034,SC2096,SC2038'
   build-and-compose:
     jobs:
-    - build
-    - compose:
-        requires:
-        - build
-        context: Info-b23prodtm
+      - build
+      - compose:
+          requires:
+            - build
+          context: Info-b23prodtm
   version: 2
