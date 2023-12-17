@@ -21,14 +21,11 @@ data:
     - AGENT_MODE: "release"
     - AGENT_USERNAME: "root"
     - AGENT_PASSWORD: "root"
-  defaultDeviceType: raspberrypi3
+  defaultDeviceType: raspberrypi3-64
   supportedDeviceTypes:
-    - raspberrypi3
     - raspberrypi3-64
-    - raspberrypi-4
     - raspberrypi4-64
     - raspberrypi400-64
-    - intel-nuc
 post-provisioning: >-
 
   # A CakePHP 2.x application
