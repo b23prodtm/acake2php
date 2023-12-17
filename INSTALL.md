@@ -39,40 +39,47 @@ Once everything is installed, please reboot your system.
 
 ## Webserver configuration
 A few variables are defined in containers environment provides client-server communication.
-
+  
+  		# Open https://${SERVER_NAME}/etc/getHashPassword.php or type $ ./configure.sh -h -p pass -s salt
+  		# Get new staff credentials (url=/admin/index.php)
+		GET_HASH_PASSWORD=<HaSheD-PasSwoRd>
+  
+		# Database name
+  		MYSQL_DATABASE=aria_db
 		# Persistent ROOT connection credentials
 		MYSQL_HOST: localhost
-		DATABASE_USER: root
 		MYSQL_ROOT_PASSWORD: mariadb
+
+Some optional configuration. The following default variables may be setup as your server preferences, set in open source:
+      
 		# CakePHP secrets
 		CAKEPHP_SECRET_TOKEN:<secret-token>
 		CAKEPHP_SECRET_SALT:<secret-salt>
 		CAKEPHP_SECURITY_CIPHER_SEED:<cipher-seed>
-
-Some configuration changes may broke the installation with Docker and on file permissions. The following default variables may be setup as your server preferences, set in open source:
-
-		# The following values are options to change if needed
+  		
+    		# Deployed Migration option
+    		MIGRATE_OPTION=-v
+		
+  		# The following values are options to change if needed
 		# Binding a mysql container to a specific (public) IP address or all (0.0.0.0)
 		MYSQL_BIND_ADDRESS=0.0.0.0
-
-		# Run as a different user space ($ id -u $USER)
-		PUID=0
-		# Run as a different user-group space ($ id -g $USER)
-		PGID=0
-
-		# MariaDB Timezone
-		TZ=Europe/Paris
+		MYSQL_TCP_PORT=3306
 
 		# Persistent USER connection credentials
 		MYSQL_USER=maria
 		MYSQL_PASSWORD=maria-abc
+  
+		# Run as a different user-group space ($ id -g $USER)
+		PGID=0
+		# Run as a different user space ($ id -u $USER)
+		PUID=0
 
-		# staff credentials (url=/admin/index.php) given $ ./configure.sh -h -p pass -s salt
-		GET_HASH_PASSWORD=<HaSheD-PasSwoRd>
-
-    # Apache 2 httpd, or DNS CNAME of the host machine ($ hostname)
+    		# Apache 2 httpd, or DNS CNAME of the host machine ($ hostname)
 		SERVER_NAME=www-machine.local
-
+  
+		# MariaDB Timezone
+		TZ=Europe/Paris
+  
 ## Validate the configuration
 
 		./configure.sh --docker --mig-database -u -i
