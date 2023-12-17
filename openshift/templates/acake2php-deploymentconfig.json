@@ -110,7 +110,7 @@
                 "value": "root"
               },
               {
-                "name": "DKR_ARCH",
+                "name": "BALENA_ARCH",
                 "value": "armhf"
               },
               {

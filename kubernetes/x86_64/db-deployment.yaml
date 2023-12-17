@@ -48,7 +48,7 @@ spec:
           value: "false"
         - name: DATABASE_USER
           value: root
-        - name: DKR_ARCH
+        - name: BALENA_ARCH
           value: armhf
         - name: HTTPD_LISTEN
           value: '*:80'
