@@ -37,20 +37,20 @@ Please read README.md file to get more information on how to setup the cluster a
 
 Once everything is installed, please reboot your system.
 
-## Webserver configuration
+## Webserver configuration (Source balena.yml)
 A few variables are defined in containers environment provides client-server communication.
   
   		# Open https://${SERVER_NAME}/etc/getHashPassword.php or type $ ./configure.sh -h -p pass -s salt
   		# Get new staff credentials (url=/admin/index.php)
-		- GET_HASH_PASSWORD: <HaSheD-PasSwoRd>
+		- GET_HASH_PASSWORD: GETHASHPASSWORD.PHP
   
 		# Database name
-  		MYSQL_DATABASE=aria_db
+  		- MYSQL_DATABASE: aria_db
 		# Persistent ROOT connection credentials
 		- MYSQL_HOST: localhost
 		- MYSQL_ROOT_PASSWORD: mariadb
 
-Some optional configuration. The following default variables may be setup as your server preferences, set in open source:
+## Some optional configuration. The following default variables may be setup as your server preferences, set in open source:
       
 		# CakePHP secrets
 		- CAKEPHP_SECRET_TOKEN:<secret-token>
