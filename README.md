@@ -31,6 +31,8 @@ Currently the deployment script
 ```. deploy.sh```
 Based on [Balena engine](http://www.balena.io). See more about [NodeJs dependencies](#nodejs-dependencies)
 
+[![balena deploy button](https://www.balena.io/deploy.svg)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/b23prodtm/acake2php)
+
 Plugins
 -------
 You do not need to change anything in your existing PHP project's repository.
