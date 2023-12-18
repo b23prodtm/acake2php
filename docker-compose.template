@@ -2,7 +2,7 @@ version: "2"
 services:
   db:
     build:
-      context: mysqldb
+      context: deployment/images/mysqldb
       dockerfile: Dockerfile.%%BALENA_ARCH%%
       args:
         PUID: 0
@@ -55,17 +55,6 @@ services:
       - db
     networks:
       - cake
-  homeassistant:
-    image: "ghcr.io/home-assistant/home-assistant:stable"
-    container_name: hass
-    volumes:
-      - config:/config
-      - localtime:/etc/localtime:ro
-    restart: unless-stopped
-    privileged: true
-    network_mode: host
-    devices:
-      - /dev/ttyAMA0
   #docker-compose v3
     #healthcheck:
       #test: ["CMD", "curl", "-f", "http://localhost"]

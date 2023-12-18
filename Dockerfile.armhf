@@ -1,17 +1,17 @@
-# THIS file was generated for $DKR_ARCH raspberrypi3
+# THIS file was generated for $BALENA_ARCH raspberrypi3
 # Make changes to the Dockefile.template
 # Docker architecture (x86_64, armhf, aarch64 )
 ARG IMG_TAG
-ARG DKR_ARCH
+ARG BALENA_ARCH
 ARG PRIMARY_HUB
 # Primary image is a Linux PHP with Apache 2 server pre-installed
-FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${IMG_TAG:-latest}-${DKR_ARCH:-armhf}
+FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${IMG_TAG:-latest}-${BALENA_ARCH:-armhf}
 
 ENV INITSYSTEM off
 ENV UDEV off
 # ----------------------
 # About Dockerfile ARGS:
-# ALL the following ARGS are DUPLICATED in common.env and $DKR_ARCH.env
+# ALL the following ARGS are DUPLICATED in common.env and $BALENA_ARCH.env
 # and Scripts/fooargs.sh for development phase.
 # If not set in common.env, it must be set in the host machine environment
 # when ./start.sh or ./test.sh or in development phase.
@@ -24,7 +24,7 @@ ENV CAKEPHP_DEBUG_LEVEL ${CAKEPHP_DEBUG_LEVEL:-2}
 ENV BALENA_MACHINE_NAME ${BALENA_MACHINE_NAME:-raspberrypi3}
 ARG SECONDARY_HUB
 ENV SECONDARY_HUB ${SECONDARY_HUB:-betothreeprod/mariadb-raspberrypi3}
-ENV DKR_ARCH ${DKR_ARCH:-armhf}
+ENV BALENA_ARCH ${BALENA_ARCH:-armhf}
 ARG COLLECT_COVERAGE
 ENV COLLECT_COVERAGE ${COLLECT_COVERAGE:-'False'}
 ARG DB
@@ -127,7 +127,7 @@ RUN chmod -R gu+xs deploy.sh configure.sh migrate-database.sh Scripts/
 # just containers configuration
 COPY etc /etc
 RUN chmod 0755 *.sh
-RUN ./deploy.sh ${DKR_ARCH} --nobuild --exit \
+RUN ./deploy.sh ${BALENA_ARCH} --nobuild --exit \
   && ./configure.sh --openshift -a -m -c -h -p pass -s word --development
 
 RUN [ "cross-build-end" ]

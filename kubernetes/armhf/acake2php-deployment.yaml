@@ -33,7 +33,7 @@ spec:
         - name: BALENA_MACHINE_NAME
           value: raspberrypi3
         - name: BALENA_PROJECTS
-          value: '(. ./mysqldb ./deployment/images/node-php7 ./deployment/images/apache-php7)
+          value: '(. ./deployment/images/mysqldb ./deployment/images/node-php7 ./deployment/images/apache-php7)
             #(submodule deployment/images/primary'
         - name: BALENA_PROJECTS_FLAGS
           value: (IMG_TAG PRIMARY_HUB SECONDARY_HUB)
@@ -47,7 +47,7 @@ spec:
           value: "false"
         - name: DATABASE_USER
           value: root
-        - name: DKR_ARCH
+        - name: BALENA_ARCH
           value: armhf
         - name: HTTPD_LISTEN
           value: '*:80'

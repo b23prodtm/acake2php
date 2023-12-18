@@ -38,7 +38,7 @@ if [ -n "$docker" ]; then
 	if [ -z "$maria" ]; then
 		docker pull "${SECONDARY_HUB}"
 	fi
-	CID="$TOPDIR/mysqldb/mysqld/mysqld.cid"
+	CID="$TOPDIR/deployment/images/mysqldb/mysqld/mysqld.cid"
 	if [ -f "$CID" ] && [ "$(cat "$CID")" = "$maria" ]; then
 		slogger -st "$0" "Container $MARIADB_SHORT_NAME running."
 	else
@@ -54,8 +54,8 @@ if [ -n "$docker" ]; then
 		--env-file .env -e PUID="$(id -u "$USER")" -e PGID="$(id -g "$USER")" \
 		--network cake -e MYSQL_HOST="${MYSQL_HOST}" -e MYSQL_BIND_ADDRESS="${MYSQL_BIND_ADDRESS:-'0.0.0.0'}" \
 		"${mysql_credentials[@]}" --publish "$MYSQL_TCP_PORT:$MYSQL_TCP_PORT" \
-		-v "$TOPDIR/mysqldb/conf.d:/etc/mysql/conf.d" -v "$TOPDIR/mysqldb/config:/config" \
-		-v "$TOPDIR/mysqldb/mysqld:/var/run/mysqld/" \
+		-v "$TOPDIR/deployment/images/mysqldb/conf.d:/etc/mysql/conf.d" -v "$TOPDIR/deployment/images/mysqldb/config:/config" \
+		-v "$TOPDIR/deployment/images/mysqldb/mysqld:/var/run/mysqld/" \
 		"${SECONDARY_HUB}" >> "$LOG" 2>&1; then
 			slogger -st "$0" "Started docker --name=${MARIADB_SHORT_NAME} ref: $(docker ps -q -a -f "name=maria") host: $MYSQL_HOST}"
 		fi

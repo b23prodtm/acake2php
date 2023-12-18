@@ -287,7 +287,7 @@ Common Issues
 
   (automatic) This looks like a first installation of mysql. You have to secure or reset your mysql root access:
 ```acake2php
-    MYSQL_ROOT_PASSWORD=<password> sudo bash mysqldb/mysql_secure_shell
+    MYSQL_ROOT_PASSWORD=<password> sudo bash deployment/images/mysqldb/mysql_secure_shell
 ```
   (manual) The Linux shell way to reinitialize sql root password:
 ```db

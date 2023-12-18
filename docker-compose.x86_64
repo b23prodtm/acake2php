@@ -2,7 +2,7 @@ version: "2"
 services:
   db:
     build:
-      context: mysqldb
+      context: deployment/images/mysqldb
       dockerfile: Dockerfile.x86_64
       args:
         PUID: 0

@@ -2,8 +2,8 @@
 # Source DockerFile:  https://github.com/ulsmith/rpi-raspbian-apache-php/blob/master/Dockerfile
 # S6 Overlay:         https://github.com/smebberson/docker-alpine/blob/master/alpine-apache/Dockerfile
 #
-FROM balenalib/raspberrypi3-64-alpine-node:run
-# RUN [ "cross-build-start" ]
+FROM balenalib/raspberrypi3-64-alpine-node:build
+RUN [ "cross-build-start" ]
 ARG PHP_LIB
 ENV PHP_LIB ${PHP_LIB:-7}
 ARG BALENA_ARCH
@@ -12,62 +12,62 @@ ENV S6_ARCH ${BALENA_ARCH:-aarch64}
 ## Install add-apt-repository packages
 RUN apk update \
     && apk add \
-		bash \
-		sudo \
-		curl \
-		git \
-		openssh-client \
-		tar \
-		gzip \
-		ca-certificates \
-		zip \
-		unzip \
-		icu-dev \
-		libmcrypt-dev \
-		freetype-dev \
-		libjpeg-turbo-dev \
-		libpng-dev \
-		netcat-openbsd
+    bash \
+    sudo \
+    curl \
+    git \
+    openssh-client \
+    tar \
+    gzip \
+    ca-certificates \
+    zip \
+    unzip \
+    icu-dev \
+    libmcrypt-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    netcat-openbsd
 
 RUN apk update \
-		    && apk add \
-		php${PHP_LIB} \
-		php${PHP_LIB}-curl \
-		php${PHP_LIB}-gd \
-		php${PHP_LIB}-intl \
-		php${PHP_LIB}-json \
-		php${PHP_LIB}-mbstring \
-		php${PHP_LIB}-opcache \
-		php${PHP_LIB}-openssl \
-		php${PHP_LIB}-pcntl \
-		php${PHP_LIB}-xml \
-		php${PHP_LIB}-mysqlnd \
-		php${PHP_LIB}-phar \
-		php${PHP_LIB}-mysqli \
-		php${PHP_LIB}-pdo_mysql \
-		php${PHP_LIB}-dom \
-		php${PHP_LIB}-tokenizer \
-		php${PHP_LIB}-simplexml \
-		php${PHP_LIB}-xmlwriter \
-		php${PHP_LIB}-fpm \
-		php${PHP_LIB}-zlib \
-		mariadb-client \
+        && apk add \
+    php${PHP_LIB} \
+    php${PHP_LIB}-curl \
+    php${PHP_LIB}-gd \
+    php${PHP_LIB}-intl \
+    php${PHP_LIB}-json \
+    php${PHP_LIB}-mbstring \
+    php${PHP_LIB}-opcache \
+    php${PHP_LIB}-openssl \
+    php${PHP_LIB}-pcntl \
+    php${PHP_LIB}-xml \
+    php${PHP_LIB}-mysqlnd \
+    php${PHP_LIB}-phar \
+    php${PHP_LIB}-mysqli \
+    php${PHP_LIB}-pdo_mysql \
+    php${PHP_LIB}-dom \
+    php${PHP_LIB}-tokenizer \
+    php${PHP_LIB}-simplexml \
+    php${PHP_LIB}-xmlwriter \
+    php${PHP_LIB}-fpm \
+    php${PHP_LIB}-zlib \
+    mariadb-client \
     && apk del build-base \
     && rm -rf /var/cache/apk/*
 
 ## Install base packages
 RUN apk update \
     && apk add \
-		apache2 \
-		apache2-ctl \
+    apache2 \
+    apache2-ctl \
     apache2-ssl \
-		php${PHP_LIB}-dev \
-		php${PHP_LIB}-apache2 \
-		curl \
-		php${PHP_LIB}-odbc \
-		php${PHP_LIB}-pdo_sqlite \
-		php${PHP_LIB}-sqlite3 \
-		php${PHP_LIB}-session \
+    php${PHP_LIB}-dev \
+    php${PHP_LIB}-apache2 \
+    curl \
+    php${PHP_LIB}-odbc \
+    php${PHP_LIB}-pdo_sqlite \
+    php${PHP_LIB}-sqlite3 \
+    php${PHP_LIB}-session \
     && apk del build-base \
     && rm -rf /var/cache/apk/*
 
@@ -108,4 +108,4 @@ ADD "https://raw.githubusercontent.com/b23prodtm/docker-systemctl-replacement/ma
 RUN chmod g+xs /bin/systemctl
 
 RUN node -v && npm -v
-# RUN [ "cross-build-end" ]
+RUN [ "cross-build-end" ]
