@@ -74,7 +74,7 @@ before_install:
   - build/handle_${TRAVIS_OS_NAME}_pkg.sh "composer" "latest" | tail
   - cd ../..
   #- docker login -u $DOCKER_USER -p $DOCKER_PASS
-  - sudo mkdir -p /etc/mysql/conf.d/ && sudo cp -f mysqldb/conf.d/my.cnf /etc/mysql/conf.d/my.cnf
+  - sudo mkdir -p /etc/mysql/conf.d/ && sudo cp -f deployment/images/mysqldb/conf.d/my.cnf /etc/mysql/conf.d/my.cnf
   - sudo sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS:-127.0.0.1}/" /etc/mysql/conf.d/my.cnf
   - if [[ "${TRAVIS_OS_NAME}" = "linux" ]]; then sudo systemctl restart mysql; fi
   - npm install --no-optional

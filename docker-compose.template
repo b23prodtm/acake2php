@@ -2,7 +2,7 @@ version: "2"
 services:
   db:
     build:
-      context: mysqldb
+      context: deployment/images/mysqldb
       dockerfile: Dockerfile.%%BALENA_ARCH%%
       args:
         PUID: 0

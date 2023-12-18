@@ -83,7 +83,7 @@
               },
               {
                 "name": "BALENA_PROJECTS",
-                "value": "(. ./mysqldb ./deployment/images/node-php7 ./deployment/images/apache-php7) #(submodule deployment/images/primary"
+                "value": "(. ./deployment/images/mysqldb ./deployment/images/node-php7 ./deployment/images/apache-php7) #(submodule deployment/images/primary"
               },
               {
                 "name": "BALENA_PROJECTS_FLAGS",

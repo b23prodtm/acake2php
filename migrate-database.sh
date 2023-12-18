@@ -74,7 +74,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     # Running docker ... mysql's allowed to connect without any local mysql installation
     docker exec "$MARIADB_SHORT_NAME" hostname 2>> "$LOG"
     sql_connect="docker exec $MARIADB_SHORT_NAME mysql"
-    sockfile="$(pwd)/mysqldb/mysqld/mysqld.sock"
+    sockfile="$(pwd)/deployment/images/mysqldb/mysqld/mysqld.sock"
     ;;
   -[uU]* )
     update_checked=1

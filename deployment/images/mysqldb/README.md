@@ -1,4 +1,4 @@
-# [betothreeprod/mariadb](https://github.com/b23prodtm/acake2php/tree/development/mysqldb)
+# [betothreeprod/mariadb](https://github.com/b23prodtm/acake2php/tree/development/deployment/images/mysqldb)
 
 The architectures supported by this image are:
 
