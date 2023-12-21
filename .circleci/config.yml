@@ -20,8 +20,8 @@ orbs:
 jobs:
   build:
     docker:
-      - image: betothreeprod/intel-nuc-node-php7
-      - image: betothreeprod/mariadb-intel-nuc
+      - image: betothreeprod/node-php7
+      - image: betothreeprod/mysqldb
         environment:
           PUID: 0
           PGID: 0
