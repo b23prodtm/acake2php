@@ -21,9 +21,7 @@
 		"cakephp/debug_kit": "2.2.9",
 		"betothreeprod/markdown-plugin": "dev-master",
 		"betothreeprod/updateshell": "dev-development",
-		"cakephp/datasources": "2.3.x-dev",
-		"facebook/graph-sdk": "^5.7",
-		"google/apiclient": "^2.2"
+		"cakephp/datasources": "2.3.x-dev"
 	},
 	"suggest": {
 		"ext-openssl": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption",
