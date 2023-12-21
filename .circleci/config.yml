@@ -10,6 +10,7 @@ aliases:
           && apk add \
             npm \
             php7-session \
+            xz \
           && apk del build-base \
           && rm -rf /var/cache/apk/*
         npm cache clear --force
