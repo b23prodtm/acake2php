@@ -37,8 +37,9 @@ RUN sed -i.user "/user/s/=.*$/= ${USER}/" /etc/mysql/conf.d/my.cnf
 
 RUN apt update && apt install -y \
   expect \
-  # auth_ed25519 support package
-  # libmariadbclient18 \
+  # auth_ed25519 support package \
+  # libmariadbclient for php7 depends on ubuntu version based on \
+  libmariadbclient19 \
   #\
  && echo "**** cleanup ****" && \
  rm -rf \
