@@ -41,7 +41,10 @@
 	},
 	"config": {
 		"vendor-dir": "app/Vendor/",
-		"process-timeout": 0
+		"process-timeout": 0,
+		"allow-plugins": {
+			"composer/installers": true
+		}
 	},
 	"bin": [
 		"lib/Cake/Console/cake"
