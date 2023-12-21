@@ -23,7 +23,7 @@ ARG CAKEPHP_DEBUG_LEVEL
 ENV CAKEPHP_DEBUG_LEVEL ${CAKEPHP_DEBUG_LEVEL:-2}
 ENV BALENA_MACHINE_NAME ${BALENA_MACHINE_NAME:-raspberrypi3-64}
 ARG SECONDARY_HUB
-ENV SECONDARY_HUB ${SECONDARY_HUB:-betothreeprod/mariadb-raspberrypi3-64}
+ENV SECONDARY_HUB ${SECONDARY_HUB:-linuxserver/mariadb:10.11.5}
 ENV BALENA_ARCH ${BALENA_ARCH:-aarch64}
 ARG COLLECT_COVERAGE
 ENV COLLECT_COVERAGE ${COLLECT_COVERAGE:-'False'}
@@ -69,7 +69,7 @@ ENV MIGRATE_OPTION ${MIGRATE_OPTION:-'-v'}
 
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
-# RUN [ "cross-build-start" ]
+RUN [ "cross-build-start" ]
 RUN install_packages \
     git \
     openssh-client \
@@ -130,7 +130,7 @@ RUN chmod 0755 *.sh
 RUN ./deploy.sh ${BALENA_ARCH} --nobuild --exit \
   && ./configure.sh --openshift -a -m -c -h -p pass -s word --development
 
-# RUN [ "cross-build-end" ]
+RUN [ "cross-build-end" ]
 
 ENTRYPOINT ./migrate-database.sh -o -u -i ${MIGRATE_OPTION} \
   && ./migrate-database.sh -o -u ${MIGRATE_OPTION} --connection=test && /init

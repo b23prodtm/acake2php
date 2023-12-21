@@ -1,5 +1,5 @@
 ARG SECONDARY_HUB
-FROM ${SECONDARY_HUB:-betothreeprod/mariadb-intel-nuc}
+FROM ${SECONDARY_HUB:-lscr.io/linuxserver/mariadb:10.11.5}
 
 # When using volumes (-v flags) permissions issues can arise
 # between the host OS and the container, we avoid this issue
@@ -31,20 +31,17 @@ ENV MYSQL_BIND_ADDRESS ${MYSQL_BIND_ADDRESS:-0.0.0.0}
 # 1. "/etc/mysql/my.cnf" to set global defaults,
 # 2. "/etc/mysql/conf.d/my.cnf" to set server options.
 # 3. "~/.my.cnf" User
-COPY conf.d/my.cnf /etc/mysql/conf.d/my.cnf
-RUN sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS}/" /etc/mysql/conf.d/my.cnf
-RUN sed -i.user "/user/s/=.*$/= ${USER}/" /etc/mysql/conf.d/my.cnf
+COPY conf.d/my.cnf /etc/my.cnf.d/my.cnf
+RUN sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS}/" /etc/my.cnf.d/my.cnf
+RUN sed -i.user "/user/s/=.*$/= ${USER}/" /etc/my.cnf.d/my.cnf
 
-RUN apt update && apt install -y \
-  expect \
-  # auth_ed25519 support package
-  libmariadbclient18 \
-  #\
- && echo "**** cleanup ****" && \
- rm -rf \
-  /tmp/* \
-  /var/lib/apt/lists/* \
-  /var/tmp/*
+RUN apk update \
+    && apk add \
+      expect \
+    # auth_ed25519 support package \
+    mariadb-client \
+    && apk del build-base \
+    && rm -rf /var/cache/apk/*
 
 COPY mysql_secure_shell .
 RUN chmod 1755 mysql_secure_shell

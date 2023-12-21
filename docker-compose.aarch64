@@ -13,7 +13,7 @@ services:
         MYSQL_DATABASE: aria_db
         MYSQL_USER: maria
         MYSQL_PASSWORD: maria-abc
-    image: betothreeprod/mariadb-raspberrypi3-64
+    image: betothreeprod/mariadb:latest-aarch64
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config

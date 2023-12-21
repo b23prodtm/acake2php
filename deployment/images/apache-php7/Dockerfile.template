@@ -2,7 +2,7 @@
 # Source DockerFile:  https://github.com/ulsmith/rpi-raspbian-apache-php/blob/master/Dockerfile
 # S6 Overlay:         https://github.com/smebberson/docker-alpine/blob/master/alpine-apache/Dockerfile
 #
-FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-node:build
+FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-node:16-3.13-build
 # RUN [ "cross-build-start" ]
 ARG PHP_LIB
 ENV PHP_LIB ${PHP_LIB:-7}
@@ -91,7 +91,7 @@ ARG S6_OVERLAY_VERSION=3.1.2.1
 RUN apk update \
     && apk add \
                nginx \
-               xz-utils \
+               xz \
     && apk del build-base \
     && rm -rf /var/cache/apk/*
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
@@ -108,4 +108,5 @@ ADD "https://raw.githubusercontent.com/b23prodtm/docker-systemctl-replacement/ma
 RUN chmod g+xs /bin/systemctl
 
 RUN node -v && npm -v
+ENTRYPOINT ["/usr/bin/entry.sh"]
 # RUN [ "cross-build-end" ]
