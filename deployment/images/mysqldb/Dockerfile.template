@@ -38,6 +38,7 @@ RUN sed -i.user "/user/s/=.*$/= ${USER}/" /etc/my.cnf.d/my.cnf
 RUN apk update \
     && apk add \
       expect \
+      xz \
     # auth_ed25519 support package \
     mariadb-client \
     && apk del build-base \
