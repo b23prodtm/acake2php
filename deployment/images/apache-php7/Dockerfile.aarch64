@@ -91,7 +91,7 @@ ARG S6_OVERLAY_VERSION=3.1.2.1
 RUN apk update \
     && apk add \
                nginx \
-               xz-utils \
+               xz \
     && apk del build-base \
     && rm -rf /var/cache/apk/*
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
