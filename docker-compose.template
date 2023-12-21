@@ -13,7 +13,7 @@ services:
         MYSQL_DATABASE: aria_db
         MYSQL_USER: maria
         MYSQL_PASSWORD: maria-abc
-    image: betothreeprod/mariadb-%%BALENA_MACHINE_NAME%%
+    image: betothreeprod/mariadb:latest-%%BALENA_ARCH%%
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
