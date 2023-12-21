@@ -22,7 +22,7 @@ jobs:
   build:
     docker:
       - image: betothreeprod/node-php7
-      - image: betothreeprod/mysqldb
+      - image: betothreeprod/mariadb-intel-nuc
         environment:
           PUID: 0
           PGID: 0
