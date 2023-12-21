@@ -13,7 +13,7 @@ services:
         MYSQL_DATABASE: aria_db
         MYSQL_USER: maria
         MYSQL_PASSWORD: maria-abc
-    image: betothreeprod/mariadb-raspberrypi3
+    image: betothreeprod/mariadb:latest-armhf
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
@@ -55,17 +55,6 @@ services:
       - db
     networks:
       - cake
-  homeassistant:
-    image: "ghcr.io/home-assistant/home-assistant:stable"
-    container_name: hass
-    volumes:
-      - config:/config
-      - localtime:/etc/localtime:ro
-    restart: unless-stopped
-    privileged: true
-    network_mode: host
-    devices:
-      - /dev/ttyAMA0
   #docker-compose v3
     #healthcheck:
       #test: ["CMD", "curl", "-f", "http://localhost"]

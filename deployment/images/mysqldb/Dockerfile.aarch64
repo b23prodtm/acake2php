@@ -1,5 +1,5 @@
 ARG SECONDARY_HUB
-FROM ${SECONDARY_HUB:-linuxserver/mariadb}
+FROM ${SECONDARY_HUB:-linuxserver/mariadb:10.11.5}
 
 # When using volumes (-v flags) permissions issues can arise
 # between the host OS and the container, we avoid this issue
@@ -38,7 +38,7 @@ RUN sed -i.user "/user/s/=.*$/= ${USER}/" /etc/mysql/conf.d/my.cnf
 RUN apt update && apt install -y \
   expect \
   # auth_ed25519 support package
-  libmariadbclient18 \
+  # libmariadbclient18 \
   #\
  && echo "**** cleanup ****" && \
  rm -rf \
