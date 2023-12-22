@@ -1,9 +1,6 @@
 name: acake2php
 description: >-
-  Using the basic container orchestrator or engine to deploy and test, is straitforward.
-  Currently the deployment script
-  ```. deploy.sh```
-  Based on [Balena engine](http://www.balena.io). See more about [NodeJs dependencies](#nodejs-dependencies)
+  Using the basic container orchestrator or engine to deploy and test, that's straitforward.
 version: 1.0.0
 type: sw.application
 assets:
@@ -67,7 +64,11 @@ post-provisioning: >-
 
   # A CakePHP 2.x application
 
-  This webserver is featuring well-known functionalities as cool as posting some web contents with pictures stored in a database. Submodules may be installed via Composer packages.
+  This webserver is featuring well-known functionalities as cool as posting some web contents with pictures stored in a database.
+  Submodules may be installed via Composer packages.
+  The deployment script was based on [Balena engine](http://www.balena.io).
+  See more about [NodeJs dependencies](#nodejs-dependencies)
+
   - Apache 2.0 License
 
   ### How to run this app

@@ -126,3 +126,4 @@ CakeLog::config('error', array(
 
 /** PHP autoloader shall detect applcation plugins from this profile */
 include_once APP . 'Config' . DS . 'boot_profile.cms.php';
+CakePlugin::load('Backups');

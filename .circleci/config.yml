@@ -10,6 +10,7 @@ aliases:
           && apk add \
             npm \
             php7-session \
+            xz \
           && apk del build-base \
           && rm -rf /var/cache/apk/*
         npm cache clear --force
@@ -20,7 +21,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: betothreeprod/intel-nuc-node-php7
+      - image: betothreeprod/node-php7
       - image: betothreeprod/mariadb-intel-nuc
         environment:
           PUID: 0
