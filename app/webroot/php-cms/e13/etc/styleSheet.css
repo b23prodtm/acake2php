@@ -1,0 +1,612 @@
+/** composants html*/
+a:hover {
+        text-decoration: underline; color: orange;
+}
+a:visited {
+        text-decoration: underline; color: darkblue; font-style: italic;
+}
+a {
+        text-decoration: none; color: teal;
+}
+object, embed, canvas, video, audio, picture {
+        max-width: 100%;
+        height: auto;
+}
+form input {
+        width: 100%;
+        font-size: 1.3em;
+}
+/* tableau d'entete */
+#entete {
+        width: 100%;
+}
+/* groupe d'entete */
+.entete div {
+        /* flex entete */
+        display: flex;
+        flex-direction: row;
+}
+.entete {
+        width: 100%;
+        font-size: 1.5em;
+        /** repeat background */
+        background-image: url('../images/header.jpg');
+        background-position: left top;
+        background-attachment: fixed;
+        background-repeat: repeat;
+        background-size: cover;
+
+        -moz-background-size: 2000px;
+        -ms-background-size: 2000px;
+        -webkit-background-size: 2000px;
+
+        /** rounded top corners (macOS-style)*/
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-top-width: 0.5em;
+        border-top-style: solid;
+        border-bottom-right-radius: 10px;
+        border-bottom-width: 0;
+}
+/* groupe d'entete a gauche */
+.entete_ouest {
+        /* flex entete */
+        flex: 10 10 auto;
+        height: 350px;
+        width: 50px;/* To make the transition work nicely. (Transitions to/from
+                                "width:auto" are buggy in Gecko and Webkit, at least.
+                                See http://bugzil.la/731886 for more info.) */
+        -webkit-transition: width 0.7s ease-out;
+        -moz-transition: width 0.7s ease-out;
+        -o-transition: width 0.7s ease-out;
+        -ms-transition: width 0.7s ease-out;
+        transition: width 0.7s ease-out;
+        text-align: right;
+        vertical-align: middle;
+}
+/* case a l'interieur du groupe */
+.entete_sud_ouest {
+        vertical-align: bottom;
+        color: black;
+        font-size-adjust: 0.5;
+}
+.slideshow {
+        vertical-align: middle;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+}
+/* case a l'interieur du groupe */
+.entete_est {
+        /* flex entete */
+        flex: 1 1 auto;
+        vertical-align: bottom;
+        }
+.titre {
+        padding: 1em 1em 0 1em;
+        margin: 1em 0 1em 0;
+        color: darkorange;
+        font-size: 1.2em;
+        text-transform: uppercase;
+        text-align: right;
+        /** souligne le titre avec bord arrondi */
+        border: 0.8em;
+        border-width: 0.8em;
+        border-bottom-style: solid;
+        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: 20px;
+}
+
+/* image a l'interieur du groupe */
+.badge img{
+        vertical-align: middle;
+        float: none;
+        height: 60%;
+}
+.lang img {
+        width: 32px;
+        margin: 1em;
+        float: right;
+        vertical-align: baseline;
+
+        /** arrondir les coins (macOS-style)*/
+        border-radius: 10px;
+
+        -webkit-box-shadow: 2.5px 2.5px 2.5px #444;
+        -moz-box-shadow: 2.5px 2.5px 2.5px #444;
+        box-shadow: 2.5px 2.5px 2.5px #444;
+}
+/** tableau principal de la page */
+.body > table {
+        width: 100%;
+        font-family: sans-serif;
+        /** arrondir les coins (macOS-style)*/
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-top-width: 0.1em;
+}
+/* tableau a l'interieur du groupe */
+.formulaire table {
+        width: 100%;
+        color: rgb(255, 255, 255);
+        background-color: rgb(255, 102, 0);
+        padding: .5em;
+        /** arrondir les coins (macOS-style)*/
+        border-radius: 10px;
+        border-top-width: 0.4em;
+}
+.formulaire_titre {
+        background-color: rgb(204, 102, 0);
+}
+.formulaire_lab {
+        font-weight: bolder;
+        width: 30%;
+}
+.formulaire_dsc {
+        width: 30%;
+}
+.formulaire_inp {
+        width: 70%;
+}
+.rubriquebanniere {
+        width: 100%;
+}
+.ads {
+        text-align:right;
+        font-style:italic;
+}
+.captcha {
+        font-family: sans-serif;
+        font-size: 1.05em;
+        color: rgb(0,143,255);
+}
+
+/* conteneur de groupe */
+.contenu {
+        color: white;
+        /** derouler en arriere plan fixe */
+        background-image: url('../images/header2.jpg');
+        background-position: center top;
+        background-attachment: fixed;
+        background-size: cover;
+        -moz-background-size: 2000px;
+        -ms-background-size: 2000px;
+        -webkit-background-size: 2000px;
+
+        /** rounded top corners (macOS-style) **/
+        border-top-style: solid;
+        border-top-width: 0.3em;
+        border-top-right-radius: 10px;
+}
+/* tableau a l'interieur du groupe */
+.contenu table{
+        width: 100%;
+        vertical-align: top;
+
+}
+/* conteneur de groupe */
+.contenu_ouest {
+        width: 20%;
+        /** bord arrondi */
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        border-top-width: 0.1em;
+        border-top-style: solid;
+        border-bottom-width: 0.1em;
+        border-bottom-style: solid;
+}
+/* tableau a l'interieur du groupe */
+.contenu_ouest table {
+        color: black;
+        background-color: white;
+        width: 100%;
+}
+/* tableau identifie */
+#contenu_est {
+        width: 100%;
+}
+/* conteneur de groupe */
+.contenu_est {
+        padding: 1em 0;
+        text-align: justify;
+}
+.info_multi {
+        /** rounded top corners (macOS-style) **/
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+                /* ombre portee */
+        -webkit-box-shadow: 2.5px 2.5px 2.5px #444;
+        -moz-box-shadow: 2.5px 2.5px 2.5px #444;
+        box-shadow: 2.5px 2.5px 2.5px #444;
+}
+/* tableau a l'interieur du groupe */
+.info_multi table {
+        width: 100%;
+        text-align: justify;
+        border-color: darkorange;
+        border-radius: 10px;
+        padding: 0.1em;
+        margin-bottom: 1em;
+        color: black;
+        background-color: white;
+}
+.info {
+        text-indent: 0.5em;
+        list-style-position: inside;
+        font-size: 1em;
+}
+/* tableau a l'interieur du groupe */
+.info table {
+        width: 100%;
+        color: black;
+        background-color: white;
+}
+/* case a l'interieur du groupe */
+.portofolio td {
+        margin: -0.5em 0;
+        vertical-align: middle;
+}
+/* case a l'interieur du groupe */
+.portofolio table {
+        padding: 0.5em;
+        width: 100%;
+        color: black;
+       background-color: white;
+}
+/* tableau a l'interieur du groupe */
+.image table {
+        text-align: right;
+        color: black;
+        background-color: white;
+        margin: 0.3em;
+}
+/* begin ZOOM : source : https://codepen.io/Remedy/pen/ZYJrpp */
+* {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+        box-sizing: border-box;
+
+        -webkit-border-horizontal-spacing: 0;
+        -webkit-border-vertical-spacing: 0;
+        /* alignement element de tableau */
+        vertical-align: top;
+        /* arrondir les bords */
+        border-radius: 5px;
+}
+.flash {
+        border-width: 5px ;
+        border-style:  solid;
+        border-color:  white; border: 5px;
+        /** float : mise en page a gauche du texte *
+        float: left;*/
+        margin: 10px;
+        overflow: hidden;
+
+        -webkit-box-shadow: 2.5px 2.5px 2.5px #111;
+        -moz-box-shadow: 2.5px 2.5px 2.5px #111;
+        box-shadow: 2.5px 2.5px 2.5px #111;
+}
+
+.zoom img {
+
+        -webkit-transition: all 1s ease;
+        -moz-transition: all 1s ease;
+        -o-transition: all 1s ease;
+        -ms-transition: all 1s ease;
+        transition: all 1s ease;
+}
+
+.zoom img:hover {
+        -ms-transform: scale(2);
+        -o-transform: scale(2);
+        -moz-transform: scale(2);
+        -webkit-transform: scale(2);
+        transform: scale(2);
+}
+.entete .entete_ouest .contenu_ouest .masque{
+        /**
+        Un container (entete) avec width: 100% et un element du container (entete_ouest) au moins width: 90% , on elimine les espaces vides autour du tableau principal.
+        */
+        margin: 0;
+        padding: 0;
+        border-spacing: 0;
+}
+/* end zoom */
+.corps {
+        width: 100%;
+        padding: 1em 0.2em;
+        margin: -0.8em 0;
+        border-radius: 10px;
+        color: black;
+        background-color: white;
+}
+.console {
+        color: orange; font-family: monospace; background-color: green;
+}
+.error {
+        color: darkgray;
+}
+/* groupe de menus */
+.menu {
+        width: 100%;
+        height: 100%;
+        /* ombre portee */
+        -webkit-box-shadow: 2.5px 2.5px 2.5px #444;
+        -moz-box-shadow: 2.5px 2.5px 2.5px #444;
+        box-shadow: 2.5px 2.5px 2.5px #444;
+
+        border-top-width: 1px;
+        border-top-style: solid;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+
+        vertical-align: top;
+        background-color: white;
+
+        -webkit-transition: all 1s ease;
+        -moz-transition: all 1s ease;
+        -o-transition: all 1s ease;
+        -ms-transition: all 1s ease;
+        transition: all 1s ease;
+}
+/* case survolee a l'interieur du groupe */
+.menu td:hover{
+        background-color: lightgray;
+}
+.parent {
+        font-style: italic;
+}
+.rubriques {
+        border-top: 1px solid white;
+        border-right: 1px solid darkorange;
+        border-left: 1px solid darkgray;
+        border-bottom: 1px solid darkgray;
+}
+.search {
+        padding: 0 0 0 0.5em;
+
+}
+/* tableau du groupe */
+.sitemap > table{
+        border-width: 0.1em; border: 0.1em;
+        border-style: solid;
+        text-align: left;
+        width: 100%;
+        font-weight: lighter;
+        padding: 0.3em;
+        /** rounded corners (macOS-style)*/
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        border-bottom-width: 0.6em;
+        border-bottom-style: groove;
+
+}
+/* case a l'interieur du groupe */
+.db_liste {
+        vertical-align: middle;
+        border-left: 0.1em solid gray;
+        padding: 0.3em;
+        margin: 0.2em;
+}
+.db_a0 {
+        color: rgb(255, 255, 255);
+        background-color: rgb(255, 70, 0);
+}
+.db_a1 {
+        color: rgb(255, 255, 255);
+        background-color: rgb(255, 53, 0);
+}
+.breadcrumb{
+        font-family: initial;
+        font-size: 2em;
+        text-align: center;
+}
+.flash > img {
+        width: 300px;
+}
+.info_flash {
+        font-style: oblique;
+        padding: 1em;
+        /* ombre portee */
+        -webkit-box-shadow: 2.5px 2.5px 2.5px #444;
+        -moz-box-shadow: 2.5px 2.5px 2.5px #444;
+        box-shadow: 2.5px 2.5px 2.5px #444;
+
+        border-top-width: 1px;
+        border-top-style: solid;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+}
+/* RESPONSIVE LAYOUT https://www.w3.org/TR/2002/CR-css3-mediaqueries-20020708/
+
+
+        smartphones
+
+
+*/
+@media screen and (max-device-width: 10.1in) {
+        * {
+                font-size: 26pt;
+        }
+        /* dezoom sur les images et la banniere slideshow  */
+        .slideshow img {
+                zoom: 1.0;
+                -ms-zoom: 1.0;
+        }
+        img {
+                zoom: 1.2;
+                -ms-zoom: 1.2;
+        }
+        .body {
+                font-size: 2em;
+        }
+
+        .sitemap {
+                font-size: 1.1em;
+        }
+        .menu {
+                width: 100%;
+                /** bord arrondi */
+                border-top-right-radius: 10px;
+                border-bottom-right-radius: 10px;
+        }
+        .rubriques {
+                height: 90%;
+                font-size: 2em;
+                padding: 0.4em 0.2em;
+        }
+}
+/* RESPONSIVE LAYOUT
+
+        Mode Portrait
+
+*/
+@media screen and (max-aspect-ratio: 4/3){
+        /** sliding menu */
+        .masque {
+                position: absolute;
+                visibility: hidden;
+        }
+        .parent {
+                text-align: right;
+        }
+        #bMenu img{
+                position: fixed;
+                height: 3em;
+        }
+        #bMenu {
+                z-index: 1;
+        }
+        .cse-branding-text {
+                position: fixed;
+                left: 10px;
+                top: 95px;
+                opacity: 0.5;
+        }
+        .cse-branding-logo {
+                position: fixed;
+                top: 0.5em;
+                right: 10px;
+                opacity: 0.3;
+        }
+        .cse-branding-form {
+                z-index: 2;
+                width: 100%;
+                /** dimension de la barre de recherche */
+                margin-left: 4em;
+                font-size: 0.8em;
+                opacity: 0.3;
+        }
+        .cse-branding-bottom {
+                right: 290;
+        }
+        .sliderBar {
+                width: 100%;
+                background-color: rgb(248, 250, 249);
+                border-radius: 0px;
+
+                /**schema basique : glissement depuis une position "hors-ecran" =
+                 - bannerwithbutton.width + button.width
+                position fixe sur la page, le script appelant accompagne un une image onClick() va placer element.style.left à "0".
+                */
+                position: fixed;
+                z-index: 2;
+                margin-top: 0em;
+                left: 0;
+                right: 0;
+                overflow-x: hidden;
+
+                /** permet une transition fluide entre les changements de style CSS <> JavaScript */
+                -webkit-transition: all 1s ease;
+                -moz-transition: all 1s ease;
+                -o-transition: all 1s ease;
+                -ms-transition: all 1s eae;
+                transition: all 1s ease;
+
+                /* ombre portee */
+                -webkit-box-shadow: 2.5px 2.5px 2.5px #444;
+                -moz-box-shadow: 2.5px 2.5px 2.5px #444;
+                box-shadow: 2.5px 2.5px 2.5px #444;
+        }
+        .slide {
+                /** schema basique : glissement depuis une position "hors-ecran" =
+                 - bannerbutton.width
+                position fixe sur la page, le script appelant accompagne un une image onClick() va placer element.style.right à "0".
+                */
+                z-index: 1;
+                visibility: hidden;
+                position: absolute;
+                top: 1em;
+                left: -100%;
+                width: 100%;
+                font-size: 1em;
+                overflow-x: hidden;
+
+                /** permet une transition fluide entre les changements de style CSS <> JavaScript */
+                -webkit-transition: all 1s ease;
+                -moz-transition: all 1s ease;
+                -o-transition: all 1s ease;
+                -ms-transition: all 1s ease;
+                transition: all 1s ease;
+
+                /* ombre portee */
+                -webkit-box-shadow: 2.5px 2.5px 2.5px #444;
+                -moz-box-shadow: 2.5px 2.5px 2.5px #444;
+                box-shadow: 2.5px 2.5px 2.5px #444;
+        }
+}
+/* RESPONSIVE LAYOUT
+
+        grands ecrans et tablettes
+
+*/
+@media screen and (min-device-width: 10.2in) {
+        * {
+                font-size: 13pt;
+        }
+        .body {
+                font-size: 1em;
+        }
+        .menu {
+                font-size: 1em;
+                /** bord arrondi */
+                border-top-right-radius: 10px;
+                border-bottom-right-radius: 10px;
+        }
+        .rubriques {
+                padding: 1em 0.5em;
+                /** bord arrondi */
+                border-bottom-right-radius: 5px;
+                border-top-right-radius: 5px;
+        }
+        .sitemap {
+                font-size: 0.9em;
+        }
+}
+/* RESPONSIVE LAYOUT
+
+        Mode Paysage
+
+*/
+@media screen and (min-aspect-ratio: 4/3) {
+        /** menu en postion statique*/
+        .parent {
+                text-align: right;
+        }
+        .mobile{
+                position: absolute;
+                visibility: hidden;
+        }
+        .sliderBar {
+                position: absolute;
+                visibility: hidden;
+        }
+        .slide {
+                position: absolute;
+                visibility: hidden;
+        }
+}
