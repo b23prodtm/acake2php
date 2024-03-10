@@ -1,0 +1,11 @@
+{
+    "name": "betothreeprod/updateshell",
+    "description": "A CakePHP Plugin: UpdateShell",
+    "type": "cakephp-plugin",
+    "keywords": ["cakephp", "update", "plugin"],
+    "homepage": "https://github.com/b23prodtm/update",
+    "license": "BSD-2-Clause",
+    "require": {
+        "php": "^7.1 || ^8"
+    }
+}

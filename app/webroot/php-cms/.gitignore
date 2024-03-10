@@ -1,0 +1,10 @@
+e13/nbproject/private/private.xml
+# variables sont passes par environment
+# e13/etc/constantes.properties
+e13/etc/constantes_local.properties
+/e13/etc/constantes.properties.old*
+/e13/etc/constantes_local.properties.old*
+e13/etc/export_hash_password.sh
+/tmp/img/*
+!*empty
+*.DS_Store
