@@ -15,11 +15,10 @@
     + [License](#license)
 
 <!-- tocstop -->
-> We are moving to Kubernetes to host our website... See more about that project in [Kubespray](http://www.github.com/b23prodtm/kubespray).
-
+> Hello! we're upgrading to CakePHP 3.x... see you soon!
 A CakePHP 2.x application 
 =========================
-[![TravisCI Status](https://travis-ci.com/b23prodtm/acake2php.svg?branch=development)](https://travis-ci.com/b23prodtm/acake2php)
+[![TravisCI Status](https://app.travis-ci.com/b23prodtm/acake2php.svg?token=VkN3AkpvB5yVGfXx1qj5&branch=development)](https://travis-ci.com/b23prodtm/acake2php)
 [![CircleCI Status](https://circleci.com/gh/b23prodtm/acake2php.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/acake2php)
 
 > [Including PHP-CMS ex-Pohse](https://sourceforge.net/projects/pohse/)
