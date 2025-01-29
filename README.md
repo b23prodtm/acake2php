@@ -15,8 +15,8 @@
     + [License](#license)
 
 <!-- tocstop -->
-> Hello! we're upgrading to CakePHP 3.x... see you soon!
-A CakePHP 2.x application 
+
+A CakePHP 3.x application 
 =========================
 [![TravisCI Status](https://app.travis-ci.com/b23prodtm/acake2php.svg?token=VkN3AkpvB5yVGfXx1qj5&branch=development)](https://travis-ci.com/b23prodtm/acake2php)
 [![CircleCI Status](https://circleci.com/gh/b23prodtm/acake2php.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/acake2php)
@@ -31,6 +31,16 @@ Currently the deployment script
 Based on [Balena engine](http://www.balena.io). See more about [NodeJs dependencies](#nodejs-dependencies)
 
 [![balena deploy button](https://www.balena.io/deploy.svg)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/b23prodtm/acake2php)
+
+Requirements
+------------
+Basically, this application's built on a PHP source code (CakePHP). Additional functionalities come from Composer plugins.
+To deploy a server or onto a container manager like docker, you need at least a developer environment with the following software:
++ PHP 8.1 or later in PATH
++ NodeJS 19 or later in PATH
++ Composer.phar executable
++ (optional) a Docker setup
++ (recommended for Windows) git unix-style shell, like Git Bash
 
 Plugins
 -------
