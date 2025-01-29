@@ -57,6 +57,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package-lock.json" }}
           paths:
             - $HOME/.npm
+            - node_modules
       - run:
           name: Set architecture and Setup Environment Variables
           command: |
@@ -80,10 +81,6 @@ jobs:
             ./test-cake.sh --circle
             . common.env && cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
           when: always
-      - persist_to_workspace:
-          root: app/
-          paths:
-            - Config
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: large
   compose:
@@ -95,8 +92,6 @@ jobs:
       - BALENA_ARCH: x86_64
     steps:
       - checkout
-      - attach_workspace:
-          at: app
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package-lock.json" }}
