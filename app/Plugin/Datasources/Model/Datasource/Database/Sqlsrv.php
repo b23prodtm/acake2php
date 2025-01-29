@@ -15,6 +15,8 @@
  * @since         CakePHP Datasources v0.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Datasources\Model\Datasource\Database;
+
 
 /**
  * Provides common base for Microsoft SQL Server Driver for PHP v1.1 connections

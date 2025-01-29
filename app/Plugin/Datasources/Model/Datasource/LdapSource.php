@@ -21,6 +21,8 @@
  * @since		 CakePHP Datasources v 0.3
  * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Datasources\Model\Datasource;
+
 App::uses('Inflector', 'Utility');
 App::uses('DataSource', 'Model/Datasource');
 

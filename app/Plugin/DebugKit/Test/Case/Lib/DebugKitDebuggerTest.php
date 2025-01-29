@@ -15,6 +15,8 @@
  * @since         debug_kit 0.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  **/
+namespace DebugKit\Test\Case\Lib;
+
 
 App::uses('DebugKitDebugger', 'DebugKit.Lib');
 App::uses('DebugTimer', 'DebugKit.Lib');

@@ -13,6 +13,8 @@
  * @since         CakePHP Datasources v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Datasources\Test\Case\Model\Datasource;
+
 
 App::uses('XmlrpcSource', 'Datasources.Model/Datasource');
 

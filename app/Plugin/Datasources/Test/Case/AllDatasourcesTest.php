@@ -3,6 +3,8 @@
  * All Datasources plugin tests
  *
  */
+namespace Datasources\Test\Case;
+
 class AllDatasourcesTest extends CakeTestCase {
 
 /**

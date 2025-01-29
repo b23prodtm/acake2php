@@ -17,6 +17,8 @@
  * @since         CakePHP Datasources v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Datasources\Test\Case\Model\Datasource\Database;
+
 App::uses('Model', 'Model');
 App::uses('Adodb', 'Datasources.Model/Datasource/Database');
 

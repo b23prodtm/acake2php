@@ -1,4 +1,6 @@
 <?php
+namespace Markdown\Model\Behavior;
+
 use Michelf\Markdown;
 
 class MarkdownBehavior extends ModelBehavior {

@@ -19,6 +19,8 @@
  * @since         CakePHP Datasources v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Datasources\Model\Datasource\Database;
+
 
 App::uses('DboSource', 'Model/Datasource');
 

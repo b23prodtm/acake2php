@@ -9,6 +9,8 @@
  * @license     MIT
  *
  */
+namespace Shells\Console\Command\tasks;
+
 
 /**
  * ProgressBarTask class

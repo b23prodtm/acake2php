@@ -14,6 +14,8 @@
  * @since         CakePHP Datasources v 0.3
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+namespace Datasources\Test\Case\Model\Datasource;
+
 
 App::uses('ConnectionManager', 'Model');
 App::uses('Model', 'Model');

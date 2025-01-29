@@ -13,6 +13,8 @@
  * @since         DebugKit 2.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace DebugKit\Test\Case\Controller\Component;
+
 
 App::uses('Router', 'Routing');
 App::uses('Controller', 'Controller');

@@ -24,6 +24,8 @@
  *     'recursive' => false // Only false is supported at the moment
  *   );
  */
+namespace Datasources\Model\Datasource;
+
 App::uses('DataSource', 'Model/Datasource');
 App::uses('Folder', 'Utility');
 

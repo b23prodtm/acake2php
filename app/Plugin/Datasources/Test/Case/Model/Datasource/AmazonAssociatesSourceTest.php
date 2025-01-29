@@ -15,6 +15,8 @@
  * @since         CakePHP Datasources v 0.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Datasources\Test\Case\Model\Datasource;
+
 
 /**
  * Import Required libraries

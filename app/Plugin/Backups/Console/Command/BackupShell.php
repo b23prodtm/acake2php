@@ -18,6 +18,8 @@
  * @package   plugns.Backups
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Backups\Console\Command;
+
 
 App::uses('CakeSchema', 'Model');
 App::uses('ConnectionManager', 'Model');

@@ -26,6 +26,8 @@
  *    'locale' => 'com' //(ca,com,co,uk,de,fr,jp)
  *  );
  */
+namespace Datasources\Model\Datasource;
+
 
 /**
  * Import XML, required library

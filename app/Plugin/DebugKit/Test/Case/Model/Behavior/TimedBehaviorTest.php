@@ -15,6 +15,8 @@
  * @since         DebugKit 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace DebugKit\Test\Case\Model\Behavior;
+
 
 App::uses('DebugKitDebugger', 'DebugKit.Lib');
 
