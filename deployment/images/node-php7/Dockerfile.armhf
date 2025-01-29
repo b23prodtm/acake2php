@@ -1,5 +1,5 @@
 ARG PHP_LIB
-ENV PHP_LIB ${PHP_LIB:-8}
+ENV PHP_LIB ${PHP_LIB:-7}
 FROM node:current-alpine3.13
 RUN apk update \
     && apk add \
