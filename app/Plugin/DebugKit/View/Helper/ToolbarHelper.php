@@ -11,8 +11,6 @@
  * @since         DebugKit 0.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\View\Helper;
-
 
 App::uses('DebugKitDebugger', 'DebugKit.Lib');
 App::uses('AppHelper', 'View/Helper');
@@ -164,7 +162,7 @@ class ToolbarHelper extends AppHelper {
  */
 	public function getQueryLogs($connection, $options = array()) {
 		$options += array('explain' => false, 'cache' => true, 'threshold' => 20);
-		$db = ConnectionManager::get($connection);
+		$db = ConnectionManager::getDataSource($connection);
 
 		if (!method_exists($db, 'getLog')) {
 			return array();

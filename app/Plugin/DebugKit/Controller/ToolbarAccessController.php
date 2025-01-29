@@ -11,8 +11,6 @@
  * @since         DebugKit 1.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\Controller;
-
 
 App::uses('Security', 'Utility');
 App::uses('DebugKitAppController', 'DebugKit.Controller');
@@ -62,8 +60,8 @@ class ToolbarAccessController extends DebugKitAppController {
  *
  * @return void
  */
-	public function beforeFilter(Event $event) {
-		parent::beforeFilter($event);
+	public function beforeFilter() {
+		parent::beforeFilter();
 		if (isset($this->Toolbar)) {
 			$this->Components->disable('Toolbar');
 		}

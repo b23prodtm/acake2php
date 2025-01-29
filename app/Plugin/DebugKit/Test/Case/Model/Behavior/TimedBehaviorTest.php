@@ -15,8 +15,6 @@
  * @since         DebugKit 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\Test\Case\Model\Behavior;
-
 
 App::uses('DebugKitDebugger', 'DebugKit.Lib');
 
@@ -25,16 +23,14 @@ App::uses('DebugKitDebugger', 'DebugKit.Lib');
  *
  * @since         DebugKit 1.3
  */
-class TimedBehaviorTestCase extends TestCase {
+class TimedBehaviorTestCase extends CakeTestCase {
 
 /**
  * Fixtures
  *
  * @var array
  */
-	public $fixtures = array(
-		'core.articles'
-	);
+	public $fixtures = array('core.article');
 
 /**
  * Start Test callback

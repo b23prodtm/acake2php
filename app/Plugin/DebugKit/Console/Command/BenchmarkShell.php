@@ -11,8 +11,6 @@
  * @since         DebugKit 1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\Console\Command;
-
 
 App::uses('CakeText', 'Utility');
 

@@ -14,8 +14,6 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\Test\Case;
-
 
 /**
  * Class DebugKitGroupTestCase
@@ -50,7 +48,7 @@ class DebugKitGroupTestCase extends PHPUnit_Framework_TestSuite {
 			$excludes = self::getTestFiles((array)$excludes);
 		}
 		if ($directory === null || $directory !== realpath($directory)) {
-			$basePath = Plugin::path('DebugKit') . 'Test' . DS . 'Case' . DS;
+			$basePath = CakePlugin::path('DebugKit') . 'Test' . DS . 'Case' . DS;
 			$directory = str_replace(DS . DS, DS, $basePath . $directory);
 		}
 

@@ -15,8 +15,6 @@
  * @since         DebugKit 0.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\Test\Case\View\Helper;
-
 
 App::uses('View', 'View');
 App::uses('Controller', 'Controller');
@@ -32,7 +30,7 @@ App::uses('FormHelper', 'View/Helper');
  *
  * @since         DebugKit 0.1
  */
-class HtmlToolbarHelperTestCase extends TestCase {
+class HtmlToolbarHelperTestCase extends CakeTestCase {
 
 /**
  * Setup Test Case

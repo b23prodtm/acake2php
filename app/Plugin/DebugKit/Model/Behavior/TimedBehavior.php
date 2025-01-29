@@ -11,8 +11,6 @@
  * @since         DebugKit 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\Model\Behavior;
-
 
 App::uses('DebugTimer', 'DebugKit.Lib');
 

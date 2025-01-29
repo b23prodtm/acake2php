@@ -15,8 +15,6 @@
  * @since         debug_kit 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\Test\Case\Lib;
-
 
 App::uses('DebugTimer', 'DebugKit.Lib');
 
@@ -25,7 +23,7 @@ App::uses('DebugTimer', 'DebugKit.Lib');
  *
  * @since         debug_kit 2.0
  */
-class DebugTimerTest extends TestCase {
+class DebugTimerTest extends CakeTestCase {
 
 /**
  * tearDown method

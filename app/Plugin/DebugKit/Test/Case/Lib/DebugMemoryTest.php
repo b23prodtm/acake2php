@@ -14,15 +14,13 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  **/
-namespace DebugKit\Test\Case\Lib;
-
 
 App::uses('DebugMemory', 'DebugKit.Lib');
 
 /**
  * Class DebugMemoryTest
  */
-class DebugMemoryTest extends TestCase {
+class DebugMemoryTest extends CakeTestCase {
 
 /**
  * test memory usage

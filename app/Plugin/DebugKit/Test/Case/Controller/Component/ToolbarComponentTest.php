@@ -13,8 +13,6 @@
  * @since         DebugKit 2.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\Test\Case\Controller\Component;
-
 
 App::uses('Router', 'Routing');
 App::uses('Controller', 'Controller');
@@ -46,16 +44,14 @@ class TestToolbarComponent extends ToolbarComponent {
 /**
  * ToolbarComponentTestCase Test case
  */
-class ToolbarComponentTestCase extends TestCase {
+class ToolbarComponentTestCase extends CakeTestCase {
 
 /**
  * fixtures
  *
  * @var array
  */
-	public $fixtures = array(
-		'core.articles'
-	);
+	public $fixtures = array('core.article');
 
 /**
  * url for test
@@ -164,7 +160,7 @@ class ToolbarComponentTestCase extends TestCase {
  * @return void
  */
 	public function testLoadPluginPanels() {
-		$debugKitPath = Plugin::path('DebugKit');
+		$debugKitPath = CakePlugin::path('DebugKit');
 		$noDir = (empty($debugKitPath) || !file_exists($debugKitPath));
 		if ($noDir) {
 			$this->markTestAsSkipped('Could not find DebugKit in plugin paths');
@@ -174,7 +170,7 @@ class ToolbarComponentTestCase extends TestCase {
 			'Plugin' => array($debugKitPath . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
 		));
 
-		Plugin::load('DebugkitTestPlugin');
+		CakePlugin::load('DebugkitTestPlugin');
 		$this->_loadController();
 		$this->Controller->Toolbar->loadPanels(array('DebugkitTestPlugin.PluginTest'));
 		$this->assertInstanceOf(
@@ -189,7 +185,7 @@ class ToolbarComponentTestCase extends TestCase {
  * @return void
  */
 	public function testLibPanels() {
-		$debugKitPath = Plugin::path('DebugKit');
+		$debugKitPath = CakePlugin::path('DebugKit');
 		$noDir = (empty($debugKitPath) || !file_exists($debugKitPath));
 		if ($noDir) {
 			$this->markTestAsSkipped('Could not find DebugKit in plugin paths');
@@ -502,7 +498,7 @@ class ToolbarComponentTestCase extends TestCase {
  * @return void
  */
 	public function testNoRequestActionInterference() {
-		$debugKitPath = Plugin::path('DebugKit');
+		$debugKitPath = CakePlugin::path('DebugKit');
 		$noDir = (empty($debugKitPath) || !file_exists($debugKitPath));
 		if ($noDir) {
 			$this->markTestAsSkipped('Could not find DebugKit in plugin paths');

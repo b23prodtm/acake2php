@@ -11,8 +11,6 @@
  * @since         DebugKit 1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\View\Helper;
-
 
 App::uses('AppHelper', 'View/Helper');
 App::uses('HtmlHelper', 'View/Helper');
@@ -79,7 +77,7 @@ class SimpleGraphHelper extends AppHelper {
 					' ',
 					array(
 						'style' => "margin-left: {$graphOffset}px; width: {$graphValue}px",
-						'title' => __d('debug_kit', "Starting {0}ms into the request, taking {1}ms", $offset, $value),
+						'title' => __d('debug_kit', "Starting %sms into the request, taking %sms", $offset, $value),
 					)
 				),
 			array('style' => "width: {$width}px;"),

@@ -10,8 +10,6 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\Lib\Log\Engine;
-
 
 /**
  * A CakeLog listener which saves having to munge files or other configured loggers.

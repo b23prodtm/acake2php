@@ -10,8 +10,6 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\Lib\Panel;
-
 
 App::uses('DebugPanel', 'DebugKit.Lib');
 
@@ -43,7 +41,7 @@ class SqlLogPanel extends DebugPanel {
 		$dbConfigs = ConnectionManager::sourceList();
 		foreach ($dbConfigs as $configName) {
 			$driver = null;
-			$db = ConnectionManager::get($configName);
+			$db = ConnectionManager::getDataSource($configName);
 			if (
 				(empty($db->config['driver']) && empty($db->config['datasource'])) ||
 				!method_exists($db, 'getLog')

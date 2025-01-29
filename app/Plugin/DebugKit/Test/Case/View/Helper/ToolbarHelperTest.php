@@ -15,8 +15,6 @@
  * @since         DebugKit 0.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace DebugKit\Test\Case\View\Helper;
-
 
 App::uses('View', 'View');
 App::uses('Controller', 'Controller');
@@ -35,16 +33,14 @@ class MockBackendHelper extends Helper {
 /**
  * Class ToolbarHelperTestCase
  */
-class ToolbarHelperTestCase extends TestCase {
+class ToolbarHelperTestCase extends CakeTestCase {
 
 /**
  * Fixtures
  *
  * @var array
  */
-	public $fixtures = array(
-		'core.posts'
-	);
+	public $fixtures = array('core.post');
 
 /**
  * setUp
