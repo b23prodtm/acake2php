@@ -62,8 +62,8 @@ class ToolbarAccessController extends DebugKitAppController {
  *
  * @return void
  */
-	public function beforeFilter() {
-		parent::beforeFilter();
+	public function beforeFilter(Event $event) {
+		parent::beforeFilter($event);
 		if (isset($this->Toolbar)) {
 			$this->Components->disable('Toolbar');
 		}

@@ -40,7 +40,7 @@ class BackupShell extends Shell {
         }
 
         App::import('Core', 'ConnectionManager');
-        $db = ConnectionManager::getDataSource($this->args[0]);
+        $db = ConnectionManager::get($this->args[0]);
         $backupdir = $this->args[2];
         $seleced_tables = '*';
         //$tables = array('orders', 'users', 'profiles');
@@ -154,7 +154,7 @@ class BackupShell extends Shell {
     }
 
     function __isDbConnected($db = NULL) {
-        $datasource = ConnectionManager::getDataSource($db);
+        $datasource = ConnectionManager::get($db);
         return $datasource->isConnected();
     }
 

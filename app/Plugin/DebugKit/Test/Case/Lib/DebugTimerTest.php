@@ -25,7 +25,7 @@ App::uses('DebugTimer', 'DebugKit.Lib');
  *
  * @since         debug_kit 2.0
  */
-class DebugTimerTest extends CakeTestCase {
+class DebugTimerTest extends TestCase {
 
 /**
  * tearDown method

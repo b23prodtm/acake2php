@@ -46,7 +46,7 @@
 			<?php echo $this->Html->link(__('Modify'), array('action' => 'edit', $client['Client']['id'])); ?>
 			<?php echo $this->Form->postLink(__('Unsubscribe'), array(
 				'action' => 'delete', $client['Client']['id']), array(
-					'confirm' => __('Are you sure to unsubscribe # %s?', $client['Client']['id']))); ?>
+					'confirm' => __('Are you sure to unsubscribe # {0}?', $client['Client']['id']))); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

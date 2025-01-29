@@ -119,7 +119,7 @@ class XmlrpcSource extends DataSource {
 	protected function _request($method, $params) {
 		$xmlRequest = $this->generateXML($method, $params);
 		if (!$this->HttpSocket) {
-			$this->HttpSocket = new HttpSocket(array('timeout' => $this->config['timeout']));
+			$this->HttpSocket = new Client(array('timeout' => $this->config['timeout']));
 		}
 		$uri = array(
 			'host' => $this->config['host'],

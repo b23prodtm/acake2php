@@ -5,11 +5,11 @@
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Confirm you have created the file: %s', $file); ?>
+	<?php echo __d('cake_dev', 'Confirm you have created the file: {0}', $file); ?>
 </p>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
-	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'missing_markdown.ctp'); ?>
+	<?php echo __d('cake_dev', 'If you want to customize this error message, create {0}', APP_DIR . DS . 'View' . DS . 'Errors' . DS . 'missing_markdown.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

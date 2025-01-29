@@ -19,7 +19,7 @@ App::uses('CakeLog', 'Log');
 App::uses('CakeLogInterface', 'Log');
 App::uses('DebugTimer', 'DebugKit.Lib');
 App::uses('DebugMemory', 'DebugKit.Lib');
-App::uses('HelperCollection', 'View');
+App::uses('HelperRegistry', 'View');
 App::uses('CakeEventManager', 'Event');
 App::uses('CakeEventListener', 'Event');
 
@@ -126,11 +126,11 @@ class ToolbarComponent extends Component implements CakeEventListener {
  * If debug is off the component will be disabled and not do any further time tracking
  * or load the toolbar helper.
  *
- * @param ComponentCollection $collection The collection.
+ * @param ComponentRegistry $collection The collection.
  * @param array $settings The settings.
  * @return \ToolbarComponent
  */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
+	public function __construct(ComponentRegistry $collection, $settings = array()) {
 		$settings = array_merge((array)Configure::read('DebugKit'), $settings);
 		$panels = $this->_defaultPanels;
 		if (isset($settings['panels'])) {
@@ -234,7 +234,7 @@ class ToolbarComponent extends Component implements CakeEventListener {
  */
 	public function initialize(Controller $controller) {
 		if (!$this->enabled) {
-			$this->_Collection->disable('Toolbar');
+			$this->_registry->disable('Toolbar');
 		}
 	}
 
@@ -445,7 +445,7 @@ class ToolbarComponent extends Component implements CakeEventListener {
 
 			App::uses($className, $plugin . 'Panel');
 			if (!class_exists($className)) {
-				trigger_error(__d('debug_kit', 'Could not load DebugToolbar panel %s', $panel), E_USER_WARNING);
+				trigger_error(__d('debug_kit', 'Could not load DebugToolbar panel {0}', $panel), E_USER_WARNING);
 				continue;
 			}
 			$panelObj = new $className($settings);

@@ -62,7 +62,7 @@ class BackupShell extends Shell {
 		$this->out("Backing up...\n");
 		$File = new File($file);
 
-		$db = ConnectionManager::getDataSource($dataSourceName);
+		$db = ConnectionManager::get($dataSourceName);
 
 		$config = $db->config;
 		$this->connection = "default";

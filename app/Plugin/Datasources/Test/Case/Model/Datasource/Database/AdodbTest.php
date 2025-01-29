@@ -151,7 +151,7 @@ if (!class_exists('Article')) {
  * DboAdodbTest class
  *
  */
-class DboAdodbTest extends CakeTestCase {
+class DboAdodbTest extends TestCase {
 
 /**
  * The Dbo instance to be tested
@@ -165,14 +165,16 @@ class DboAdodbTest extends CakeTestCase {
  *
  * @var string
  */
-	public $fixtures = array('core.article');
+	public $fixtures = array(
+		'core.articles'
+	);
 
 /**
  * Skip if cannot connect to AdoDb
  */
 	public function skip() {
 		$this->_initDb();
-		$db = ConnectionManager::getDataSource('test');
+		$db = ConnectionManager::get('test');
 		$this->skipIf($db->config['driver'] !== 'adodb', '%s Adodb connection not available');
 	}
 
@@ -181,7 +183,7 @@ class DboAdodbTest extends CakeTestCase {
  */
 	public function startTest($method) {
 		$this->markTestSkipped('Test not compatible with cake 2.0');
-		$db = ConnectionManager::getDataSource('test');
+		$db = ConnectionManager::get('test');
 		$this->db = new DboAdoTestDb($db->config);
 		$this->model = new AdodbTestModel();
 	}

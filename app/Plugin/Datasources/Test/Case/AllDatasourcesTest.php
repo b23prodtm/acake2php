@@ -5,7 +5,7 @@
  */
 namespace Datasources\Test\Case;
 
-class AllDatasourcesTest extends CakeTestCase {
+class AllDatasourcesTest extends TestCase {
 
 /**
  * Suite define the tests for this suite
@@ -15,7 +15,7 @@ class AllDatasourcesTest extends CakeTestCase {
 	public static function suite() {
 		$suite = new CakeTestSuite('All Datasources test');
 
-		$path = CakePlugin::path('Datasources') . 'Test' . DS . 'Case' . DS;
+		$path = Plugin::path('Datasources') . 'Test' . DS . 'Case' . DS;
 		$suite->addTestDirectoryRecursive($path);
 
 		return $suite;

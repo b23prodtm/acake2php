@@ -350,14 +350,16 @@ class ArraySourceTestIpAddressesArraySourceTestUser extends ArraySourceTestModel
  * Array Datasource Test
  *
  */
-class ArraySourceTest extends CakeTestCase {
+class ArraySourceTest extends TestCase {
 
 /**
  * List of fixtures
  *
  * @var array
  */
-	public $fixtures = array('plugin.datasources.user');
+	public $fixtures = array(
+		'plugin.datasources.users'
+	);
 
 /**
  * Array Source Instance

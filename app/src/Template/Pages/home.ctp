@@ -11,7 +11,7 @@ endif;
 
 App::uses('Debugger', 'Utility');
 ?>
-<h2><?php echo __d('cake_dev', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
+<h2><?php echo __d('cake_dev', 'Release Notes for CakePHP {0}.', Configure::version()); ?></h2>
 <p>
 	<?php echo $this->Html->link(__d('cake_dev', 'Read the changelog'), 'https://cakephp.org/changelogs/' . Configure::version()); ?>
 </p>
@@ -58,11 +58,11 @@ endif;
 	$settings = Cache::settings();
 	if (!empty($settings)):
 		echo '<span class="notice success">';
-			echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit %s', '<em>' . $settings['engine'] . 'Engine</em>', CONFIG . 'core.php');
+			echo __d('cake_dev', 'The {0} is being used for core caching. To change the config edit {1}', '<em>' . $settings['engine'] . 'Engine</em>', CONFIG . 'core.php');
 		echo '</span>';
 	else:
 		echo '<span class="notice">';
-			echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in %s', CONFIG . 'core.php');
+			echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in {0}', CONFIG . 'core.php');
 		echo '</span>';
 	endif;
 	?>
@@ -79,7 +79,7 @@ endif;
 		echo '<span class="notice">';
 			echo __d('cake_dev', 'Your database configuration file is NOT present.');
 			echo '<br/>';
-			echo __d('cake_dev', 'Rename %s to %s', CONFIG . 'database.php.default', CONFIG . 'database.php');
+			echo __d('cake_dev', 'Rename {0} to {1}', CONFIG . 'database.php.default', CONFIG . 'database.php');
 		echo '</span>';
 	endif;
 	?>
@@ -88,7 +88,7 @@ endif;
 if (isset($filePresent)):
 	App::uses('ConnectionManager', 'Model');
 	try {
-		$connected = ConnectionManager::getDataSource('default');
+		$connected = ConnectionManager::get('default');
 	} catch (Exception $connectionError) {
 		$connected = false;
 		$errorMsg = $connectionError->getMessage();
@@ -138,7 +138,7 @@ endif;
 		echo '<span class="notice">';
 			echo __d('cake_dev', 'DebugKit is not installed. It will help you inspect and debug different aspects of your application.');
 			echo '<br/>';
-			echo __d('cake_dev', 'You can install it from %s', $this->Html->link('GitHub', 'https://github.com/cakephp/debug_kit/tree/2.2'));
+			echo __d('cake_dev', 'You can install it from {0}', $this->Html->link('GitHub', 'https://github.com/cakephp/debug_kit/tree/2.2'));
 		echo '</span>';
 	endif;
 	?>

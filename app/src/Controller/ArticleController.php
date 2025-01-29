@@ -129,11 +129,11 @@ class ArticleController extends AppController {
 
                 if ($this->Article->delete($id)) {
                         $this->Flash->success(
-                                __d('article', 'Article with id : %s was deleted.', h($id))
+                                __d('article', 'Article with id : {0} was deleted.', h($id))
                         );
                 } else {
                         $this->Flash->error(
-                                __d('article', "Article with id: %s couldn't be deleted.", h($id))
+                                __d('article', "Article with id: {0} couldn't be deleted.", h($id))
                         );
                 }
 

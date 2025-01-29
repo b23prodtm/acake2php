@@ -75,7 +75,7 @@
 		<li><?php echo $this->Form->postLink(__('Remove subscription'), array(
 			'action' => 'delete', $client['Client']['id']),
 			array(
-				'confirm' => __('Are you sure to unsubscribe # %s?', $client['Client']['id'])
+				'confirm' => __('Are you sure to unsubscribe # {0}?', $client['Client']['id'])
 			)
 		); ?> </li>
 		<li><?php echo $this->Html->link(__('Change my password'), array('controller' => 'motdepasse', 'action' => 'index')); ?> </li>

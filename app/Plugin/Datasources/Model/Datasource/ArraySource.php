@@ -245,7 +245,7 @@ class ArraySource extends DataSource {
 					if ($model->useDbConfig == $linkModel->useDbConfig) {
 						$db = $this;
 					} else {
-						$db = ConnectionManager::getDataSource($linkModel->useDbConfig);
+						$db = ConnectionManager::get($linkModel->useDbConfig);
 					}
 
 					if (isset($db)) {

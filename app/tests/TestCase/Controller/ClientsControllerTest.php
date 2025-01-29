@@ -14,8 +14,8 @@ class ClientsControllerTest extends ControllerTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.client',
-		'app.motdepasse'
+		'app.clients',
+		'app.motdepasses'
 	);
 
 }

@@ -44,7 +44,7 @@ class AmazonAssociatesTestDataSource extends AmazonAssociatesSource {
  * AmazonAssociatesTestCase
  *
  */
-class AmazonAssociatesTest extends CakeTestCase {
+class AmazonAssociatesTest extends TestCase {
 
 /**
  * Amazon Datasource object

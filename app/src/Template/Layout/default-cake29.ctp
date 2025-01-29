@@ -316,7 +316,7 @@ oc deploy cakephp-mysql-example --latest
                                                 $hasDB = 1;
                                                 $tableExisted = 0;
                                                 try {
-                                                        $connection = ConnectionManager::getDataSource('default');
+                                                        $connection = ConnectionManager::get('default');
                                                 } catch (Exception $e) {
                                                         $hasDB = 0;
                                                 }

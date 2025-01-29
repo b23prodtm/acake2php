@@ -6,7 +6,7 @@
  */
 namespace Markdown\Lib\Error;
 
-class MissingMarkdownException extends CakeException {
+class MissingMarkdownException extends \Exception {
 
 	protected $_messageTemplate = 'Markdown file %s is missing.';
 

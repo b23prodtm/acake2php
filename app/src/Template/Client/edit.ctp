@@ -29,7 +29,7 @@
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
 		<li><?php echo $this->Html->link(__('Change my password'), array('controller' = > 'Motdepasse', 'action' => 'edit', $client['Motdepasse']['id'])); ?> </li>
-		<li><?php echo $this->Form->postLink(__('Unsubscribe'), array('action' => 'delete', $this->Form->value('Client.id')), array('confirm' => __('Are you sure you want to remove # %s?', $this->Form->value('Client.id')))); ?></li>
+		<li><?php echo $this->Form->postLink(__('Unsubscribe'), array('action' => 'delete', $this->Form->value('Client.id')), array('confirm' => __('Are you sure you want to remove # {0}?', $this->Form->value('Client.id')))); ?></li>
 		<li><?php echo $this->Html->link(__('Member list'), array('action' => 'index')); ?></li>
 	</ul>
 </div>

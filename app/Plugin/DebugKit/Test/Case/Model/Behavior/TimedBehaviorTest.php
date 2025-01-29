@@ -25,14 +25,16 @@ App::uses('DebugKitDebugger', 'DebugKit.Lib');
  *
  * @since         DebugKit 1.3
  */
-class TimedBehaviorTestCase extends CakeTestCase {
+class TimedBehaviorTestCase extends TestCase {
 
 /**
  * Fixtures
  *
  * @var array
  */
-	public $fixtures = array('core.article');
+	public $fixtures = array(
+		'core.articles'
+	);
 
 /**
  * Start Test callback

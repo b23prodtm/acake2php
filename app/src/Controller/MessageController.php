@@ -101,11 +101,11 @@ class MessageController extends AppController {
 
 	    if ($this->Message->delete($id)) {
 	        $this->Flash->success(
-	            __('Message %s was successfully removed.', h($id))
+	            __('Message {0} was successfully removed.', h($id))
 	        );
 	    } else {
 	        $this->Flash->error(
-	            __('Message %s could NOT be removed', h($id))
+	            __('Message {0} could NOT be removed', h($id))
 	        );
 	    }
 

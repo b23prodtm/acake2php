@@ -78,7 +78,7 @@ class BlogTest extends CakeTestModel {
  * CsvSourceTestCase
  *
  */
-class CsvSourceTest extends CakeTestCase {
+class CsvSourceTest extends TestCase {
 
 /**
  * Default testing configuration

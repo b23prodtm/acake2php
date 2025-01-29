@@ -88,8 +88,8 @@ class AppController extends Controller {
                 $this->set("r", $this->_r);
         }
 
-        public function beforeFilter() {
-                parent::beforeFilter();
+        public function beforeFilter(Event $event) {
+                parent::beforeFilter($event);
                 /* internationalisation (i18n) */
                 Configure::write('Config.language', $this->_r->getLanguage());
                 /* AuthComponent de ne pas exiger un login pour toutes les actions index et view*/

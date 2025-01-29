@@ -33,11 +33,13 @@ class LdapPerson extends Model {
 	public $primaryKey = 'cn';
 }
 
-class LdapSourceTest extends CakeTestCase {
+class LdapSourceTest extends TestCase {
 
 	public $autoFixtures = false;
 
-	public $fixtures = array('plugin.Datasources.ldapPerson');
+	public $fixtures = array(
+		'plugin.Datasources.ldapPeople'
+	);
 
 /**
  * setUp method
@@ -132,12 +134,12 @@ class LdapSourceTest extends CakeTestCase {
 	}
 
 	public function testIsConnected() {
-		$ldap = ConnectionManager::getDataSource('test_ldap');
+		$ldap = ConnectionManager::get('test_ldap');
 		$this->assertTrue($ldap->isConnected());
 	}
 
 	public function testDisconnect() {
-		$ldap = ConnectionManager::getDataSource('test_ldap');
+		$ldap = ConnectionManager::get('test_ldap');
 		$ldap->disconnect();
 		$this->assertFalse($ldap->isConnected());
 	}
@@ -260,7 +262,7 @@ class LdapSourceTest extends CakeTestCase {
 	}
 
 	public function testConvertTimestampADToUnix() {
-		$ldap = ConnectionManager::getDataSource('test_ldap');
+		$ldap = ConnectionManager::get('test_ldap');
 		$time = $ldap->convertTimestampADToUnix('131277152960000000');
 		$this->assertEquals(1483241696, $time);
 	}

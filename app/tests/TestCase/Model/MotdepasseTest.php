@@ -6,7 +6,7 @@ App::uses('MotDePasse', 'Model');
 /**
  * MotDePasse Test Case
  */
-class MotDePasseTest extends CakeTestCase {
+class MotDePasseTest extends TestCase {
 
 /**
  * Fixtures
@@ -14,7 +14,7 @@ class MotDePasseTest extends CakeTestCase {
  * @var array
  */
 	public $fixtures = array(
-		'app.motdepasse'
+		'app.motdepasses'
 	);
 
 /**

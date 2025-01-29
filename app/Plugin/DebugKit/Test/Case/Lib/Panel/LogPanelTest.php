@@ -23,7 +23,7 @@ App::uses('Controller', 'Controller');
 /**
  * Class LogPanelTest
  */
-class LogPanelTest extends CakeTestCase {
+class LogPanelTest extends TestCase {
 
 /**
  * set up

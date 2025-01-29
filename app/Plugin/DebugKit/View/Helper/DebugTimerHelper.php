@@ -59,7 +59,7 @@ class DebugTimerHelper extends Helper {
 		}
 		DebugTimer::start(
 			'render_' . basename($viewFile),
-			__d('debug_kit', 'Rendering %s',
+			__d('debug_kit', 'Rendering {0}',
 			Debugger::trimPath($viewFile))
 		);
 	}

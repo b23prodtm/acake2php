@@ -18,8 +18,8 @@ class MotDePasseController extends AppController {
 			parent::__construct($request, $response);
 	}
 
-	public function beforeFilter() {
-			parent::beforeFilter();
+	public function beforeFilter(Event $event) {
+			parent::beforeFilter($event);
 			/* Permet aux utilisateurs de creer un mot de passe */
 			$this->Auth->allow('add', 'delete');
 	}
@@ -37,7 +37,7 @@ class MotDePasseController extends AppController {
 									$id = $this->Auth->user('id');
 							}
 							$client = Client::findById($id);
-							$this->Flash->message(__('Subscription saving %s...', $client));
+							$this->Flash->message(__('Subscription saving {0}...', $client));
 							/* Desaffectaction du 'password' en requete,
 							pour éviter la sauvegarde en session en clair du mot de passe en appelant login. */
 							unset($this->request->data['MotDePasse']['password']);
@@ -99,9 +99,9 @@ class MotDePasseController extends AppController {
 					return $this->redirect(array('action' => 'add', $id));
 			}
 			if(!$client) {
-					$this->Flash->error(__("Invalid '%s' subscription", $id));
+					$this->Flash->error(__("Invalid '{0}' subscription", $id));
 			} else {
-				$this->Flash->error(__("Subscription '%s' doesn\'t match the password", $id));
+				$this->Flash->error(__("Subscription '{0}' doesn\'t match the password", $id));
 			}
 			$this->Flash->error(__('Password could NOT be removed'));
 			return $this->redirect(array('action' => 'index'));

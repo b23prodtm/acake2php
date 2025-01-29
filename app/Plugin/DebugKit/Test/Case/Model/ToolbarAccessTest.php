@@ -25,14 +25,16 @@ App::uses('ToolbarAccess', 'DebugKit.Model');
  *
  * @since         DebugKit 1.3
  */
-class ToolbarAccessTestCase extends CakeTestCase {
+class ToolbarAccessTestCase extends TestCase {
 
 /**
  * Included fixtures
  *
  * @var array
  */
-	public $fixtures = array('core.post');
+	public $fixtures = array(
+		'core.posts'
+	);
 
 /**
  * setUp method

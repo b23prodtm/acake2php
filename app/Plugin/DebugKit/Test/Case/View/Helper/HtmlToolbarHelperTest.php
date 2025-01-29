@@ -32,7 +32,7 @@ App::uses('FormHelper', 'View/Helper');
  *
  * @since         DebugKit 0.1
  */
-class HtmlToolbarHelperTestCase extends CakeTestCase {
+class HtmlToolbarHelperTestCase extends TestCase {
 
 /**
  * Setup Test Case

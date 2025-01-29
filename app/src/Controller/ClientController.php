@@ -13,8 +13,8 @@ class ClientController extends AppController {
   		  parent::__construct($request, $response);
   	}
 
-    public function beforeFilter() {
-        parent::beforeFilter();
+    public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
         /* Permet aux utilisateurs de s'enregistrer et de se déconnecter */
         $this->Auth->allow('add', 'logout');
     }

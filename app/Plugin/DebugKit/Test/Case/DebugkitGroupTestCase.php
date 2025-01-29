@@ -50,7 +50,7 @@ class DebugKitGroupTestCase extends PHPUnit_Framework_TestSuite {
 			$excludes = self::getTestFiles((array)$excludes);
 		}
 		if ($directory === null || $directory !== realpath($directory)) {
-			$basePath = CakePlugin::path('DebugKit') . 'Test' . DS . 'Case' . DS;
+			$basePath = Plugin::path('DebugKit') . 'Test' . DS . 'Case' . DS;
 			$directory = str_replace(DS . DS, DS, $basePath . $directory);
 		}
 

@@ -22,7 +22,7 @@ namespace Datasources\Test\Fixture;
  * User Fixture
  *
  */
-class UserFixture extends CakeTestFixture {
+class UserFixture extends TestFixture {
 
 /**
  * Fields

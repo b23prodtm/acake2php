@@ -20,14 +20,14 @@ namespace DebugKit\Test\Case\Lib;
 
 App::uses('DebugKitDebugger', 'DebugKit.Lib');
 App::uses('DebugTimer', 'DebugKit.Lib');
-require_once CakePlugin::path('DebugKit') . 'Test' . DS . 'Case' . DS . 'TestFireCake.php';
+require_once Plugin::path('DebugKit') . 'Test' . DS . 'Case' . DS . 'TestFireCake.php';
 
 /**
  * Test case for the DebugKitDebugger
  *
  * @since         debug_kit 0.1
  */
-class DebugKitDebuggerTest extends CakeTestCase {
+class DebugKitDebuggerTest extends TestCase {
 
 /**
  * setUp method

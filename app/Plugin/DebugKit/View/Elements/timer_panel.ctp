@@ -54,7 +54,7 @@ endif;
 <div class="debug-info debug-timers">
 	<h2><?php echo __d('debug_kit', 'Timers'); ?></h2>
 	<div class="request-time">
-		<?php $totalTime = __d('debug_kit', '%s (ms)', $this->Number->precision($requestTime * 1000, 0)); ?>
+		<?php $totalTime = __d('debug_kit', '{0} (ms)', $this->Number->precision($requestTime * 1000, 0)); ?>
 		<?php echo $this->Toolbar->message(__d('debug_kit', 'Total Request Time:'), $totalTime)?>
 	</div>
 <?php

@@ -22,7 +22,7 @@ namespace Datasources\Test\Fixture;
  * LdapPerson Fixture
  *
  */
-class LdapPersonFixture extends CakeTestFixture {
+class LdapPersonFixture extends TestFixture {
 
 	public $primaryKey = 'cn';
 

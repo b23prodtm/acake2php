@@ -21,18 +21,18 @@ App::build(array(
 /**
  * Load DebugKit plugin
  */
-CakePlugin::load('DebugKit');
+Plugin::load('DebugKit');
 
 /**
  * Load Markdown Plugin
  */
 
-CakePlugin::load(array('Markdown' => array('bootstrap' => true)));
+Plugin::load(array('Markdown' => array('bootstrap' => true)));
 /**
  * Load UpdateShell Plugin
  */
-CakePlugin::load('UpdateShell');
+Plugin::load('UpdateShell');
 /**
  * Load DataSources Plugin
  */
-CakePlugin::load('Datasources');
+Plugin::load('Datasources');

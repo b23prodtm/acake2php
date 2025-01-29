@@ -64,7 +64,7 @@ if (isset($debugKitInHistoryMode)) {
 				echo '</h5>';
 				echo $this->Toolbar->table($queryLog['queries'], $headers, array('title' => 'SQL Log ' . $dbName));
 				if ($duplicate) {
-					echo '<p class="alert alert-warning">' . __d('debug_kit', '%s duplicate queries run.', $duplicate) . '</p>';
+					echo '<p class="alert alert-warning">' . __d('debug_kit', '{0} duplicate queries run.', $duplicate) . '</p>';
 				}
 			?>
 		<h4><?php echo __d('debug_kit', 'Query Explain:'); ?></h4>

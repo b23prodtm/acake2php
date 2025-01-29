@@ -24,14 +24,16 @@ App::uses('Controller', 'Controller');
  *
  * @since         DebugKit 2.1
  */
-class SqlLogPanelTest extends CakeTestCase {
+class SqlLogPanelTest extends TestCase {
 
 /**
  * fixtures.
  *
  * @var array
  */
-	public $fixtures = array('core.article');
+	public $fixtures = array(
+		'core.articles'
+	);
 
 /**
  * Setup

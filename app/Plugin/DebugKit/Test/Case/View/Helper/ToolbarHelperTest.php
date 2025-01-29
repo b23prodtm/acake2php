@@ -35,14 +35,16 @@ class MockBackendHelper extends Helper {
 /**
  * Class ToolbarHelperTestCase
  */
-class ToolbarHelperTestCase extends CakeTestCase {
+class ToolbarHelperTestCase extends TestCase {
 
 /**
  * Fixtures
  *
  * @var array
  */
-	public $fixtures = array('core.post');
+	public $fixtures = array(
+		'core.posts'
+	);
 
 /**
  * setUp

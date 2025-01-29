@@ -14,7 +14,7 @@ if (filter_input(INPUT_GET, 'images')) {
         }
         $f = new Formulaire(__d('article', 'Upload'). ' '.__dn('article', '%s image', 'images', $i + 1), $url . "/?images=publie");
         for ($i = 0; $i < $n; $i++) {
-                $champ[] = new ChampFile("image_$i", __d('article', 'file format image/%s', getTypes()[1]));
+                $champ[] = new ChampFile("image_$i", __d('article', 'file format image/{0}', getTypes()[1]));
                 $f->ajouterChamp($champ[$i]);
         }
         $valider = new ChampValider(__d("article", 'Upload'));

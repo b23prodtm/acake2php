@@ -18,7 +18,7 @@
 namespace DebugKit\Test\Case\View\Helper;
 
 
-$path = CakePlugin::path('DebugKit');
+$path = Plugin::path('DebugKit');
 
 App::uses('View', 'View');
 App::uses('Controller', 'Controller');
@@ -34,7 +34,7 @@ require_once $path . 'Test' . DS . 'Case' . DS . 'TestFireCake.php';
  *
  * @since         DebugKit 0.1
  */
-class FirePhpToolbarHelperTestCase extends CakeTestCase {
+class FirePhpToolbarHelperTestCase extends TestCase {
 
 /**
  * setUp
