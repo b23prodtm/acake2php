@@ -3,7 +3,7 @@ set -e
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=Scripts/lib/test/parsing.sh
 . "$TOPDIR/Scripts/lib/test/parsing.sh"
-migrate="--connection=test -v -u -i --enable-authentication-plugin"
+migrate="--connection=test -v -u -i --enable-ed25519-plugin"
 # default arg --docker, is enabled
 saved=( "$@" )
 set -- "--docker" "$@"
