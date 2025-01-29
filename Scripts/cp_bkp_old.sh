@@ -8,7 +8,7 @@ wd=$1
 src=$2
 dst=$3
 pwd=$(pwd)
-cd "$wd"
+cd "$wd" || true
 if [[ -f $dst && -f $src && -n $(command -v md5) ]]; then
 # read or operation to define $file1 & $file2 here ...
   val1=$(md5 -q "$src")
@@ -23,5 +23,5 @@ if [[ -f $dst && -f $src && -n $(command -v md5) ]]; then
   fi
 fi
 cp -v "$src" "$dst"
-cd "$pwd"
+cd "$pwd" || true
 slogger -st "$0" "${src} copied. Please, review the files.\n"
