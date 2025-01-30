@@ -56,3 +56,4 @@ Thumbs.db
 /nbproject/private/
 mysqldb/mysqld/
 mysqld/conf.d/custom.cnf
+upgrade/

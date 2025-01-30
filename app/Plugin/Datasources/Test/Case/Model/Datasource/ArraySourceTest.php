@@ -15,6 +15,8 @@
  * @since         CakePHP Datasources v 0.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Datasources\Test\Case\Model\Datasource;
+
 
 App::uses('ArraySource', 'Datasources.Model/Datasource');
 App::uses('ConnectionManager', 'Model');
@@ -348,14 +350,16 @@ class ArraySourceTestIpAddressesArraySourceTestUser extends ArraySourceTestModel
  * Array Datasource Test
  *
  */
-class ArraySourceTest extends CakeTestCase {
+class ArraySourceTest extends TestCase {
 
 /**
  * List of fixtures
  *
  * @var array
  */
-	public $fixtures = array('plugin.datasources.user');
+	public $fixtures = array(
+		'plugin.datasources.users'
+	);
 
 /**
  * Array Source Instance

@@ -13,6 +13,8 @@
  * @since         CakePHP Datasources v 0.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Datasources\Test\Case\Model\Datasource;
+
 
 App::uses('XmlrpcSource', 'Datasources.Model/Datasource');
 
@@ -44,7 +46,7 @@ class XmlrpcModel extends CakeTestModel {
  */
 	public function getStateName($number) {
 		$params = array('examples.getStateName', array($number), &$this);
-		$db = ConnectionManager::getDataSource($this->useDbConfig);
+		$db = ConnectionManager::get($this->useDbConfig);
 		return call_user_func_array(array($db, 'query'), $params);
 	}
 
@@ -74,7 +76,7 @@ class XmlrpcTestSource extends XmlrpcSource {
  * XML RPC Datasource Test
  *
  */
-class XmlrpcSourceTest extends CakeTestCase {
+class XmlrpcSourceTest extends TestCase {
 
 /**
  * XML RPC Source Instance

@@ -1,4 +1,6 @@
 <?php
+namespace Markdown\View\Helper;
+
 use Michelf\MarkdownExtra;
 
 /**

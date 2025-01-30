@@ -1,4 +1,6 @@
 <?php
+namespace UpdateShell\Console\Command;
+
 class UpdateShell extends Shell {
 	var $Folder = null;
 

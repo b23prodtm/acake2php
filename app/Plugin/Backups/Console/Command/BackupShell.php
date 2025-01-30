@@ -18,6 +18,8 @@
  * @package   plugns.Backups
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Backups\Console\Command;
+
 
 App::uses('CakeSchema', 'Model');
 App::uses('ConnectionManager', 'Model');
@@ -60,7 +62,7 @@ class BackupShell extends Shell {
 		$this->out("Backing up...\n");
 		$File = new File($file);
 
-		$db = ConnectionManager::getDataSource($dataSourceName);
+		$db = ConnectionManager::get($dataSourceName);
 
 		$config = $db->config;
 		$this->connection = "default";

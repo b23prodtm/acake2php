@@ -15,6 +15,8 @@
  * @since         CakePHP Datasources v 0.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Datasources\Model\Datasource\Database;
+
 
 App::uses('Mysql', 'Model/Datasource/Database');
 

@@ -4,7 +4,9 @@
  *
  * @package       App.Error
  */
-class MissingMarkdownException extends CakeException {
+namespace Markdown\Lib\Error;
+
+class MissingMarkdownException extends \Exception {
 
 	protected $_messageTemplate = 'Markdown file %s is missing.';
 

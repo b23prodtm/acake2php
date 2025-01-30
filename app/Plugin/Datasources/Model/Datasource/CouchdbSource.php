@@ -15,6 +15,8 @@
  * @since         CakePHP Datasources v 0.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Datasources\Model\Datasource;
+
 App::uses('HttpSocket', 'Network/Http');
 
 /**
@@ -73,7 +75,7 @@ class CouchdbSource extends DataSource {
 				$this->config['request']['uri']['pass'] = $this->config['password'];
 			}
 
-			$this->Socket = new HttpSocket($this->config);
+			$this->Socket = new Client($this->config);
 			if (strpos($this->Socket->get(), 'couchdb') !== false) {
 				$this->connected = true;
 			} else {

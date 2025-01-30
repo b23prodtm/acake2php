@@ -1,4 +1,6 @@
 <?php
+namespace Markdown\Controller\Component;
+
 App::uses('Component', 'Controller');
 
 /**

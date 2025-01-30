@@ -1,3 +1,5 @@
+ARG PHP_LIB
+ENV PHP_LIB ${PHP_LIB:-7}
 FROM node:current-alpine3.13
 RUN apk update \
     && apk add \
@@ -17,26 +19,26 @@ RUN apk update \
     libjpeg-turbo-dev \
     libpng-dev \
     netcat-openbsd \
-    php7 \
-    php7-curl \
-    php7-gd \
-    php7-intl \
-    php7-json \
-    php7-mbstring \
-    php7-opcache \
-    php7-openssl \
-    php7-pcntl \
-    php7-xml \
-    php7-mysqlnd \
-    php7-phar \
-    php7-mysqli \
-    php7-pdo_mysql \
-    php7-dom \
-    php7-tokenizer \
-    php7-simplexml \
-    php7-xmlwriter \
-    php7-fpm \
-    php7-zlib \
+    php${PHP_LIB} \
+    php${PHP_LIB}-curl \
+    php${PHP_LIB}-gd \
+    php${PHP_LIB}-intl \
+    php${PHP_LIB}-json \
+    php${PHP_LIB}-mbstring \
+    php${PHP_LIB}-opcache \
+    php${PHP_LIB}-openssl \
+    php${PHP_LIB}-pcntl \
+    php${PHP_LIB}-xml \
+    php${PHP_LIB}-mysqlnd \
+    php${PHP_LIB}-phar \
+    php${PHP_LIB}-mysqli \
+    php${PHP_LIB}-pdo_mysql \
+    php${PHP_LIB}-dom \
+    php${PHP_LIB}-tokenizer \
+    php${PHP_LIB}-simplexml \
+    php${PHP_LIB}-xmlwriter \
+    php${PHP_LIB}-fpm \
+    php${PHP_LIB}-zlib \
     py3-pip \
     python3-dev \
     libffi-dev \
@@ -53,8 +55,5 @@ RUN apk update \
     g++ \
     && apk del build-base \
     && rm -rf /var/cache/apk/*
-# Make sure the nginx and php-fpm7 (FASTCGI server) starts when system reboots
-# RUN rc-update add php-fpm7 default
-# RUN rc-service php-fpm7 start
 WORKDIR /var/www/html/
 RUN node -v && npm -v

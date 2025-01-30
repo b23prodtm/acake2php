@@ -26,6 +26,8 @@
  *    'locale' => 'com' //(ca,com,co,uk,de,fr,jp)
  *  );
  */
+namespace Datasources\Model\Datasource;
+
 
 /**
  * Import XML, required library
@@ -87,14 +89,14 @@ class AmazonAssociatesSource extends DataSource {
 /**
  * Constructor
  *
- * Creates new HttpSocket
+ * Creates new Client
  *
  * @param array $config Configuration array
  */
 	public function __construct($config = array()) {
 		parent::__construct($config);
 
-		$this->Http = new HttpSocket();
+		$this->Http = new Client();
 	}
 
 /**

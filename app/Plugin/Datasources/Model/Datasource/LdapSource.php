@@ -21,6 +21,8 @@
  * @since		 CakePHP Datasources v 0.3
  * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+namespace Datasources\Model\Datasource;
+
 App::uses('Inflector', 'Utility');
 App::uses('DataSource', 'Model/Datasource');
 
@@ -498,7 +500,7 @@ class LdapSource extends DataSource {
 					if ($model->useDbConfig === $linkModel->useDbConfig) {
 						$db = $this;
 					} else {
-						$db = ConnectionManager::getDataSource($linkModel->useDbConfig);
+						$db = ConnectionManager::get($linkModel->useDbConfig);
 					}
 
 					if ($db !== null) {
@@ -756,7 +758,7 @@ class LdapSource extends DataSource {
 									if ($linkModel->useDbConfig == $deepModel->useDbConfig) {
 										$db = $this;
 									} else {
-										$db = ConnectionManager::getDataSource($deepModel->useDbConfig);
+										$db = ConnectionManager::get($deepModel->useDbConfig);
 									}
 									$queryData = array();
 									$db->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
