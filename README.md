@@ -36,7 +36,7 @@ Requirements
 ------------
 Basically, this application's built on a PHP source code (CakePHP). Additional functionalities come from Composer plugins.
 To deploy a server or onto a container manager like docker, you need at least a developer environment with the following software:
-+ PHP 8.1 or later in PATH
++ PHP 7.4 or later in PATH
 + NodeJS 19 or later in PATH and Yarn (recommended in Windows)
 + Composer.phar executable
 + (optional) a Docker setup
@@ -91,8 +91,8 @@ However, if these files exist they will affect the behavior of the build process
 
 #### NodeJs dependencies
 
-  This project depends on npmjs [balena-cloud](https://www.npmjs.com/package/balena-cloud). Please call
-  `npm update` or `yarn` [Classic Yarn](https://classic.yarnpkg.com/en/docs/usage)
+  This project depends on npmjs [balena-cloud-apps](https://www.npmjs.com/package/balena-cloud-apps). Please call
+  `npm install -g balena-cloud-apps` or `yarn global add balena-cloud-apps` [Classic Yarn](https://classic.yarnpkg.com/en/docs/usage)
   whenever the system complains about `balena_deploy` not found.
 
 * **.env files**
