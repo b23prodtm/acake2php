@@ -1,6 +1,6 @@
 <!-- toc -->
 
-- [A CakePHP 2.x application ](#a-cakephp-2.x-application)
+- [A CakePHP 3.x application ](#a-cakephp-3.x-application)
     + [Quickstart](#quickstart)
     - [Plugins](#plugins)
       + [CakePHP Plugins](#cakephp-plugins)
