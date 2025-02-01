@@ -71,7 +71,7 @@ services:
 #      retries: 3
 #      start_period: 30m
     volumes:
-      db-backup:/mnt/external-drives
+      - db-backup:/mnt/external-drives
 volumes:
   hostapcache:
   db-config:
