@@ -3,9 +3,9 @@
 - [A Cake2PHP 3.x application ](#a-cake2php-3.x-application)
     + [Quickstart](#quickstart)
     - [Plugins](#plugins)
-      + [Plugins](#plugins)
-      + [NodeJs dependencies](#nodejs-dependencies)
-    + [Compatibility](#compatibility)
+      + [NodeJs packages](#nodejs-packages)
+      + [Composer Plugins](#composer-plugins)
+    + [Local Built-in Server](#local-built-in-server)
     + [PHPUnit Test](#phpunit-test)
     + [Device pod environment](#device-pod-environment)
     - [Database terminal](#database-terminal)
@@ -70,7 +70,7 @@ However, if these files exist they will affect the behavior of the build process
   [Packagist](https://packagist.org).
 
 
-#### NodeJs dependencies
+#### NodeJs packages
 
 * Modules **package.json**
 
@@ -101,7 +101,7 @@ However, if these files exist they will affect the behavior of the build process
 
       Scripts/update-templates.sh
 
-#### Plugins 
+#### Composer Plugins 
 
    Plugins are registered in both _git submodule_ and _composer.json_. To make them ready for build, edit _composer.json_ as needed and launch the command ```composer update```. 
    Plugins home folder: 
@@ -133,18 +133,18 @@ However, if these files exist they will affect the behavior of the build process
          RewriteRule    (.*) webroot/$1    [L]
       </IfModule>
 
-Compatibility
--------------
-* CakePHP 2.X application also supports Docker CE 18.03 and later
+Local Built-in Server
+---------------------
+* CakePHP application also supports Docker
 * MariaDB 10.1 and later
 
-CAKE includes a server application that´s only made for local tests on port 9000.
+Start a local server machine for testing on port 9000.
 Open a Terminal window:
 
     DB=Mysql ./configure.sh --mig-database -u
     ./start-cake.sh --docker -c server -p 9000
 
-> Ctrl-click the URLs to open them in the browser. To get more help about the command line interface :
+> Ctrl-click the URL that appear on the terminal. It will open them in the browser. To get more help about the command line interface :
 
     ./start-cake.sh --help
 
