@@ -78,7 +78,8 @@ RUN install_packages \
     ca-certificates \
     zip \
     unzip \
-    mariadb-client
+    mariadb-client \
+    yarn
 
 RUN install_packages \
     memcached \
@@ -101,10 +102,10 @@ WORKDIR /var/www/localhost/htdocs/
 COPY app app
 
 COPY package.json .
-COPY package-lock.json .
+COPY yarn.lock .
 
 # Helper packages (just a long node process...)
-RUN npm install --no-optional && npm link balena-cloud-apps
+RUN yarn && npm link balena-cloud-apps
 
 # Add cake and composer command to system path
 COPY composer.json .
