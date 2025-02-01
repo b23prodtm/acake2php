@@ -86,7 +86,7 @@ jobs:
     resource_class: large
   compose:
     docker:
-      - image: library/docker:dind
+      - image: docker:dind
     shell: /bin/bash -leo pipefail
     environment:
       - BASH_ENV: /etc/profile
