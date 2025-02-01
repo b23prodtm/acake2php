@@ -1,4 +1,4 @@
-version: "2"
+version: "3.4"
 services:
   db:
     build:
@@ -18,7 +18,7 @@ services:
       - localtime:/etc/localtime:ro
       - db-data:/config
       - db-socket:/var/run/mysqld
-      - db-config:/var/www/htdocs/localhost/app/Config/Schema
+      - db-config:/var/www/htdocs/localhost/app/config/Schema
     ports:
       - "3306:3306"
     restart: unless-stopped
@@ -46,7 +46,7 @@ services:
       io.balena.features.dbus: "1"
     volumes:
       - localtime:/etc/localtime:ro
-      - db-config:/var/www/htdocs/localhost/app/Config/Schema
+      - db-config:/var/www/htdocs/localhost/app/config/Schema
       - db-socket:/var/run/mysqld
     ports:
       - "80:80"
@@ -55,14 +55,24 @@ services:
       - db
     networks:
       - cake
-  #docker-compose v3
-    #healthcheck:
-      #test: ["CMD", "curl", "-f", "http://localhost"]
-      #interval: 1m30s
-      #timeout: 10s
-      #retries: 3
+  balena-storage:
+    build:
+      context: balena-storage
+      dockerfile: Dockerfile.armhf
+    privileged: true
+    env_file:
+      - common.env
+      - .env
+#docker-compose v3
+    healthcheck:
+      test: ["CMD", "/usr/src/scripts/backup-db.sh"]
+      interval: 720h
+      timeout: 10s
+      retries: 3
       # v3.4 compose file
-      #start_period: 40s
+      start_period: 30m
+    volumes:
+      db-backup:/mnt/external-drives
 volumes:
   hostapcache:
   db-config:
@@ -73,6 +83,7 @@ volumes:
     external: false
   config:
   localtime:
+  db-backup:
 networks:
   cake:
     external: false
