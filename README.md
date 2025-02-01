@@ -493,6 +493,22 @@ and update the database schema:
 
   Your BASH doesn't handle array in scripts. Please upgrade to Bash v.5 or later.
 
+13. I've made changes to deployment/images/ dockerfile, how can I rebuild it?
+
+  Use npm [balena-cloud-apps](https://github.com/b23prodtm/balena-cloud-apps), for exmaple to build the apache-php7 Docker image, we'll choose *18-alpine* tag: 
+    
+    cd deployment/images/apache-php7/
+    docker_build . . betothreeprod/apache-php7:18-alpine aarch64
+    docker_build . . betothreeprod/apache-php7:18-alpine armhf
+    docker_build . . betothreeprod/apache-php7:18-alpine x86_64
+
+  to publish on to DockerHub betothreeprod repository. You'll have to login as *betothreeprod* from a web browser.
+  Only balenaOS baselib images can use cross-build based on balenaEngine. If not, you should run docker_build from the target architecture, e.g. a Raspberry PI for aarch64.
+
+14. The error push access denied, repository does not exist or may require authorization: server message: insufficient_scope: authorization failed appears upon successful build
+
+  You must configure a DOCKER_USER and DOCKER_PASS as environment variables. Use an [access_token](https://docs.docker.com/security/for-developers/access-tokens/#use-an-access-token) for DOCKER_PASS.
+
 License
 -------
 	Copyright 2016-2025 www.b23prodtm.info
