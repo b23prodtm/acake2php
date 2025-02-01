@@ -12,9 +12,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"balena-cloud-apps@npm:^1.0.44":
-  version: 1.0.44
-  resolution: "balena-cloud-apps@npm:1.0.44"
+"balena-cloud-apps@npm:1.0.47":
+  version: 1.0.47
+  resolution: "balena-cloud-apps@npm:1.0.47"
   dependencies:
     shelljs: "npm:^0.8.4"
   bin:
@@ -24,10 +24,11 @@ __metadata:
     docker_build: vendor/cni/docker_build.sh
     git_fix_issue: vendor/cni/git_fix_issue.sh
     git_fix_issue_close: vendor/cni/git_fix_issue_close.sh
+    git_retag: vendor/cni/git_retag.sh
     init_functions: vendor/cni/init_functions.sh
     post_install: vendor/cni/post_install.sh
     update_templates: vendor/cni/update_templates.sh
-  checksum: 10c0/b7bfe1b2de2bba9d982269aa87ce2bc792fe4a094c584be33301afce5029150bb8223cc02a2c276caebf0a0a5e6f0f6037d84dee77706763d03cc2c55af32ea0
+  checksum: 10c0/96e587b670baeecdc53b248d8bdb55a25966248abd95d762bf95e002b7e5240dcc9d0ae0a07e551b7580f990fcdcb9bf4de58718534a45545824839cb109779b
   languageName: node
   linkType: hard
 
@@ -141,7 +142,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "myphpcms@workspace:."
   dependencies:
-    balena-cloud-apps: "npm:^1.0.44"
+    balena-cloud-apps: "npm:1.0.47"
     composer: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
