@@ -1,4 +1,10 @@
-FROM balenalib/raspberrypi3-alpine
+FROM balenalib/raspberrypi3-alpine-node:18-3.18
+
+RUN apk update \
+        && apk add \
+    mariadb-client \
+    && apk del build-base \
+    && rm -rf /var/cache/apk/*
 
 # Enable udev for detection of dynamically plugged devices
 ENV UDEV=on
