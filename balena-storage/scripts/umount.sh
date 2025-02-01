@@ -15,10 +15,10 @@ if [[ -z "$DEVNAME" ]]; then
 fi
 
 # Get required device information
-ID_BUS="${ID_BUS:=$(udevadm info -n $DEVNAME | awk -F "=" '/ID_BUS/{ print $2 }')}"
-ID_FS_TYPE="${ID_FS_TYPE:=$(udevadm info -n $DEVNAME | awk -F "=" '/ID_FS_TYPE/{ print $2 }')}"
-ID_FS_UUID_ENC="${ID_FS_UUID_ENC:=$(udevadm info -n $DEVNAME | awk -F "=" '/ID_FS_UUID_ENC/{ print $2 }')}"
-ID_FS_LABEL_ENC="${ID_FS_LABEL_ENC:=$(udevadm info -n $DEVNAME | awk -F "=" '/ID_FS_LABEL_ENC/{ print $2 }')}"
+ID_BUS="${ID_BUS:=$(udevadm info -n "$DEVNAME" | awk -F "=" '/ID_BUS/{ print $2 }')}"
+ID_FS_TYPE="${ID_FS_TYPE:=$(udevadm info -n "$DEVNAME" | awk -F "=" '/ID_FS_TYPE/{ print $2 }')}"
+ID_FS_UUID_ENC="${ID_FS_UUID_ENC:=$(udevadm info -n "$DEVNAME" | awk -F "=" '/ID_FS_UUID_ENC/{ print $2 }')}"
+ID_FS_LABEL_ENC="${ID_FS_LABEL_ENC:=$(udevadm info -n "$DEVNAME" | awk -F "=" '/ID_FS_LABEL_ENC/{ print $2 }')}"
 
 if [[ -z "$ID_BUS" || -z "$ID_FS_TYPE" || -z "$ID_FS_UUID_ENC" || -z "$ID_FS_LABEL_ENC" ]]; then
   echo "Could not get device information: $DEVNAME" >> /usr/src/unmount.log
