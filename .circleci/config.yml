@@ -8,14 +8,14 @@ aliases:
         git submodule update --init --recursive
         apk update \
           && apk add \
-            npm \
+            yarn \
             php7-session \
             xz \
           && apk del build-base \
           && rm -rf /var/cache/apk/*
-        npm cache clear --force
-        npm install --omit=optional
-        npm link balena-cloud-apps
+        yarn cache clean
+        yarn add balena-cloud-apps
+        yarn
 orbs:
   shellcheck: circleci/shellcheck@1.3.16
 jobs:
@@ -43,7 +43,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - v1-dependencies-{{ checksum "yarn.lock" }}
             - v1-dependencies-{{ checksum "composer.lock" }}
       - setup_remote_docker:
           docker_layer_caching: false
@@ -54,9 +54,8 @@ jobs:
             - app/Vendor
             - webroot/php-cms
       - save_cache:
-          key: v1-dependencies-{{ checksum "package-lock.json" }}
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
           paths:
-            - $HOME/.npm
             - node_modules
       - run:
           name: Set architecture and Setup Environment Variables
@@ -94,7 +93,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package-lock.json" }}
+            - v1-dependencies-{{ checksum "yarn.lock" }}
             - v1-dependencies-{{ checksum "composer.lock" }}
       - setup_remote_docker:
           docker_layer_caching: false
