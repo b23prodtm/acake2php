@@ -26,7 +26,7 @@ usage=("" \
 "          To initialize the databases, enter in the ${MYSQL_HOST} host terminal: $0 -u -i" \
 "          -------------" \
 "          file.sock   Set the socket file to connect SQL database" \
-"          -u          Update the database in app/Config/Schema/" \
+"          -u          Update the database in app/config/Schema/" \
 "          -y          Overwrite database.php and default socket file" \
 "          -n          Doesn't overwrite database.php and socket" \
 "          -i --sql-password=<word> --test-sql-password=<word>" \
