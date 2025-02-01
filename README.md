@@ -1,11 +1,11 @@
 <!-- toc -->
 
-- [A CakePHP 2.x application ](#a-cakephp-2.x-application)
+- [A Cake2PHP 3.x application ](#a-cake2php-3.x-application)
     + [Quickstart](#quickstart)
     - [Plugins](#plugins)
-      + [CakePHP Plugins](#cakephp-plugins)
-      + [NodeJs dependencies](#nodejs-dependencies)
-    + [Compatibility](#compatibility)
+      + [NodeJs packages](#nodejs-packages)
+      + [Composer Plugins](#composer-plugins)
+    + [Local Built-in Server](#local-built-in-server)
     + [PHPUnit Test](#phpunit-test)
     + [Device pod environment](#device-pod-environment)
     - [Database terminal](#database-terminal)
@@ -16,12 +16,12 @@
 
 <!-- tocstop -->
 
-A CakePHP 3.x application 
+A Cake2PHP 3.x application 
 =========================
 [![TravisCI Status](https://app.travis-ci.com/b23prodtm/acake2php.svg?token=VkN3AkpvB5yVGfXx1qj5&branch=development)](https://travis-ci.com/b23prodtm/acake2php)
 [![CircleCI Status](https://circleci.com/gh/b23prodtm/acake2php.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/acake2php)
 
-> [Including PHP-CMS ex-Pohse](https://sourceforge.net/projects/pohse/)
+> [The PHP-CMS eShop project was at the origin of this application](https://sourceforge.net/projects/pohse/)
 
 Quickstart
 ----------
@@ -34,12 +34,11 @@ Based on [Balena engine](http://www.balena.io). See more about [NodeJs dependenc
 
 Requirements
 ------------
-Basically, this application's built on a PHP source code (CakePHP). Additional functionalities come from Composer plugins.
 To deploy a server or onto a container manager like docker, you need at least a developer environment with the following software:
-+ PHP 8.1 or later in PATH
-+ NodeJS 19 or later in PATH
-+ Composer.phar executable
-+ (optional) a Docker setup
++ PHP 7.4 or later in PATH
++ NodeJS 19 or later in PATH and NPM or Yarn (recommended in Windows)
++ Package managers NPM or Yarn, also HomeBrew, MacPorts or Chocolatey, etc.
++ a Docker setup (Mac or PC) or BalenaEngine (Linux)
 + (recommended for Windows) git unix-style shell, like Git Bash
 
 Plugins
@@ -51,19 +50,64 @@ However, if these files exist they will affect the behavior of the build process
 
   The acake2php folder includes modules that need to be pulled in order to install locally.
   After the first checkout browse to acake2php folder and do
-  ```git submodule sync && git submodule update --init --recursive```
+  
+    git submodule sync && git submodule update --init --recursive
+  
   You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the acake2php folder and start over.
-  > After a sucessful ```git checkout```each time, run once ```git submodule update --init --recursive``` to ensure submodules are downloaded from git. Otherwise your build may fail.
-  > _DEVELOPER TIP:_ To push tags : ```git tag`<version> && git push --tags```.   
+> After
+>     git checkout
+>  each time, run once
+>
+>     git submodule update --init --recursive
+>  to ensure submodules are downloaded from git. Otherwise your build may fail.
 
 * Packagist **composer.json**
 
-  List of dependencies to be installed with `composer`[here](https://packagist.org).
+  Update all required plugins
 
-#### CakePHP Plugins 
+      composer update
 
-   Plugins are registered in both _git submodule_ and _composer.json_. To allow a plugin to accept ```composer update```, edit _composer.json_ according to the available released tags. 
-   In the plugin's home repository (`app/Vendor/<package-name>` or `app/Plugin/<plugin-name>/`)
+  [Packagist](https://packagist.org).
+
+
+#### NodeJs packages
+
+* Modules **package.json**
+
+  List of dependencies to be installed with `npmjs` [here](https://www.npmjs.com).
+
+      npm update
+  
+  or:
+
+      yarn
+
+  You can install NPM/YARN helper package [balena-cloud-apps](https://www.npmjs.com/package/balena-cloud-apps).
+
+   To use it:
+   
+      npm install -g balena-cloud-apps
+   
+   or:
+    
+      yarn global add balena-cloud-apps
+
+  [Classic Yarn](https://classic.yarnpkg.com/en/docs/usage)
+  whenever the system complains about `balena_deploy` not found.
+
+* **Templates files**
+
+  Setup environment variables, build files, ready for deployment with any of the available targets:
+
+      Scripts/update-templates.sh
+
+#### Composer Plugins 
+
+   Plugins are registered in both _git submodule_ and _composer.json_. To make them ready for build, edit _composer.json_ as needed and launch the command ```composer update```. 
+   Plugins home folder: 
+       
+       app/Vendor/<package-name>
+       app/Plugin/<plugin-name>/
 
 * **.htaccess**
 
@@ -89,38 +133,18 @@ However, if these files exist they will affect the behavior of the build process
          RewriteRule    (.*) webroot/$1    [L]
       </IfModule>
 
-#### NodeJs dependencies
-
-  This project depends on npmjs [balena-cloud](https://www.npmjs.com/package/balena-cloud). Please call
-  `npm update`
-  whenever the system complains about `balena_deploy` not found.
-
-* **.env files**
-
-  Set environment variables as the following arguments, for instance on MacOS X:
-
-      ./deploy.sh amd64 --nobuild
-
-  Use a .env file in shell to configure up with RaspberryPI3 hosts :
-
-      ./deploy.sh arm32 --nobuild
-
-  .env -> arm32v7.env
-
-      ./deploy.sh arm32 --balena
-
-Compatibility
--------------
-* CakePHP 2.X application also supports Docker CE 18.03 and later
+Local Built-in Server
+---------------------
+* CakePHP application also supports Docker
 * MariaDB 10.1 and later
 
-CAKE includes a server application that´s only made for local tests on port 9000.
+Start a local server machine for testing on port 9000.
 Open a Terminal window:
 
     DB=Mysql ./configure.sh --mig-database -u
     ./start-cake.sh --docker -c server -p 9000
 
-> Ctrl-click the URLs to open them in the browser. To get more help about the command line interface :
+> Ctrl-click the URL that appear on the terminal. It will open them in the browser. To get more help about the command line interface :
 
     ./start-cake.sh --help
 
@@ -213,178 +237,191 @@ Inside **acake2php** pod:
 An SQL server (must match remote server version) must be reachable by hostname or via its socket. If it's the 1st time you use this connection,
 
 Configure it as a service and configure the login ACL with the user shell.
-* __Optional__ database automatic configuration:
+* __Optional__ database automatic configuration
+*
+*     ./configure.sh -d -u -i
 
-```acake2php
-./configure.sh -d -u -i
-```
 
 * __Optional__ To Setup MYSQL_ROOT_PASSWORD at prompt:
+*
+*     mysql_secure_installation
 
-```db
-mysql_secure_installation
-```
 
-* __Optional__ Edit `./app/Config/database.php` if you wish to modify the DATABASE_CONFIG class.
+* __Optional__ Edit
+*
+*     ./app/Config/database.php
+*  if you wish to modify the DATABASE_CONFIG class.
 
-* __Optional__ Edit `./app/Model/Datasources/Database` if you wish to modify the DBOSource driver.
+* __Optional__ Edit
+*
+*     ./app/Model/Datasources/Database
+*  if you wish to modify the DBOSource driver.
 
 * Edit `./Scripts/fooargs.sh` to change default *test* environment settings (host, port, login, database name)
 
 * Run the configuration script:
+*
+*     ./configure.sh -d -p <root-password> -i --sql-password=<new-password>
 
-```acake2php
-./configure.sh -d -p <root-password> -i --sql-password=<new-password>
-```
 
 * More about configuration:
-
-```acake2php
-./configure.sh --help && ./migrate-database.sh --help
-```
+*
+*     ./configure.sh --help && ./migrate-database.sh --help
 
 * More [common issues](#common-issues)
 
-* The following command resets SQL users `${DATABASE_USER}` and `${MYSQL_USER}` password :
+* The following command resets SQL users `${DATABASE_USER}` and `${MYSQL_USER}` password
+*
+*     ./migrate-database.sh -p -i -p --test-sql-password
 
-    ./migrate-database.sh -p -i -p --test-sql-password
 
 #### Generate new administrator password
 To sign in with staff rights, at http://localhost/admin/index.php, somebody needs a unique password stored in `GET_HASH_PASSWORD`. One way to generate this hashed password with "salted“ encryption and setup:
 
-		./configure.sh -h -p <password> -w <salt>
+    ./configure.sh -h -p <password> -w <salt>
 
 To regenerate or read the current password hash again, simply browse to http://localhost/php-cms/e13/etc/getHashPassword.php
 
-`GET_HASH_PASSWORD=<HaSheD/PasSwoRd!>` must be stored in the local server environment as a system readable variable.
+    GET_HASH_PASSWORD=<HaSheD/PasSwoRd!>
+
+must be stored in the local server environment as a system readable variable.
 
 Common Issues
 -------------
 1. How to fix the following error?
 
   Index page displays:
-```
+
     errno : 1146
     sqlstate : 42S02
     error : Table 'phpcms.info' doesn't exist
-```
+
   Try the following to migrate (update) all database tables, answer 'y' when prompted:
-```acake2php
+
     ./migrate-database.sh -u
-```
+
 2. ACCESS DENIED appears with other information complaining about database connection, what does that mean ?
 
   You probably have modified user privileges on your server:
-```db
+
     mysql -u root
     use mysql;
     grant all PRIVILEGES on $TEST_DATABASE_NAME.* to '$MYSQL_USER'@'$MYSQL_HOST';
     exit
-```acake2php
+
     ./configure.sh -c
-```
+
   This will reset the connection profile in ..etc/ properties file with the template.
   More about environment variables are located in the remote pod (OpenShift) settings and locally in ./Scripts/fooargs.sh.  
 
   > Note:
-```acake2php
+
     ./configure.sh --mig-database -p -i --sql-password
-```
+
   to do a reset with environment root and user password.
 
 3. ACCESS DENIED for root@'127.0.0.1' or root@'localhost' appears with other information complaining about database connection, what does that mean ?
 
   (automatic) This looks like a first installation of mysql. You have to secure or reset your mysql root access:
-```acake2php
+
     MYSQL_ROOT_PASSWORD=<password> sudo bash deployment/images/mysqldb/mysql_secure_shell
-```
+
   (manual) The Linux shell way to reinitialize sql root password:
-```db
+
     sudo rm -rf /usr/local/var/mysql
     mysqld --initialize | grep "temporary password" | cut -f4  -d ":" | cut -c 2-  > app/tmp/nupwd
-```
+
   > Note: A temporary password is generated for root@localhost. Now import identities.
-```acake2php
-    brew services restart mysql@5.7
+
     ./configure.sh --mig-database -p $(cat app/tmp/nupwd) -i --sql-password
-```
+
   > You have now configured a new SQL root password and a test password. Local SQL access and server is ready to run tests:
-```acake2php
+
     ./test-cake.sh -p -t <test-password>
-```
+
   Go on to development phase with the [Local Built-in server](#local-built-in-server).
 
 4. I've made changes to mysql database tables, I've made changes to Config/Schema/schema.php, as Config/database.php defines it, what should I do ?
 
   Migrate all your tables:
-```acake2php
+
     ./migrate-database.sh -u
-```
+
   Answer 'y' when prompted.
 
 5. How to fix up 'Database connection "Mysql" or could not be created ?
   PHP mysql extensions must be installed.
-```acake2php
+
     php -i | grep Extensions
-```
+
   Log in with root privileges should work:
-```db
+
     mysql -u root --password=${MYSQL_ROOT_PASSWORD}
-```
+
   If not, do a reset of your passwords:
-```db
+
     mysqladmin -uroot password
-```
+
   If it isn't possible to login:
-    + Check your environment variables (common.env and docker-compose.yml) settings). Use one or the other, and see which works for you:
-```
+    + Check your environment variables in
+      
+      common.env
+      docker-compose.template
+      
+Don't forget to update YML with new values
+
+      Scripts/update-templates.sh
+
+Use one or the other, and see which works for you:
+
     MYSQL_HOST=$(hostname)
-```(Unix/OSX platforms)
-            or if docker-compose services are the following name:
-```
+
+(Unix/OSX platforms) or if using docker-compose services
+
     MYSQL_HOST=db
     MYSQL_TCP_PORT=3306
-```
+
   + Debug the local configuration, look for unbound VARIABLES, add verbosity level information (add `-o` if you are in a remote shell):
-```acake2php
+
     set -u
     ./configure.sh --verbose -d -u
-```
+
   + Try resetting privileges
-```acake2php
+
     ./configure.sh --mig-database -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} -i
-```
+
   Don't miss the parameter to startup a local container database :
-```acake2php
+
     ./migrate-database.sh -u --docker -i or ./configure.sh --mig-database -u --docker -i
-```
+
   + Note that localhost is a special value. Using 127.0.0.1 is not the same thing. The latter will connect to the mysqld server through tcpip.
+
   + Try the [secure_installation](#database-configuration).
 
 6. How to fix up ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysql.sock' (2) ?
 
   Run the socket fixup script with arguments:
-```acake2php
+
     ./migrate-database.sh /tmp/mysqld.sock
     brew services restart mysql@5.7
-```
+
 7. I'm testing with ./start_cake.sh and I cannot add any new post on Updates section, what should I do ?
 
   With the CLI, you may ctrl-X ctrl-C to exit server and migrate your database:
-```acake2php
+
     ./migrate-database.sh -u
     ./start_cake.sh
-```
+
   Answer 'y' when prompted.
 
 8. I cannot upload any picture, why ?
 
   The Mysql.php Datasource must define binary and mediumbinary storage types. Please look at the file  __app/Model/Datasource/Mysql_cms.php__ if it exists and if you experienced the following error:
-```
+
     errno : 1054
     sqlstate : 42S22
     error : Unknown column 'image' in 'field list'
-```
+
   Add the *__mediumbinary__* storage, extending the original Datasource class:
 
 ```
@@ -422,40 +459,59 @@ class Mysql_cms extends Mysql
 }
 ?>
 ```
-  Ensure it is set as $identities[DB]['datasource'] in `app/Config/database.php`,`./Scripts/fooargs.sh`, `.travis.yml` and update the database schema:
-```acake2php
+
+Ensure it is set as $identities[DB]['datasource'] in 
+    
+    app/Config/database.php
+    ./Scripts/fooargs.sh
+
+and update the database schema:
+
     ./migrate-database.sh -u
-```
+
 9. It looks like submodule folders have disappeared, why ?
 
-  A recent `git checkout ` made the submodule disappear from disk, that can happen on master/development branch.  Recall or add the shell configure script to your workflow:
-```acake2php
+  A recent change made the submodule disappear from disk, that can happen on master/development branch.  Recall or add the shell configure script to your workflow:
+
     ./configure.sh -m
-```
+
 10. Error: Please install PHPUnit framework v3.7 (http://www.phpunit.de)
 
   You need to configure development environment from Composer dependencies.
-```acake2php
+
     ./configure.sh --development
-```
+
 11. Undefined functins balena_deploy or init_functions: No such file or directory
 
   You need to export the `node_modules/.bin` for this shell to find npmjs installed binaries.
 
-```
+
     export PATH="`pwd`/node_modules/.bin:\$PATH"
-```
+
 
 12. Any message "saved[@]: unbound variable" on Darwin (OSX)
 
-  Your BASH doesn't handle array in scripts and uses version 3. Please upgrade to v.4 or later.
-  Check your bash version and upgrade OpenSSL Cacert as well:
-```
-    .travis/TravisCI-OSX-PHP/build/prepare_osx_env.sh
-```
+  Your BASH doesn't handle array in scripts. Please upgrade to Bash v.5 or later.
+
+13. I've made changes to deployment/images/ dockerfile, how can I rebuild it?
+
+  Use npm [balena-cloud-apps](https://github.com/b23prodtm/balena-cloud-apps), for exmaple to build the apache-php7 Docker image, we'll choose *18-alpine* tag: 
+    
+    cd deployment/images/apache-php7/
+    docker_build . . betothreeprod/apache-php7:18-alpine aarch64
+    docker_build . . betothreeprod/apache-php7:18-alpine armhf
+    docker_build . . betothreeprod/apache-php7:18-alpine x86_64
+
+  to publish on to DockerHub betothreeprod repository. You'll have to login as *betothreeprod* from a web browser.
+  Only balenaOS baselib images can use cross-build based on balenaEngine. If not, you should run docker_build from the target architecture, e.g. a Raspberry PI for aarch64.
+
+14. The error push access denied, repository does not exist or may require authorization: server message: insufficient_scope: authorization failed appears upon successful build
+
+  You must configure a DOCKER_USER and DOCKER_PASS as environment variables. Use an [access_token](https://docs.docker.com/security/for-developers/access-tokens/#use-an-access-token) for DOCKER_PASS.
+
 License
 -------
-	Copyright 2016 www.b23prodtm.info
+	Copyright 2016-2025 www.b23prodtm.info
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
