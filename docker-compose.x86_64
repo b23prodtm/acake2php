@@ -63,14 +63,13 @@ services:
     env_file:
       - common.env
       - .env
-#docker-compose v3
-    healthcheck:
-      test: ["CMD", "/usr/src/scripts/backup-db.sh"]
-      interval: 720h
-      timeout: 10s
-      retries: 3
-      # v3.4 compose file
-      start_period: 30m
+# v3.4 compose file
+#    healthcheck:
+#      test: ["CMD", "/usr/src/scripts/backup-db.sh"]
+#      interval: 720h
+#      timeout: 10s
+#      retries: 3
+#      start_period: 30m
     volumes:
       db-backup:/mnt/external-drives
 volumes:
