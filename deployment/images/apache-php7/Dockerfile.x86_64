@@ -11,7 +11,9 @@ ENV S6_ARCH ${BALENA_ARCH:-x86_64}
 
 ## Install add-apt-repository packages
 RUN apk update \
-    && apk add \
+    && apk upgrade
+
+RUN apk add \
     bash \
     sudo \
     curl \
@@ -29,8 +31,7 @@ RUN apk update \
     libpng-dev \
     netcat-openbsd
 
-RUN apk update \
-        && apk add \
+RUN apk add \
     php${PHP_LIB} \
     php${PHP_LIB}-curl \
     php${PHP_LIB}-gd \
@@ -51,13 +52,10 @@ RUN apk update \
     php${PHP_LIB}-xmlwriter \
     php${PHP_LIB}-fpm \
     php${PHP_LIB}-zlib \
-    mariadb-client \
-    && apk del build-base \
-    && rm -rf /var/cache/apk/*
+    mariadb-client 
 
 ## Install base packages
-RUN apk update \
-    && apk add \
+RUN apk add \
     apache2 \
     apache2-ctl \
     apache2-ssl \
@@ -67,8 +65,9 @@ RUN apk update \
     php${PHP_LIB}-odbc \
     php${PHP_LIB}-pdo_sqlite \
     php${PHP_LIB}-sqlite3 \
-    php${PHP_LIB}-session \
-    && apk del build-base \
+    php${PHP_LIB}-session
+
+RUN apk del build-base \
     && rm -rf /var/cache/apk/*
 
 # Backup default instance
