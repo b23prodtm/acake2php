@@ -10,7 +10,7 @@ services:
       MYSQL_DATABASE: aria_db
       MYSQL_USER: maria
       MYSQL_PASSWORD: maria-abc
-    image: betothreeprod/mysqldb:latest-aarch64
+    image: betothreeprod/mysqldb:latest-x86_64
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
@@ -32,13 +32,13 @@ services:
       - .env
     build:
       context: .
-      dockerfile: Dockerfile.aarch64
+      dockerfile: Dockerfile.x86_64
       args:
         CAKEPHP_DEBUG_LEVEL: "2"
         MYSQL_HOST: "db"
         PUID: 1000
         PGID: 1000
-    image: betothreeprod/acake2php-raspberrypi3-64
+    image: betothreeprod/acake2php-intel-nuc
     labels:
       io.balena.features.dbus: "1"
     volumes:
@@ -55,7 +55,7 @@ services:
   balena-storage:
     build:
       context: balena-storage
-      dockerfile: Dockerfile.aarch64
+      dockerfile: Dockerfile.x86_64
     privileged: true
     env_file:
       - common.env
