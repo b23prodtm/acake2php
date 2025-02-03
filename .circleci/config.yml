@@ -57,6 +57,7 @@ jobs:
           MYSQL_DATABASE: aria_db
           MYSQL_USER: maria
           MYSQL_PASSWORD: maria-abc
+    parallelism: 2
     shell: /bin/bash -leo pipefail
     environment:
       - BASH_ENV: /etc/profile
@@ -91,12 +92,17 @@ jobs:
             mkdir -p ~/phpunit
             ./test-cake.sh --circle
             . common.env && cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
+      - store_test_results:
+          path: ~/phpunit
+      - store_artifacts:
+          path: ~/phpunit
           when: always
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/runner
     docker:
       - image: cimg/gcp:2025.01
+    parallelism: 2
     shell: /bin/bash -leo pipefail
     environment:
       - BASH_ENV: /etc/profile
@@ -115,10 +121,6 @@ jobs:
             set -u
             TAG=0.1.$CIRCLE_BUILD_NUM
             docker-compose -f docker-compose.$BALENA_ARCH build
-      - store_test_results:
-          path: ~/phpunit
-      - store_artifacts:
-          path: ~/phpunit
 workflows:
   cleanup:
     jobs:
@@ -128,7 +130,4 @@ workflows:
     jobs:
       - build
       - compose:
-          requires:
-            - build
-          context: Info-b23prodtm
   version: 2
