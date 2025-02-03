@@ -42,16 +42,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"composer@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "composer@npm:4.1.0"
-  dependencies:
-    pretty-time: "npm:^1.1.0"
-    use: "npm:^3.1.1"
-  checksum: 10c0/967a2880fade435dbe0af17b2812de1f330a92f3edee2af91efec67e0ccc9febf6ab677afc5815d7fb61f1be1c0cac44f5808817d2cfd1b031c365a728119479
-  languageName: node
-  linkType: hard
-
 "concat-map@npm:0.0.1":
   version: 0.0.1
   resolution: "concat-map@npm:0.0.1"
@@ -143,7 +133,6 @@ __metadata:
   resolution: "myphpcms@workspace:."
   dependencies:
     balena-cloud-apps: "npm:1.0.47"
-    composer: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
 
@@ -167,13 +156,6 @@ __metadata:
   version: 1.0.7
   resolution: "path-parse@npm:1.0.7"
   checksum: 10c0/11ce261f9d294cc7a58d6a574b7f1b935842355ec66fba3c3fd79e0f036462eaf07d0aa95bb74ff432f9afef97ce1926c720988c6a7451d8a584930ae7de86e1
-  languageName: node
-  linkType: hard
-
-"pretty-time@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "pretty-time@npm:1.1.0"
-  checksum: 10c0/ba9d7af19cd43838fb2b147654990949575e400dc2cc24bf71ec4a6c4033a38ba8172b1014b597680c6d4d3c075e94648b2c13a7206c5f0c90b711c7388726f3
   languageName: node
   linkType: hard
 
@@ -229,13 +211,6 @@ __metadata:
   version: 1.0.0
   resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
   checksum: 10c0/6c4032340701a9950865f7ae8ef38578d8d7053f5e10518076e6554a9381fa91bd9c6850193695c141f32b21f979c985db07265a758867bac95de05f7d8aeb39
-  languageName: node
-  linkType: hard
-
-"use@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "use@npm:3.1.1"
-  checksum: 10c0/75b48673ab80d5139c76922630d5a8a44e72ed58dbaf54dee1b88352d10e1c1c1fc332066c782d8ae9a56503b85d3dc67ff6d2ffbd9821120466d1280ebb6d6e
   languageName: node
   linkType: hard
 
