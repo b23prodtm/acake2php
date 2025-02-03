@@ -1,19 +1,16 @@
 version: "2.1"
 services:
   db:
-    build:
-      context: deployment/images/mysqldb
-      dockerfile: Dockerfile.armhf
-      args:
-        PUID: 0
-        PGID: 0
-        TZ: Europe/Paris
-        MYSQL_ROOT_PASSWORD: mariadb
-        MYSQL_HOST: localhost
-        MYSQL_DATABASE: aria_db
-        MYSQL_USER: maria
-        MYSQL_PASSWORD: maria-abc
-    image: betothreeprod/mariadb:latest-armhf
+    environment:
+      PUID: 0
+      PGID: 0
+      TZ: Europe/Paris
+      MYSQL_ROOT_PASSWORD: mariadb
+      MYSQL_HOST: localhost
+      MYSQL_DATABASE: aria_db
+      MYSQL_USER: maria
+      MYSQL_PASSWORD: maria-abc
+    image: betothreeprod/mysqldb:latest-armhf
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
