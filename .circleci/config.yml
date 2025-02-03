@@ -9,6 +9,9 @@ aliases:
         apk update \
           && apk upgrade \
           && apk add \
+            nodejs \
+            npm \
+            yarn \
             php7-session \
             xz \
           && apk del build-base \
