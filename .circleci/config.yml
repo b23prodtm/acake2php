@@ -7,6 +7,7 @@ aliases:
         git submodule sync
         git submodule update --init --recursive
         apk update \
+          && apk upgrade \
           && apk add \
             php7-session \
             xz \
@@ -23,7 +24,7 @@ jobs:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/runner
     docker:
-      - image: betothreeprod/apache-php7:18-alpine
+      - image: betothreeprod/apache-php7:latest-x86_64
       - image: betothreeprod/mariadb-intel-nuc
         environment:
           PUID: 0
