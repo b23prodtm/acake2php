@@ -11,12 +11,10 @@ aliases:
           && apk add \
             php7-session \
             xz \
-            composer \
           && apk del build-base \
           && rm -rf /var/cache/apk/*
         yarn
         npm link balena-cloud-apps
-        composer update
 orbs:
   shellcheck: circleci/shellcheck@1.3.16
 jobs:
