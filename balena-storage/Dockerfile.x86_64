@@ -1,4 +1,4 @@
-FROM balenalib/generic-amd64-alpine-node:18-3.18
+FROM balenalib/intel-nuc-alpine-node:18-3.18
 
 RUN apk update \
         && apk add \
