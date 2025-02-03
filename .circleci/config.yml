@@ -84,9 +84,9 @@ jobs:
     resource_class: b23prodtm/runner
     docker:
       - image: docker:dind
-    shell: /bin/bash -leo pipefail
+    shell: /bin/sh -leo pipefail
     environment:
-      - BASH_ENV: /etc/profile
+      - SH_ENV: /etc/profile
       - BALENA_ARCH: x86_64
     steps:
       - checkout
