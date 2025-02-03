@@ -36,6 +36,7 @@ RUN sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS}/" /etc/my.cnf.d/my
 RUN sed -i.user "/user/s/=.*$/= ${USER}/" /etc/my.cnf.d/my.cnf
 
 RUN apk update \
+    && apk upgrade \
     && apk add \
       expect \
       xz \
