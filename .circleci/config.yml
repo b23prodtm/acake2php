@@ -1,6 +1,6 @@
 version: 2.1
 aliases:
-  - &deps
+  - &deps-apk
     run:
       name: Install dependencies
       command: |
@@ -11,9 +11,22 @@ aliases:
           && apk add \
             nodejs \
             npm \
-            xz \
           && apk del build-base \
           && rm -rf /var/cache/apk/*
+        npm install --global yarn \
+        && yarn
+        npm link balena-cloud-apps
+        balena_deploy . $BALENA_ARCH --nobuild --exit
+  - &deps-apt
+    run:
+      name: Install dependencies
+      command: |
+        git submodule sync
+        git submodule update --init --recursive
+        apt-get update && apt-get install --yes --no-install-recommends \
+            nodejs \
+            npm \
+        && rm -rf /var/lib/apt/lists/*
         npm install --global yarn \
         && yarn
         npm link balena-cloud-apps
@@ -58,7 +71,7 @@ jobs:
             - v1-dependencies-{{ checksum "yarn.lock" }}
       #- setup_remote_docker:
       #    docker_layer_caching: false
-      - *deps
+      - *deps-apk
       - *caches
       - run:
           name: Waiting for Mysql to be ready
@@ -83,7 +96,7 @@ jobs:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/runner
     docker:
-      - image: cimg/aws
+      - image: cimg/gcp:2025.01
     shell: /bin/bash -leo pipefail
     environment:
       - BASH_ENV: /etc/profile
@@ -95,7 +108,7 @@ jobs:
             - v1-dependencies-{{ checksum "yarn.lock" }}
       #- setup_remote_docker:
       #    docker_layer_caching: false
-      - *deps
+      - *deps-apt
       - *caches
       - run:
           command: |
