@@ -17,16 +17,13 @@ aliases:
         npm install --global yarn \
         && yarn
         npm link balena-cloud-apps
+        balena_deploy . $BALENA_ARCH --nobuild --exit
     save_cache:
       key: v1-dependencies-{{ checksum "yarn.lock" }}
       paths:
         - app/Vendor
         - webroot/php-cms
         - node_modules
-    run:
-      name: Set architecture and Setup Environment Variables
-      command: |
-        balena_deploy . $BALENA_ARCH --nobuild --exit
 orbs:
   shellcheck: circleci/shellcheck@1.3.16
 jobs:
