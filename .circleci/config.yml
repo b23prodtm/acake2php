@@ -83,7 +83,7 @@ jobs:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/runner
     docker:
-      - image: docker:dind
+      - image: cimg/node:23.7.0
     shell: /bin/sh -leo pipefail
     environment:
       - SH_ENV: /etc/profile
@@ -95,13 +95,6 @@ jobs:
             - v1-dependencies-{{ checksum "yarn.lock" }}
       #- setup_remote_docker:
       #    docker_layer_caching: false
-      - run:
-          name: Install dependencies
-          command: |
-            apk update \
-              && apk upgrade \
-              && apk add \
-              bash
       - *deps
       - *caches
       - run:
