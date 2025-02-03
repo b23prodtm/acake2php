@@ -25,7 +25,7 @@ jobs:
     resource_class: b23prodtm/runner
     docker:
       - image: betothreeprod/apache-php7:latest-x86_64
-      - image: betothreeprod/mariadb-intel-nuc
+      - image: betothreeprod/mysqldb:latest-x86_64
         environment:
           PUID: 0
           PGID: 0

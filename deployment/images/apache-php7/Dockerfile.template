@@ -5,7 +5,7 @@
 FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-node:18-edge-build
 # RUN [ "cross-build-start" ]
 ARG PHP_LIB
-ENV PHP_LIB ${PHP_LIB:-7}
+ENV PHP_LIB ${PHP_LIB:-8}
 ARG BALENA_ARCH
 ENV S6_ARCH ${BALENA_ARCH:-%%BALENA_ARCH%%}
 
