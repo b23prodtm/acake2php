@@ -44,7 +44,7 @@ orbs:
 jobs:
   build:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    #resource_class: b23prodtm/runner
+    resource_class: b23prodtm/runner
     docker:
       - image: betothreeprod/apache-php7:latest-x86_64
       - image: betothreeprod/mysqldb:latest-x86_64
@@ -99,10 +99,10 @@ jobs:
           when: always
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    #resource_class: b23prodtm/runner
+    resource_class: b23prodtm/runner
     docker:
-    #  - image: cimg/gcp:2025.01
-      - image: betothreeprod/dind-php7
+      - image: cimg/aws:2025.01
+    #  - image: betothreeprod/dind-php7
     parallelism: 2
     shell: /bin/bash -leo pipefail
     environment:
@@ -115,7 +115,7 @@ jobs:
             - v1-dependencies-{{ checksum "yarn.lock" }}
       #- setup_remote_docker:
       #    docker_layer_caching: false
-      - *deps-apk
+      - *deps-apt
       - *caches
       - run:
           command: |
