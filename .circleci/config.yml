@@ -18,13 +18,10 @@ aliases:
         && yarn
         npm link balena-cloud-apps
     save_cache:
-      key: v1-dependencies-{{ checksum "composer.lock" }}
+      key: v1-dependencies-{{ checksum "yarn.lock" }}
       paths:
         - app/Vendor
         - webroot/php-cms
-    save_cache:
-      key: v1-dependencies-{{ checksum "yarn.lock" }}
-      paths:
         - node_modules
     run:
       name: Set architecture and Setup Environment Variables
@@ -58,7 +55,6 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "composer.lock" }}
             - v1-dependencies-{{ checksum "yarn.lock" }}
       #- setup_remote_docker:
       #    docker_layer_caching: false
@@ -93,7 +89,6 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "composer.lock" }}
             - v1-dependencies-{{ checksum "yarn.lock" }}
       #- setup_remote_docker:
       #    docker_layer_caching: false
