@@ -8,12 +8,12 @@ aliases:
         git submodule update --init --recursive
         apk update \
           && apk add \
-            yarn \
             php7-session \
             xz \
             composer \
           && apk del build-base \
           && rm -rf /var/cache/apk/*
+        npm install --global yarn
         yarn cache clean
         yarn
         npm link balena-cloud-apps
