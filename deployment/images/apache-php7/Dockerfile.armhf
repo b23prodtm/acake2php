@@ -65,7 +65,8 @@ RUN apk add \
     php${PHP_LIB}-odbc \
     php${PHP_LIB}-pdo_sqlite \
     php${PHP_LIB}-sqlite3 \
-    php${PHP_LIB}-session
+    php${PHP_LIB}-session \
+    composer
 
 RUN apk del build-base \
     && rm -rf /var/cache/apk/*
