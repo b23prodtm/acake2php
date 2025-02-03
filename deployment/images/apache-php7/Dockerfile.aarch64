@@ -5,7 +5,7 @@
 FROM balenalib/raspberrypi3-64-alpine-node:18-edge-build
 RUN [ "cross-build-start" ]
 ARG PHP_LIB
-ENV PHP_LIB ${PHP_LIB:-7}
+ENV PHP_LIB ${PHP_LIB:-74}
 ARG BALENA_ARCH
 ENV S6_ARCH ${BALENA_ARCH:-aarch64}
 
@@ -59,7 +59,7 @@ RUN apk add \
     apache2 \
     apache2-ctl \
     apache2-ssl \
-    php${PHP_LIB}-dev \
+    #php${PHP_LIB}-dev \
     php${PHP_LIB}-apache2 \
     curl \
     php${PHP_LIB}-odbc \
