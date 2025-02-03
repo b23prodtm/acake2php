@@ -5,7 +5,7 @@
 FROM balenalib/raspberrypi3-alpine-node:18-edge-build
 RUN [ "cross-build-start" ]
 ARG PHP_LIB
-ENV PHP_LIB ${PHP_LIB:-74}
+ENV PHP_LIB ${PHP_LIB:-72}
 ARG BALENA_ARCH
 ENV S6_ARCH ${BALENA_ARCH:-armhf}
 
