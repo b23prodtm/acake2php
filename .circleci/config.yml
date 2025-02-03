@@ -23,11 +23,11 @@ aliases:
       command: |
         git submodule sync
         git submodule update --init --recursive
-        apt-get update && apt-get install --yes --no-install-recommends \
+        sudo apt-get update && sudo apt-get install --yes --no-install-recommends \
             nodejs \
             npm \
-        && rm -rf /var/lib/apt/lists/*
-        npm install --global yarn \
+        && sudo rm -rf /var/lib/apt/lists/*
+        sudp npm install --global yarn \
         && yarn
         npm link balena-cloud-apps
         balena_deploy . $BALENA_ARCH --nobuild --exit
