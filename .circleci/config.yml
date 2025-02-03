@@ -95,6 +95,13 @@ jobs:
             - v1-dependencies-{{ checksum "yarn.lock" }}
       #- setup_remote_docker:
       #    docker_layer_caching: false
+      - run:
+          name: Install dependencies
+          command: |
+            apk update \
+              && apk upgrade \
+              && apk add \
+              bash
       - *deps
       - *caches
       - run:
