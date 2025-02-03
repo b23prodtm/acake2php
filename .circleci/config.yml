@@ -23,7 +23,7 @@ orbs:
 jobs:
   build:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    # resource_class: b23prodtm/runner
+    resource_class: b23prodtm/runner
     docker:
       - image: betothreeprod/apache-php7
       - image: betothreeprod/mariadb-intel-nuc
@@ -86,7 +86,7 @@ jobs:
           when: always
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    # resource_class: b23prodtm/runner
+    resource_class: b23prodtm/runner
     docker:
       - image: docker:dind
     shell: /bin/bash -leo pipefail
