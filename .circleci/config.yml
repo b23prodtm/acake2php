@@ -36,7 +36,6 @@ jobs:
           MYSQL_DATABASE: aria_db
           MYSQL_USER: maria
           MYSQL_PASSWORD: maria-abc
-    shell: /bin/bash -leo pipefail
     environment:
       - BASH_ENV: /etc/profile
       - BALENA_ARCH: x86_64
@@ -89,7 +88,6 @@ jobs:
     resource_class: b23prodtm/runner
     docker:
       - image: docker:dind
-    shell: /bin/bash -leo pipefail
     environment:
       - BASH_ENV: /etc/profile
       - BALENA_ARCH: x86_64
