@@ -11,12 +11,12 @@ aliases:
           && apk add \
             nodejs \
             npm \
-            yarn \
             php7-session \
             xz \
           && apk del build-base \
           && rm -rf /var/cache/apk/*
-        yarn
+        npm install --global yarn \
+        && yarn
         npm link balena-cloud-apps
 orbs:
   shellcheck: circleci/shellcheck@1.3.16
