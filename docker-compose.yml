@@ -1,16 +1,19 @@
 version: "2.1"
 services:
   db:
-    environment:
-      PUID: 0
-      PGID: 0
-      TZ: Europe/Paris
-      MYSQL_ROOT_PASSWORD: mariadb
-      MYSQL_HOST: localhost
-      MYSQL_DATABASE: aria_db
-      MYSQL_USER: maria
-      MYSQL_PASSWORD: maria-abc
-    image: betothreeprod/mysqldb:latest-armhf
+    build:
+      context: deployment/images/mysqldb
+      dockerfile: Dockerfile.aarch64
+      args:
+        PUID: 0
+        PGID: 0
+        TZ: Europe/Paris
+        MYSQL_ROOT_PASSWORD: mariadb
+        MYSQL_HOST: localhost
+        MYSQL_DATABASE: aria_db
+        MYSQL_USER: maria
+        MYSQL_PASSWORD: maria-abc
+    image: betothreeprod/mysqldb:latest-aarch64
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
@@ -32,13 +35,13 @@ services:
       - .env
     build:
       context: .
-      dockerfile: Dockerfile.armhf
+      dockerfile: Dockerfile.aarch64
       args:
         CAKEPHP_DEBUG_LEVEL: "2"
         MYSQL_HOST: "db"
         PUID: 1000
         PGID: 1000
-    image: betothreeprod/acake2php-raspberrypi3
+    image: betothreeprod/acake2php-raspberrypi3-64
     labels:
       io.balena.features.dbus: "1"
     volumes:
@@ -55,7 +58,7 @@ services:
   balena-storage:
     build:
       context: balena-storage
-      dockerfile: Dockerfile.armhf
+      dockerfile: Dockerfile.aarch64
     privileged: true
     env_file:
       - common.env
