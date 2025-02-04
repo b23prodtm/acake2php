@@ -2,8 +2,8 @@
 # Source DockerFile:  https://github.com/ulsmith/rpi-raspbian-apache-php/blob/master/Dockerfile
 # S6 Overlay:         https://github.com/smebberson/docker-alpine/blob/master/alpine-apache/Dockerfile
 #
-FROM balenalib/raspberrypi3-alpine-node:18-3.18-build
-RUN [ "cross-build-start" ]
+FROM balenalib/raspberrypi3-alpine-node:18-3.15-build
+# RUN [ "cross-build-start" ]
 ARG PHP_LIB
 ENV PHP_LIB ${PHP_LIB:-7}
 ARG BALENA_ARCH
@@ -11,7 +11,9 @@ ENV S6_ARCH ${BALENA_ARCH:-armhf}
 
 ## Install add-apt-repository packages
 RUN apk update \
-    && apk add \
+    && apk upgrade
+
+RUN apk add \
     bash \
     sudo \
     curl \
@@ -29,8 +31,7 @@ RUN apk update \
     libpng-dev \
     netcat-openbsd
 
-RUN apk update \
-        && apk add \
+RUN apk add \
     php${PHP_LIB} \
     php${PHP_LIB}-curl \
     php${PHP_LIB}-gd \
@@ -51,13 +52,10 @@ RUN apk update \
     php${PHP_LIB}-xmlwriter \
     php${PHP_LIB}-fpm \
     php${PHP_LIB}-zlib \
-    mariadb-client \
-    && apk del build-base \
-    && rm -rf /var/cache/apk/*
+    mariadb-client 
 
 ## Install base packages
-RUN apk update \
-    && apk add \
+RUN apk add \
     apache2 \
     apache2-ctl \
     apache2-ssl \
@@ -66,9 +64,9 @@ RUN apk update \
     curl \
     php${PHP_LIB}-odbc \
     php${PHP_LIB}-pdo_sqlite \
-    php${PHP_LIB}-sqlite3 \
-    php${PHP_LIB}-session \
-    && apk del build-base \
+    php${PHP_LIB}-sqlite3
+
+RUN apk del build-base \
     && rm -rf /var/cache/apk/*
 
 # Backup default instance
@@ -109,4 +107,4 @@ RUN chmod g+xs /bin/systemctl
 
 RUN node -v && npm -v
 ENTRYPOINT ["/usr/bin/entry.sh"]
-RUN [ "cross-build-end" ]
+# RUN [ "cross-build-end" ]

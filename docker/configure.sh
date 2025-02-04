@@ -132,5 +132,5 @@ echo "<?php
       \$this->{\$source} = \$config;
     }
   }
-  }" > app/Config/database.php
-  echo -e "${green}Unit Test was set up in app/Config/database.php${nc}"
+  }" > app/config/database.php
+  echo -e "${green}Unit Test was set up in app/config/database.php${nc}"

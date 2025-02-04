@@ -495,6 +495,15 @@ and update the database schema:
 
 13. I've made changes to deployment/images/ dockerfile, how can I rebuild it?
 
+  To build the Docker images, dependencies included:
+    
+    ./deploy.sh
+  
+  Then, choose the Docker architecture, and then choose option 
+    
+    6:build dependencies.
+
+  To be able to publish on to DockerHub [betothreeprod](https://hub.docker.com/u/betothreeprod) repository, first login as *betothreeprod* from a web browser.
   Use npm [balena-cloud-apps](https://github.com/b23prodtm/balena-cloud-apps), for exmaple to build the apache-php7 Docker image, we'll choose *18-alpine* tag: 
     
     cd deployment/images/apache-php7/
@@ -502,7 +511,6 @@ and update the database schema:
     docker_build . . betothreeprod/apache-php7:18-alpine armhf
     docker_build . . betothreeprod/apache-php7:18-alpine x86_64
 
-  to publish on to DockerHub betothreeprod repository. You'll have to login as *betothreeprod* from a web browser.
   Only balenaOS baselib images can use cross-build based on balenaEngine. If not, you should run docker_build from the target architecture, e.g. a Raspberry PI for aarch64.
 
 14. The error push access denied, repository does not exist or may require authorization: server message: insufficient_scope: authorization failed appears upon successful build
