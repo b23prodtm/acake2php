@@ -99,7 +99,7 @@ jobs:
           when: always
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    resource_class: b23prodtm/runner
+    #resource_class: b23prodtm/runner
     docker:
       - image: cimg/aws:2025.01
     #  - image: betothreeprod/dind-php7
@@ -115,6 +115,7 @@ jobs:
             - v1-dependencies-{{ checksum "yarn.lock" }}
       - setup_remote_docker:
           version: edge
+          docker_layer_caching: true
       - *deps-apt
       - *caches
       - run:
