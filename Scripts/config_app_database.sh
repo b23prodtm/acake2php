@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+[ $# -lt 1 ] && echo "Usage : $0 [--docker] [<file.template.or.php.or.sock>]..." && exit 1
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 sqlversion="5.7"
 # shellcheck source=lib/logging.sh
@@ -25,22 +26,23 @@ fi
 sockdir=/var/run/mysqld
 wd="$TOPDIR/app/config"
 while [[ "$#" -gt 0 ]]; do case $1 in
-  *.php)
-    dbfile=$1
+        *.php|*.template)
+                dbfile=$1
 		file=$(echo "$dbfile" | cut -d . -f 1)
 		# shellcheck source=cp_bkp_old.sh
                 . "${TOPDIR}/Scripts/cp_bkp_old.sh" "$wd" "$dbfile" "${file}.php";;
-	*.sock )
+	*.sock)
 		if [ -n "$(command -v mysql)" ]; then
 			mysql --version
 		fi
 		sockh=$sockdir/mysqld.sock
+                slogger -st "$0" "${orange}Try $sockh to symlink the socket $1...${nc}"
 		#; symlink mysql socket
 		# shellcheck disable=SC2154
-                slogger -st "$0" "${orange}Please allow the super-user to link mysql socket to $1 ...${nc}"
                 if [ -e $sockh ]; then
 			ls -al $sockh
 	 	else
+                        slogger -st "$0" "${orange}Please allow the super-user to link mysql socket to $1 ...${nc}"
 			[ ! -d $sockdir ] && sudo mkdir -p $sockdir
 	                sudo ln -vsf "$1" $sockh
 		fi;;

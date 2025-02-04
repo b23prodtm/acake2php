@@ -22,6 +22,6 @@ if [[ -f $dst && -f $src && -n $(command -v md5) ]]; then
     echo "${dst} file's already there.."
   fi
 fi
-cp -v "$src" "$dst"
+cp -vf "$src" "$dst"
 cd "$pwd" || true
 slogger -st "$0" "${src} copied. Please, review the files.\n"
