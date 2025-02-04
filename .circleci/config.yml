@@ -113,8 +113,8 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "yarn.lock" }}
-      #- setup_remote_docker:
-      #    docker_layer_caching: false
+      - setup_remote_docker:
+          version: edge
       - *deps-apt
       - *caches
       - run:
