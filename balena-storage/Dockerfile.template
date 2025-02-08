@@ -1,5 +1,7 @@
 FROM balenalib/%%BALENA_MACHINE_NAME%%-alpine-node
 
+RUN yarn add balena-cli
+
 # Enable udev for detection of dynamically plugged devices
 ENV UDEV=on
 COPY udev/usb.rules /etc/udev/rules.d/usb.rules
