@@ -10,7 +10,7 @@ printf "Delete dumps older than 6 months..."
 find "$STORAGE" -type f -name "backup_*.sql" -mmin +259200 -exec rm -f {} \;
 
 #Cold backup works on balenaCloud only
-if [ ! "$(command -v balena)" > /dev/null ]; then
+if [[ ! "$(command -v balena)" > /dev/null ]]; then
 	printf "balena-cli was not installed, cannot perform cold backup.\n"
 else
 	CONTAINER_NAME=$(balena ps | grep db | xargs printf "%s\n" "$1" | head -n 1)
