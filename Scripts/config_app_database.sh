@@ -7,18 +7,26 @@ sqlversion="5.7"
 # shellcheck source=lib/parsing.sh
 . "${TOPDIR}/Scripts/lib/parsing.sh"
 docker=$(parse_arg "--docker" "$@")
+homebrew=0x01
+port=0x10
+pm=0x00
+[ -z "$(command -v brew)" ] && pm = $((pm | 0x01))
+[ -z "$(command -v port)" ] && pm = $((pm | 0x10))
 if [ -n "$docker" ]; then
 	bash -c "./Scripts/start_daemon.sh ${docker}"
 else
-	if [ -z "$(command -v brew)" ]; then
-		echo "Missing homebrew... aborted mysql check.";
+	if [ -z $((pm & (homebrew | port))) ]; then
+		echo "Missing package manager... aborted mysql check.";
 	elif [ -z "$(command -v mysql)" ]; then
-		slogger -st "$0" "Missing MySQL ${sqlversion} database service."
-		brew outdated mysql@${sqlversion} | brew upgrade
-		slogger -st "$0" "Installing with Homebrew..."
-		brew install mysql@${sqlversion}
-		slogger -st "$0" "Starting the service thread..."
-		brew services start mysql@${sqlversion}
+		if [ $((pm & homebrew)) ]; then
+			brew outdated mysql@${sqlversion} | brew upgrade
+			brew install mysql@${sqlversion}
+			brew services start mysql@${sqlversion}
+		elif [ $((pm & port)) ]; then
+			port outdated mysql5${sqlversion} | port upgrade
+                        port install mysql5@${sqlversion}
+			port services start mysql5@${sqlversion}
+		fi
 		slogger -st "$0" "Performing some checks..."
 		mysql_upgrade -u root &
 	fi

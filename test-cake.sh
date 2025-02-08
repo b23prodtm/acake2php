@@ -27,10 +27,9 @@ usage=("" \
 while [[ "$#" -gt 0 ]]; do case $1 in
   --runner )
     # shellcheck disable=SC2086
-    migrate="$(parse_arg_trim --docker $migrate) --runner"
+    migrate="$(parse_arg_trim --docker $migrate) --runner --testunitbase=ariadb_test"
     # shellcheck disable=SC2086
     config_args="$(parse_arg_trim --docker  $config_args) --runner"
-    set TEST_DATABASE_NAME "ariadb_test"
     ;;
   --phpcs )
     export PHPCS=1

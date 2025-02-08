@@ -28,11 +28,11 @@ usage=("" \
 "          file.sock   Set the socket file to connect SQL database" \
 "          -u          Update the database in app/config/Schema/" \
 "          -y          Overwrite database.php and default socket file" \
-"          -n          Doesn't overwrite database.php and socket" \
 "          -i --sql-password=<word> --test-sql-password=<word>" \
 "                      Initialize databases with new passwords and reset MYSQL_DATABASE and TEST_DATABASE_NAME privileges" \
-"          -r, --runner" \
+"          -n, --runner" \
 "                      CircleCI and self-host runner: resets database.php, keep socket and update the database" \
+"                      Doesn't use the socket file" \
 "          --travis" \
 "                      Travis CI job" \
 "          -p=<password>" \
@@ -90,9 +90,6 @@ while [ "$#" -gt 0 ]; do case "$1" in
   --connection* )
     ck_args="$1";;
   *.sock ) sockfile=$1;;
-  -[nN]* )
-    sockfile=""
-    config_app_checked="-N";;
   -[iI]* )
     mode=$((mode | initialize_databases))
     ;;
@@ -122,8 +119,10 @@ while [ "$#" -gt 0 ]; do case "$1" in
   -[hH]*|--help )
     printf "%s\n" "${usage[@]}"
     exit 0;;
-  -[rR]*|--runner|--travis)
+  -[nN]*|--runner|--travis)
     mode=$((mode | runner))
+    sockfile=""
+    config_app_checked="-N";;
     ;;
   -[pP]* )
     parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
