@@ -52,17 +52,17 @@ jobs:
           PUID: 0
           PGID: 0
           TZ: Europe/Paris
-          MYSQL_ROOT_PASSWORD: mariadb
-          MYSQL_HOST: localhost
-          MYSQL_DATABASE: aria_db
-          MYSQL_USER: maria
-          MYSQL_PASSWORD: maria-abc
     shell: /bin/bash -leo pipefail
     environment:
       - BASH_ENV: /etc/profile
       - BALENA_ARCH: x86_64
       - MYSQL_HOST: 127.0.0.1
       - MYSQL_TCP_PORT: 3306
+      - MYSQL_ROOT_PASSWORD: mariadb
+      - MYSQL_HOST: 127.0.0.1
+      - MYSQL_DATABASE: aria_db
+      - MYSQL_USER: maria
+      - MYSQL_PASSWORD: maria-abc
     working_directory: /var/www/html/
     steps:
       - checkout
@@ -98,7 +98,7 @@ jobs:
           when: always
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    resource_class: b23prodtm/linux
+    #resource_class: b23prodtm/linux
     docker:
       - image: cimg/aws:2025.01
     shell: /bin/bash -leo pipefail
@@ -110,9 +110,9 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "yarn.lock" }}
-      #- setup_remote_docker:
-      #    version: edge
-      #    docker_layer_caching: true
+      - setup_remote_docker:
+          version: edge
+          docker_layer_caching: true
       - *deps-apt
       - *caches
       - run:

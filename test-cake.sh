@@ -6,7 +6,6 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 migrate="--connection=test -v -u -i --enable-ed25519-plugin"
 # default arg --docker, is enabled
 saved=( "$@" )
-set -- "--docker" "$@"
 config_args="-c -h -p pass -s word --development"
 db_data="db-data:/config/databases/"
 usage=("" \
@@ -14,7 +13,7 @@ usage=("" \
 "Usage: $0 [--docker|--runner [--cov|--phpcs]] [-p <password>] [-t <password>] " \
 "           -r, --runner        [path to a file with a list of variables], " \
 "                               also disables Docker Image" \
-"           --docker            [enabled] Startup with Docker Image DATABASE" \
+"           --docker            [enabled] Start a Docker daemon and DATABASE" \
 "           -p <password>       Exports MYSQL_ROOT_PASSWORD" \
 "           -t <password>       Exports MYSQL_PASSWORD" \
 "           --cov               Coverage All Tests" \
