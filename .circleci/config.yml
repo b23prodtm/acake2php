@@ -52,17 +52,17 @@ jobs:
           PUID: 0
           PGID: 0
           TZ: Europe/Paris
-          MYSQL_ROOT_PASSWORD: mariadb
-          MYSQL_HOST: localhost
-          MYSQL_DATABASE: aria_db
-          MYSQL_USER: maria
-          MYSQL_PASSWORD: maria-abc
     shell: /bin/bash -leo pipefail
     environment:
       - BASH_ENV: /etc/profile
       - BALENA_ARCH: x86_64
       - MYSQL_HOST: 127.0.0.1
       - MYSQL_TCP_PORT: 3306
+      - MYSQL_ROOT_PASSWORD: mariadb
+      - MYSQL_HOST: 127.0.0.1
+      - MYSQL_DATABASE: aria_db
+      - MYSQL_USER: maria
+      - MYSQL_PASSWORD: maria-abc
     working_directory: /var/www/html/
     steps:
       - checkout
