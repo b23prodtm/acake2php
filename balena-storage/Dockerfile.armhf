@@ -6,6 +6,8 @@ RUN apk update \
     && apk del build-base \
     && rm -rf /var/cache/apk/*
 
+RUN yarn add balena-cli
+
 # Enable udev for detection of dynamically plugged devices
 ENV UDEV=on
 COPY udev/usb.rules /etc/udev/rules.d/usb.rules
