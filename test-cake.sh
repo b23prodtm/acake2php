@@ -11,10 +11,8 @@ config_args="-c -h -p pass -s word --development"
 db_data="db-data:/config/databases/"
 usage=("" \
 "${cyan}Notice:${nc}The test script." \
-"Usage: $0 [--travis|--docker|--openshift|--circle [--cov|--phpcs]] [-p <password>] [-t <password>] " \
-"           --travis, --circle  Travis or Circle CI Local Test Workflow" \
-"                               also disables Docker Image" \
-"           -o, --openshift     [path to a file with a list of variables], " \
+"Usage: $0 [--docker|--runner [--cov|--phpcs]] [-p <password>] [-t <password>] " \
+"           -r, --runner        [path to a file with a list of variables], " \
 "                               also disables Docker Image" \
 "           --docker            [enabled] Startup with Docker Image DATABASE" \
 "           -p <password>       Exports MYSQL_ROOT_PASSWORD" \
@@ -28,11 +26,11 @@ usage=("" \
 "           --docker" \
 "")
 while [[ "$#" -gt 0 ]]; do case $1 in
-  --circle )
+  --runner )
     # shellcheck disable=SC2086
-    migrate=$(parse_arg_trim --docker $migrate)
+    migrate="$(parse_arg_trim --docker $migrate) --runner"
     # shellcheck disable=SC2086
-    config_args=$(parse_arg_trim --docker $config_args)
+    config_args="$(parse_arg_trim --docker  $config_args) --runner"
     ;;
   --phpcs )
     export PHPCS=1
@@ -56,11 +54,6 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     set -x
     migrate="-v ${migrate}"
     echo "Passed params :  $0 ${saved[*]}";;
-  -[oO]*|--openshift )
-    # shellcheck disable=SC2086
-    migrate="$(parse_arg_trim --docker $migrate) --openshift"
-    # shellcheck disable=SC2086
-    config_args="$(parse_arg_trim --docker $config_args) --openshift"
     ;;
   --travis)
     export MYSQL_HOST=${MYSQL_HOST:-'127.0.0.1'}
