@@ -1,17 +1,12 @@
-FROM balenalib/intel-nuc-alpine-node:20
-
-RUN apk update \
-        && apk add \
-    mariadb-client \
-    && apk del build-base \
-    && rm -rf /var/cache/apk/*
+FROM balenalib/intel-nuc-alpine-node
 
 # Enable udev for detection of dynamically plugged devices
 ENV UDEV=on
 COPY udev/usb.rules /etc/udev/rules.d/usb.rules
 
 # Install dependencies
-RUN install_packages findmnt util-linux grep
+RUN install_packages findmnt util-linux grep \
+     mariadb-client
 
 WORKDIR /usr/src
 COPY scripts scripts
