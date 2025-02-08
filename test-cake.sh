@@ -30,6 +30,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     migrate="$(parse_arg_trim --docker $migrate) --runner"
     # shellcheck disable=SC2086
     config_args="$(parse_arg_trim --docker  $config_args) --runner"
+    set TEST_DATABASE_NAME "ariadb_test"
     ;;
   --phpcs )
     export PHPCS=1
@@ -72,10 +73,6 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     ;;
   *) echo "Unknown parameter, passed $0: $1"; exit 1;;
 esac; shift; done
-if [ "$PHPCS" = 1 ]; then
-  bash -c "./Scripts/start_daemon.sh test ${saved[*]}" || exit 1
-  exit 0
-fi
 # shellcheck source=configure.sh
 bash -c "${TOPDIR}/configure.sh $config_args"
 if bash -c "${TOPDIR}/migrate-database.sh ${migrate}"; then
