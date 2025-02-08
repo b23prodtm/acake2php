@@ -122,7 +122,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
   -[nN]*|--runner|--travis)
     mode=$((mode | runner))
     sockfile=""
-    config_app_checked="-N";;
+    config_app_checked="-N"
     ;;
   -[pP]* )
     parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
@@ -224,7 +224,7 @@ if [[ $((mode & initialize_databases)) -gt 0 ]]; then
   args=(\
 "-e \"use mysql;\"" \
 "-e \"create user if not exists '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
-"-e \"SET PASSWORD FOR '${MYSQL_USER}'@'${mysql_host}' = PASSWORD('${set_MYSQL_PASSWORD}');\"" \
+"-e \"SET PASSWORD FOR '${MYSQL_USER}'@'${mysql_host}'=PASSWORD('${set_MYSQL_PASSWORD}');\"" \
 "-e \"grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \

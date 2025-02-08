@@ -10,8 +10,8 @@ docker=$(parse_arg "--docker" "$@")
 homebrew=0x01
 port=0x10
 pm=0x00
-[ -z "$(command -v brew)" ] && pm = $((pm | 0x01))
-[ -z "$(command -v port)" ] && pm = $((pm | 0x10))
+[ -z "$(command -v brew)" ] && pm=$((pm | 0x01))
+[ -z "$(command -v port)" ] && pm=$((pm | 0x10))
 if [ -n "$docker" ]; then
 	bash -c "./Scripts/start_daemon.sh ${docker}"
 else
