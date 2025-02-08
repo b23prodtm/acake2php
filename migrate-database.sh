@@ -123,7 +123,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     printf "%s\n" "${usage[@]}"
     exit 0;;
   -[rR]*|--runner|--travis)
-    mode=$((mode | $runner))
+    mode=$((mode | runner))
     ;;
   -[pP]* )
     parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
