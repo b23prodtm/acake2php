@@ -154,7 +154,7 @@ Open a Terminal window:
 
     ./test-cake.sh
 
-There are options (--travis, --openshift, --circle) dedicated to continuous integration build environments. Use --help to see more about options.
+There are options (--runner, --travis) dedicated to continuous integration build environments. Use --help to see more about options.
 
 See [below](#common-issues) to allow access on the built-in local server.
 
@@ -504,7 +504,7 @@ and update the database schema:
     6:build dependencies.
 
   To be able to publish on to DockerHub [betothreeprod](https://hub.docker.com/u/betothreeprod) repository, first login as *betothreeprod* from a web browser.
-  Use npm [balena-cloud-apps](https://github.com/b23prodtm/balena-cloud-apps), for exmaple to build the apache-php7 Docker image, we'll choose *18-alpine* tag: 
+  Use npm [balena-cloud-apps](https://github.com/b23prodtm/balena-cloud-apps), for instance to build the apache-php7 Docker image, we'll choose *18-alpine* tag: 
     
     cd deployment/images/apache-php7/
     docker_build . . betothreeprod/apache-php7:18-alpine aarch64
