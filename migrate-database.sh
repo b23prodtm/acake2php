@@ -56,11 +56,11 @@ dbfile=app/config/database.template
 schemafile=app/config/Schema/schema.template
 sockfile=/tmp/mysqld.sock
 config_app_checked="-Y"
-mode=$((0x0000))
-test_checked=$((0x1000))
-runner=$((0x0100))
-update_checked=$((0x0010))
-initialize_databases=$((0x0001))
+mode=0x0000
+test_checked=0x1000
+runner=0x0100
+update_checked=0x0010
+initialize_databases=0x0001
 saved=( "$@" )
 authentication_plugin=0
 mysql_host="%"
@@ -81,11 +81,11 @@ while [ "$#" -gt 0 ]; do case "$1" in
     sockfile="$(pwd)/deployment/images/mysqldb/mysqld/mysqld.sock"
     ;;
   -[uU]* )
-    mode|=$update_checked
+    mode=$((mode | update_checked))
     ;;
   --connection=test )
     ck_args="$1"
-    mode|=$test_checked
+    mode=$((mode | test_checked))
     ;;
   --connection* )
     ck_args="$1";;
@@ -94,7 +94,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     sockfile=""
     config_app_checked="-N";;
   -[iI]* )
-    mode|=$initialize_databases
+    mode=$((mode | initialize_databases))
     ;;
   --sql-password*)
     OPTIND=1
@@ -123,14 +123,14 @@ while [ "$#" -gt 0 ]; do case "$1" in
     printf "%s\n" "${usage[@]}"
     exit 0;;
   -[rR]*|--runner|--travis)
-    mode|=$runner
+    mode=$((mode | $runner))
     ;;
   -[pP]* )
     parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
     shift $((OPTIND -1))
     ;;
   -[tT]* )
-    mode|=$test_checked
+    mode=$((mode | test_checked))
     ck_args="--connection=test"
     printf "Testing %s Unit..." $test_checked
     parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER} password" "$@"
@@ -151,7 +151,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     # shellcheck disable=SC2046
     set -- $(echo "${arg}" \
     | awk 'BEGIN{ FS="[ =]+" }{ print "-u " $2 }') "$@"
-    mode|=$test_checked
+    mode=$((mode | test_checked))
     ck_args="--connection=test"
     parse_and_export "u" "TEST_DATABASE_NAME" "${MYSQL_USER} database name" "$@"
     shift $((OPTIND -1))
