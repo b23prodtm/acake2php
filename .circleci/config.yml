@@ -128,5 +128,7 @@ workflows:
   build-and-compose:
     jobs:
       - build
-      - compose
+      - compose:
+          requires:
+            - build
   version: 2
