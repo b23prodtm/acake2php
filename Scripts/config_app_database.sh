@@ -24,13 +24,12 @@ else
 	fi
 fi
 sockdir=/var/run/mysqld
-wd="$TOPDIR/app/config"
 while [[ "$#" -gt 0 ]]; do case $1 in
 	*.php|*.template)
 		dbfile=$1
 		file=$(echo "$dbfile" | cut -d . -f 1)
 		# shellcheck source=cp_bkp_old.sh
-		. "${TOPDIR}/Scripts/cp_bkp_old.sh" "$wd" "$dbfile" "${file}.php";;
+		. "${TOPDIR}/Scripts/cp_bkp_old.sh" "$TOPDIR" "$dbfile" "${file}.php";;
 	*.sock)
 		if [ -n "$(command -v mysql)" ]; then
 			mysql --version
