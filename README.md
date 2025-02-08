@@ -154,7 +154,7 @@ Open a Terminal window:
 
     ./test-cake.sh
 
-There are options (--travis, --openshift, --circle) dedicated to continuous integration build environments. Use --help to see more about options.
+There are options (--runner, --travis) dedicated to continuous integration build environments. Use --help to see more about options.
 
 See [below](#common-issues) to allow access on the built-in local server.
 
