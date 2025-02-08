@@ -164,7 +164,7 @@ done
 # shellcheck disable=SC2154
 shell_prompt "$TOPDIR/Scripts/config_app_database.sh ${dbfile} ${schemafile} ${sockfile} ${docker}" \
 "${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
-if [[ $(($mode & $initialize_databases)) -gt 0 ]]; then
+if [[ $((mode & initialize_databases)) -gt 0 ]]; then
   #; ---------------------------------- set MYSQL_ROOT_PASSWORD
   export set_DATABASE_PASSWORD=${set_DATABASE_PASSWORD:-$MYSQL_ROOT_PASSWORD}
   # shellcheck disable=SC2154
@@ -239,10 +239,10 @@ if [[ $(($mode & $initialize_databases)) -gt 0 ]]; then
   && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}
   check_log "$LOG"
 fi
-if [[ $(($mode & $update_checked)) -gt 0 ]]; then
+if [[ $((mode & update_checked)) -gt 0 ]]; then
   bash -c "./Scripts/start_daemon.sh ${travis} ${docker} update ${ck_args}"
 fi
-if [[ $(($mode & ($test_checked || $runner))) -gt 0 ]]; then
+if [[ $((mode & (test_checked | runner))) -gt 0 ]]; then
   echo "GOAL $travis $docker $runner $test_args"
   bash -c "./Scripts/bootstrap.sh ${travis} ${runner} ${docker} test ${test_args}"
   check_log "$LOG"
