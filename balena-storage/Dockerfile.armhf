@@ -1,6 +1,7 @@
 FROM balenalib/raspberrypi3-alpine-node
 
-RUN yarn add balena-cli
+# requires node 20
+#RUN yarn add balena-cli
 
 # Enable udev for detection of dynamically plugged devices
 ENV UDEV=on
