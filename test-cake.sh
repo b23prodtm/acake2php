@@ -37,7 +37,8 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     config_args=""
     ;;
   --cov )
-    export COLLECT_COVERAGE=true;;
+    export COLLECT_COVERAGE=true
+    ;;
   -[hH]*|--help )
     printf "%s\n" "${usage[@]}"
     exit 0;;
@@ -52,7 +53,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   -[vV]*|--verbose )
     set -x
     migrate="-v ${migrate}"
-    echo "Passed params :  $0 ${saved[*]}";;
+    echo "Passed params :  $0 ${saved[*]}"
     ;;
   --travis)
     export MYSQL_HOST=${MYSQL_HOST:-'127.0.0.1'}
