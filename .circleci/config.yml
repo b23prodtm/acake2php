@@ -57,7 +57,6 @@ jobs:
           MYSQL_DATABASE: aria_db
           MYSQL_USER: maria
           MYSQL_PASSWORD: maria-abc
-    parallelism: 2
     shell: /bin/bash -leo pipefail
     environment:
       - BASH_ENV: /etc/profile
@@ -102,8 +101,6 @@ jobs:
     #resource_class: b23prodtm/runner
     docker:
       - image: cimg/aws:2025.01
-    #  - image: betothreeprod/dind-php7
-    parallelism: 2
     shell: /bin/bash -leo pipefail
     environment:
       - BASH_ENV: /etc/profile
