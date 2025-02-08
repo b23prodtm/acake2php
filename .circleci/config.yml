@@ -44,7 +44,7 @@ orbs:
 jobs:
   build:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    resource_class: b23prodtm/runner
+    resource_class: b23prodtm/linux
     docker:
       - image: betothreeprod/apache-php7:latest-x86_64
       - image: betothreeprod/mysqldb:latest-x86_64
@@ -52,18 +52,17 @@ jobs:
           PUID: 0
           PGID: 0
           TZ: Europe/Paris
-          MYSQL_ROOT_PASSWORD: mariadb
-          MYSQL_HOST: localhost
-          MYSQL_DATABASE: aria_db
-          MYSQL_USER: maria
-          MYSQL_PASSWORD: maria-abc
-    parallelism: 2
     shell: /bin/bash -leo pipefail
     environment:
       - BASH_ENV: /etc/profile
       - BALENA_ARCH: x86_64
       - MYSQL_HOST: 127.0.0.1
       - MYSQL_TCP_PORT: 3306
+      - MYSQL_ROOT_PASSWORD: mariadb
+      - MYSQL_HOST: 127.0.0.1
+      - MYSQL_DATABASE: aria_db
+      - MYSQL_USER: maria
+      - MYSQL_PASSWORD: maria-abc
     working_directory: /var/www/html/
     steps:
       - checkout
@@ -90,7 +89,7 @@ jobs:
             set -u
             mkdir -p ./app/build/logs
             mkdir -p ~/phpunit
-            ./test-cake.sh --circle
+            ./test-cake.sh --runner
             . common.env && cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
       - store_test_results:
           path: ~/phpunit
@@ -99,11 +98,9 @@ jobs:
           when: always
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    #resource_class: b23prodtm/runner
+    #resource_class: b23prodtm/linux
     docker:
       - image: cimg/aws:2025.01
-    #  - image: betothreeprod/dind-php7
-    parallelism: 2
     shell: /bin/bash -leo pipefail
     environment:
       - BASH_ENV: /etc/profile

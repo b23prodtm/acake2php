@@ -7,11 +7,11 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/parsing.sh"
 # shellcheck source=Scripts/lib/test/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
-openshift=$(parse_arg "-[oO]+|--openshift" "$@")
+runner=$(parse_arg "-[rR]+|--runner" "$@")
 docker=$(parse_arg "--docker" "$@")
 travis=$(parse_arg "--travis" "$@")
-pargs=$(parse_arg_trim "-[oO]+|--openshift|--docker|--travis" "$@")
-if [ -n "$openshift" ]; then
+pargs=$(parse_arg_trim "-[rR]+|--runner|--docker|--travis" "$@")
+if [ -n "$runner" ]; then
   slogger -st "$0" "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
   . "$TOPDIR/Scripts/bootargs.sh" "$@"
@@ -20,7 +20,7 @@ else
   # shellcheck source=Scripts/fooargs.sh
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi
-LOG=$(new_cake_log "$travis" "$openshift" "$docker") && slogger -st "$0" "$LOG"
+LOG=$(new_cake_log "$travis" "$runner" "$docker") && slogger -st "$0" "$LOG"
 usage=("" \
 "Usage: $0 [sockfile.sock] [-u] [-y|n] [-o] [-p <word>] [-t <word>] [-i] [--sql-password=<password>] [--test-sql-password=<password>]" \
 "          To initialize the databases, enter in the ${MYSQL_HOST} host terminal: $0 -u -i" \
@@ -28,11 +28,13 @@ usage=("" \
 "          file.sock   Set the socket file to connect SQL database" \
 "          -u          Update the database in app/config/Schema/" \
 "          -y          Overwrite database.php and default socket file" \
-"          -n          Doesn't overwrite database.php and socket" \
 "          -i --sql-password=<word> --test-sql-password=<word>" \
 "                      Initialize databases with new passwords and reset MYSQL_DATABASE and TEST_DATABASE_NAME privileges" \
-"          -o, --openshift, --travis" \
-"                      Resets database.php, keep socket and update the database" \
+"          -n, --runner" \
+"                      CircleCI and self-host runner: resets database.php, keep socket and update the database" \
+"                      Doesn't use the socket file" \
+"          --travis" \
+"                      Travis CI job" \
 "          -p=<password>" \
 "                      Exports MYSQL_ROOT_PASSWORD" \
 "          -t=<password>" \
@@ -50,13 +52,15 @@ usage=("" \
 sql_connect="mysql"
 # shellcheck disable=SC2153
 sql_connect_host="-h ${MYSQL_HOST} -P ${MYSQL_TCP_PORT}"
-dbfile=database.template
-schemafile=Schema/schema.php
+dbfile=app/config/database.template
+schemafile=app/config/Schema/schema.template
 sockfile=/tmp/mysqld.sock
 config_app_checked="-Y"
-test_checked=0
-update_checked=0
-initialize_databases=0
+mode=0x0000
+test_checked=0x1000
+runner=0x0100
+update_checked=0x0010
+initialize_databases=0x0001
 saved=( "$@" )
 authentication_plugin=0
 mysql_host="%"
@@ -77,20 +81,17 @@ while [ "$#" -gt 0 ]; do case "$1" in
     sockfile="$(pwd)/deployment/images/mysqldb/mysqld/mysqld.sock"
     ;;
   -[uU]* )
-    update_checked=1
+    mode=$((mode | update_checked))
     ;;
   --connection=test )
     ck_args="$1"
-    test_checked=1
+    mode=$((mode | test_checked))
     ;;
   --connection* )
     ck_args="$1";;
   *.sock ) sockfile=$1;;
-  -[nN]* )
-    sockfile=""
-    config_app_checked="-N";;
   -[iI]* )
-    initialize_databases=1
+    mode=$((mode | initialize_databases))
     ;;
   --sql-password*)
     OPTIND=1
@@ -98,7 +99,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     shift $((OPTIND -1))
     ;;
   --test-sql-password*)
-    test_checked=1
+    mode-=$test_checked
     ck_args="--connection=test"
     OPTIND=1
     parse_sql_password "set_MYSQL_PASSWORD" "Altering ${MYSQL_USER} password" "$@"
@@ -118,15 +119,17 @@ while [ "$#" -gt 0 ]; do case "$1" in
   -[hH]*|--help )
     printf "%s\n" "${usage[@]}"
     exit 0;;
-  -[oO]*|--openshift);;
-  --travis)
+  -[nN]*|--runner|--travis)
+    mode=$((mode | runner))
+    sockfile=""
+    config_app_checked="-N"
     ;;
   -[pP]* )
     parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
     shift $((OPTIND -1))
     ;;
   -[tT]* )
-    test_checked=1
+    mode=$((mode | test_checked))
     ck_args="--connection=test"
     printf "Testing %s Unit..." $test_checked
     parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER} password" "$@"
@@ -147,7 +150,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     # shellcheck disable=SC2046
     set -- $(echo "${arg}" \
     | awk 'BEGIN{ FS="[ =]+" }{ print "-u " $2 }') "$@"
-    test_checked=1
+    mode=$((mode | test_checked))
     ck_args="--connection=test"
     parse_and_export "u" "TEST_DATABASE_NAME" "${MYSQL_USER} database name" "$@"
     shift $((OPTIND -1))
@@ -160,7 +163,7 @@ done
 # shellcheck disable=SC2154
 shell_prompt "$TOPDIR/Scripts/config_app_database.sh ${dbfile} ${schemafile} ${sockfile} ${docker}" \
 "${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
-if [[ $initialize_databases -eq 1 ]]; then
+if [[ $((mode & initialize_databases)) -gt 0 ]]; then
   #; ---------------------------------- set MYSQL_ROOT_PASSWORD
   export set_DATABASE_PASSWORD=${set_DATABASE_PASSWORD:-$MYSQL_ROOT_PASSWORD}
   # shellcheck disable=SC2154
@@ -221,7 +224,7 @@ if [[ $initialize_databases -eq 1 ]]; then
   args=(\
 "-e \"use mysql;\"" \
 "-e \"create user if not exists '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
-"-e \"SET PASSWORD FOR '${MYSQL_USER}'@'${mysql_host}' = PASSWORD('${set_MYSQL_PASSWORD}');\"" \
+"-e \"SET PASSWORD FOR '${MYSQL_USER}'@'${mysql_host}'=PASSWORD('${set_MYSQL_PASSWORD}');\"" \
 "-e \"grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
@@ -235,11 +238,11 @@ if [[ $initialize_databases -eq 1 ]]; then
   && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}
   check_log "$LOG"
 fi
-if [[ $update_checked -eq 1 ]]; then
+if [[ $((mode & update_checked)) -gt 0 ]]; then
   bash -c "./Scripts/start_daemon.sh ${travis} ${docker} update ${ck_args}"
 fi
-if [[ $test_checked -eq 1 ]]; then
-  echo "GOAL $travis $docker $test_args"
-  bash -c "./Scripts/bootstrap.sh ${travis} ${docker} test ${test_args}"
+if [[ $((mode & (test_checked | runner))) -gt 0 ]]; then
+  echo "GOAL $travis $docker $runner $test_args"
+  bash -c "./Scripts/bootstrap.sh ${travis} ${runner} ${docker} test ${test_args}"
   check_log "$LOG"
 fi

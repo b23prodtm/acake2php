@@ -63,6 +63,8 @@ services:
     env_file:
       - common.env
       - .env
+    networks:
+      - cake
 # v3.4 compose file
 #    healthcheck:
 #      test: ["CMD", "/usr/src/scripts/backup-db.sh"]

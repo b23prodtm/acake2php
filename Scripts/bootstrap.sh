@@ -7,9 +7,9 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . "${TOPDIR}/Scripts/lib/shell_prompt.sh"
 # shellcheck source=lib/parsing.sh
 . "${TOPDIR}/Scripts/lib/parsing.sh"
-openshift=$(parse_arg "-[oO]+|--openshift"  "$@")
-pargs=$(parse_arg_trim "-[oO]+|--openshift"  "$@")
-if [ -n "$openshift" ]; then
+runner=$(parse_arg "-[rR]+|--runner"  "$@")
+pargs=$(parse_arg_trim "-[rR]+|--runner"  "$@")
+if [ -n "$runner" ]; then
   slogger -st "$0" "Bootargs...: ${pargs}"
   export CAKEPHP_DEBUG_LEVEL=1
   # shellcheck source=bootargs.sh
@@ -23,12 +23,12 @@ fi
 #;
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;
-if [ ! -f "$TOPDIR/$MYPHPCMS_DIR/e13/etc/constantes.properties" ] && [ -z "$openshift" ]; then
+if [ ! -f "$TOPDIR/$MYPHPCMS_DIR/e13/etc/constantes.properties" ] && [ -z "$runner" ]; then
   shell_prompt "$TOPDIR/configure.sh -c" "missing file creation constantes.properties" "${DEBIAN_FRONTEND:-}"
 fi
 slogger -st "$0" "Auto configuration..."
 #; hash file that is stored in webroot to allow administrator privileges
-if [ -z "${GET_HASH_PASSWORD:-}" ] && [ -z "$openshift" ]; then
+if [ -z "${GET_HASH_PASSWORD:-}" ] && [ -z "$runner" ]; then
   hash="$TOPDIR/${MYPHPCMS_DIR}/e13/etc/export_hash_password.sh"
   if [ ! -f "$hash" ]; then
     shell_prompt "$TOPDIR/configure.sh -h " "define a value for missing GET_HASH_PASSWORD" "${DEBIAN_FRONTEND:-}"
@@ -40,7 +40,7 @@ fi
 echo -e "${nc}Password ${green}${GET_HASH_PASSWORD}${nc}"
 #; Install PHPUnit, performs unit tests
 #; The website must pass health checks in order to be deployed
-if [ -n "$openshift" ]; then
+if [ -n "$runner" ]; then
   phpunit="$TOPDIR/app/Vendor/bin/phpunit"
   if [ ! -f "$phpunit" ]; then
     # shellcheck source=composer.sh
@@ -50,4 +50,4 @@ if [ -n "$openshift" ]; then
   fi
   printf "%s\n" "$($phpunit --version)"
 fi
-bash -c "$TOPDIR/Scripts/start_daemon.sh ${pargs}"
+bash -c "$TOPDIR/Scripts/start_daemon.sh ${pargs} ${runner}"

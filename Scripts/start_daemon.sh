@@ -6,11 +6,11 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 # shellcheck source=lib/parsing.sh
 . "$TOPDIR/Scripts/lib/parsing.sh"
-openshift=$(parse_arg "-[oO]+|--openshift" "$@")
+runner=$(parse_arg "-[rR]+|--runner" "$@")
 docker=$(parse_arg "--docker" "$@")
 travis=$(parse_arg "--travis" "$@")
-ck_args=$(parse_arg_trim "-[oO]+|--openshift|--docker|--travis" "$@")
-LOG=$(new_cake_log "$travis" "$docker" "$openshift") && slogger -st "$0" "$LOG"
+ck_args=$(parse_arg_trim "-[rR]+|--runner|--docker|--travis" "$@")
+LOG=$(new_cake_log "$travis" "$docker" "$runner") && slogger -st "$0" "$LOG"
 MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
 function wait_for_host() {
 	[ "$#" -lt 2 ] && printf "Usage: %s <host> <port>" "${FUNCNAME[0]}" && exit 1

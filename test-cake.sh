@@ -6,17 +6,14 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 migrate="--connection=test -v -u -i --enable-ed25519-plugin"
 # default arg --docker, is enabled
 saved=( "$@" )
-set -- "--docker" "$@"
 config_args="-c -h -p pass -s word --development"
 db_data="db-data:/config/databases/"
 usage=("" \
 "${cyan}Notice:${nc}The test script." \
-"Usage: $0 [--travis|--docker|--openshift|--circle [--cov|--phpcs]] [-p <password>] [-t <password>] " \
-"           --travis, --circle  Travis or Circle CI Local Test Workflow" \
+"Usage: $0 [--docker|--runner [--cov|--phpcs]] [-p <password>] [-t <password>] " \
+"           -r, --runner        [path to a file with a list of variables], " \
 "                               also disables Docker Image" \
-"           -o, --openshift     [path to a file with a list of variables], " \
-"                               also disables Docker Image" \
-"           --docker            [enabled] Startup with Docker Image DATABASE" \
+"           --docker            [enabled] Start a Docker daemon and DATABASE" \
 "           -p <password>       Exports MYSQL_ROOT_PASSWORD" \
 "           -t <password>       Exports MYSQL_PASSWORD" \
 "           --cov               Coverage All Tests" \
@@ -28,11 +25,11 @@ usage=("" \
 "           --docker" \
 "")
 while [[ "$#" -gt 0 ]]; do case $1 in
-  --circle )
+  --runner )
     # shellcheck disable=SC2086
-    migrate=$(parse_arg_trim --docker $migrate)
+    migrate="$(parse_arg_trim --docker $migrate) --runner --testunitbase=ariadb_test"
     # shellcheck disable=SC2086
-    config_args=$(parse_arg_trim --docker $config_args)
+    config_args="$(parse_arg_trim --docker  $config_args) --runner"
     ;;
   --phpcs )
     export PHPCS=1
@@ -40,7 +37,8 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     config_args=""
     ;;
   --cov )
-    export COLLECT_COVERAGE=true;;
+    export COLLECT_COVERAGE=true
+    ;;
   -[hH]*|--help )
     printf "%s\n" "${usage[@]}"
     exit 0;;
@@ -55,12 +53,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   -[vV]*|--verbose )
     set -x
     migrate="-v ${migrate}"
-    echo "Passed params :  $0 ${saved[*]}";;
-  -[oO]*|--openshift )
-    # shellcheck disable=SC2086
-    migrate="$(parse_arg_trim --docker $migrate) --openshift"
-    # shellcheck disable=SC2086
-    config_args="$(parse_arg_trim --docker $config_args) --openshift"
+    echo "Passed params :  $0 ${saved[*]}"
     ;;
   --travis)
     export MYSQL_HOST=${MYSQL_HOST:-'127.0.0.1'}
@@ -79,10 +72,6 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     ;;
   *) echo "Unknown parameter, passed $0: $1"; exit 1;;
 esac; shift; done
-if [ "$PHPCS" = 1 ]; then
-  bash -c "./Scripts/start_daemon.sh test ${saved[*]}" || exit 1
-  exit 0
-fi
 # shellcheck source=configure.sh
 bash -c "${TOPDIR}/configure.sh $config_args"
 if bash -c "${TOPDIR}/migrate-database.sh ${migrate}"; then
