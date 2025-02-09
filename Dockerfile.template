@@ -133,6 +133,6 @@ RUN ./deploy.sh ${BALENA_ARCH} --nobuild --exit \
 
 # RUN [ "cross-build-end" ]
 
-ENTRYPOINT ./migrate-database.sh -o -u -i ${MIGRATE_OPTION} \
-  && ./migrate-database.sh -o -u ${MIGRATE_OPTION} --connection=test && /init
+ENTRYPOINT ./migrate-database.sh -n -u -i ${MIGRATE_OPTION} \
+  && ./migrate-database.sh -n -u ${MIGRATE_OPTION} --connection=test && /init
 EXPOSE 80 443
