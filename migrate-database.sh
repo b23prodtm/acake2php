@@ -65,7 +65,7 @@ initialize_bit=0x00001
 saved=( "$@" )
 authentication_plugin=0
 mysql_host="%"
-ck_args="--connection=default"
+cx_args="--connection=default"
 # test_args="app AllTests --stderr"
 test_args="app Controller/PagesController --stderr >> $LOG"
 MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
@@ -86,11 +86,11 @@ while [ "$#" -gt 0 ]; do case "$1" in
     mode=$((mode | update_bit))
     ;;
   --connection=test )
-    ck_args="$1"
+    cx_args="$1"
     mode=$((mode | test_bit))
     ;;
   --connection* )
-    ck_args="$1";;
+    cx_args="$1";;
   *.sock ) sockfile=$1;;
   -[iI]* )
     mode=$((mode | initialize_bit))
@@ -102,7 +102,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     ;;
   --test-sql-password*)
     mode=$((mode | test_bit))
-    ck_args="--connection=test"
+    cx_args="--connection=test"
     OPTIND=1
     parse_sql_password "set_MYSQL_PASSWORD" "Altering ${MYSQL_USER} password" "$@"
     shift $((OPTIND -1))
@@ -115,7 +115,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
 "$(export -p | grep "DATABASE\|MYSQL")" \
 "")
     printf "%s\n" "${text[@]}"
-    ck_args="${ck_args} -v"
+    cx_args="${cx_args} -v"
     test_args="${test_args} -v"
     ;;
   -[hH]*|--help )
@@ -132,8 +132,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     ;;
   -[tT]* )
     mode=$((mode | test_bit))
-    ck_args="--connection=test"
-    printf "Testing %s Unit..." $test_args
+    cx_args="--connection=test"
     parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER} password" "$@"
     shift $((OPTIND -1))
     ;;
@@ -153,7 +152,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     set -- $(echo "${arg}" \
     | awk 'BEGIN{ FS="[ =]+" }{ print "-u " $2 }') "$@"
     mode=$((mode | test_bit))
-    ck_args="--connection=test"
+    cx_args="--connection=test"
     parse_and_export "u" "TEST_DATABASE_NAME" "${MYSQL_USER} database name" "$@"
     shift $((OPTIND -1))
     ;;
@@ -245,7 +244,7 @@ if [[ $((mode & (test_bit | update_bit | runner_bit | docker_bit))) -gt 0 ]]; th
   if [[ $((mode & test_bit)) -gt 0 ]]; then
       pargs="$pargs test $test_args"
   elif [[ $((mode & update_bit)) -gt 0 ]]; then
-      pargs="$pargs update $ck_args"
+      pargs="$pargs update $cx_args"
   fi
   bash -c "./Scripts/bootstrap.sh $pargs"
   check_log "$LOG"
