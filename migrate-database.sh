@@ -240,12 +240,13 @@ if [[ $((mode & initialize_bit)) -gt 0 ]]; then
   && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}
   check_log "$LOG"
 fi
-if [[ $((mode & update_bit)) -gt 0 ]]; then
-  bash -c "./Scripts/start_daemon.sh ${travis} ${docker} update ${ck_args}"
-fi
-if [[ $((mode & (test_bit | runner_bit | travis_bit))) -gt 0 ]]; then
+if [[ $((mode & (test_bit | update_bit | runner_bit | docker_bit))) -gt 0 ]]; then
   pargs=" $travis $docker $runner"
-  if [[ $((mode & test_bit)) ]]; then pargs="$pargs test $test_args"
+  if [[ $((mode & test_bit)) -gt 0 ]]; then
+      pargs="$pargs test $test_args"
+  elif [[ $((mode & update_bit)) -gt 0 ]]; then
+      pargs="$pargs update $ck_args"
+  fi
   bash -c "./Scripts/bootstrap.sh $pargs"
   check_log "$LOG"
 fi
