@@ -56,15 +56,16 @@ dbfile=app/config/database.template
 schemafile=app/config/Schema/schema.template
 sockfile=/tmp/mysqld.sock
 config_app_checked="-Y"
-mode=0x0000
-test_checked=0x1000
-runner=0x0100
-update_checked=0x0010
-initialize_databases=0x0001
+mode=0x00000
+test_bit=0x10000
+runner_bit=0x01000
+update_bit=0x00100
+docker_bit=0x00010
+initialize_bit=0x00001
 saved=( "$@" )
 authentication_plugin=0
 mysql_host="%"
-ck_args="--connection=default"
+cx_args="--connection=default"
 # test_args="app AllTests --stderr"
 test_args="app Controller/PagesController --stderr >> $LOG"
 MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
@@ -74,6 +75,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     log_warning_msg "Plugin Not available from PHP PDO connect (you should avoid using it)"
     authentication_plugin="ed25519";;
   --docker )
+    mode=$((mode | docker_bit))
     bash -c "./Scripts/start_daemon.sh ${docker}"
     # Running docker ... mysql's allowed to connect without any local mysql installation
     docker exec "$MARIADB_SHORT_NAME" hostname 2>> "$LOG"
@@ -81,17 +83,17 @@ while [ "$#" -gt 0 ]; do case "$1" in
     sockfile="$(pwd)/deployment/images/mysqldb/mysqld/mysqld.sock"
     ;;
   -[uU]* )
-    mode=$((mode | update_checked))
+    mode=$((mode | update_bit))
     ;;
   --connection=test )
-    ck_args="$1"
-    mode=$((mode | test_checked))
+    cx_args="$1"
+    mode=$((mode | test_bit))
     ;;
   --connection* )
-    ck_args="$1";;
+    cx_args="$1";;
   *.sock ) sockfile=$1;;
   -[iI]* )
-    mode=$((mode | initialize_databases))
+    mode=$((mode | initialize_bit))
     ;;
   --sql-password*)
     OPTIND=1
@@ -99,8 +101,8 @@ while [ "$#" -gt 0 ]; do case "$1" in
     shift $((OPTIND -1))
     ;;
   --test-sql-password*)
-    mode-=$test_checked
-    ck_args="--connection=test"
+    mode=$((mode | test_bit))
+    cx_args="--connection=test"
     OPTIND=1
     parse_sql_password "set_MYSQL_PASSWORD" "Altering ${MYSQL_USER} password" "$@"
     shift $((OPTIND -1))
@@ -113,7 +115,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
 "$(export -p | grep "DATABASE\|MYSQL")" \
 "")
     printf "%s\n" "${text[@]}"
-    ck_args="${ck_args} -v"
+    cx_args="${cx_args} -v"
     test_args="${test_args} -v"
     ;;
   -[hH]*|--help )
@@ -129,9 +131,8 @@ while [ "$#" -gt 0 ]; do case "$1" in
     shift $((OPTIND -1))
     ;;
   -[tT]* )
-    mode=$((mode | test_checked))
-    ck_args="--connection=test"
-    printf "Testing %s Unit..." $test_checked
+    mode=$((mode | test_bit))
+    cx_args="--connection=test"
     parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER} password" "$@"
     shift $((OPTIND -1))
     ;;
@@ -150,8 +151,8 @@ while [ "$#" -gt 0 ]; do case "$1" in
     # shellcheck disable=SC2046
     set -- $(echo "${arg}" \
     | awk 'BEGIN{ FS="[ =]+" }{ print "-u " $2 }') "$@"
-    mode=$((mode | test_checked))
-    ck_args="--connection=test"
+    mode=$((mode | test_bit))
+    cx_args="--connection=test"
     parse_and_export "u" "TEST_DATABASE_NAME" "${MYSQL_USER} database name" "$@"
     shift $((OPTIND -1))
     ;;
@@ -163,7 +164,7 @@ done
 # shellcheck disable=SC2154
 shell_prompt "$TOPDIR/Scripts/config_app_database.sh ${dbfile} ${schemafile} ${sockfile} ${docker}" \
 "${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
-if [[ $((mode & initialize_databases)) -gt 0 ]]; then
+if [[ $((mode & initialize_bit)) -gt 0 ]]; then
   #; ---------------------------------- set MYSQL_ROOT_PASSWORD
   export set_DATABASE_PASSWORD=${set_DATABASE_PASSWORD:-$MYSQL_ROOT_PASSWORD}
   # shellcheck disable=SC2154
@@ -238,11 +239,13 @@ if [[ $((mode & initialize_databases)) -gt 0 ]]; then
   && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}
   check_log "$LOG"
 fi
-if [[ $((mode & update_checked)) -gt 0 ]]; then
-  bash -c "./Scripts/start_daemon.sh ${travis} ${docker} update ${ck_args}"
-fi
-if [[ $((mode & (test_checked | runner))) -gt 0 ]]; then
-  echo "GOAL $travis $docker $runner $test_args"
-  bash -c "./Scripts/bootstrap.sh ${travis} ${runner} ${docker} test ${test_args}"
+if [[ $((mode & (test_bit | update_bit | runner_bit | docker_bit))) -gt 0 ]]; then
+  pargs=" $travis $docker $runner"
+  if [[ $((mode & test_bit)) -gt 0 ]]; then
+      pargs="$pargs test $test_args"
+  elif [[ $((mode & update_bit)) -gt 0 ]]; then
+      pargs="$pargs update $cx_args"
+  fi
+  bash -c "./Scripts/bootstrap.sh $pargs"
   check_log "$LOG"
 fi
