@@ -503,21 +503,11 @@ and update the database schema:
     
     6:build dependencies.
 
-  To be able to publish on to DockerHub [betothreeprod](https://hub.docker.com/u/betothreeprod) repository, first login as *DOCKER_USER* from a web browser.
-  Use npm [balena-cloud-apps](https://github.com/b23prodtm/balena-cloud-apps), for instance to build the apache-php7 Docker image, we'll choose *18-alpine* tag: 
+  To be able to publish on to DockerHub [betothreeprod](https://hub.docker.com/u/betothreeprod) repository, first login as *DOCKER_USER* from a web browser. Then use the following to deploy images to Docker Hub:
     
     DOCKER_USER=yourDockerUserName DOCKER_PASS=yourDockerPassword ./deploy.sh 
 
-   If selecting ARM 32 or 64 from a PC/Mac machine, first disable the RUN [ cross-build-start -end ] docker cross-platform build modes, run `./deploy.sh` 2:balena .
-
-  To have a different repository published, use [balena-cloud-apps](https://github.com/b23prodtm/balena-cloud-apps) `docker_build` command:
-  
-    cd deployment/images/apache-php7/
-    export DOCKER_USER=yourDockerUserName
-    export DOCKER_PASS=yourDockerPassword 
-    docker_build . . betothreeprod/apache-php7:18-alpine aarch64
-    docker_build . . betothreeprod/apache-php7:18-alpine armhf
-    docker_build . . betothreeprod/apache-php7:18-alpine x86_64
+   If selecting ARM 32 or 64 from a PC/Mac machine, first enable the RUN [ cross-build-start ] and RUN [ cross-build-end ] balenaOS cross-platform build modes, run `./deploy.sh` 1:local-balena .
 
   Only balenaOS baselib images can use cross-build based on balenaEngine. If not, you should run docker_build from the target architecture, e.g. a Raspberry PI for aarch64.
 
