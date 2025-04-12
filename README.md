@@ -494,20 +494,18 @@ and update the database schema:
   Your BASH doesn't handle array in scripts. Please upgrade to Bash v.5 or later.
 
 13. I've made changes to deployment/images/ dockerfile, how can I rebuild it?
-
-  To build the Docker images, dependencies included:
-    
-    ./deploy.sh
   
-  Then, choose the Docker architecture, and then choose option 
-    
-    6:build dependencies.
-
   To be able to publish on to DockerHub [betothreeprod](https://hub.docker.com/u/betothreeprod) repository, first login as *DOCKER_USER* from a web browser. Then use the following to deploy images to Docker Hub:
     
     DOCKER_USER=yourDockerUserName DOCKER_PASS=yourDockerPassword ./deploy.sh 
 
-   If selecting ARM 32 or 64 from a PC/Mac machine, first enable the RUN [ cross-build-start ] and RUN [ cross-build-end ] balenaOS cross-platform build modes, run `./deploy.sh` 1:local-balena .
+   If selecting ARM 32 or 64 from a PC/Mac machine, first enable the RUN [ cross-build-start ] and RUN [ cross-build-end ] balenaOS cross-platform build modes, run `./deploy.sh`:
+   
+    1:local-balena
+  
+  Then, choose the Docker architecture, and then choose option:
+    
+    6:build dependencies.
 
   Only balenaOS baselib images can use cross-build based on balenaEngine. If not, you should run docker_build from the target architecture, e.g. a Raspberry PI for aarch64.
 
