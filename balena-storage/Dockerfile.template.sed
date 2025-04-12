@@ -8,8 +8,8 @@ s#(PRIMARY_HUB[=:-]+)[^$ }]+#\1betothreeprod/apache-php7#g
 s#%%PRIMARY_HUB%%#betothreeprod/apache-php7#g
 s#(PRIMARY_TAG[=:-]+)[^$ }]+#\1latest-aarch64#g
 s#%%PRIMARY_TAG%%#latest-aarch64#g
-s#(SECONDARY_HUB[=:-]+)[^$ }]+#\1lscr.io/linuxserver/mariadb#g
-s#%%SECONDARY_HUB%%#lscr.io/linuxserver/mariadb#g
+s#(SECONDARY_HUB[=:-]+)[^$ }]+#\1linuxserver/mariadb#g
+s#%%SECONDARY_HUB%%#linuxserver/mariadb#g
 s#(SECONDARY_TAG[=:-]+)[^$ }]+#\1arm64v8-10.6.13#g
 s#%%SECONDARY_TAG%%#arm64v8-10.6.13#g
 s#(BALENA_ARCH[=:-]+)[^$ }]+#\1aarch64#g
