@@ -11,9 +11,7 @@ ENV S6_ARCH ${BALENA_ARCH:-armhf}
 
 ## Install add-apt-repository packages
 RUN apk update \
-    && apk upgrade
-
-RUN apk add \
+    && apk add \
     bash \
     sudo \
     curl \
@@ -84,7 +82,7 @@ RUN ln -sf /dev/stdout /var/log/apache2/access.log && \
     ln -sf /dev/stderr /var/log/apache2/error.log
 
 # ADD S6 Overlay
-ARG S6_OVERLAY_VERSION=3.2.0.3
+ARG S6_OVERLAY_VERSION=3.2.0.2
 
 RUN apk update \
     && apk add \
@@ -106,5 +104,5 @@ ADD "https://raw.githubusercontent.com/b23prodtm/docker-systemctl-replacement/ma
 RUN chmod g+xs /bin/systemctl
 
 RUN node -v && npm -v
-ENTRYPOINT ["/usr/bin/entry.sh"]
+ENTRYPOINT ["/init"]
 RUN [ "cross-build-end" ]
