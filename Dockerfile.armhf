@@ -3,7 +3,7 @@
 # Docker architecture (x86_64, armhf, aarch64 )
 ARG PRIMARY_HUB
 # Primary image is a Linux PHP with Apache 2 server pre-installed
-FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${PRIMARY_TAG:-%%PRIMARY_TAG%%}
+FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${PRIMARY_TAG:-latest-armhf}
 
 ENV INITSYSTEM off
 ENV UDEV off
