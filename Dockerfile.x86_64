@@ -5,7 +5,7 @@ ARG IMG_TAG
 ARG BALENA_ARCH
 ARG PRIMARY_HUB
 # Primary image is a Linux PHP with Apache 2 server pre-installed
-FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${IMG_TAG:-latest}-${BALENA_ARCH:-x86_64}
+FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${PRIMARY_TAG:-%%PRIMARY_TAG%%}
 
 ENV INITSYSTEM off
 ENV UDEV off
