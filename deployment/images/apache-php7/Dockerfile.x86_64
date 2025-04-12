@@ -11,9 +11,7 @@ ENV S6_ARCH ${BALENA_ARCH:-x86_64}
 
 ## Install add-apt-repository packages
 RUN apk update \
-    && apk upgrade
-
-RUN apk add \
+    && apk add \
     bash \
     sudo \
     curl \
