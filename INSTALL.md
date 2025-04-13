@@ -83,8 +83,6 @@ Argument value `--docker` was set, use it only if you are in a local docker conf
 		./configure.sh --docker --mig-database -u -i
                 ./test-cake.sh --docker
 
-		This should pass until it updates the database. This can succeed only if the [Webserver](#Webserver-configuration) initialization did well with your settings. The webserver must be ready to use.
-
 ## Circle CI
 Developer build continuous integration
 The current project is a full PHP (CakePHP) with MySQL (MariaDB) container for Docker-CE, or even a ```Dockerfile``` compatible container interface. We choose Circle CI because it's able to achieve full remote tests with docker :whale: before we deploy to a devices swarm. It actually can run on self hosted runners and remote runnners from .circle/config.yml configuration file presets.
