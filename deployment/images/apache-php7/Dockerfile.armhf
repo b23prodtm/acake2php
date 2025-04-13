@@ -3,7 +3,7 @@
 # S6 Overlay:         https://github.com/smebberson/docker-alpine/blob/master/alpine-apache/Dockerfile
 #
 FROM balenalib/raspberrypi3-alpine-node:18-3.15-build
-# RUN [ "cross-build-start" ]
+RUN [ "cross-build-start" ]
 ARG PHP_LIB
 ENV PHP_LIB ${PHP_LIB:-7}
 ARG BALENA_ARCH
@@ -95,12 +95,12 @@ CMD ["/usr/sbin/nginx"]
 
 ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
 RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch-symlinks.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch-symlinks.tar.xz
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz /tmp
+RUN tar -C / -Jxpf /tmp/s6-overlay-symlinks-noarch.tar.xz
 ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz /tmp
 RUN tar -C / -Jxpf /tmp/s6-overlay-${S6_ARCH}.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}-symlinks.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-${S6_ARCH}-symlinks.tar.xz
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz /tmp
+RUN tar -C / -Jxpf /tmp/s6-overlay-symlinks-arch.tar.xz
 
 ENV UDEV on
 
@@ -109,4 +109,4 @@ RUN chmod g+xs /bin/systemctl
 
 RUN node -v && npm -v
 ENTRYPOINT ["/init"]
-# RUN [ "cross-build-end" ]
+RUN [ "cross-build-end" ]
