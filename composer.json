@@ -39,6 +39,11 @@
 			"app/Plugin/DebugKit": ["cakephp/debug_kit"]
 		}
 	},
+	"autoload": {
+    "psr-4": {
+        "App\\": "app/src"
+    }
+	},
 	"config": {
 		"vendor-dir": "app/Vendor/",
 		"process-timeout": 0,

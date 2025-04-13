@@ -1,6 +1,6 @@
-## Build the virtual machine (VM)
-Docker :whale: is able to use web server containers in local VM or a remote cluster.  
-A typical install script could look like the following script, for instance edit a file :
+## Build the Docker VM images
+Docker :whale: VM or a remote fleet Balena/Kubernetes/etc.  
+A typical install script could look like the following scrip file:
 
 		#!/usr/bin/env bash
 		set -u
@@ -8,10 +8,8 @@ A typical install script could look like the following script, for instance edit
 		cd acake2php
 		git clone https://github.com/b23prodtm/acake2php.git
 		git submodule sync && git submodule update --init --recursive
-		npm install --omit=optional
-		# reset architecture flags
-		./deploy.sh x86_64 --nobuild 0
-		./deploy.sh x86_64 --build-deps --docker
+		yarn
+		./deploy.sh x86_64 --local --build-deps --docker
 
 Docker builds up a new container and pushes it in registry.
 It will eventually run the container as the startup script succeeds.
@@ -28,17 +26,16 @@ We have provided 3 ways to make use of this project. It supports:
 
 Please read README.md file to get more information on how to setup the cluster and handle common issues.
 
-## VM Requirements
+## Requirements
 - Broadband Internet access to the Worldwide Web, to download the packages and container images dependencies from the remote Docker registries.
 - The Docker CE described with the Dockerfile. >:whale: [Get Started](https://docs.docker.com/machine/get-started/) application.
-- NodeJS command line package manager interface, [npmjs](https://www.npmjs.com/get-npm)
+- NodeJS command line package manager interface, [npmjs](https://www.npmjs.com/get-npm) with yarn package manager
 - A BASH Terminal (Linux or Darwin OS are known to work)
-- A virtualization system like [VBoxmanager](https://www.virtualbox.org/wiki/Downloads) must be installed for your OS.
 
 Once everything is installed, please reboot your system.
 
 ## Webserver configuration (Source balena.yml)
-A few variables are defined in containers environment provides client-server communication.
+Very few variables are defined by default. It provides host-container-server communication. Host Firewall and file attributes set to the host platform values.
   
   		# Open https://${SERVER_NAME}/etc/getHashPassword.php or type $ ./configure.sh -h -p pass -s salt
   		# Get new staff credentials (url=/admin/index.php)
@@ -50,7 +47,7 @@ A few variables are defined in containers environment provides client-server com
 		- MYSQL_HOST: localhost
 		- MYSQL_ROOT_PASSWORD: mariadb
 
-## Some optional configuration. The following default variables may be setup as your server preferences, set in open source:
+## Some configuration. All variables may be changed to your needs:
       
 		# CakePHP secrets
 		- CAKEPHP_SECRET_TOKEN:<secret-token>
@@ -80,39 +77,27 @@ A few variables are defined in containers environment provides client-server com
 		# MariaDB Timezone
 		- TZ: Europe/Paris
   
-## Validate the configuration
+## Validate the configuration, and eventually test it:
+Argument value `--docker` was set, use it only if you are in a local docker configuration.
 
 		./configure.sh --docker --mig-database -u -i
-
-		This should pass until it updates the database. This can succeed only if the [Webserver](#Webserver-configuration) initialization did well with your settings. The webserver must be ready to use.
+                ./test-cake.sh --docker
 
 ## Circle CI
-The current project is a full php with mariadb container for the Docker Virtual Machine (VM) manager, or Docker-CE, or even a ```Dockerfile``` compatible container interface. We choose Circle CI because it's able to achieve full remote tests with docker :whale: before we deploy to a Cloud Provider, Kubernetes Cluster, OpenShift, etc.
-
-### Make local tests with CircleCI CLI
-A local test may only run with a complete local Virtual Host (Vbox) configuration. See the requirements below.
-Get started a Docker shell, and build through local Circle CLI:
-
-		.circleci/build.sh
-
-* **circleci cli**
-
-- The CircleCI Client installed in ```$PATH```. [CLI Configuration](https://circleci.com/docs/2.0/local-cli/#section=configuration) shell command line :
-
-				curl -fLSs https://circle.ci/cli | bash
-
+Developer build continuous integration
+The current project is a full PHP (CakePHP) with MySQL (MariaDB) container for Docker-CE, or even a ```Dockerfile``` compatible container interface. We choose Circle CI because it's able to achieve full remote tests with docker :whale: before we deploy to a devices swarm. It actually can run on self hosted runners and remote runnners from .circle/config.yml configuration file presets.
 
 ### [developers] Update the Docker deployment image
 Rebuild image registry from deployment folder if you make change to the primary. E.g. change of Linux distribution. Edit the file deployment/images/primary/Dockerfile.template to your needs and perform a build from the a Docker client machine. If you make use of [Balena OS base image list](https://www.balena.io/docs/reference/base-images/base-images-ref/) repository you can use blocks to cross build for ARM ```# [ "cross-build-start" ] # [ "cross-build-end" ]``` command lines in the Dockerfile.template files. For instance, in a Terminal with Docker installed, at first dependencies may be built :
 
-    ./deploy.sh armhf --nobuild --build-deps
+    ./deploy.sh aarch64 --local --build-deps
 
 To deploy a Raspberry Pi with Docker or Balena Cloud.
 
-		./deploy.sh armhf --balena
+    ./deploy.sh aarch64 --balena --push
 
 ### License
-   Copyright 2016 www.b23prodtm.info
+   Copyright 2016-2025 www.b23prodtm.info
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
