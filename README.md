@@ -12,6 +12,8 @@
       + [More Database Configuration](#more-database-configuration)
       + [Generate new administrator password](#generate-new-administrator-password)
     + [Common Issues](#common-issues)
+    + [Cross Platform](#cross-platform)
+    + [Docker Hub](#docker-hub)
     + [License](#license)
 
 <!-- tocstop -->
@@ -516,23 +518,35 @@ and update the database schema:
 
 13. I've made changes to deployment/images/ dockerfile, how can I rebuild it?
   
-  To be able to publish on to DockerHub [betothreeprod](https://hub.docker.com/u/betothreeprod) repository, first login as *DOCKER_USER* from a web browser. Then use the following to deploy images to Docker Hub:
+  To be able to publish into [DockerHub](https://hub.docker.com/u/betothreeprod) repository, first login as *DOCKER_USER* from a web browser. Then use the following to deploy images to Docker Hub:
     
+    update_templates
     DOCKER_USER=yourDockerUserName DOCKER_PASS=yourDockerPassword ./deploy.sh 
 
-   If selecting ARM 32 or 64 from a PC/Mac machine, first enable the RUN [ cross-build-start ] and RUN [ cross-build-end ] balenaOS cross-platform build modes, run `./deploy.sh`:
+Cross Platform
+--------------
+
+   If selecting an ARM device target from an ordinary X86 machine, first enable the RUN [ cross-build-start ] and RUN [ cross-build-end ] balenaOS cross-platform build modes, run `./deploy.sh`:
    
     1:local-balena
   
-  Then, choose the Docker architecture, and then choose option:
+  Choose the target architecture, and then choose the option:
     
-    6:build dependencies.
+    6:build dependencies
 
-  Only balenaOS baselib images can use cross-build based on balenaEngine. If not, you should run docker_build from the target architecture, e.g. a Raspberry PI for aarch64.
+  Only balenaOS baselib images can use cross-build based on balenaEngine. You should otherwise run `docker buildx build --platform=linux/arm64` from an ARM computer.
+  BalenaOS and BalenaCloud as an open source platform allow us to maintain a small devices fleet (aka swarm, cluster).
+  Use Balena one button deployment, update the source code as your needs, and deploy to BalenaCloud, this will disable cross-platform build:
 
-14. The error push access denied, repository does not exist or may require authorization: server message: insufficient_scope: authorization failed appears upon successful build
+    2:balena
+    5:push
 
-  You must configure a DOCKER_USER and DOCKER_PASS as environment variables. Use an [access_token](https://docs.docker.com/security/for-developers/access-tokens/#use-an-access-token) for DOCKER_PASS.
+You are able to deploy to a balena fleet, using their original deployment process.
+
+Docker Hub
+----------
+
+  You should configure a DOCKER_USER and DOCKER_PASS as environment variables. You may use an [access_token](https://docs.docker.com/security/for-developers/access-tokens/#use-an-access-token) for DOCKER_PASS for better security.
 
 License
 -------
