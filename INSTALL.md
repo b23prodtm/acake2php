@@ -8,7 +8,7 @@ A typical install script could look like the following scrip file:
 		cd acake2php
 		git clone https://github.com/b23prodtm/acake2php.git
 		git submodule sync && git submodule update --init --recursive
-		yarn update && yarn
+		yarn
 		./deploy.sh x86_64 --local --build-deps --docker
 
 Docker builds up a new container and pushes it in registry.
