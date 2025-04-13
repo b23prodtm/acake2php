@@ -1,49 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <phpunit
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="Vendor/phpunit/phpunit/phpunit.xsd"
-    backupGlobals="false"
-    backupStaticAttributes="false"
-    beStrictAboutChangesToGlobalState="true"
-    beStrictAboutOutputDuringTests="true"
-    beStrictAboutTestsThatDoNotTestAnything="true"
-    bootstrap="Vendor/autoload.php"
     colors="true"
-    columns="max"
-    convertErrorsToExceptions="true"
-    convertNoticesToExceptions="true"
-    convertWarningsToExceptions="true"
     processIsolation="false"
-    stopOnError="false"
     stopOnFailure="false"
-    stopOnRisky="false"
-    verbose="true"
->
+    bootstrap="tests/bootstrap.php"
+    >
     <php>
-        <ini name="error_reporting" value="E_ALL" />
+        <ini name="memory_limit" value="-1"/>
+        <ini name="apc.enable_cli" value="1"/>
     </php>
 
+    <!-- Add any additional test suites you want to run here -->
     <testsuites>
-        <testsuite name="PHP Coveralls component test suite">
-            <directory>./tests/</directory>
+        <testsuite name="app">
+            <directory>tests/TestCase/</directory>
         </testsuite>
+        <!-- Add plugin test suites here. -->
     </testsuites>
 
+    <!-- Setup a listener for fixtures -->
+    <listeners>
+        <listener class="Cake\TestSuite\Fixture\FixtureInjector">
+            <arguments>
+                <object class="Cake\TestSuite\Fixture\FixtureManager"/>
+            </arguments>
+        </listener>
+    </listeners>
+
+    <!-- Ignore vendor tests in code coverage reports -->
     <filter>
         <whitelist>
-            <directory>./src</directory>
+            <directory suffix=".php">src/</directory>
+            <directory suffix=".php">plugins/*/src/</directory>
             <exclude>
-                <directory>./build</directory>
-                <directory>./composer</directory>
-                <directory>./tests</directory>
-                <directory>./vendor</directory>
+                <file>src/Console/Installer.php</file>
             </exclude>
         </whitelist>
     </filter>
-
-    <logging>
-        <log type="coverage-clover" target="build/logs/clover.xml"/>
-        <log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false"/>
-    </logging>
 </phpunit>

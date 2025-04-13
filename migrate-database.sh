@@ -27,11 +27,11 @@ usage=("" \
 "          -------------" \
 "          file.sock   Set the socket file to connect SQL database" \
 "          -u          Update the database in app/config/Schema/" \
-"          -y          Overwrite database.php and default socket file" \
+"          -y          Overwrite app.php and default socket file" \
 "          -i --sql-password=<word> --test-sql-password=<word>" \
 "                      Initialize databases with new passwords and reset MYSQL_DATABASE and TEST_DATABASE_NAME privileges" \
 "          -n, --runner" \
-"                      CircleCI and self-host runner: resets database.php, keep socket and update the database" \
+"                      CircleCI and self-host runner: resets app.php, keep socket and update the database" \
 "                      Doesn't use the socket file" \
 "          --travis" \
 "                      Travis CI job" \
@@ -52,7 +52,7 @@ usage=("" \
 sql_connect="mysql"
 # shellcheck disable=SC2153
 sql_connect_host="-h ${MYSQL_HOST} -P ${MYSQL_TCP_PORT}"
-dbfile=app/config/database.template
+dbfile=app/config/app.template
 schemafile=app/config/Schema/schema.template
 sockfile=/tmp/mysqld.sock
 config_app_checked="-Y"

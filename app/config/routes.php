@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Routes configuration
  *
@@ -7,100 +6,99 @@
  * Routes are very important mechanism that allows you to freely connect
  * different URLs to chosen controllers and their actions (functions).
  *
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.Config
- * @since         CakePHP(tm) v 0.2.9
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-/**
- * ...and connect the rest of 'Pages' controller's URLs.
- */
-Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+use Cake\Http\Middleware\CsrfProtectionMiddleware;
+use Cake\Routing\RouteBuilder;
+use Cake\Routing\Router;
+use Cake\Routing\Route\DashedRoute;
 
-/**
- **************************************************        E14Controller routing
- * the one star(*) wildcard is for one-to-one passed arguments separated by the slash '/'
- */
-Router::connect('/e14/:action/*', array('controller' => 'e14'));
-/**
- * the two stars(**) wildcard is for many-to-one passed argument as a whole string
- */
-Router::connect('/e14/**', array('controller' => 'e14', 'action' => 'index'));
-/**
- * views are prefixed with "admin/" => admin_action()
- */
-Router::connect('/admin/e14/:action/*', array('controller' => 'e14', 'admin' => true));
-/**
- ***************************************************   ArticleController routing
- * the one star(*) wildcard is for one-to-one passed arguments separated by the slash '/'
- */
-Router::connect('/users/psd/:action/*', array('controller' => 'MotDePasse'));
-/**
- * the two stars(**) wildcard is for many-to-one  argument passed as a whole string
- */
-Router::connect('/users/psd/**', array('controller' => 'MotDePasse', 'action' => 'index'));
-/**
- */
-Router::connect('/admin/users/psd/:action/*', array('controller' => 'MotDePasse', 'admin' => true));
-/**
- ***************************************************   ArticleController routing
- * the one star(*) wildcard is for one-to-one passed arguments separated by the slash '/'
- */
-Router::connect('/users/:action/*', array('controller' => 'client'));
-/**
- * the two stars(**) wildcard is for many-to-one  argument passed as a whole string
- */
-Router::connect('/users/**', array('controller' => 'client', 'action' => 'index'));
-/**
- */
-Router::connect('/admin/users/:action/*', array('controller' => 'client', 'admin' => true));
-/**
- ***************************************************   ArticleController routing
- * the one star(*) wildcard is for one-to-one passed arguments separated by the slash '/'
- */
-Router::connect('/article/:action/*', array('controller' => 'article'));
-/**
- * the two stars(**) wildcard is for many-to-one  argument passed as a whole string
- */
-Router::connect('/article/**', array('controller' => 'article', 'action' => 'index'));
-/**
- */
-Router::connect('/admin/article/:action/*', array('controller' => 'article', 'admin' => true));
-/**
- ***************************************************   MessageController routing
- * the one star(*) wildcard is for one-to-one passed arguments separated by the slash '/'
- */
-Router::connect('/contactus/:action/*', array('controller' => 'message'));
-/**
- * the two stars(**) wildcard is for many-to-one  argument passed as a whole string
- */
-Router::connect('/contactus/**', array('controller' => 'message', 'action' => 'index'));
-/**
- */
-Router::connect('/admin/contactus/:action/*', array('controller' => 'message', 'admin' => true));
-/**
- ***************************************************             default routing
- */
-Router::connect('/admin/*', array('controller' => 'e14', 'action' => 'index', 'admin' => true));
-/**
+/*
+ * The default class to use for all routes
+ *
+ * The following route classes are supplied with CakePHP and are appropriate
+ * to set as the default:
+ *
+ * - Route
+ * - InflectedRoute
+ * - DashedRoute
+ *
+ * If no call is made to `Router::defaultRouteClass()`, the class used is
+ * `Route` (`Cake\Routing\Route\Route`)
+ *
+ * Note that `Route` does not do any inflections on URLs which will result in
+ * inconsistently cased URLs when used with `:plugin`, `:controller` and
+ * `:action` markers.
+ *
+ * Cache: Routes are cached to improve performance, check the RoutingMiddleware
+ * constructor in your `src/Application.php` file to change this behavior.
  *
  */
-Router::connect('/:action/*', array('controller' => 'e14'));
-/**
+Router::defaultRouteClass(DashedRoute::class);
+
+Router::scope('/', function (RouteBuilder $routes) {
+    // Register scoped middleware for in scopes.
+    $routes->registerMiddleware('csrf', new CsrfProtectionMiddleware([
+        'httpOnly' => true,
+    ]));
+
+    /*
+     * Apply a middleware to the current route scope.
+     * Requires middleware to be registered through `Application::routes()` with `registerMiddleware()`
+     */
+    $routes->applyMiddleware('csrf');
+
+    /*
+     * Here, we are connecting '/' (base path) to a controller called 'Pages',
+     * its action called 'display', and we pass a param to select the view file
+     * to use (in this case, src/Template/Pages/home.ctp)...
+     */
+    $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+
+    /*
+     * ...and connect the rest of 'Pages' controller's URLs.
+     */
+    $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+
+    /*
+     * Connect catchall routes for all controllers.
+     *
+     * Using the argument `DashedRoute`, the `fallbacks` method is a shortcut for
+     *
+     * ```
+     * $routes->connect('/:controller', ['action' => 'index'], ['routeClass' => 'DashedRoute']);
+     * $routes->connect('/:controller/:action/*', [], ['routeClass' => 'DashedRoute']);
+     * ```
+     *
+     * Any route class can be used with this method, such as:
+     * - DashedRoute
+     * - InflectedRoute
+     * - Route
+     * - Or your own route class
+     *
+     * You can remove these routes once you've connected the
+     * routes you want in your application.
+     */
+    $routes->fallbacks(DashedRoute::class);
+});
+
+/*
+ * If you need a different set of middleware or none at all,
+ * open new scope and define routes there.
  *
+ * ```
+ * Router::scope('/api', function (RouteBuilder $routes) {
+ *     // No $routes->applyMiddleware() here.
+ *     // Connect API actions here.
+ * });
+ * ```
  */
-Router::connect('/', array('controller' => 'e14', 'action' => 'index'));
-
-
-/* all URLs /(somename).php parsed to (somename) as :action or passed argument e.g. index/_image.php => e14/index/_image => _image.php as included script */
-Router::parseExtensions('php');
-/**
- * Load all plugin routes. See the Plugin documentation on
- * how to customize the loading of plugin routes.
- */
-Plugin::routes();
-
-/**
- * Load the CakePHP default routes. Only remove this if you do not want to use
- * the built-in default routes.
- * */
-include CAKE . 'Config' . DS . 'routes.php';

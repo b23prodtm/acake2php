@@ -55,7 +55,7 @@ Common Issues
 
   Go on to development phase with the [Local Built-in server](#local-built-in-server).
 
-4. I've made changes to mysql database tables, I've made changes to Config/Schema/schema.php, as Config/database.php defines it, what should I do ?
+4. I've made changes to mysql database tables, I've made changes to app/config/Schema/schema.php, as config/app.php defines it, what should I do ?
 
   Migrate all your tables:
 
@@ -174,10 +174,19 @@ class Mysql_cms extends Mysql
 ?>
 ```
 
-Ensure it is set as $identities[DB]['datasource'] in 
+Verify configuration in environment variables and app/config:
     
-    app/Config/database.php
+    docker-compose.template
+    app/config/app.template
+    ./configure.sh -d
+
+If locally testing, edit:
+
     ./Scripts/fooargs.sh
+
+Configuration will update:
+
+    app/config/app.php
 
 and update the database schema:
 
