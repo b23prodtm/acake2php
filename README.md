@@ -40,19 +40,20 @@ To deploy a server or onto a container manager like docker, you need at least a 
 + Package managers NPM or Yarn, also HomeBrew, MacPorts or Chocolatey, etc.
 + a Docker setup (Mac or PC) or BalenaEngine (Linux)
 + (recommended for Windows) git unix-style shell, like Git Bash
++ OpenSSH Agent with key-pair (.ssh/*.pub) must be added to the webserver host
 
-Quick Configuration
--------------------
-Once you havev the server up and running (usually in a docker container), the website may not be reacheable until the database is configured.
-if you have access to the host running the webservice as a container, just connect to it, with BalenaOS it's very easy:
+Configuration
+-------------
+Once you have got the server up and running (usually in a docker container), the website may not be reacheable until the database is configured.
+You need to have network access to the host running the webservice as a container, just connect to it, with BalenaOS it's very easy:
 
-  ./balena-connect-it 22222 <user@host-ip> acake2php
+  ./balena-connect-it.sh 22222 <user@host-ip> acake2php
 
 Otherwise use:
 
   ssh -ttp <port> <user@host-ip> docker exec -it <container-name> "/bin/sh"
 
-Then once loggedin, run as normal user:
+Then once logged in, run as a normal user:
 
   ./configure.sh -d -u -i
 
