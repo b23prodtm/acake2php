@@ -47,15 +47,15 @@ Configuration
 Once you have got the server up and running (usually in a docker container), the website may not be reacheable until the database is configured.
 You need to have network access to the host running the webservice as a container, just connect to it, with BalenaOS it's very easy:
 
-  ./balena-connect-it.sh 22222 <user@host-ip> acake2php
+    ./balena-connect-it.sh 22222 <user@host-ip> acake2php
 
 Otherwise use:
 
-  ssh -ttp <port> <user@host-ip> docker exec -it <container-name> "/bin/sh"
+    ssh -ttp <port> <user@host-ip> docker exec -it <container-name> "/bin/sh"
 
 Then once logged in, run as a normal user:
 
-  ./configure.sh -d -u -i
+    ./configure.sh -d -u -i
 
 It will configure PHP plugins and migrate the table in databases.
 
