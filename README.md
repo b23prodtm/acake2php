@@ -53,11 +53,14 @@ Otherwise use:
 
     ssh -ttp <port> <user@host-ip> docker exec -it <container-name> "/bin/sh"
 
-Then once logged in, run as a normal user:
+Once you're logged in, run as a normal user in `/var/www/localhost/htdocs #` :
 
     ./configure.sh -d -u -i
 
 It will configure PHP plugins and migrate the table in databases.
+You can also test the configuration, lauch Cake Tests from `/var/www/localhost/htdocs #` :
+
+    ./test-cake.sh
 
 Plugins
 -------
