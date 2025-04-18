@@ -1,54 +1,58 @@
 <?php
 /**
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.View.Layouts
- * @since         CakePHP(tm) v 0.10.0.1076
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         0.10.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * @var \App\View\AppView $this
  */
 
-$cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework');
-$cakeVersion = __d('cake_dev', 'CakePHP {0}', Configure::version())
+$cakeDescription = 'CakePHP: the rapid development php framework';
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-	<?php echo $this->Html->charset(); ?>
-	<title>
-		<?php echo $cakeDescription ?>:
-		<?php echo $this->fetch('title'); ?>
-	</title>
-	<?php
-		echo $this->Html->meta('icon');
+    <?= $this->Html->charset() ?>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <?= $cakeDescription ?>:
+        <?= $this->fetch('title') ?>
+    </title>
+    <?= $this->Html->meta('icon') ?>
 
-		echo $this->Html->css('cake.generic');
+    <?= $this->Html->css('base.css') ?>
+    <?= $this->Html->css('style.css') ?>
 
-		echo $this->fetch('meta');
-		echo $this->fetch('css');
-		echo $this->fetch('script');
-	?>
+    <?= $this->fetch('meta') ?>
+    <?= $this->fetch('css') ?>
+    <?= $this->fetch('script') ?>
 </head>
 <body>
-	<div id="container">
-		<div id="header">
-			<h1><?php echo $this->Html->link($cakeDescription, 'http://cakephp.org'); ?></h1>
-		</div>
-		<div id="content">
-
-			<?php echo $this->Flash->render(); ?>
-
-			<?php echo $this->fetch('content'); ?>
-		</div>
-		<div id="footer">
-			<?php echo $this->Html->link(
-					$this->Html->image('cake.power.gif', array('alt' => $cakeDescription, 'border' => '0')),
-					'http://www.cakephp.org/',
-					array('target' => '_blank', 'escape' => false)
-				);
-			?>
-			<p>
-				<?php echo $cakeVersion; ?>
-			</p>
-		</div>
-	</div>
-	<?php /** DEBUG KIT REPLACES echo $this->element('sql_dump'); */?>
+    <nav class="top-bar expanded" data-topbar role="navigation">
+        <ul class="title-area large-3 medium-4 columns">
+            <li class="name">
+                <h1><a href=""><?= $this->fetch('title') ?></a></h1>
+            </li>
+        </ul>
+        <div class="top-bar-section">
+            <ul class="right">
+                <li><a target="_blank" href="https://book.cakephp.org/3/">Documentation</a></li>
+                <li><a target="_blank" href="https://api.cakephp.org/3.0/">API</a></li>
+            </ul>
+        </div>
+    </nav>
+    <?= $this->Flash->render() ?>
+    <div class="container clearfix">
+        <?= $this->fetch('content') ?>
+    </div>
+    <footer>
+    </footer>
 </body>
 </html>

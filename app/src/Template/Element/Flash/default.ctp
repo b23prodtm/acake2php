@@ -1,1 +1,15 @@
-<div id="<?php echo $key; ?>Message" class="<?php echo !empty($params['class']) ? $params['class'] : 'message'; ?>"><?php echo $message; ?></div>
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var array $params
+ * @var string $message
+ */
+$class = 'message';
+if (!empty($params['class'])) {
+    $class .= ' ' . $params['class'];
+}
+if (!isset($params['escape']) || $params['escape'] !== false) {
+    $message = h($message);
+}
+?>
+<div class="<?= h($class) ?>" onclick="this.classList.add('hidden');"><?= $message ?></div>
