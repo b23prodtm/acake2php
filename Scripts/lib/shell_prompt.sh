@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+APPDIR="$TOPDIR/app/src"
 . init_functions .
 shell_prompt() {
   [ $# -lt 2 ] && printf "Usage: %s <file> <name> [-y|n]" "${FUNCNAME[0]}" && exit 1
@@ -50,7 +51,7 @@ patches() {
 }
 #; export -f patches
 cakephp() {
-  "${TOPDIR}/app/Console/cake.php" "$@"
+  "${APPDIR}/Console/cake.php" "$@"
 }
 #; export -f cakephp
 docker_name() {

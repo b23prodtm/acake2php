@@ -1,6 +1,6 @@
 <!-- toc -->
 
-- [A Cake2PHP 3.x application ](#a-cake2php-3.x-application)
+- [A Cake2PHP website](#a-cake2php-3.x-application)
     + [Quickstart](#quickstart)
     - [Plugins](#plugins)
       + [NodeJs packages](#nodejs-packages)
@@ -18,8 +18,8 @@
 
 <!-- tocstop -->
 
-A Cake2PHP 3.x application 
-=========================
+A Cake2PHP website
+==================
 [![TravisCI Status](https://app.travis-ci.com/b23prodtm/acake2php.svg?token=VkN3AkpvB5yVGfXx1qj5&branch=development)](https://travis-ci.com/b23prodtm/acake2php)
 [![CircleCI Status](https://circleci.com/gh/b23prodtm/acake2php.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/acake2php)
 
@@ -272,8 +272,8 @@ Configure it as a service and configure the login ACL with the user shell.
 
 * __Optional__ Edit
 *
-*     ./app/Config/database.php
-*  if you wish to modify the DATABASE_CONFIG class.
+*     ./app/Config/app.template
+*  if you wish to modify the database connection and email transport.
 
 * __Optional__ Edit
 *

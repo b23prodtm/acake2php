@@ -55,8 +55,9 @@ data:
     # MariaDB Timezone
     - TZ: Europe/Paris
 
-  defaultDeviceType: raspberrypi3-64
+  defaultDeviceType: raspberrypi2
   supportedDeviceTypes:
+    - raspberrypi2
     - raspberrypi3-64
     - raspberrypi4-64
     - raspberrypi400-64
