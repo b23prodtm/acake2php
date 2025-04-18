@@ -9,29 +9,36 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Errors
- * @since         CakePHP(tm) v 0.10.0.1076
+ * @since         0.10.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Error\Debugger;
+
+$this->setLayout('dev_error');
+
+$this->assign('title', 'Database Error');
+$this->assign('templateName', 'pdo_error.ctp');
+
+$this->start('subheading');
 ?>
-<h2><?php echo __d('cake_dev', 'Database Error'); ?></h2>
-<p class="error">
-	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo $message; ?>
+    <strong>Error: </strong>
+    <?= h($message); ?>
+<?php $this->end() ?>
+
+<?php $this->start('file') ?>
+<p class="notice">
+    If you are using SQL keywords as table column names, you can enable identifier
+    quoting for your database connection in config/app.php.
 </p>
 <?php if (!empty($error->queryString)) : ?>
-	<p class="notice">
-		<strong><?php echo __d('cake_dev', 'SQL Query'); ?>: </strong>
-		<?php echo h($error->queryString); ?>
-	</p>
+    <p class="notice">
+        <strong>SQL Query: </strong>
+    </p>
+    <pre><?= h($error->queryString); ?></pre>
 <?php endif; ?>
 <?php if (!empty($error->params)) : ?>
-		<strong><?php echo __d('cake_dev', 'SQL Query Params'); ?>: </strong>
-		<?php echo Debugger::dump($error->params); ?>
+        <strong>SQL Query Params: </strong>
+        <pre><?= h(Debugger::dump($error->params)); ?></pre>
 <?php endif; ?>
-<p><strong><?php echo __d('cms','Please review your configuration ('. APP . DS .'Config) :'); ?>: Schema/schema.php</strong>
-<?php echo __d('cms','In a server shell prompt'); ?>:<pre>./configure.sh -d -u -p&lt;sql-root-password&gt;</pre>
-</p>
-<?php
-echo $this->element('exception_stack_trace');
-?>
+<?= $this->element('auto_table_warning'); ?>
+<?php $this->end() ?>

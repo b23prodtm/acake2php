@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+APPPATH="app/src"
 # shellcheck source=Scripts/lib/test/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=Scripts/lib/test/parsing.sh
@@ -89,6 +90,6 @@ while [[ "$#" -gt 0 ]]; do case $1 in
 esac; shift; done
 slogger -st sed "Cake 2.x patches"
 #; patches
-patches "lib/Cake/Console/ShellDispatcher.php" "lib/Cake/Console/ConsoleOutput.php" "app/Config/core.php"
+patches "$APPPATH/Console/ShellDispatcher.php" "$APPPATH/Console/ConsoleOutput.php" "$APPPATH/../config/core.php"
 #; update plugins and dependencies
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"

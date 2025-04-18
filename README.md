@@ -272,8 +272,8 @@ Configure it as a service and configure the login ACL with the user shell.
 
 * __Optional__ Edit
 *
-*     ./app/Config/database.php
-*  if you wish to modify the DATABASE_CONFIG class.
+*     ./app/Config/app.template
+*  if you wish to modify the database connection and email transport.
 
 * __Optional__ Edit
 *

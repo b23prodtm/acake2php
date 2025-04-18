@@ -1,33 +1,38 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Errors
- * @since         CakePHP(tm) v 2.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         2.2.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-echo $message = "" .
- "<h2>" . __d('cake_dev', 'XXX Fatal Error XXX') . "</h2>" .
- '<p class="error">' .
- '<strong>' . __d('cake_dev', 'Error') . ': </strong>' .
- '' . h($error->getMessage()) . '' .
- '<br>' .
- '<strong>' . __d('cake_dev', 'File') . '</strong>' .
- '' . h($error->getFile()) . '' .
- '<br>' .
- '<strong>' . __d('cake_dev', 'Line') . '</strong>' .
- '' . h($error->getLine()) . '';
-//add this report to a mailing
-$mail_address ='webmaster@' . filter_input(INPUT_SERVER, 'SERVER_NAME');
-$message .= "</p><p class='notice'>A mail with the report was sent to ".$mail_address.'.';
-$post_array = array('message' => $message, 'email' => $mail_address, 'subject' => "Fatal Error : " . $error->getFile());
-echo $this->requestAction(array("Controller" => 'Emails', 'action' => 'send', 'Email' => $post_array), array('return' => true));
+$this->layout = 'dev_error';
+
+$this->assign('title', 'Fatal Error');
+$this->assign('templateName', 'fatal_error.ctp');
+
+$this->start('subheading');
 ?>
-</p>
+    <strong>Error: </strong>
+    <?= h($error->getMessage()) ?>
+    <br/>
+
+    <strong>File</strong>
+    <?= h($error->getFile()) ?>
+    <br/>
+    <strong>Line: </strong>
+    <?= h($error->getLine()) ?>
+<?php $this->end() ?>
+
+<?php
+$this->start('file');
+if (extension_loaded('xdebug')):
+    xdebug_print_function_stack();
+endif;
+$this->end();
