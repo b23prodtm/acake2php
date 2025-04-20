@@ -1,11 +1,28 @@
 {
-    "name": "cakephp/app",
-    "description": "CakePHP skeleton app",
-    "homepage": "https://cakephp.org",
-    "type": "project",
-    "license": "MIT",
+    "name": "b23prodtm/myphpcms",
+    "description": "CMS featuring CakePHP Framework",
+    "homepage": "https://www.sourceforge.net/projects/pohse",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+                "name": "CakePHP Community",
+                "homepage": "https://github.com/cakephp/cakephp/graphs/contributors"
+        },
+        {
+                "name": "B23:production GNU",
+                "homepage": "https://github.com/b23prodtm"
+        }
+    ],
+    "support": {
+        "source": "https://www.sourceforge.net/projects/pohse/support"
+    },
+    "bin": [
+        "app/bin/cake"
+    ],
     "require": {
-        "php": ">=5.6",
+        "php": "^7 || ^8",
+        "betothreeprod/updateshell": "^0.1.6",
+        "betothreeprod/markdown-plugin": "^0.9.3",
         "cakephp/cakephp": "3.10.*",
         "cakephp/migrations": "^2.0.0",
         "cakephp/plugin-installer": "^1.3",
@@ -16,13 +33,16 @@
         "cakephp/cakephp-codesniffer": "^3.0",
         "cakephp/debug_kit": "^3.17.0",
         "josegonzalez/dotenv": "3.*",
-        "phpunit/phpunit": "^5|^6",
-        "psy/psysh": "@stable"
+        "psy/psysh": "@stable",
+        "phpunit/phpunit": "*",
+        "php-coveralls/php-coveralls": "^1 || ^2.1",
+        "phpunit/phpcov": "*"
     },
     "suggest": {
         "markstory/asset_compress": "An asset compression plugin which provides file concatenation and a flexible filter system for preprocessing and minification.",
-        "dereuromark/cakephp-ide-helper": "After baking your code, this keeps your annotations in sync with the code evolving from there on for maximum IDE and PHPStan/Psalm compatibility."
-    },
+        "dereuromark/cakephp-ide-helper": "After baking your code, this keeps your annotations in sync with the code evolving from there on for maximum IDE and PHPStan/Psalm compatibility.",
+	"ext-openssl": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption",
+	"ext-mcrypt": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption"    },
     "autoload": {
         "psr-4": {
             "App\\": "src/"
@@ -45,12 +65,15 @@
         "cs-fix": "phpcbf --colors -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP src/ tests/ config/ webroot/",
         "stan": "phpstan analyse -l 5 src/",
         "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan-shim:^0.11 && mv composer.backup composer.json",
-        "test": "phpunit --colors=always"
+        "test": "phpunit --colors=always",
+        "alltests": "cake test core AllTests --stderr"
     },
     "prefer-stable": true,
     "config": {
+        "vendor-dir": "vendor/",
         "sort-packages": true,
         "allow-plugins": {
+            "composer/installers": true,
             "cakephp/plugin-installer": true
         }
     }
