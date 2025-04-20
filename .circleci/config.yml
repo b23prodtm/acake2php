@@ -35,7 +35,7 @@ aliases:
     save_cache:
       key: v1-dependencies-{{ checksum "yarn.lock" }}
       paths:
-        - app/Vendor
+        - app/vendor
         - webroot/php-cms
         - node_modules
 
