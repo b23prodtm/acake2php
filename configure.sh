@@ -38,7 +38,7 @@ usage=("" \
 "")
 composer_args="require --no-interaction --update-no-dev"
 saved=( "$@" )
-show_password_status "${DATABASE_USER}" "${MYSQL_ROOT_PASSWORD}" "is configuring ${runner} ${docker}..."
+show_password_status "root" "MYSQL_ROOT_PASSWORD" "is configuring ${runner} ${docker}..."
 #; if the full set of the arguments exists, there won't be any prompt in the shell
 while [[ "$#" -gt 0 ]]; do case $1 in
   -[cC]*|--const)
