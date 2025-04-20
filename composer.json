@@ -35,17 +35,13 @@
 	},
 	"autoload": {
 		"psr-4": {
+		        "App\\": "app/src",
 			"Betothreeprod\\UpdateShell\\": "app/Vendor/betothreeprod/updateshell",
 			"Betothreeprod\\MarkdownExtra\\": "app/Vendor/betothreeprod/MarkdownExtra"
 		}
 	},
-	"autoload": {
-    "psr-4": {
-        "App\\": "app/src"
-    }
-	},
 	"config": {
-		"vendor-dir": "app/Vendor/",
+		"vendor-dir": "app/vendor/",
 		"process-timeout": 0,
 		"allow-plugins": {
 			"composer/installers": true,
