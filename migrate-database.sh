@@ -191,7 +191,7 @@ if [[ $((mode & initialize_bit)) -gt 0 ]]; then
 "-e \"select plugin from user where user='${MYSQL_USER}';\"")
   # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days:
   # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\""
-  shell_prompt "${sql_connect} ${sql_connect_host} -u ${user} ${password} \
+  shell_prompt "${sql_connect} ${sql_connect_host} -uroot ${MYSQL_ROOT_PASSWORD} \
   ${args[*]} >> $LOG 2>&1" "Import test identities" "$prompt" \
   && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}
   check_log "$LOG"
