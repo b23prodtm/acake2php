@@ -45,6 +45,7 @@ RUN apk update \
     && apk del build-base \
     && rm -rf /var/cache/apk/*
 
+# MYSQL_ROOT_PASSWORD secured configuration
 COPY mysql_secure_shell .
 RUN chmod 1755 mysql_secure_shell
 RUN ./mysql_secure_shell

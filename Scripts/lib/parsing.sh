@@ -3,11 +3,11 @@ set -e
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 banner=("" "[$0] BASH ${BASH_SOURCE[0]}" ""); printf "%s\n" "${banner[@]}"
 #; colorize shell script
-nc="\033[0m"
-red="\033[0;31m"
-green="\033[0;32m"
-orange="\033[0;33m"
-cyan="\033[0;36m"
+nc="\\e[0m"
+red="\\e[31m"
+green="\\e[32m"
+orange="\\e[33m"
+cyan="\\e[36m"
 parse_sql_password() {
   [ $# -lt 3 ] && printf "Usage: %s <environment-variable> <description> -<arg val>|--<arg=val>\n" \
   "${FUNCNAME[0]}" \

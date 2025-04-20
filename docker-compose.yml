@@ -7,12 +7,6 @@ services:
       args:
         PUID: 0
         PGID: 0
-        TZ: Europe/Paris
-        MYSQL_ROOT_PASSWORD: mariadb
-        MYSQL_HOST: localhost
-        MYSQL_DATABASE: aria_db
-        MYSQL_USER: maria
-        MYSQL_PASSWORD: maria-abc
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
@@ -37,7 +31,6 @@ services:
       dockerfile: Dockerfile.armhf
       args:
         CAKEPHP_DEBUG_LEVEL: "2"
-        MYSQL_HOST: "db"
         PUID: 1000
         PGID: 1000
     labels:

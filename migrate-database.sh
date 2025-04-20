@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-# shellcheck source=Scripts/lib/test/logging.sh
+# shellcheck source=Scripts/lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
-# shellcheck source=Scripts/lib/test/parsing.sh
+# shellcheck source=Scripts/lib/parsing.sh
 . "$TOPDIR/Scripts/lib/parsing.sh"
-# shellcheck source=Scripts/lib/test/shell_prompt.sh
+# shellcheck source=Scripts/lib/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 runner=$(parse_arg "-[rR]+|--runner" "$@")
 docker=$(parse_arg "--docker" "$@")
@@ -29,7 +29,7 @@ usage=("" \
 "          -u          Update the database in app/config/Schema/" \
 "          -y          Overwrite app.php and default socket file" \
 "          -i --sql-password=<word> --test-sql-password=<word>" \
-"                      Initialize databases with new passwords and reset MYSQL_DATABASE and TEST_DATABASE_NAME privileges" \
+"                      Initialize databases with new passwords and reset MYSQL_DATABASE and TEST_MYSQL_DATABASE privileges" \
 "          -n, --runner" \
 "                      CircleCI and self-host runner: resets app.php, keep socket and update the database" \
 "                      Doesn't use the socket file" \
@@ -42,7 +42,7 @@ usage=("" \
 "          --database=<name>" \
 "                      Exports MYSQL_DATABASE" \
 "          --testunitbase=<name>" \
-"                      Exports TEST_DATABASE_NAME" \
+"                      Exports TEST_MYSQL_DATABASE" \
 "          --enable-ed25519-plugin" \
 "                      Enable MariaDB plugin https://mariadb.com/kb/en/authentication-plugin-ed25519/" \
 "          -v, --verbose" \
@@ -97,7 +97,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     ;;
   --sql-password*)
     OPTIND=1
-    parse_sql_password "set_DATABASE_PASSWORD" "Altering ${DATABASE_USER} password" "$@"
+    parse_sql_password "set_MYSQL_PASSWORD" "Altering ${MYSQL_USER} password" "$@"
     shift $((OPTIND -1))
     ;;
   --test-sql-password*)
@@ -127,7 +127,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     config_app_checked="-N"
     ;;
   -[pP]* )
-    parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
+    parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${MYSQL_ROOT_USER} password" "$@"
     shift $((OPTIND -1))
     ;;
   -[tT]* )
@@ -142,7 +142,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     # shellcheck disable=SC2046
     set -- $(echo "${arg}" \
     | awk 'BEGIN{ FS="[ =]+" }{ print "-d " $2 }') "$@"
-    parse_and_export "d" "MYSQL_DATABASE" "${DATABASE_USER} database name" "$@"
+    parse_and_export "d" "MYSQL_DATABASE" "${MYSQL_ROOT_USER} database name" "$@"
     shift $((OPTIND -1))
     ;;
   --testunitbase*)
@@ -153,7 +153,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     | awk 'BEGIN{ FS="[ =]+" }{ print "-u " $2 }') "$@"
     mode=$((mode | test_bit))
     cx_args="--connection=test"
-    parse_and_export "u" "TEST_DATABASE_NAME" "${MYSQL_USER} database name" "$@"
+    parse_and_export "u" "TEST_MYSQL_DATABASE" "${MYSQL_USER} database name" "$@"
     shift $((OPTIND -1))
     ;;
   *) echo "Invalid parameter: ${BASH_SOURCE[0]} $1" && exit 1;;
@@ -165,49 +165,6 @@ done
 shell_prompt "$TOPDIR/Scripts/config_app_database.sh ${dbfile} ${schemafile} ${sockfile} ${docker}" \
 "${cyan}Setup ${dbfile} connection and socket\n${nc}" "$config_app_checked"
 if [[ $((mode & initialize_bit)) -gt 0 ]]; then
-  #; ---------------------------------- set MYSQL_ROOT_PASSWORD
-  export set_DATABASE_PASSWORD=${set_DATABASE_PASSWORD:-$MYSQL_ROOT_PASSWORD}
-  # shellcheck disable=SC2154
-  log_warning_msg "${red}WARNING: You will modify SQL ${DATABASE_USER} password !${nc}"
-  prompt="-Y"
-  if [ -z "${set_DATABASE_PASSWORD}" ]; then
-    # shellcheck disable=SC2154
-     log_warning_msg "${orange}WARNING: Using blank password for ${DATABASE_USER} !!${nc}"
-    prompt=${DEBIAN_FRONTEND:-''}
-  fi
-  if [ $authentication_plugin = "ed25519" ]; then
-    identifiedby="IDENTIFIED VIA ed25519 USING '${set_DATABASE_PASSWORD}'"
-  else
-    identifiedby="identified by '${set_DATABASE_PASSWORD}'"
-  fi
-  # ALTER USER is MariaDB 10.2 and above waiting for ARM binary
-  # "-e \"alter user '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
-  args=(\
-"-e \"select version();\"" \
-"-e \"use mysql;\"" \
-"-e \"create user if not exists '${DATABASE_USER}'@'${mysql_host}' ${identifiedby};\"" \
-"-e \"SET PASSWORD FOR '${DATABASE_USER}'@'${mysql_host}' = PASSWORD('${set_DATABASE_PASSWORD}');\"" \
-"-e \"grant all PRIVILEGES on *.* to '${DATABASE_USER}'@'${mysql_host}' WITH GRANT OPTION;\"" \
-"-e \"flush PRIVILEGES;\"" \
-"-e \"create database if not exists ${MYSQL_DATABASE} default character set='utf8' default collate='utf8_bin';\"" \
-"-e \"create database if not exists ${TEST_DATABASE_NAME};\"" \
-"-e \"create database if not exists ${TEST_DATABASE_NAME}_2;\"" \
-"-e \"create database if not exists ${TEST_DATABASE_NAME}_3;\"" \
-"-e \"select plugin from user where user='${DATABASE_USER}';\"" \
-"-e \"show databases;\"" \
-"")
-  # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days:
-  # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\""
-  slogger -st "$0" "Forked script to keep hidden table user secrets..."
-  password=""
-  user="${DATABASE_USER}"
-  if [ -n "${MYSQL_ROOT_PASSWORD:-}" ]; then
-    password="--password=${MYSQL_ROOT_PASSWORD}"
-    user="root"
-  fi
-  shell_prompt "${sql_connect} ${sql_connect_host} -u ${user} ${password} \
-  ${args[*]} >> $LOG 2>&1" "Import default identities" "$prompt"\
-  && export MYSQL_ROOT_PASSWORD=${set_DATABASE_PASSWORD}
   #; ---------------------------------- set MYSQL_PASSWORD
   slogger -st "$0" "\r${red}WARNING: You will modify SQL ${MYSQL_USER} password !${nc}"
   export set_MYSQL_PASSWORD=${set_MYSQL_PASSWORD:-$MYSQL_PASSWORD}
@@ -227,14 +184,14 @@ if [[ $((mode & initialize_bit)) -gt 0 ]]; then
 "-e \"create user if not exists '${MYSQL_USER}'@'${mysql_host}' ${identifiedby};\"" \
 "-e \"SET PASSWORD FOR '${MYSQL_USER}'@'${mysql_host}'=PASSWORD('${set_MYSQL_PASSWORD}');\"" \
 "-e \"grant all PRIVILEGES on ${MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
-"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
-"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
-"-e \"grant all PRIVILEGES on ${TEST_DATABASE_NAME}_3.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_MYSQL_DATABASE}.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_MYSQL_DATABASE}_2.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
+"-e \"grant all PRIVILEGES on ${TEST_MYSQL_DATABASE}_3.* to '${MYSQL_USER}'@'${mysql_host}';\"" \
 "-e \"flush PRIVILEGES;\"" \
 "-e \"select plugin from user where user='${MYSQL_USER}';\"")
   # enable failed-login tracking, such that three consecutive incorrect passwords cause temporary account locking for two days:
   # "-e \"FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 2;\""
-  shell_prompt "${sql_connect} ${sql_connect_host} -u ${user} ${password} \
+  shell_prompt "${sql_connect} ${sql_connect_host} -uroot ${MYSQL_ROOT_PASSWORD} \
   ${args[*]} >> $LOG 2>&1" "Import test identities" "$prompt" \
   && export MYSQL_PASSWORD=${set_MYSQL_PASSWORD}
   check_log "$LOG"
