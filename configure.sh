@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-APPPATH="app/vendor/cakephp/cakephp/src"
+APPPATH="app"
+SRCPATH="app/vendor/cakephp/cakephp/src"
+
 # shellcheck source=Scripts/lib/test/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=Scripts/lib/test/parsing.sh
@@ -92,4 +94,5 @@ esac; shift; done
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
 slogger -st sed "Cake patches"
 #; patches
-patches "$APPPATH/Console/ShellDispatcher.php" "$APPPATH/Console/ConsoleOutput.php" "$APPPATH/../config/core.php"
+patches "$APPPATH/config/core.php"
+patches "$SRCPATH/Console/ShellDispatcher.php" "$SRCPATH/Console/ConsoleOutput.php" 
