@@ -88,8 +88,8 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     echo "Passed params : ${BASH_SOURCE[*]} ${saved[*]}";;
     *) echo "Unknown parameter passed: ${BASH_SOURCE[0]} $1"; exit 1;;
 esac; shift; done
+#; update plugins and dependencies
+bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
 slogger -st sed "Cake patches"
 #; patches
 patches "$APPPATH/Console/ShellDispatcher.php" "$APPPATH/Console/ConsoleOutput.php" "$APPPATH/../config/core.php"
-#; update plugins and dependencies
-bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
