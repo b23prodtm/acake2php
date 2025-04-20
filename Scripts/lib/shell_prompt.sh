@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
-APPDIR="$TOPDIR/app/src"
+APPDIR="$TOPDIR/app/vendor/cakephp/cakephp/src/"
 . init_functions .
 shell_prompt() {
   [ $# -lt 2 ] && printf "Usage: %s <file> <name> [-y|n]" "${FUNCNAME[0]}" && exit 1
