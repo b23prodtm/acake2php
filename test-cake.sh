@@ -27,7 +27,7 @@ usage=("" \
 while [[ "$#" -gt 0 ]]; do case $1 in
   --runner )
     # shellcheck disable=SC2086
-    migrate="$(parse_arg_trim --docker $migrate) --runner --testunitbase=ariadb_test"
+    migrate="$(parse_arg_trim --docker $migrate) --runner --testunitbase=${TEST_MYSQL_DATABASE}"
     # shellcheck disable=SC2086
     config_args="$(parse_arg_trim --docker  $config_args) --runner"
     ;;
@@ -43,7 +43,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     printf "%s\n" "${usage[@]}"
     exit 0;;
   -[pP]*)
-    parse_sql_password "MYSQL_ROOT_PASSWORD" "user ${DATABASE_USER} password" "$@"
+    parse_sql_password "MYSQL_ROOT_PASSWORD" "user root password" "$@"
     shift $((OPTIND -1))
     ;;
   -[tT]*)

@@ -63,7 +63,7 @@ jobs:
       - MYSQL_DATABASE: aria_db
       - MYSQL_USER: maria
       - MYSQL_PASSWORD: maria-abc
-      - TEST_DATABASE_NAME: test_aria_db_test
+      - TEST_MYSQL_DATABASE: test_aria_db_test
     working_directory: /var/www/html/
     steps:
       - checkout

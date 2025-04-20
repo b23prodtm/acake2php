@@ -77,7 +77,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
     ;;
   --development )
-    composer_args="require --no-interaction"
+    composer_args="-d $APPPATH require --no-interaction"
     ;;
   -[aA]*|--apache )
     # shellcheck disable=SC2154
