@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-# shellcheck source=Scripts/lib/test/logging.sh
+# shellcheck source=Scripts/lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
-# shellcheck source=Scripts/lib/test/parsing.sh
+# shellcheck source=Scripts/lib/parsing.sh
 . "$TOPDIR/Scripts/lib/parsing.sh"
-# shellcheck source=Scripts/lib/test/shell_prompt.sh
+# shellcheck source=Scripts/lib/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 runner=$(parse_arg "-[rR]+|--runner" "$@")
 docker=$(parse_arg "--docker" "$@")
