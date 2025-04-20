@@ -18,9 +18,10 @@
 	},
 	"require": {
 		"php": "^7 || ^8",
-		"cakephp/debug_kit": "^3.23",
 		"betothreeprod/updateshell": "^0.1.6",
-		"betothreeprod/markdown-plugin": "^0.9.3"
+		"betothreeprod/markdown-plugin": "^0.9.3",
+		"cakephp/app": "^3",
+		"cakephp/debug_kit": "^3.23"
 	},
 	"suggest": {
 		"ext-openssl": "You need to install ext-openssl or ext-mcrypt to use AES-256 encryption",
@@ -29,23 +30,10 @@
 	"require-dev": {
 		"phpunit/phpunit": "*",
 		"php-coveralls/php-coveralls": "^1 || ^2.1",
-		"phpunit/phpcov": "*",
-		"cakephp/upgrade": "3.x-dev",
-		"cakephp/cakephp": "3.10.*"
-	},
-	"autoload": {
-		"psr-4": {
-			"Betothreeprod\\UpdateShell\\": "app/Vendor/betothreeprod/updateshell",
-			"Betothreeprod\\MarkdownExtra\\": "app/Vendor/betothreeprod/MarkdownExtra"
-		}
-	},
-	"autoload": {
-    "psr-4": {
-        "App\\": "app/src"
-    }
+		"phpunit/phpcov": "*"
 	},
 	"config": {
-		"vendor-dir": "app/Vendor/",
+		"vendor-dir": "app/vendor/",
 		"process-timeout": 0,
 		"allow-plugins": {
 			"composer/installers": true,
