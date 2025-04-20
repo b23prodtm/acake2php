@@ -6,8 +6,6 @@
 *.old
 .circleci/config-compat.yml
 acake2php*.zip
-app/config/app.php*
-!app/config/app.php
 app/config/database.sql*
 app/config/Schema/schema.php*
 !app/config/Schema/schema.php
@@ -19,9 +17,8 @@ app/tmp/persistent/
 app/tmp/sessions/
 app/webroot/php-cms/e13/nbproject/private/
 app/src/Console/Templates/skel/tmp/
-app/Plugin
-app/Vendor
-!app/Vendor/autoload.php
+app/plugins
+app/vendor
 Plugin
 Vendor
 build
