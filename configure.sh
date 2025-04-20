@@ -13,6 +13,7 @@ SRCPATH="app/vendor/cakephp/cakephp/src"
 runner=$(parse_arg "-[rR]+|--runner"  "$@")
 docker=$(parse_arg "--docker" "$@")
 pargs=$(parse_arg_trim "--docker|-[rR]+|--runner" "$@")
+composer_args="-d $APPPATH require --no-interaction --update-no-dev"
 if [ -n "$runner" ]; then
   slogger -st "$0" "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
@@ -36,7 +37,6 @@ usage=("" \
 "          --development  Install composer dependencies" \
 "          -a, --apache2  Make apache2 VirtualHost configuration from templates: etc/apache2/site.tpl..." \
 "")
-composer_args="require --no-interaction --update-no-dev"
 saved=( "$@" )
 show_password_status "root" "MYSQL_ROOT_PASSWORD" "is configuring ${runner} ${docker}..."
 #; if the full set of the arguments exists, there won't be any prompt in the shell
@@ -77,7 +77,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
     ;;
   --development )
-    composer_args="require --no-interaction"
+    composer_args="-d $APPPATH require --no-interaction"
     ;;
   -[aA]*|--apache )
     # shellcheck disable=SC2154

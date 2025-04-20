@@ -168,11 +168,10 @@ if [[ $((mode & initialize_bit)) -gt 0 ]]; then
   #; ---------------------------------- set MYSQL_PASSWORD
   slogger -st "$0" "\r${red}WARNING: You will modify SQL ${MYSQL_USER} password !${nc}"
   export set_MYSQL_PASSWORD=${set_MYSQL_PASSWORD:-$MYSQL_PASSWORD}
+  prompt="-Y"
   if [ -z "${set_MYSQL_PASSWORD}" ]; then
     slogger -st "$0" "\r${orange}WARNING: Using blank password for ${MYSQL_USER} !!${nc}"
     prompt=${DEBIAN_FRONTEND:-''}
-  else
-    prompt=""
   fi
   if [ $authentication_plugin = "ed25519" ]; then
     identifiedby="IDENTIFIED VIA ed25519 USING '${set_MYSQL_PASSWORD}'"

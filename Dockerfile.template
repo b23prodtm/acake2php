@@ -107,10 +107,8 @@ COPY yarn.lock .
 RUN yarn && npm link balena-cloud-apps
 
 # Add cake and composer command to system path
-COPY composer.json .
-COPY composer.lock .
-ENV PATH "${PATH}:/var/www/localhost/htdocs/app/Console"
-ENV PATH "${PATH}:/var/www/localhost/htdocs/app/Vendor/bin"
+ENV PATH "${PATH}:/var/www/localhost/htdocs/app/bin"
+ENV PATH "${PATH}:/var/www/localhost/htdocs/bin"
 
 # Configure the application
 WORKDIR /var/www/localhost/htdocs/
