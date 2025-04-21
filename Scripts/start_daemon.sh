@@ -48,7 +48,7 @@ if [ -n "$docker" ]; then
 		docker rm -f "$maria" "$maria_hub" >> "$LOG" 2>&1 || true
 		slogger -st "$0" "Container $MARIADB_SHORT_NAME 's started up..."
 		mysql_credentials=("-e MYSQL_DATABASE=${MYSQL_DATABASE} -e MYSQL_USER=${MYSQL_USER}" "-e MYSQL_PASSWORD=${MYSQL_PASSWORD}" \
-		"-e DATABASE_USER=${DATABASE_USER}" "-e MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}")
+		"-e MYSQL_RANDOM_ROOT_PASSWORD=yes")
 		[ -z "$(docker network ls -q -f 'name=cake')" ] && docker network create cake
 		if docker run --name "$MARIADB_SHORT_NAME" -id \
 		--env-file .env -e PUID="$(id -u "$USER")" -e PGID="$(id -g "$USER")" \
@@ -68,46 +68,50 @@ if [ -n "$docker" ]; then
 fi
 # shellcheck disable=SC2086
 if [ -n "$(parse_arg "server" $ck_args)" ]; then
-  show_password_status "${DATABASE_USER}" "${MYSQL_ROOT_PASSWORD}" "is running development server"
-  url="http://${SERVER_NAME}:${CAKE_TCP_PORT:-8000}"
+	show_password_status "${MYSQL_USER}" "${MYSQL_PASSWORD}" "is running development server"
+	url="http://${SERVER_NAME}:${CAKE_TCP_PORT:-8000}"
 	# shellcheck disable=SC2154
-  slogger -st "$0" "Welcome homepage ${cyan}${url}${nc}"
-  slogger -st "$0" "Administrator login ${cyan}${url}/admin/index${nc}"
+	slogger -st "$0" "Welcome homepage ${cyan}${url}${nc}"
+	slogger -st "$0" "Administrator login ${cyan}${url}/admin/index${nc}"
 	# shellcheck disable=SC2154
 	slogger -st "$0" "Debugging echoes ${cyan}${url}${orange}?debug=1&verbose=1${nc}"
-  slogger -st "$0" "Another Test configuration ${cyan}${url}/admin/index.php${orange}?test=1${nc}"
-  slogger -st "$0" "Unit tests ${cyan}${url}/test.php${nc}"
-  slogger -st "$0" "Turnoff flags (fix captcha)${cyan}${url}/admin/logoff.php${nc}"
-  slogger -st "$0" "==============================================="
+	slogger -st "$0" "Another Test configuration ${cyan}${url}/admin/index.php${orange}?test=1${nc}"
+	slogger -st "$0" "Unit tests ${cyan}${url}/test.php${nc}"
+	slogger -st "$0" "Turnoff flags (fix captcha)${cyan}${url}/admin/logoff.php${nc}"
+	slogger -st "$0" "==============================================="
 	# shellcheck disable=SC2086
 	run_ps cakephp $ck_args
 elif [ -n "$(parse_arg "test" "$(parse_arg_trim "--connection*" $ck_args)")" ]; then
-  slogger -st "$0" "$(printf "Passed Cake Args: %s" "$ck_args")"
-  if [ "${COLLECT_COVERAGE}" = "true" ]; then
-    run_ps "$TOPDIR/app/Vendor/bin/phpunit" --log-junit ~/phpunit/junit.xml --coverage-clover \
+	slogger -st "$0" "$(printf "Passed Cake Args: %s" "$ck_args")"
+	if [ "${COLLECT_COVERAGE}" = "true" ]; then
+    		run_ps "$TOPDIR/app/vendor/bin/phpunit" --log-junit ~/phpunit/junit.xml --coverage-clover \
 		app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist \
-		app/Test/Case/AllTestsTest.php
-  elif [ "${PHPCS}" = 1 ]; then
-		run_ps "$TOPDIR/app/Vendor/bin/phpcs" --colors -p -s --extensions=php --cache "$TOPDIR/app"
+		app/tests/TestCase/AllTestsTest.php
+	elif [ "${PHPCS}" = 1 ]; then
+		run_ps "$TOPDIR/app/vendor/bin/phpcs" --colors -p -s --extensions=php --cache "$TOPDIR/app"
 	else
 		# shellcheck disable=SC2086
 		run_ps cakephp $ck_args --coverage-clover app/build/logs/clover.xml
-  fi
+	fi
+elif [ -n "$(parse_arg "create" $ck_args)" ]; then
+        #; cakephp shell
+        slogger -st "$0" "Migrating database 'cake bake migration' ..."
+	# shellcheck disable=SC2086
+	p=$(parse_arg_trim "create" $ck_args)
+	slogger -st "$0" "$(printf "Passed Cake Args:(%s) -> %s" "$ck_args" "$p")"
+	# shellcheck disable=SC2086
+	run_ps cakephp bake migration $p
+	# shellcheck disable=SC2086
+	run_ps cakephp migrations -n status
 elif [ -n "$(parse_arg "update" $ck_args)" ]; then
-  #; cakephp shell
-  slogger -st "$0" "Migrating database 'cake schema update' ..."
+        #; cakephp shell
+        slogger -st "$0" "Migrating database 'cake migrations' ..."
 	# shellcheck disable=SC2086
 	p=$(parse_arg_trim "update" $ck_args)
 	slogger -st "$0" "$(printf "Passed Cake Args:(%s) -> %s" "$ck_args" "$p")"
 	# shellcheck disable=SC2086
-	run_ps cakephp schema update $p -y
-  if [ -f app/Config/Schema/sessions.php ]; then
-      slogger -st "$0" "Generating default Sessions table"
-			# shellcheck disable=SC2086
-			run_ps cakephp schema create Sessions $p -y
-	fi
-  slogger -st "$0" "Generating database schema 'cake schema generate'"
+	run_ps cakephp migrations -n status
 	# shellcheck disable=SC2086
-	run_ps cakephp schema generate $p -f snapshot
+	run_ps cakephp migrations -n $p
 fi
 check_log "$LOG"

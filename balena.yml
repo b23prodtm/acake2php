@@ -17,14 +17,16 @@ data:
   applicationEnvironmentVariables:
     # Open https://${SERVER_NAME}/etc/getHashPassword.php or type $ ./configure.sh -h -p pass -s salt
     # Get new staff credentials (url=/admin/index.php)
+    # It's printed out in startup script
     #- GET_HASH_PASSWORD: GETHASHPASSWORD.PHP
 
     # Database name
-    - MYSQL_DATABASE: aria_db
+    - MYSQL_DATABASE: Acake2php
     # Persistent ROOT connection credentials
-    - MYSQL_HOST: localhost
+    - MYSQL_HOST: db
     # Database Root Password
-    - MYSQL_ROOT_PASSWORD:
+    - MYSQL_USER: Acake2php
+    - MYSQL_PASSWORD: Ac4ke2php
 
 # Some optional configuration. The following default variables may be setup as your server preferences, set in open source:
 
@@ -41,16 +43,12 @@ data:
     - MYSQL_BIND_ADDRESS: 0.0.0.0
     - MYSQL_TCP_PORT: 3306
 
-    # Persistent USER connection credentials
-    - MYSQL_USER: maria
-    - MYSQL_PASSWORD: 
-
     # Run as a different user-group space ($ id -g $USER)
     - PGID: 0
     # Run as a different user space ($ id -u $USER)
     - PUID: 0
 
-        # Apache 2 httpd, or DNS CNAME of the host machine ($ hostname)
+    # Apache 2 httpd, or DNS CNAME of the host machine ($ hostname)
     - SERVER_NAME: www-machine.local
 
     # MariaDB Timezone

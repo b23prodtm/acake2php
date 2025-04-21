@@ -9,9 +9,7 @@ command="--docker -c server -p 8000 -H 0.0.0.0"
 saved=( "$@" )
 export COLLECT_COVERAGE="false"
 usage=("" \
-"Usage: $0 [-p <password>] [-t <password>] [-c <command>] [options]" \
-"          -p <password>        Exports MYSQL_ROOT_PASSWORD to bootargs." \
-"          -t <password>        Exports MYSQL_PASSWORD" \
+"Usage: $0 [-c <command>] [options]" \
 "          -c <command> <options> [--help]" \
 "                               Set parameters to lib/Cake/Console/cake" \
 "                               E.g. $0 -c --docker server --help" \
@@ -27,14 +25,6 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     set -x
     command="${command} $1"
     echo "Passed params : $0 ${saved[*]}";;
-  -[pP]*)
-    parse_sql_password "MYSQL_ROOT_PASSWORD" "current ${DATABASE_USER} password" "$@"
-    shift $((OPTIND -1))
-    ;;
-  -[tT]*)
-    parse_sql_password "MYSQL_PASSWORD" "current ${MYSQL_USER} password" "$@"
-    shift $((OPTIND -1))
-    ;;
   -[cC]*)
     docker=$(parse_arg "--docker" "$command")
     command="$docker ${*:2}"
