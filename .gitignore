@@ -26,7 +26,7 @@ dist
 tags
 *.mo
 !*empty
-**/composer*.phar
+bin/composer
 mysqldb/config/
 mysqldb/conf.d/custom.cnf
 node_modules

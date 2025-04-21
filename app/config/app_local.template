@@ -36,8 +36,8 @@ return [
      */
     'Datasources' => [
         'default' => [
-            'className' => Connection::class,
-            'driver' => Mysql::class,
+            'className' => \Cake\Database\Connection::class,
+            'driver' => \Cake\Database\Driver\Mysql::class,
             /*
              * CakePHP will use the default DB port based on the driver selected
              * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
@@ -52,8 +52,8 @@ return [
             'url' => env('DATABASE_URL', null),
         ],
 	'test' => [
-            'className' => Connection::class,
-            'driver' => Mysql::class,
+            'className' => \Cake\Database\Connection::class,
+            'driver' => \Cake\Database\Driver\Mysql::class,
             'host' => getenv("MYSQL_HOST"),
             'port' => getenv("MYSQL_TCP_PORT"),
             'username' => getenv("MYSQL_USER"),
@@ -73,12 +73,13 @@ return [
      */
     'EmailTransport' => [
         'default' => [
-            'host' => 'localhost',
-            'port' => 25,
-            'username' => null,
-            'password' => null,
-            'client' => null,
-            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
+            'host' => env('EMAIL_TRANSPORT_DEFAULT_HOST', 'localhost'),
+            'port' => env('EMAIL_TRANSPORT_DEFAULT_PORT', 25),
+            'username' => env('EMAIL_TRANSPORT_DEFAULT_USERNAME', null),
+            'password' => env('EMAIL_TRANSPORT_DEFAULT_PASSWORD', null),
+            'tls' => env('EMAIL_TRANSPORT_DEFAULT_TLS', 'false'),
+	    'from' => env('EMAIL_TRANSPORT_DEFAULT_FROM', 'Acake2php.local'),
+            'from-name' => env('EMAIL_TRANSPORT_DEFAULT_FROM_NAME', 'Acake2php)
         ],
     ],
 ];
