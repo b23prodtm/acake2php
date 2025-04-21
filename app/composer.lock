@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d2a6c5d7036f570ea87d4a64d29ed4a",
+    "content-hash": "b486ce95eb841151796b1f64298cbd95",
     "packages": [
         {
             "name": "aura/intl",
@@ -156,6 +156,57 @@
                 "source": "https://github.com/b23prodtm/update/tree/0.1.6"
             },
             "time": "2025-04-16T21:18:33+00:00"
+        },
+        {
+            "name": "cakephp/app",
+            "version": "3.10.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cakephp/app.git",
+                "reference": "13a6729680c56652fa69a277f4f3acf3d14969b0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cakephp/app/zipball/13a6729680c56652fa69a277f4f3acf3d14969b0",
+                "reference": "13a6729680c56652fa69a277f4f3acf3d14969b0",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": "3.10.*",
+                "cakephp/migrations": "^2.0.0",
+                "cakephp/plugin-installer": "^1.3",
+                "mobiledetect/mobiledetectlib": "2.*",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "cakephp/bake": "^1.9.0",
+                "cakephp/cakephp-codesniffer": "^3.0",
+                "cakephp/debug_kit": "^3.17.0",
+                "josegonzalez/dotenv": "3.*",
+                "phpunit/phpunit": "^5|^6",
+                "psy/psysh": "@stable"
+            },
+            "suggest": {
+                "dereuromark/cakephp-ide-helper": "After baking your code, this keeps your annotations in sync with the code evolving from there on for maximum IDE and PHPStan/Psalm compatibility.",
+                "markstory/asset_compress": "An asset compression plugin which provides file concatenation and a flexible filter system for preprocessing and minification."
+            },
+            "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "App\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "CakePHP skeleton app",
+            "homepage": "https://cakephp.org",
+            "support": {
+                "issues": "https://github.com/cakephp/app/issues",
+                "source": "https://github.com/cakephp/app/tree/3.10.1"
+            },
+            "time": "2021-08-25T02:15:42+00:00"
         },
         {
             "name": "cakephp/cakephp",
