@@ -52,7 +52,7 @@ MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
 while [ "$#" -gt 0 ]; do case "$1" in
   --docker )
     mode=$((mode | docker_bit))
-    bash -c "./Scripts/start_daemon.sh ${docker}"
+    bash -c "$TOPDIR/Scripts/start_daemon.sh ${docker}"
     ;;
   -[uU]* )
     mode=$((mode | update_bit))
@@ -112,21 +112,20 @@ initialize() {
 	sockdir=/var/run/mysqld
 	while [[ "$#" -gt 0 ]]; do case $1 in
         	*.php|*.template)
-                	dbfile=$1
-	                file=$(echo "$dbfile" | cut -d . -f 1)
+                	template=$1
+	                file=$(echo "$template" | cut -d . -f 1)
         	        # shellcheck source=cp_bkp_old.sh
-	                . "${TOPDIR}/Scripts/cp_bkp_old.sh" "$TOPDIR" "$dbfile" "${file}.php";;
+	                . "${TOPDIR}/Scripts/cp_bkp_old.sh" "$TOPDIR" "$template" "${file}.php";;
 		*);;
 	esac; shift; done
 	rm "$TOPDIR/config/Migrations/*"
-	bash -c "$(php $TOPDIR/Scripts/schemaToMigrations.php)"
 }
 #; export -f initialize
 
 if [[ $((mode & initialize_bit)) -gt 0 ]]; then
 	# INITIALIZATION STUFF
-	initialize ${dbfile} ${docker}
-	bash -c "./Scripts/config_app_databases.sh ${$schemafile}"
+	initialize "${dbfile} ${schemafile} ${docker}"
+	bash -c "$TOPDIR/Scripts/config_app_databases.sh $(echo "$schemafile" | cut -d . -f 1).php"
 fi
 if [[ $((mode & (test_bit | update_bit | runner_bit | docker_bit))) -gt 0 ]]; then
   pargs="$travis $docker $runner"
@@ -135,6 +134,6 @@ if [[ $((mode & (test_bit | update_bit | runner_bit | docker_bit))) -gt 0 ]]; th
   elif [[ $((mode & update_bit)) -gt 0 ]]; then
       pargs="$pargs update $cx_args"
   fi
-  bash -c "./Scripts/bootstrap.sh $pargs"
+  bash -c "$TOPDIR/Scripts/bootstrap.sh $pargs"
   check_log "$LOG"
 fi

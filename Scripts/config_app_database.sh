@@ -8,14 +8,14 @@ sqlversion="5.7"
 . "${TOPDIR}/Scripts/lib/parsing.sh"
 
 function make_migration() {
-        [ "$#" -lt 2 ] && printf "Usage: %s <in-schemafile.php> <out-migration.php>" "${FUNCNAME[0]}" && exit 1
-	php "$TOPDIR/Scripts/schemaToMigration.php $1 $2
+        [ "$#" -lt 1 ] && printf "Usage: %s <in-schemafile.php>" "${FUNCNAME[0]}" && exit 1
+	bash -c "php $TOPDIR/Scripts/schemaToMigration.php $1"
 }
 
 while [[ "$#" -gt 0 ]]; do case $1 in
 	*.php|*.template)
 		schemafile=$1
 		file=$(echo "$schemafile" | cut -d . -f 1)
-		make_migration $schemafile "$TOPDIR/config/Migrations/${file}.php"
+		make_migration $schemafile
 	 *);;
 esac; shift; done

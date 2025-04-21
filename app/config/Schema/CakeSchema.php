@@ -2,8 +2,6 @@
 namespace Config\Schema;
 /** Cake App */
 require_once(__DIR__."/../../vendor/autoload.php");
-
-require_once(__DIR__."/schema.php");
 /* CreateProducts fieldName:fieldType?[length]:indexType:indexName */
 class Field {
 	public $name;
@@ -84,8 +82,16 @@ class Table {
 	}
 }
 class CakeSchema {
-	public static function main() {
+	public static function main($argv) {
+	        $file = $argv;
+		if(is_array($argv)) {
+			if(count($argv) < 2) { print "Usage: php __FILE__ <in-schemafile.php>"; return; }
+			$file = $argv[1];
+		}
+		require_once(__DIR__."/".$file);
+
 		$schema = new AppSchema();
+		$schema->file = $file;
 		$reflect = new \ReflectionObject($schema);
 		$props = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC);
 
