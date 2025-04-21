@@ -14,8 +14,6 @@ usage=("" \
 "           -r, --runner        [path to a file with a list of variables], " \
 "                               also disables Docker Image" \
 "           --docker            [enabled] Start a Docker daemon and DATABASE" \
-"           -p <password>       Exports MYSQL_ROOT_PASSWORD" \
-"           -t <password>       Exports MYSQL_PASSWORD" \
 "           --cov               Coverage All Tests" \
 "           --phpcs             PHP Code Sniffer" \
 "" \
@@ -42,14 +40,6 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   -[hH]*|--help )
     printf "%s\n" "${usage[@]}"
     exit 0;;
-  -[pP]*)
-    parse_sql_password "MYSQL_ROOT_PASSWORD" "user root password" "$@"
-    shift $((OPTIND -1))
-    ;;
-  -[tT]*)
-    parse_sql_password "MYSQL_PASSWORD" "test user ${MYSQL_USER} password" "$@"
-    shift $((OPTIND -1))
-    ;;
   -[vV]*|--verbose )
     set -x
     migrate="-v ${migrate}"
