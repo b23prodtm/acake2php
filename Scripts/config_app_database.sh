@@ -16,6 +16,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
 	*.php|*.template)
 		schemafile=$1
 		file=$(echo "$schemafile" | cut -d . -f 1)
-		make_migration $schemafile
+		make_migration "$schemafile"
+		;;
 	 *);;
 esac; shift; done
