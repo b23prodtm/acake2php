@@ -118,9 +118,8 @@ initialize() {
 	                . "${TOPDIR}/Scripts/cp_bkp_old.sh" "$TOPDIR" "$dbfile" "${file}.php";;
 		*);;
 	esac; shift; done
-	if [ -n "$docker" ]; then
-        	bash -c "./Scripts/start_daemon.sh ${docker}"
-	fi
+	rm "$TOPDIR/config/Migrations/*"
+	bash -c "$(php $TOPDIR/Scripts/schemaToMigrations.php)"
 }
 #; export -f initialize
 

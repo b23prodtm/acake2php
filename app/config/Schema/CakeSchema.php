@@ -1,6 +1,9 @@
 <?php
 namespace Config\Schema;
+/** Cake App */
 require_once(__DIR__."/../../vendor/autoload.php");
+
+require_once(__DIR__."/schema.php");
 /* CreateProducts fieldName:fieldType?[length]:indexType:indexName */
 class Field {
 	public $name;
@@ -10,67 +13,67 @@ class Field {
 	public $indexType;
 	public $indexName;
 	public $parameters;
-	public function Field($name) {
+	public function __construct($name) {
 		$this->name = $name;
 	}
-}
-class Table {
-	private function addAttrs($k, $v) {
+	public function addAttrs($k, $v) {
 		if(is_array($v)) {
 			foreach($v as $subKey => $subValue) {
 				if(is_int($subKey))
-					addAttrs($k, $subValue);
+					$this->addAttrs($k, $subValue);
 				else
-					addAttrs($subKey, $subValue);
+					$this->addAttrs($subKey, $subValue);
 			}
 			return;
 		}
 		switch ($k) {
 			case "type":
-				$field->type = $v;
+				$this->type = $v;
 				break;
 			case "null":
-				$field->null = ($v == "true");
+				$this->null = ($v == "true");
 				break;
 			case "length":
-				$field->length = $v;
+				$this->length = $v;
 			case "default":
 				break;
 			case "unique":
-				$field->indexType = "unique";
+				$this->indexType = "unique";
 				break;
 			case "key":
-				if($v == "primary") $field->indexName = strtoupper($field->name)."_INDEX";
+				if($v == "primary") $this->indexName = strtoupper($this->name)."_INDEX";
 				break;
 			default:
-				$field->parameters[$k] = $v;
+				$this->parameters[$k] = $v;
 				break;
 		}
 	}
+}
+class Table {
 	public $name;
 	public $fields;
-	public function Table($name, $fields) {
+	public function __construct($name, $fields) {
 		$this->name = $name;
 		$this->fields = array();
 		foreach($fields  as $fieldName => $fieldAttrs) {
-			addField($fieldName, $fieldAttrs);
+			$this->addField($fieldName, $fieldAttrs);
 		}
 	}
 	public function addField($name, $attrs) {
-		$field = new Field($fieldName);
-		if(is_array($fieldAttrs)) {
-			foreach($fieldAttrs as $f => $v) {
-				addAttrs($f, $v);
+		$field = new Field($name);
+		if(is_array($attrs)) {
+			foreach($attrs as $f => $v) {
+				$field->addAttrs($f, $v);
 			}
 		}
-		$this->fields[$fieldName] = $field;
+		$this->fields[] = $field;
 	}
 	/* CreateProducts fieldName:fieldType?[length]:indexType:indexName */
 	public function bakePrint() {
 		print "Create".ucfirst($this->name);
-		foreach($this->fields as $field) {
-			print " ".$field->name;
+		foreach($this->fields as $k => $field) {
 			if($field->type !== null) {
+				print " ".$field->name;
 				print ":".$field->type;
 				if($field->null) $field->type .= "?";
 				if($field->length !== null) print "[".$field->length."]";
@@ -81,20 +84,18 @@ class Table {
 	}
 }
 class CakeSchema {
-# empty
-	public static function main(){
+	public static function main() {
 		$schema = new AppSchema();
-		$schema->file = $argv[1];
-		$reflect = new ReflectionObject($schema);
-		$props   = $reflect->getProperties(ReflectionProperty::IS_PUBLIC);
+		$reflect = new \ReflectionObject($schema);
+		$props = $reflect->getProperties(\ReflectionProperty::IS_PUBLIC);
 
-		foreach ($props as $tableName => $fields) {
-			if(is_array($fields)) {
-				$table = new Table($tableName, $fields);
-				print "bake migration ";
-				$table->bakePrint();
-				print "\n";
-			}
+		foreach ($props as $k => $property) {
+			$fields = $property->getValue($schema);
+			if(!is_array($fields)) continue;
+			$table = new Table($property->getName(), $fields);
+			print "cake bake migration ";
+			$table->bakePrint();
+			print "\n";
 		}
 	}
 }
