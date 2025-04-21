@@ -19,7 +19,7 @@ class AppSchema extends CakeSchema {
 	public function after($event = array()) {
 	}
 
-	public $achat = array(
+	public $achats = array(
 		'id_commande' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'key' => 'primary'),
 		'id_facture' => array('type' => 'string', 'null' => false, 'length' => 32, 'key' => 'primary'),
 		'id_magasin' => array('type' => 'string', 'null' => false, 'length' => 4, 'key' => 'primary'),
@@ -39,7 +39,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $categorie = array(
+	public $categories = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'autoIncrement' => true),
 		'nom' => array('type' => 'string', 'null' => false, 'length' => 50, 'key' => 'primary'),
 		'parent' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 3, 'unsigned' => false, 'key' => 'index'),
@@ -51,7 +51,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $classification = array(
+	public $classifications = array(
 		'id' => array('type' => 'string', 'null' => false, 'length' => 4, 'key' => 'primary'),
 		'nom' => array('type' => 'string', 'null' => false, 'length' => 30),
 		'id_categorie' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
@@ -82,7 +82,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $commande = array(
+	public $commandes = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'date_de_commande' => array('type' => 'date', 'null' => false, 'key' => 'index'),
 		'id_produit' => array('type' => 'string', 'null' => false, 'length' => 20),
@@ -94,7 +94,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $compte = array(
+	public $comptes = array(
 		'id' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'primary'),
 		'nb_de_produits_achetes' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'key' => 'index'),
 		'montant_d_achat_total' => array('type' => 'decimal', 'null' => false, 'default' => '0.0', 'length' => '6,1', 'unsigned' => false),
@@ -119,7 +119,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $disponibilite = array(
+	public $disponibilites = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 5, 'unsigned' => false, 'key' => 'primary'),
 		'id_exemplaire' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'primary'),
 		'indexes' => array(
@@ -128,7 +128,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $editeur = array(
+	public $editeurs = array(
 		'code_editeur' => array('type' => 'string', 'null' => false, 'length' => 4, 'key' => 'primary'),
 		'image' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 5, 'unsigned' => false),
 		'nom' => array('type' => 'string', 'null' => false, 'length' => 20),
@@ -138,7 +138,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $exemplaire = array(
+	public $exemplaires = array(
 		'code_reference' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'primary'),
 		'date_de_livraison' => array('type' => 'date', 'null' => false),
 		'id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 5, 'unsigned' => false),
@@ -148,7 +148,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $facture = array(
+	public $factures = array(
 		'reference' => array('type' => 'string', 'null' => false, 'length' => 32, 'key' => 'primary'),
 		'montant_facture' => array('type' => 'decimal', 'null' => true, 'default' => null, 'length' => '6,1', 'unsigned' => false),
 		'date_de_facturation' => array('type' => 'date', 'null' => false),
@@ -161,7 +161,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $fournisseur = array(
+	public $fournisseurs = array(
 		'code_fournisseur' => array('type' => 'string', 'null' => false, 'length' => 4, 'key' => 'primary'),
 		'nom' => array('type' => 'string', 'null' => false, 'length' => 30, 'key' => 'index'),
 		'adresse' => array('type' => 'string', 'null' => false, 'length' => 40),
@@ -175,7 +175,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB', 'comment' => 'Fournisseurs des produits')
 	);
 
-	public $image = array(
+	public $images = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'nom' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 250),
 		'image' => array('type' => 'mediumbinary', 'null' => false, 'default' => null),
@@ -187,7 +187,7 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
-	public $info = array(
+	public $infos = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'categorie' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 		'titre' => array('type' => 'text', 'null' => false, 'default' => null),

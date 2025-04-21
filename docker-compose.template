@@ -7,6 +7,8 @@ services:
       args:
         PUID: 0
         PGID: 0
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: yes
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
