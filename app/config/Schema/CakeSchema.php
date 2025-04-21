@@ -82,9 +82,7 @@ class Table {
 }
 class CakeSchema {
 # empty
-	public static function main($file){
-		require_once($file);
-
+	public static function main(){
 		$schema = new AppSchema();
 		$schema->file = $argv[1];
 		$reflect = new ReflectionObject($schema);
