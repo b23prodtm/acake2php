@@ -13,7 +13,7 @@ services:
       - localtime:/etc/localtime:ro
       - db-data:/config
       - db-socket:/var/run/mysqld
-      - db-config:/var/www/htdocs/localhost/app/config/Schema
+      - db-config:/var/www/htdocs/localhost/app/config
     ports:
       - "3306:3306"
     restart: unless-stopped
@@ -39,7 +39,7 @@ services:
       io.balena.features.dbus: "1"
     volumes:
       - localtime:/etc/localtime:ro
-      - db-config:/var/www/htdocs/localhost/app/config/Schema
+      - db-config:/var/www/htdocs/localhost/app/config
       - db-socket:/var/run/mysqld
     ports:
       - "80:80"
