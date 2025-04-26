@@ -13,7 +13,7 @@ SRCPATH="app/vendor/cakephp/cakephp/src"
 runner=$(parse_arg "-[rR]+|--runner"  "$@")
 docker=$(parse_arg "--docker" "$@")
 pargs=$(parse_arg_trim "--docker|-[rR]+|--runner" "$@")
-composer_args="-d $APPPATH require --no-interaction --update-no-dev"
+composer_args="-d $APPPATH update --no-interaction --no-dev"
 if [ -n "$runner" ]; then
   slogger -st "$0" "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
