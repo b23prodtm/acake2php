@@ -3,7 +3,7 @@ services:
   db:
     build:
       context: deployment/images/mysqldb
-      dockerfile: Dockerfile.armhf
+      dockerfile: Dockerfile.aarch64
       args:
         PUID: 0
         PGID: 0
@@ -30,7 +30,7 @@ services:
       - .env
     build:
       context: .
-      dockerfile: Dockerfile.armhf
+      dockerfile: Dockerfile.aarch64
       args:
         CAKEPHP_DEBUG_LEVEL: "2"
         PUID: 1000
@@ -51,7 +51,7 @@ services:
   balena-storage:
     build:
       context: balena-storage
-      dockerfile: Dockerfile.armhf
+      dockerfile: Dockerfile.aarch64
     privileged: true
     env_file:
       - common.env
