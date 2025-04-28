@@ -1,9 +1,9 @@
-# THIS file was generated for $BALENA_ARCH 
+# THIS file was generated for $BALENA_ARCH raspberrypi3-64
 # Make changes to the Dockefile.template
 # Docker architecture (x86_64, armhf, aarch64 )
 ARG PRIMARY_HUB
 # Primary image is a Linux PHP with Apache 2 server pre-installed
-FROM ${PRIMARY_HUB:-%%PRIMARY_HUB%%}:${PRIMARY_TAG:-%%PRIMARY_TAG%%}
+FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${PRIMARY_TAG:-latest-aarch64}
 
 ENV INITSYSTEM off
 ENV UDEV off
@@ -20,9 +20,9 @@ ENV UDEV off
 ARG CAKEPHP_DEBUG_LEVEL
 ENV CAKEPHP_DEBUG_LEVEL ${CAKEPHP_DEBUG_LEVEL:-2}
 ARG BALENA_MACHINE_NAME
-ENV BALENA_MACHINE_NAME ${BALENA_MACHINE_NAME:-}
+ENV BALENA_MACHINE_NAME ${BALENA_MACHINE_NAME:-raspberrypi3-64}
 ARG SECONDARY_HUB
-ENV SECONDARY_HUB ${SECONDARY_HUB:-%%SECONDARY_HUB%%}
+ENV SECONDARY_HUB ${SECONDARY_HUB:-linuxserver/mariadb}
 ARG BALENA_ARCH
 ENV BALENA_ARCH ${BALENA_ARCH:-aarch64}
 ARG COLLECT_COVERAGE
