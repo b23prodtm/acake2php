@@ -50,9 +50,10 @@ COPY mysql_secure_shell .
 RUN chmod 1755 mysql_secure_shell
 RUN ./mysql_secure_shell
 
-RUN echo "***** Fix PASSWORD, PRIVILEGES and CREATE ${MYSQL_USER}..." \
+RUN echo "***** Fix root PRIVILEGES AND CREATE USER ${MYSQL_USER} with ${MYSQL_DATABASE} PRIVILEGES " \
   && echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'% WITH GRANT OPTION;" | tee -a p.sql \
   && echo "CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';" | tee -a p.sql \
+  && echo "GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%;" | tee -a p.sql \
   && echo "FLUSH PRIVILEGES;" | tee -a p.sql \
   && mkdir -p /config/initdb.d/ && mv p.sql /config/initdb.d/patch.sql
 
