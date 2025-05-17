@@ -82,7 +82,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
     printf "%s\n" "${usage[@]}"
     exit 0;;
   -[nN]*|--runner|--travis)
-    mode=$((mode | runner))
+    mode=$((mode | runner_bit))
     ;;
   --testunitbase*)
     # Transform long options to short ones
