@@ -101,7 +101,7 @@ done
 # configure user application database and eventually alter user database access
 # shellcheck disable=SC2154
 initialize() {
-	[ "$#" -lt 3 ] && echo "Usage: ${FUNCNAM]} [--docker] [<file.template.or.php]..." && exit 1
+	[ "$#" -lt 2 ] && echo "Usage: ${FUNCNAM]} [--docker] [<file.template.or.php]..." && exit 1
 	slogger -st "${FUNCNAME[0]}" "$* ..."
 	docker=$(parse_arg "--docker" "$@")
 	homebrew=0x01
