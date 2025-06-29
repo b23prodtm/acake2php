@@ -5,6 +5,8 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . "${TOPDIR}/Scripts/lib/logging.sh"
 # shellcheck source=lib/shell_prompt.sh
 . "${TOPDIR}/Scripts/lib/shell_prompt.sh"
+runner=$(parse_arg "-[rR]+|--runner"  "$@")
+pargs=$(parse_arg_trim "-[rR]+|--runner"  "$@")
 #;
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;
