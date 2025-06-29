@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-[ $# -lt 1 ] && echo "Usage: $0 -p=<pass> -s=<hash> [-f=<exec_hash_file.sh>]" && exit 1
+#; [ $# -lt 1 ] && echo "Usage: $0 -p=<pass> -s=<hash> [-f=<exec_hash_file.sh>]" && exit 1
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 # shellcheck source=lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
@@ -22,9 +22,9 @@ while [ "$#" -gt 0 ]; do case $1 in
 esac; shift; done
 #; read password if not set
 if [ -z "$pass" ]; then while true; do
-   read -sp -r "Please enter a password :" pass
+   read -r -p "Please enter a password :" pass
    echo -e "\n"
-   read -sp -r "Please re-enter the password :" confirmpass
+   read -r -p "Please re-enter the password :" confirmpass
    echo -e "\n"
    if [ "$pass" = "$confirmpass" ]; then
       break
@@ -36,7 +36,7 @@ done; fi
 
 # read hash if not set
 if [ -z "$hash" ]; then while [ "$hash" = "" ]; do
-   read -p -r "Please enter the hash word :" hash
+   read -r -p "Please enter the hash word :" hash
 done; fi
 # read filename if not set
 if [ -z "$hash_file" ]; then

@@ -17,9 +17,9 @@ slogger -st "$0" "Auto configuration..."
 #; hash file that is stored in webroot to allow administrator privileges
 if [ -z "${GET_HASH_PASSWORD:-}" ] && [ -z "$runner" ]; then
   hash="$TOPDIR/${MYPHPCMS_DIR}/e13/etc/export_hash_password.sh"
-  if [ ! -f "$hash" ]; then
-    shell_prompt "$TOPDIR/configure.sh -h " "define a value for missing GET_HASH_PASSWORD" "${DEBIAN_FRONTEND:-}"
-  fi
+  while [ ! -f "$hash" ]; do
+    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh" "define a value for missing GET_HASH_PASSWORD" "${DEBIAN_FRONTEND:-}"
+  done
   # shellcheck source=app/webroot/php-cms/e13/etc/export_hash_password.sh
   . "$hash"
 fi
