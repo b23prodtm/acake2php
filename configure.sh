@@ -44,7 +44,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   -[pP]*|--password)
     #; GET_HASH_PASSWORD
     shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -p ${*:2}" "${cyan}Step 2. Get an encrypted password.\n${nc}" "-Y"
-    ;;
+    shift;;
   -[dD]*|--mig-database)
     shell_prompt "$TOPDIR/migrate-database.sh ${docker} ${runner} ${*:2}" "${cyan}Step 3. Migrate database\n${nc}" "-Y"
     break;;
