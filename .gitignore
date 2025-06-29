@@ -56,3 +56,4 @@ mysqld/conf.d/custom.cnf
 upgrade/
 /app/Config/Schema/AppSchema.php
 /app/Config/app_local.php
+!/Scripts/app/Config/core.php.sed
