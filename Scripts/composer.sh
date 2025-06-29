@@ -7,8 +7,6 @@
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 # shellcheck source=lib/logging.sh
 . "${TOPDIR}/Scripts/lib/logging.sh"
-# shellcheck source=lib/parsing.sh
-. "${TOPDIR}/Scripts/lib/parsing.sh"
 composer="bin/composer"
 if [ -n "$(command -v composer)" ]; then
         composer="composer"

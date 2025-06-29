@@ -41,11 +41,13 @@ show_password_status() {
 }
 #; export -f show_password_status
 patches() {
+  [ "$#" -lt 1 ] && echo "Usage: ${FUNCNAME[0]} '<srcfile-relative-path>'" && exit 1
   for f in "$@"; do
     file="$(basename "${f}")"
     dir="$(dirname "${f}")"
     [ ! -f "$dir/$file" ] && file="${file,,}"
     [ ! -f "$dir/$file" ] && dir="${dir,,}"
+    #; sed in Scripts/app folder
     sed -i.old -E -f "$(dirname "${BASH_SOURCE[0]}")/../${f}.sed" "$dir/$file"
   done
 }

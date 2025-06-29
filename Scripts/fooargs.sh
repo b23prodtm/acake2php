@@ -1,15 +1,9 @@
 #!/usr/bin/env bash
 incFOO_ARGS=${incFOO_ARGS:-0}; if [ "$incFOO_ARGS" -eq 0 ]; then
   export incFOO_ARGS=1
-  # shellcheck source=lib/logging.sh
-  . ./Scripts/lib/logging.sh
-  # shellcheck source=lib/parsing.sh
-  . ./Scripts/lib/parsing.sh
   set -eu
   docker=$(parse_arg "--docker" "$@")
   travis=$(parse_arg "--travis" "$@")
-  # shellcheck disable=SC2154
-  slogger -st "$0" "Loading ${orange}Test environment${nc} : $0..."
   #; Common Environment profile
   [[ ! -e .env || ! -e common.env ]] \
   && printf "Missing environment configuration, please run ./deploy.sh %s --nobuild first." "$(arch)" \
@@ -17,8 +11,6 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ "$incFOO_ARGS" -eq 0 ]; then
   eval "$(cat .env common.env | awk 'BEGIN{ FS="\n" }{ print "export " $1 }')"
   #; To change  Model/Datasource/Database
   export DB=${DB:-Mysql}
-  # shellcheck disable=SC2154
-  slogger -st "$0" "DB : ${green}${DB}${nc}"
   # Test units :
   #             - Web interface:
   #               URL: http://localhost:8000/index.php?test=1
@@ -47,7 +39,7 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ "$incFOO_ARGS" -eq 0 ]; then
   export FTP_SERVICE_HOST=localhost
   export FTP_SERVICE_USER=test
   export FTP_SERVICE_PASSWORD=mypassword
-  #; export GET_HASH_PASSWORD=wokUd0mcc
+  export HASH_PASSWORD=password
   if [ -n "$(parse_arg "-[vV]+|--verbose" "$@")" ]; then
     echo "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
     echo "MYSQL_PASSWORD=${MYSQL_PASSWORD}"

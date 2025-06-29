@@ -55,11 +55,11 @@ Common Issues
 
   Go on to development phase with the [Local Built-in server](#local-built-in-server).
 
-4. I've made changes to mysql database tables, I've made changes to app/config/Schema/schema.php, as config/app.php defines it, what should I do ?
+4. I've made changes to app/Config/Schema/AppSchema.template, what should I do ?
 
-  Migrate all your tables:
+  Confogure and migrate all your tables:
 
-    ./migrate-database.sh -u
+    ./migrate-database.sh -i -u
 
   Answer 'y' when prompted.
 
@@ -192,11 +192,14 @@ and update the database schema:
 
     ./migrate-database.sh -u
 
-9. It looks like submodule folders have disappeared, why ?
+9. The terminal or shell returns SYSTEMD_NO_WRAP LINES COLUMNS: unbound variable
 
-  A recent change made the submodule disappear from disk, that can happen on master/development branch.  Recall or add the shell configure script to your workflow:
+  /etc/rc.status must be invoked, so export the two variables and systemd wrap lines:
 
-    ./configure.sh -m
+    export LINES=60  # Example value
+    export COLUMNS=80  # Example value
+    SYSTEMD_NO_WRAP=0 <any command that throw this error>
+
 
 10. Error: Please install PHPUnit framework v3.7 (http://www.phpunit.de)
 

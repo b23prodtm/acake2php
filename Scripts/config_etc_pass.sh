@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
-[ $# -lt 1 ] && echo "Usage: $0 -p=<pass> -s=<salt> [-f=<exec_hash_file.sh>]" && exit 1
+[ $# -lt 1 ] && echo "Usage: $0 -p=<pass> -s=<hash> [-f=<exec_hash_file.sh>]" && exit 1
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 # shellcheck source=lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
-# shellcheck source=lib/parsing.sh
-. "$TOPDIR/Scripts/lib/parsing.sh"
 pwd=$(pwd)
 pass=""
-salt=""
+hash=""
 hash_file=""
 MYPHPCMS_DIR=${MYPHPCMS_DIR:-'app/webroot/php-cms'}
 dir="$TOPDIR/$MYPHPCMS_DIR/e13/etc/"
@@ -15,9 +13,9 @@ cd "$dir" || log_failure_msg "No such directory %s\n" "$dir"
 # passed args from shell_prompt
 while [ "$#" -gt 0 ]; do case $1 in
   -[pP]* )
-      parse_arg_export "pass" "a password" "$@";;
+      parse_arg_export "pass" "some password" "$@";;
   -[sS]* )
-      parse_arg_export "salt" "a salt word" "$@";;
+      parse_arg_export "hash" "some hash" "$@";;
   -[fF]* )
       parse_arg_export "hash_file" "a filename.sh" "$@";;
   *);;
@@ -36,15 +34,15 @@ if [ -z "$pass" ]; then while true; do
    fi
 done; fi
 
-# read salt if not set
-if [ -z "$salt" ]; then while [ "$salt" = "" ]; do
-   read -p -r "Please enter the salt word :" salt
+# read hash if not set
+if [ -z "$hash" ]; then while [ "$hash" = "" ]; do
+   read -p -r "Please enter the hash word :" hash
 done; fi
 # read filename if not set
 if [ -z "$hash_file" ]; then
     hash_file="export_hash_password.sh"
 fi
-php -f getHashPassword.php -- -p "$pass" -s "$salt" -f "$hash_file"
+php -f getHashPassword.php -- -p "$pass" -s "$hash" -f "$hash_file"
 #; so that the shell can execute export file
 chmod 777 $hash_file
 # shellcheck source=../app/webroot/php-cms/e13/etc/getHashPassword.php

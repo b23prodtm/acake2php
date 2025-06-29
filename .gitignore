@@ -7,8 +7,7 @@
 .circleci/config-compat.yml
 acake2php*.zip
 app/config/database.sql*
-app/config/Schema/schema.php*
-!app/config/Schema/schema.php
+app/config/Schema/AppSchema.php*
 app/tmp
 app/webroot/e13/nbproject/private/
 app/tmp/cache/
@@ -55,3 +54,5 @@ nbproject/private/
 mysqldb/mysqld/
 mysqld/conf.d/custom.cnf
 upgrade/
+/app/Config/Schema/AppSchema.php
+/app/Config/app_local.php

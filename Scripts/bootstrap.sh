@@ -5,21 +5,6 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . "${TOPDIR}/Scripts/lib/logging.sh"
 # shellcheck source=lib/shell_prompt.sh
 . "${TOPDIR}/Scripts/lib/shell_prompt.sh"
-# shellcheck source=lib/parsing.sh
-. "${TOPDIR}/Scripts/lib/parsing.sh"
-runner=$(parse_arg "-[rR]+|--runner"  "$@")
-pargs=$(parse_arg_trim "-[rR]+|--runner"  "$@")
-if [ -n "$runner" ]; then
-  slogger -st "$0" "Bootargs...: ${pargs}"
-  export CAKEPHP_DEBUG_LEVEL=1
-  # shellcheck source=bootargs.sh
-  . "${TOPDIR}/Scripts/bootargs.sh" "$@"
-else
-  slogger -st "$0" "Locally Testing values, bootargs...: ${pargs}"
-  export CAKEPHP_DEBUG_LEVEL=2
-  # shellcheck source=fooargs.sh
-  . "${TOPDIR}/Scripts/fooargs.sh" "$@"
-fi
 #;
 #; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
 #;

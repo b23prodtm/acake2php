@@ -57,7 +57,7 @@ Otherwise use:
 
 Once you're logged in, run as a normal user in `/var/www/localhost/htdocs #` :
 
-    ./configure.sh -d -u -i
+    ./configure.sh -d -i -u
 
 It will configure PHP plugins and migrate the table in databases.
 You can also test the configuration, lauch Cake Tests from `/var/www/localhost/htdocs #` :
@@ -69,21 +69,6 @@ Plugins
 You do not need to change anything in your existing PHP project's repository.
 However, if these files exist they will affect the behavior of the build process:
 
-* Git **submodules**
-
-  The acake2php folder includes modules that need to be pulled in order to install locally.
-  After the first checkout browse to acake2php folder and do
-  
-    git submodule sync && git submodule update --init --recursive
-  
-  You'll see modules populating the subfolder app/webroot/... If something goes wrong, erase the acake2php folder and start over.
-> After
->     git checkout
->  each time, run once
->
->     git submodule update --init --recursive
->  to ensure submodules are downloaded from git. Otherwise your build may fail.
-
 * Packagist **composer.json**
 
   Update all required plugins
@@ -93,15 +78,11 @@ However, if these files exist they will affect the behavior of the build process
   [Packagist](https://packagist.org).
 
 
-#### NodeJs packages
+#### Node and Yarn modules 
 
-* Modules **package.json**
+* **package.json**
 
   List of dependencies to be installed with `npmjs` [here](https://www.npmjs.com).
-
-      npm update
-  
-  or:
 
       yarn
 
@@ -237,77 +218,62 @@ The following additional variables must be set up as server secrets environment,
     <Domain-Name>
 
 
-Database terminal
------------------
-Container engines provides provide a confined environment, with persistent storage. Check that last database deployment was successful, open a pod shell :
+#### **db** pod healthcheck
 
-Inside **db** pod:
+Container engines provides a sanbox virtual system with some persistent storage. To check that the last database migration was successful, open a pod shell :
 
-```mysql -uroot --password=${MYSQL_ROOT_PASSWORD}```
+    mysql -uroot --password=${MYSQL_ROOT_PASSWORD}
 
 Issue some SQL statements, for instance :
 
-```ùse aria_db; show tables;``` should list tables
+    use aria_db; show tables;
 
-Inside **acake2php** pod:
+To temporarily change the MYSQL_ROOT_PASSWORD in a pod:
 
-```cake schema update --connection=default``` should build the databases
-
-```cake schema update --connection=test``` should build the test databases
-
-#### More Database Configuration
-
-An SQL server (must match remote server version) must be reachable by hostname or via its socket. If it's the 1st time you use this connection,
-
-Configure it as a service and configure the login ACL with the user shell.
-* __Optional__ database automatic configuration
-*
-*     ./configure.sh -d -u -i
+    mysql_secure_installation
 
 
-* __Optional__ To Setup MYSQL_ROOT_PASSWORD at prompt:
-*
-*     mysql_secure_installation
+This should list all the migrated tables
+
+#### **acake2php** pod healthcheck
+
+    cake schema update --connection=default
+
+This should migrate the databases.
+
+    cake schema update --connection=test
+
+This should migrate the test databases.
+
+#### Database
+
+By editing the files `Config/app_local.template` and `Config/Schema/AppSchema.template` if you wish to modify the database connection and email transport.
+You can then configure and migrate databases (configuration and migration)
+
+     ./configure.sh -d -i -u
 
 
-* __Optional__ Edit
-*
-*     ./app/Config/app.template
-*  if you wish to modify the database connection and email transport.
+More about configuration:
 
-* __Optional__ Edit
-*
-*     ./app/Model/Datasources/Database
-*  if you wish to modify the DBOSource driver.
+     ./configure.sh --help && ./migrate-database.sh --help
 
-* Edit `./Scripts/fooargs.sh` to change default *test* environment settings (host, port, login, database name)
-
-* Run the configuration script:
-*
-*     ./configure.sh -d -p <root-password> -i --sql-password=<new-password>
-
-
-* More about configuration:
-*
-*     ./configure.sh --help && ./migrate-database.sh --help
-
-* More [common issues](#common-issues)
-
-* The following command resets SQL users `${DATABASE_USER}` and `${MYSQL_USER}` password
-*
-*     ./migrate-database.sh -p -i -p --test-sql-password
-
+More [common issues](#common-issues)
 
 #### Generate new administrator password
-To sign in with staff rights, at http://localhost/admin/index.php, somebody needs a unique password stored in `GET_HASH_PASSWORD`. One way to generate this hashed password with "salted“ encryption and setup:
 
-    ./configure.sh -h -p <password> -w <salt>
+To sign in with staff rights, at http://localhost/admin/index.php, somebody needs a unique password stored in `GET_HASH_PASSWORD`. One way to generate this hashed password with "hashed“ encryption and setup:
+
+    ./configure.sh -p <password> -s <hash>
 
 To regenerate or read the current password hash again, simply browse to http://localhost/php-cms/e13/etc/getHashPassword.php
 
-    GET_HASH_PASSWORD=<HaSheD/PasSwoRd!>
+    HASH_PASSWORD=<unencrypted Password>
 
-must be stored in the local server environment as a system readable variable.
+or:
+ 
+    GET_HASH_PASSWORD=<encrypted Password>
+
+One of them must be stored in the local server environment as a system readable variable.
 
 Cross Platform
 --------------

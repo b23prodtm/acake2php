@@ -88,7 +88,7 @@ class CakeSchema {
 			if(count($argv) < 2) { print "Usage: php __FILE__ <in-schemafile.php>"; return; }
 			$file = $argv[1];
 		}
-		require_once(__DIR__."/".$file);
+		require_once($file);
 
 		$schema = new AppSchema();
 		$schema->file = $file;

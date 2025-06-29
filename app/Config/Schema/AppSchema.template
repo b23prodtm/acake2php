@@ -5,12 +5,12 @@
  */
 namespace Config\Schema;
 
-/** Si le fichier myschema.php est modifié,
-* le script dédié ./migrate-database.sh -p=<sql-root-password> -u
+/** Si le fichier AppSchema est modifié,
+* le script dédié ./migrate-database.sh -i -u
 * pour mettre à jour la base données */
 class AppSchema extends CakeSchema {
 
-	public $file = 'schema.php';
+	public $file = 'AppSchema.php';
 
 	public function before($event = array()) {
 		return true;

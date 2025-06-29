@@ -3,12 +3,9 @@ set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 APPPATH="app"
 SRCPATH="app/vendor/cakephp/cakephp/src"
-
-# shellcheck source=Scripts/lib/test/logging.sh
+# shellcheck source=Scripts/lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
-# shellcheck source=Scripts/lib/test/parsing.sh
-. "$TOPDIR/Scripts/lib/parsing.sh"
-# shellcheck source=Scripts/lib/test/shell_prompt.sh
+# shellcheck source=Scripts/lib/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 runner=$(parse_arg "-[rR]+|--runner"  "$@")
 docker=$(parse_arg "--docker" "$@")
@@ -24,14 +21,13 @@ else
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi
 usage=("" \
-"Usage: $0 [-m] [--runner] [-c] [-h [-p password -s salt [-f filename]]]" \
-"          [-m] [--runner] [-c][[-d|--mig-database] [options]]" \
+"Usage: $0 [-r|--runner|--travis] [-c] [-p password -s hash [-f filename]]" \
+"          [-c][[-d|--mig-database] [options]]" \
 "          --runner       A test or migrate for CI self-host runner build" \
 "          -c,--const     Reset to $TOPDIR/app/webroot/php-cms/etc/constantes-template.properties" \
-"          -h,--hash      Reset administrator password hash:" \
-"               -p <password> -s <salt> [-f <save-filename>]" \
-"                         Set administrator <password> with md5 <salt>. Optional file to save a shell script export." \
-"          -m,--submodule Update sub-modules from Git" \
+"          -p,--password <password> -s <hash> [-f <save-filename>]" \
+"                         Setup administrator <password> with md5 <hash>. " \
+"                         (Optional) A filename to save a shell script export." \
 "          -d, --mig-database [options]" \
 "                         Migrate Database (see $0 --mig-database --help)" \
 "          --development  Install composer dependencies" \
@@ -45,24 +41,21 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     # shellcheck disable=SC2154
     shell_prompt "$TOPDIR/Scripts/config_etc_const.sh" "${cyan}Step 1. Overwrite constantes.properties\n${nc}" "-Y"
     ;;
-  -[hH]*|--hash)
-    #; get hash password
-    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh ${*:2}" "${cyan}Step 2. Get a hashed password with encryption, PHP encrypts.\n${nc}" "-Y"
+  -[pP]*|--password)
+    #; GET_HASH_PASSWORD
+    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -p ${*:2}" "${cyan}Step 2. Get an encrypted password.\n${nc}" "-Y"
     ;;
   -[dD]*|--mig-database)
-    #; [[-d|--mig-database] [-u]] argument fixes up : Error: Database connection "Mysql" is missing, or could not be created.
     shell_prompt "$TOPDIR/migrate-database.sh ${docker} ${runner} ${*:2}" "${cyan}Step 3. Migrate database\n${nc}" "-Y"
     break;;
   -[sS]*|-[pP]*|-[fF]*)
-    #; void --hash password known args
+    #; void --password known args
     OPTIND=1
     if [[ "$#" -gt 1 ]]; then
       arg=$2; [[ "${arg:0:1}" != '-' ]] && OPTIND=2
     fi
     shift $((OPTIND -1))
     ;;
-  -[mM]*|--submodule)
-    git submodule sync && git submodule update --init --recursive --force;;
   --help )
     printf "%s\n" "${usage[@]}"
     exit 0;;
@@ -88,11 +81,11 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   -[vV]*|--verbose )
     set -x
     echo "Passed params : ${BASH_SOURCE[*]} ${saved[*]}";;
-    *) echo "Unknown parameter passed: ${BASH_SOURCE[0]} $1"; exit 1;;
+    *) echo "Unknown parameter: ${BASH_SOURCE[0]} $1"; exit 1;;
 esac; shift; done
 #; update plugins and dependencies
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
-slogger -st sed "Cake patches"
+slogger -st sed "Cake patches $APPPATH and $SRCPATH"
 #; patches
-patches "$APPPATH/config/core.php"
+patches "$APPPATH/Config/core.php"
 patches "$SRCPATH/Console/ShellDispatcher.php" "$SRCPATH/Console/ConsoleOutput.php" 

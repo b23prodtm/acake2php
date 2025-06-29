@@ -18,7 +18,8 @@ data:
     # Open https://${SERVER_NAME}/etc/getHashPassword.php or type $ ./configure.sh -h -p pass -s salt
     # Get new staff credentials (url=/admin/index.php)
     # It's printed out in startup script
-    #- GET_HASH_PASSWORD: GETHASHPASSWORD.PHP
+    - GET_HASH_PASSWORD: Encrypt_it_with_getHashPassword_php
+    - HASH_PASSWORD: Let_us_encrypt_it_from_startup
 
     # Database name
     - MYSQL_DATABASE: Acake2php

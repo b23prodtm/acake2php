@@ -37,9 +37,9 @@ Once everything is installed, please reboot your system.
 ## Webserver configuration (Source balena.yml)
 Very few variables are defined by default. It provides host-container-server communication. Host Firewall and file attributes set to the host platform values.
   
-  		# Open https://${SERVER_NAME}/etc/getHashPassword.php or type $ ./configure.sh -h -p pass -s salt
+  		# Open https://${SERVER_NAME}/etc/getHashPassword.php or type $ ./configure.sh -p password -s hash
   		# Get new staff credentials (url=/admin/index.php)
-		- GET_HASH_PASSWORD: GETHASHPASSWORD.PHP
+                - GET_HASH_PASSWORD: (let's encrypt it from above)
   
 		# Database name
   		- MYSQL_DATABASE: aria_db
@@ -78,7 +78,8 @@ Very few variables are defined by default. It provides host-container-server com
 		- TZ: Europe/Paris
   
 ## Validate the configuration, and eventually test it:
-Argument value `--docker` was set, use it only if you are in a local docker configuration.
+Requirements: A Docker or any compatible must be installed and running.
+Argument value `--docker` set up a local docker test configuration.
 
 		./configure.sh --docker --mig-database -u -i
                 ./test-cake.sh --docker
