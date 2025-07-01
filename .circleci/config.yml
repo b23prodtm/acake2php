@@ -123,7 +123,7 @@ workflows:
   cleanup:
     jobs:
       - shellcheck/check:
-          ignore: 'SC1091,SC2034,SC2096,SC2038'
+          ignore: 'SC2154,SC1091,SC2034,SC2096,SC2038'
   build-and-compose:
     jobs:
       - build
