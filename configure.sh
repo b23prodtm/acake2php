@@ -24,7 +24,6 @@ usage=("" \
 "Usage: $0 [-r|--runner|--travis] [-c] [-p password -s hash [-f filename]]" \
 "          [-c][[-d|--mig-database] [options]]" \
 "          --runner       A test or migrate for CI self-host runner build" \
-"          -c,--const     Reset to $TOPDIR/app/webroot/php-cms/etc/constantes-template.properties" \
 "          -p,--password <password> -s <hash> [-f <save-filename>]" \
 "                         Setup administrator <password> with md5 <hash>. " \
 "                         (Optional) A filename to save a shell script export." \
@@ -37,16 +36,12 @@ saved=( "$@" )
 show_password_status "root" "MYSQL_ROOT_PASSWORD" "is configuring ${runner} ${docker}..."
 #; if the full set of the arguments exists, there won't be any prompt in the shell
 while [[ "$#" -gt 0 ]]; do case $1 in
-  -[cC]*|--const)
-    # shellcheck disable=SC2154
-    shell_prompt "$TOPDIR/Scripts/config_etc_const.sh" "${cyan}Step 1. Overwrite constantes.properties\n${nc}" "-Y"
-    ;;
   -[pP]*|--password)
     #; GET_HASH_PASSWORD
-    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -p ${*:2}" "${cyan}Step 2. Get an encrypted password.\n${nc}" "-Y"
+    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -p ${*:2}" "${cyan}Step 1. Get an encrypted password.\n${nc}" "-Y"
     shift;;
   -[dD]*|--mig-database)
-    shell_prompt "$TOPDIR/migrate-database.sh ${docker} ${runner} ${*:2}" "${cyan}Step 3. Migrate database\n${nc}" "-Y"
+    shell_prompt "$TOPDIR/migrate-database.sh ${docker} ${runner} ${*:2}" "${cyan}Step 2. Migrate database\n${nc}" "-Y"
     break;;
   -[sS]*|-[fF]*)
     #; void --password known args

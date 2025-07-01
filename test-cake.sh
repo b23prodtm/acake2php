@@ -6,7 +6,7 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 migrate="--connection=test -v -u -i"
 # default arg --docker, is enabled
 saved=( "$@" )
-config_args="-c -h -p pass -s word --development"
+config_args="-p pass -s hash --development"
 db_data="db-data:/config/databases/"
 usage=("" \
 "${cyan}Notice:${nc}The test script." \

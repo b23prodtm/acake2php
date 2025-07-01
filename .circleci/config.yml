@@ -15,7 +15,7 @@ aliases:
           && rm -rf /var/cache/apk/*
         npm install --global yarn \
         && yarn
-        npm link balena-cloud-apps
+        yarn global add balena-cloud-apps
         balena_deploy . $BALENA_ARCH --nobuild --exit
   - &deps-apt
     run:
@@ -29,7 +29,7 @@ aliases:
         && sudo rm -rf /var/lib/apt/lists/*
         sudo npm install --global yarn \
         && yarn
-        sudo npm link balena-cloud-apps
+        sudo yarn global add balena-cloud-apps
         balena_deploy . $BALENA_ARCH --nobuild --exit
   - &caches
     save_cache:

@@ -127,7 +127,7 @@ RUN chmod -R gu+xs start-cake.sh test-cake.sh deploy.sh configure.sh migrate-dat
 COPY etc /etc
 RUN chmod 0755 *.sh
 RUN ./deploy.sh ${BALENA_ARCH} --nobuild --exit \
-  && ./configure.sh --runner -a -c -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development
+  && ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development
 
 # RUN [ "cross-build-end" ]
 
