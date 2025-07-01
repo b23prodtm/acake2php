@@ -1,17 +1,6 @@
 ## Build the Docker VM images
 Docker :whale: VM or a remote fleet Balena/Kubernetes/etc.  
-A typical install script could look like the following scrip file:
-
-		#!/usr/bin/env bash
-		set -u
-		export PATH="node_modules/.bin:$PATH"
-		cd acake2php
-		git clone https://github.com/b23prodtm/acake2php.git
-		git submodule sync && git submodule update --init --recursive
-		yarn
-		./deploy.sh x86_64 --local --build-deps --docker
-
-Docker builds up a new container and pushes it in registry.
+A typical install script could look like the following script .circleci/config.yml
 It will eventually run the container as the startup script succeeds.
 
 ## Quick VM Startup
@@ -90,6 +79,9 @@ The current project is a full PHP (CakePHP) with MySQL (MariaDB) container for D
 
 ### [developers] Update the Docker deployment image
 A. Fork the master repository (development branch).
+    
+    yarn
+
 B. Rebuild image registry from deployment folder if you make change to the primary. E.g. change of Linux distribution. Edit the file deployment/images/primary/Dockerfile.template to your needs and perform a build from the a Docker client machine.
 If you make use of [Balena OS base image list](https://www.balena.io/docs/reference/base-images/base-images-ref/) repository you can use blocks to cross build for ARM ```# [ "cross-build-start" ] # [ "cross-build-end" ]``` command lines in the Dockerfile.template files:
 
