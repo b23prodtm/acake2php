@@ -78,7 +78,7 @@ However, if these files exist they will affect the behavior of the build process
   [Packagist](https://packagist.org).
 
 
-#### Node and Yarn modules 
+#### Node modules 
 
 * **package.json**
 
@@ -86,15 +86,9 @@ However, if these files exist they will affect the behavior of the build process
 
       yarn
 
-  You can install NPM/YARN helper package [balena-cloud-apps](https://www.npmjs.com/package/balena-cloud-apps).
-
-   To use it:
-   
-      npm install -g balena-cloud-apps
-   
-   or:
+  You can use sandboxed NPM/YARN helper package [balena-cloud-apps](https://www.npmjs.com/package/balena-cloud-apps).
     
-      yarn global add balena-cloud-apps
+      yarn dlx -p balena-cloud-apps balena_deploy
 
   [Classic Yarn](https://classic.yarnpkg.com/en/docs/usage)
   whenever the system complains about `balena_deploy` not found.

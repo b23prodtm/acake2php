@@ -207,13 +207,11 @@ and update the database schema:
 
     ./configure.sh --development
 
-11. Undefined functins balena_deploy or init_functions: No such file or directory
+11. Undefined functions balena_deploy or init_functions: No such file or directory
 
-  You need to export the `node_modules/.bin` for this shell to find npmjs installed binaries.
+    Use yarn with a temporary environment executable:
 
-
-    export PATH="`pwd`/node_modules/.bin:\$PATH"
-
+        yarn dlx -p balena-cloud-apps balena_deploy
 
 12. Any message "saved[@]: unbound variable" on Darwin (OSX)
 
