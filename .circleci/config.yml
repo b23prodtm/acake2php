@@ -14,7 +14,7 @@ aliases:
           && apk del build-base \
           && rm -rf /var/cache/apk/*
         yarn
-        npm install -gf balena-cloud-apps
+        npm link balena-cloud-apps
         balena_deploy . $BALENA_ARCH --nobuild --exit
   - &deps-apt
     run:
@@ -27,7 +27,7 @@ aliases:
             npm \
         && sudo rm -rf /var/lib/apt/lists/*
         yarn
-        sudo npm install -gf balena-cloud-apps
+        sudo npm link balena-cloud-apps
         balena_deploy . $BALENA_ARCH --nobuild --exit
   - &caches
     save_cache:

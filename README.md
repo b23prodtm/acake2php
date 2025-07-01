@@ -86,11 +86,10 @@ However, if these files exist they will affect the behavior of the build process
 
       yarn
 
-  You can use sandboxed NPM/YARN helper package [balena-cloud-apps](https://www.npmjs.com/package/balena-cloud-apps).
+  Install the balenaCloud helper package [balena-cloud-apps](https://www.npmjs.com/package/balena-cloud-apps).
     
-      yarn dlx -p balena-cloud-apps balena_deploy
+      sudo npm link balena-cloud-apps
 
-  [Classic Yarn](https://classic.yarnpkg.com/en/docs/usage)
   whenever the system complains about `balena_deploy` not found.
 
 * **Templates files**
