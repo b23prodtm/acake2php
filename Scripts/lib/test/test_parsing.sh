@@ -24,23 +24,6 @@ function test_parse_and_export() {
   unset P T
 }
 
-function test_parse_sql_password() {
-  args=(P "password one" "-p" "pass_one" "--foo=arg")
-  parse_sql_password "${args[@]}"
-  # shellcheck disable=SC2059
-  [ "$P" = "pass_one" ] \
-  && printf "${Z[*]}" "OK" "1° password" "$P" $OPTIND \
-  || printf "${Z[*]}" "FAILED" "1° password" "$P" $OPTIND
-
-  args=("S" "password two" "-f" "arg" "--test-sql-password=pass_two")
-  parse_sql_password "${args[@]}"
-  # shellcheck disable=SC2059
-  [ "$S" = "pass_two" ] \
-  && printf "${Z[*]}" "OK" "2° password" "$S" $OPTIND \
-  || printf "${Z[*]}" "FAILED" "2° password" "$S" $OPTIND
-  unset P S
-}
-
 function test_arg_exists() {
   args=(-d me "--open=9" --data)
   T=$(parse_arg_exists "-d" "${args[@]}")
@@ -85,7 +68,7 @@ function test_arg_trim() {
   && printf "${Z[*]}" "OK" "2° trim" "$P" $OPTIND \
   || printf "${Z[*]}" "FAILED" "2° trim" "$P" $OPTIND
 }
-test=("test_arg_exists" "test_arg" "test_arg_trim" "test_parse_and_export" "test_parse_sql_password")
+test=("test_arg_exists" "test_arg" "test_arg_trim" "test_parse_and_export")
 for t in "${test[@]}"; do
   printf "TEST CASES : %s\n" "$t" && eval "$t"
 done

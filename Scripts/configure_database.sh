@@ -4,8 +4,6 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 sqlversion="5.7"
 # shellcheck source=lib/logging.sh
 . "${TOPDIR}/Scripts/lib/logging.sh"
-# shellcheck source=lib/parsing.sh
-. "${TOPDIR}/Scripts/lib/parsing.sh"
 
 function make_migration() {
         [ "$#" -lt 1 ] && printf "Usage: %s <in-schemafile.php>" "${FUNCNAME[0]}" && exit 1

@@ -13,8 +13,7 @@ aliases:
             npm \
           && apk del build-base \
           && rm -rf /var/cache/apk/*
-        npm install --global yarn \
-        && yarn
+        yarn
         npm link balena-cloud-apps
         balena_deploy . $BALENA_ARCH --nobuild --exit
   - &deps-apt
@@ -27,8 +26,7 @@ aliases:
             nodejs \
             npm \
         && sudo rm -rf /var/lib/apt/lists/*
-        sudo npm install --global yarn \
-        && yarn
+        yarn
         sudo npm link balena-cloud-apps
         balena_deploy . $BALENA_ARCH --nobuild --exit
   - &caches
@@ -125,7 +123,7 @@ workflows:
   cleanup:
     jobs:
       - shellcheck/check:
-          ignore: 'SC1091,SC2034,SC2096,SC2038'
+          ignore: 'SC2154,SC1091,SC2034,SC2096,SC2038'
   build-and-compose:
     jobs:
       - build

@@ -5,34 +5,15 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . "${TOPDIR}/Scripts/lib/logging.sh"
 # shellcheck source=lib/shell_prompt.sh
 . "${TOPDIR}/Scripts/lib/shell_prompt.sh"
-# shellcheck source=lib/parsing.sh
-. "${TOPDIR}/Scripts/lib/parsing.sh"
 runner=$(parse_arg "-[rR]+|--runner"  "$@")
 pargs=$(parse_arg_trim "-[rR]+|--runner"  "$@")
-if [ -n "$runner" ]; then
-  slogger -st "$0" "Bootargs...: ${pargs}"
-  export CAKEPHP_DEBUG_LEVEL=1
-  # shellcheck source=bootargs.sh
-  . "${TOPDIR}/Scripts/bootargs.sh" "$@"
-else
-  slogger -st "$0" "Locally Testing values, bootargs...: ${pargs}"
-  export CAKEPHP_DEBUG_LEVEL=2
-  # shellcheck source=fooargs.sh
-  . "${TOPDIR}/Scripts/fooargs.sh" "$@"
-fi
-#;
-#; check if file etc/constantes_local.properties exist (~ ./configure.sh was run once)
-#;
-if [ ! -f "$TOPDIR/$MYPHPCMS_DIR/e13/etc/constantes.properties" ] && [ -z "$runner" ]; then
-  shell_prompt "$TOPDIR/configure.sh -c" "missing file creation constantes.properties" "${DEBIAN_FRONTEND:-}"
-fi
 slogger -st "$0" "Auto configuration..."
 #; hash file that is stored in webroot to allow administrator privileges
 if [ -z "${GET_HASH_PASSWORD:-}" ] && [ -z "$runner" ]; then
   hash="$TOPDIR/${MYPHPCMS_DIR}/e13/etc/export_hash_password.sh"
-  if [ ! -f "$hash" ]; then
-    shell_prompt "$TOPDIR/configure.sh -h " "define a value for missing GET_HASH_PASSWORD" "${DEBIAN_FRONTEND:-}"
-  fi
+  while [ ! -f "$hash" ]; do
+    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh" "define a value for missing GET_HASH_PASSWORD" "${DEBIAN_FRONTEND:-}"
+  done
   # shellcheck source=app/webroot/php-cms/e13/etc/export_hash_password.sh
   . "$hash"
 fi

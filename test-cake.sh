@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -e
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-# shellcheck source=Scripts/lib/test/parsing.sh
-. "$TOPDIR/Scripts/lib/test/parsing.sh"
+# shellcheck source=Scripts/lib/logging.sh
+. "$TOPDIR/Scripts/lib/logging.sh"
 migrate="--connection=test -v -u -i"
 # default arg --docker, is enabled
 saved=( "$@" )
-config_args="-c -h -p pass -s word --development"
+config_args="-p pass -s hash --development"
 db_data="db-data:/config/databases/"
 usage=("" \
 "${cyan}Notice:${nc}The test script." \

@@ -8,36 +8,6 @@ red="\\e[31m"
 green="\\e[32m"
 orange="\\e[33m"
 cyan="\\e[36m"
-parse_sql_password() {
-  [ $# -lt 3 ] && printf "Usage: %s <environment-variable> <description> -<arg val>|--<arg=val>\n" \
-  "${FUNCNAME[0]}" \
-  && exit 1
-  evar=$1
-  desc=$2
-  shift 2
-  # Transform long options to short ones
-  while [ "$#" -gt 0 ]; do
-      # shellcheck disable=SC2046
-      case "$1" in
-      -[pP]*|-[tT]*)
-        parse_and_export "$1" "$evar" "$desc" "${@}"
-        shift
-        ;;
-      --sql-password*) set -- $(echo "$1" \
-      | awk 'BEGIN{ FS="[ =]+" }{ print "-p " $2 }') "${@:2}"
-        parse_and_export "-p" "$evar" "$desc" "${@}"
-        shift
-        ;;
-      --test-sql-password*) set -- $(echo "$1" \
-      | awk 'BEGIN{ FS="[ =]+" }{ print "-t " $2 }') "${@:2}"
-        parse_and_export "-t" "$evar" "$desc" "${@}"
-        shift
-        ;;
-      *);;
-    esac;shift
-  done
-}
-#; export -f parse_sql_password
 parse_arg_export() {
   [ $# -lt 3 ] && printf "%s\n" \
   "Usage: ${FUNCNAME[0]} <environment-variable> <description> -<arg> <val>" \

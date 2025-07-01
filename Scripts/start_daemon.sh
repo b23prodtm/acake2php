@@ -4,8 +4,6 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=lib/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
-# shellcheck source=lib/parsing.sh
-. "$TOPDIR/Scripts/lib/parsing.sh"
 runner=$(parse_arg "-[rR]+|--runner" "$@")
 docker=$(parse_arg "--docker" "$@")
 travis=$(parse_arg "--travis" "$@")

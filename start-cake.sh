@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-# shellcheck source=Scripts/lib/test/parsing.sh
-. "$TOPDIR/Scripts/lib/parsing.sh"
+# shellcheck source=Scripts/lib/logging.sh
+. "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=Scripts/lib/test/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 command="--docker -c server -p 8000 -H 0.0.0.0"
