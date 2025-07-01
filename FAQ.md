@@ -209,9 +209,9 @@ and update the database schema:
 
 11. Undefined functions balena_deploy or init_functions: No such file or directory
 
-    Use yarn with a temporary environment executable:
+    Use npm to install helper binaries in PATH environment:
 
-        yarn dlx -p balena-cloud-apps balena_deploy
+        npm install -gf balena-cloud-apps
 
 12. Any message "saved[@]: unbound variable" on Darwin (OSX)
 

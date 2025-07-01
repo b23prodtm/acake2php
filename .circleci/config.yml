@@ -14,7 +14,8 @@ aliases:
           && apk del build-base \
           && rm -rf /var/cache/apk/*
         yarn
-        yarn dlx -p balena-cloud-apps balena_deploy . $BALENA_ARCH --nobuild --exit
+        npm install -gf balena-cloud-apps
+        balena_deploy . $BALENA_ARCH --nobuild --exit
   - &deps-apt
     run:
       name: Install dependencies
@@ -26,7 +27,8 @@ aliases:
             npm \
         && sudo rm -rf /var/lib/apt/lists/*
         yarn
-        yarn dlx -p balena-cloud-apps balena_deploy . $BALENA_ARCH --nobuild --exit
+        sudo npm install -gf balena-cloud-apps
+        balena_deploy . $BALENA_ARCH --nobuild --exit
   - &caches
     save_cache:
       key: v1-dependencies-{{ checksum "yarn.lock" }}
