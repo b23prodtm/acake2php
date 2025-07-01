@@ -89,13 +89,21 @@ Developer build continuous integration
 The current project is a full PHP (CakePHP) with MySQL (MariaDB) container for Docker-CE, or even a ```Dockerfile``` compatible container interface. We choose Circle CI because it's able to achieve full remote tests with docker :whale: before we deploy to a devices swarm. It actually can run on self hosted runners and remote runnners from .circle/config.yml configuration file presets.
 
 ### [developers] Update the Docker deployment image
-Rebuild image registry from deployment folder if you make change to the primary. E.g. change of Linux distribution. Edit the file deployment/images/primary/Dockerfile.template to your needs and perform a build from the a Docker client machine. If you make use of [Balena OS base image list](https://www.balena.io/docs/reference/base-images/base-images-ref/) repository you can use blocks to cross build for ARM ```# [ "cross-build-start" ] # [ "cross-build-end" ]``` command lines in the Dockerfile.template files. For instance, in a Terminal with Docker installed, at first dependencies may be built :
+A. Fork the master repository (development branch).
+B. Rebuild image registry from deployment folder if you make change to the primary. E.g. change of Linux distribution. Edit the file deployment/images/primary/Dockerfile.template to your needs and perform a build from the a Docker client machine.
+If you make use of [Balena OS base image list](https://www.balena.io/docs/reference/base-images/base-images-ref/) repository you can use blocks to cross build for ARM ```# [ "cross-build-start" ] # [ "cross-build-end" ]``` command lines in the Dockerfile.template files:
 
     ./deploy.sh aarch64 --local --build-deps
 
-To deploy a Raspberry Pi with Docker or Balena Cloud.
+C. With the BalenaCloud and BalenaHub service, you may see the message on build logs:
+[Error]               Error: The command 'cross-build-start' returned a non-zero code: 1:
+Run a push, even if it's unsuccessful:
 
     ./deploy.sh aarch64 --balena --push
+
+You have now disabled the cross-build environment.
+Browse up to your github master fork-repository.
+Click on Deploy with Balena in the README, choose a fleet and deploy it!
 
 ### License
    Copyright 2016-2025 www.b23prodtm.info
