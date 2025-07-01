@@ -21,8 +21,8 @@ else
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi
 usage=("" \
-"Usage: $0 [-r|--runner|--travis] [-c] [-p password -s hash [-f filename]]" \
-"          [-c][[-d|--mig-database] [options]]" \
+"Usage: $0 [-r|--runner|--travis] [-p password -s hash [-f filename]]" \
+"          [[-d|--mig-database] [options]]" \
 "          --runner       A test or migrate for CI self-host runner build" \
 "          -p,--password <password> -s <hash> [-f <save-filename>]" \
 "                         Setup administrator <password> with md5 <hash>. " \
