@@ -1,4 +1,4 @@
-k# THIS file was generated for $BALENA_ARCH %%BALENA_MACHINE_NAME%%
+# THIS file was generated for $BALENA_ARCH %%BALENA_MACHINE_NAME%%
 # Make changes to the Dockefile.template
 # Docker architecture (x86_64, armhf, aarch64 )
 ARG PRIMARY_HUB
