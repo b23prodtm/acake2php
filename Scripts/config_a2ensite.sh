@@ -3,7 +3,7 @@ set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . init_functions .
 export WWW="${1:-$TOPDIR/app/webroot}"
-export CNF="${2:-/etc/apache2}"
+export CNF="${2:-$TOPDIR/etc/apache2}"
 log_daemon_msg "Add VirtualHost $HTTPD_LISTEN ${WWW} to ${CNF}/conf.d/site.conf, ${BASH_SOURCE[0]} [www_directory:app/webroot] [site.conf_directory:/etc/apache2]"
 mkdir -p "$CNF/conf.d"
 mkdir -p "$WWW"
