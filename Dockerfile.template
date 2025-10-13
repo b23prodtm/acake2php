@@ -1,4 +1,4 @@
-# THIS file was generated for $BALENA_ARCH %%BALENA_MACHINE_NAME%%
+k# THIS file was generated for $BALENA_ARCH %%BALENA_MACHINE_NAME%%
 # Make changes to the Dockefile.template
 # Docker architecture (x86_64, armhf, aarch64 )
 ARG PRIMARY_HUB
@@ -124,7 +124,7 @@ RUN chmod -R gu+xs start-cake.sh test-cake.sh deploy.sh configure.sh migrate-dat
 # RUN cat app/webroot/php-cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
 
 # just containers configuration
-RUN mkdir -p /etc/apache2/conf.d
+RUN mkdir -p /etc/apache2 && mkdir -p /etc/apache2/conf.d
 COPY etc/apache2/conf.d/* /etc/apache2/conf.d/.
 RUN mkdir -p /etc/service.d/apache
 COPY etc/service.d/apache/* /etc/service.d/apache/.
