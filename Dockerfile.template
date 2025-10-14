@@ -129,7 +129,7 @@ RUN ./deploy.sh ${BALENA_ARCH} --nobuild --exit \
   && ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development
 
 COPY etc/apache2 /etc/.
-COPY etc/service.d/apache /etc/service.d/.
+COPY etc/services.d/apache /etc/services.d/.
 
 # RUN [ "cross-build-end" ]
 
