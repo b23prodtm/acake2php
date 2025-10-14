@@ -5,8 +5,9 @@ ARG PRIMARY_HUB
 # Primary image is a Linux PHP with Apache 2 server pre-installed
 FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${PRIMARY_TAG:-latest-x86_64}
 
-#ENV INITSYSTEM off
-#ENV UDEV off
+ENV INITSYSTEM off
+ENV UDEV off
+
 # ----------------------
 # About Dockerfile ARGS:
 # ALL the following ARGS are DUPLICATED in common.env and $BALENA_ARCH.env
@@ -126,5 +127,5 @@ RUN printf "TO LOGIN INSIDE 'ACAKE2PHP' CONTAINER: \n"
 RUN printf "docker exec -it \$(docker ps | grep acake2php | awk {'printf \$1'}) bash \n"
 
 ENTRYPOINT ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
-  && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test && /init
+  && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
 EXPOSE 80 443
