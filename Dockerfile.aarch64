@@ -106,8 +106,10 @@ ENV PATH "${PATH}:/var/www/localhost/htdocs/bin"
 # Configure the application
 WORKDIR /var/www/localhost/htdocs/
 
-# Copy the scripts code inside the image
+# Copy the code inside the image root
 COPY . .
+COPY etc/apache2 /etc/.
+COPY etc/services.d/apache /etc/services.d/.
 
 
 # Password Hash Verbosity (MAYBE SECURITY LACK)
@@ -118,8 +120,6 @@ RUN chmod 0755 *.sh && chmod 0755 Scripts/*.sh
 RUN Scripts/update-templates.sh || true
 RUN ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development
 
-COPY etc/apache2 /etc/.
-COPY etc/services.d/apache /etc/services.d/.
 
 RUN [ "cross-build-end" ]
 RUN printf "TO LOGIN INSIDE 'ACAKE2PHP' CONTAINER: \n"
