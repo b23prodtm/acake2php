@@ -126,6 +126,9 @@ RUN [ "cross-build-end" ]
 RUN printf "TO LOGIN INSIDE 'ACAKE2PHP' CONTAINER: \n"
 RUN printf "docker exec -it \$(docker ps | grep acake2php | awk {'printf \$1'}) bash \n"
 
-ENTRYPOINT ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
-  && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
+RUN ./migrate-database.sh -r -i -u ${MIGRATE_OPTION}
+RUN ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
+
+ENTRYPOINT /init
+
 EXPOSE 80 443
