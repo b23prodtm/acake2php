@@ -69,7 +69,7 @@ ARG HASH_PASSWORD
 ENV HASH_PASSWORD ${HASH_PASSWORD:-'password'}
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
-RUN [ "cross-build-start" ]
+# RUN [ "cross-build-start" ]
 RUN install_packages \
     git \
     openssh-client \
@@ -121,7 +121,7 @@ RUN Scripts/update-templates.sh || true
 RUN ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development
 
 
-RUN [ "cross-build-end" ]
+# RUN [ "cross-build-end" ]
 RUN printf "TO LOGIN INSIDE 'ACAKE2PHP' CONTAINER: \n"
 RUN printf "docker exec -it \$(docker ps | grep acake2php | awk {'printf \$1'}) bash \n"
 
