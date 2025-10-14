@@ -108,8 +108,8 @@ WORKDIR /var/www/localhost/htdocs/
 
 # Copy the code inside the image root
 COPY . .
-COPY etc/apache2 /etc/.
-COPY etc/services.d/apache /etc/services.d/.
+COPY etc/apache2 /etc/apache2
+COPY etc/services.d/apache /etc/services.d/apache
 
 
 # Password Hash Verbosity (MAYBE SECURITY LACK)
