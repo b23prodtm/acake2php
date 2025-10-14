@@ -5,9 +5,6 @@ ARG PRIMARY_HUB
 # Primary image is a Linux PHP with Apache 2 server pre-installed
 FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${PRIMARY_TAG:-latest-aarch64}
 
-ENV INITSYSTEM off
-ENV UDEV off
-
 # ----------------------
 # About Dockerfile ARGS:
 # ALL the following ARGS are DUPLICATED in common.env and $BALENA_ARCH.env
@@ -109,9 +106,7 @@ WORKDIR /var/www/localhost/htdocs/
 
 # Copy the code inside the image root
 COPY . .
-COPY etc/apache2 /etc/apache2
-COPY etc/services.d/apache /etc/services.d/apache
-
+COPY etc /etc
 
 # Password Hash Verbosity (MAYBE SECURITY LACK)
 # RUN cat app/webroot/php-cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
@@ -126,9 +121,8 @@ RUN [ "cross-build-end" ]
 RUN printf "TO LOGIN INSIDE 'ACAKE2PHP' CONTAINER: \n"
 RUN printf "docker exec -it \$(docker ps | grep acake2php | awk {'printf \$1'}) bash \n"
 
-RUN ./migrate-database.sh -r -i -u ${MIGRATE_OPTION}
-RUN ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
-
-ENTRYPOINT /init
+ENTRYPOINT ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
+&& ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test \
+&& /init
 
 EXPOSE 80 443
