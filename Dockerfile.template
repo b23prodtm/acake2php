@@ -5,8 +5,8 @@ ARG PRIMARY_HUB
 # Primary image is a Linux PHP with Apache 2 server pre-installed
 FROM ${PRIMARY_HUB:-%%PRIMARY_HUB%%}:${PRIMARY_TAG:-%%PRIMARY_TAG%%}
 
-ENV INITSYSTEM off
-ENV UDEV off
+#ENV INITSYSTEM off
+#ENV UDEV off
 # ----------------------
 # About Dockerfile ARGS:
 # ALL the following ARGS are DUPLICATED in common.env and $BALENA_ARCH.env
@@ -88,14 +88,6 @@ RUN install_packages \
     gettext
     # libicu libicu-dev
 
-WORKDIR /usr/src/
-
-COPY vagrant-shell.sh .
-RUN chmod 0755 vagrant-shell.sh
-RUN ./vagrant-shell.sh php-settings-update extension memcached.so \
- && ./vagrant-shell.sh php-settings-update session.save_handler memcached \
- && ./vagrant-shell.sh php-settings-update session.save_path '127.0.0.1:11211,127.0.0.1:11212'
-
 WORKDIR /var/www/localhost/htdocs/
 
 # Copy the app source code inside the image
@@ -118,12 +110,12 @@ WORKDIR /var/www/localhost/htdocs/
 COPY . .
 
 
-# Password Hash Verbose
+# Password Hash Verbosity (MAYBE SECURITY LACK)
 # RUN cat app/webroot/php-cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
 
 # just containers configuration
 RUN chmod 0755 *.sh && chmod 0755 Scripts/*.sh
-RUN Scripts/update-templates.sh
+RUN Scripts/update-templates.sh || true
 RUN ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development
 
 COPY etc/apache2 /etc/.

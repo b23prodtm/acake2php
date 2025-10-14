@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 set -eu
+
+# Fixes env variables unset
+DOCKER_USER="${DOCKER_USER:-betothreeprod}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0
+
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 APPPATH="app"
 SRCPATH="app/vendor/cakephp/cakephp/src"
