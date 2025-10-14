@@ -5,8 +5,9 @@ ARG PRIMARY_HUB
 # Primary image is a Linux PHP with Apache 2 server pre-installed
 FROM ${PRIMARY_HUB:-%%PRIMARY_HUB%%}:${PRIMARY_TAG:-%%PRIMARY_TAG%%}
 
-#ENV INITSYSTEM off
-#ENV UDEV off
+ENV INITSYSTEM off
+ENV UDEV off
+
 # ----------------------
 # About Dockerfile ARGS:
 # ALL the following ARGS are DUPLICATED in common.env and $BALENA_ARCH.env
