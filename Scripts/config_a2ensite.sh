@@ -3,7 +3,7 @@ set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . init_functions .
 WWW="${1:-$TOPDIR/app/webroot}"
-CNF="${2:-$TOPDIR/etc/apache2}"
+CNF="${2:-/etc/apache2}"
 log_daemon_msg "Shell call : $0 $@ ${WWW} host ${CNF}/conf.d/site.conf}"
 envsubst < "${CNF}/site.tpl" > "${CNF}/conf.d/site.conf"
 log_daemon_msg "SSL VirtualHost (not set)"
