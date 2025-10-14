@@ -127,5 +127,5 @@ RUN printf "TO LOGIN INSIDE 'ACAKE2PHP' CONTAINER: \n"
 RUN printf "docker exec -it \$(docker ps | grep acake2php | awk {'printf \$1'}) bash \n"
 
 ENTRYPOINT ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
-  && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test && /init
+  && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
 EXPOSE 80 443
