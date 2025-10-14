@@ -69,7 +69,7 @@ ARG HASH_PASSWORD
 ENV HASH_PASSWORD ${HASH_PASSWORD:-'password'}
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
-# RUN [ "cross-build-start" ]
+RUN [ "cross-build-start" ]
 RUN install_packages \
     git \
     openssh-client \
@@ -117,21 +117,19 @@ WORKDIR /var/www/localhost/htdocs/
 # Copy the scripts code inside the image
 COPY . .
 
-# Change mode of bash Scripts
-RUN chmod -R gu+xs start-cake.sh test-cake.sh deploy.sh configure.sh migrate-database.sh Scripts/
 
 # Password Hash Verbose
 # RUN cat app/webroot/php-cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
 
 # just containers configuration
-RUN chmod 0755 *.sh
-RUN ./deploy.sh ${BALENA_ARCH} --nobuild --exit \
-  && ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development
+RUN chmod 0755 *.sh && chmod 0755 Scripts/*.sh
+RUN Scripts/update-templates.sh
+RUN ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development
 
 COPY etc/apache2 /etc/.
 COPY etc/services.d/apache /etc/services.d/.
 
-# RUN [ "cross-build-end" ]
+RUN [ "cross-build-end" ]
 
 ENTRYPOINT ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
   && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test && /init
