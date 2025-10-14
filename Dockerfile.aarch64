@@ -5,8 +5,6 @@ ARG PRIMARY_HUB
 # Primary image is a Linux PHP with Apache 2 server pre-installed
 FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${PRIMARY_TAG:-latest-aarch64}
 
-ENV INITSYSTEM off
-ENV UDEV off
 # ----------------------
 # About Dockerfile ARGS:
 # ALL the following ARGS are DUPLICATED in common.env and $BALENA_ARCH.env
@@ -39,12 +37,10 @@ ENV PUID ${PUID:-0}
 ARG PGID
 ENV PGID ${PGID:-0}
 # Must own the ip address
-ARG HTTPD_LISTEN
-ENV HTTPD_LISTEN ${HTTPD_LISTEN:-'*:80'}
+ARG HTTP_PORT
+ENV HTTP_PORT ${HTTP_PORT:-'80'}
 ARG SSL_PORT
 ENV SSL_PORT ${SSL_PORT:-'443'}
-ARG HTTPD_LISTEN_SSL
-ENV HTTPD_LISTEN_SSL ${HTTPD_LISTEN_SSL:-'*:443'}
 # Enable migrate-database.sh options
 ARG MIGRATE_OPTION
 ENV MIGRATE_OPTION ${MIGRATE_OPTION:-'-v'}
@@ -67,6 +63,8 @@ ARG MYSQL_PASSWORD
 ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'maria-abc'}
 ARG HASH_PASSWORD
 ENV HASH_PASSWORD ${HASH_PASSWORD:-'password'}
+ARG HTDOCS
+ENV HTDOCS /var/www/localhost/htdocs
 # Use the default production configuration
 #COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 RUN [ "cross-build-start" ]
@@ -88,15 +86,7 @@ RUN install_packages \
     gettext
     # libicu libicu-dev
 
-WORKDIR /usr/src/
-
-COPY vagrant-shell.sh .
-RUN chmod 0755 vagrant-shell.sh
-RUN ./vagrant-shell.sh php-settings-update extension memcached.so \
- && ./vagrant-shell.sh php-settings-update session.save_handler memcached \
- && ./vagrant-shell.sh php-settings-update session.save_path '127.0.0.1:11211,127.0.0.1:11212'
-
-WORKDIR /var/www/localhost/htdocs/
+WORKDIR ${HTDOCS}
 
 # Copy the app source code inside the image
 COPY app app
@@ -108,29 +98,29 @@ COPY yarn.lock .
 RUN yarn && npm link balena-cloud-apps
 
 # Add cake and composer command to system path
-ENV PATH "${PATH}:/var/www/localhost/htdocs/app/bin"
-ENV PATH "${PATH}:/var/www/localhost/htdocs/bin"
+ENV PATH "${PATH}:${HTDOCS}/app/bin"
+ENV PATH "${PATH}:${HTDOCS}/bin"
 
-# Configure the application
-WORKDIR /var/www/localhost/htdocs/
-
-# Copy the scripts code inside the image
+# Copy the code inside the image root
 COPY . .
+COPY etc /etc
 
-
-# Password Hash Verbose
+# Password Hash Verbosity (MAYBE SECURITY LACK)
 # RUN cat app/webroot/php-cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
 
 # just containers configuration
 RUN chmod 0755 *.sh && chmod 0755 Scripts/*.sh
-RUN Scripts/update-templates.sh
+RUN Scripts/update-templates.sh || true
+
+# configure server variables
 RUN ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development
 
-COPY etc/apache2 /etc/.
-COPY etc/services.d/apache /etc/services.d/.
-
 RUN [ "cross-build-end" ]
+RUN printf "TO LOGIN INSIDE 'ACAKE2PHP' CONTAINER: \n"
+RUN printf "docker exec -it \$(docker ps | grep acake2php | awk {'printf \$1'}) bash \n"
 
 ENTRYPOINT ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
-  && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test && /init
+&& ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test \
+&& /init
+
 EXPOSE 80 443
