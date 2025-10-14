@@ -103,7 +103,7 @@ ENV PATH "${PATH}:${HTDOCS}/bin"
 
 # Copy the code inside the image root
 COPY . .
-COPY etc etc
+COPY etc /etc
 
 # Password Hash Verbosity (MAYBE SECURITY LACK)
 # RUN cat app/webroot/php-cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
@@ -111,13 +111,9 @@ COPY etc etc
 # just containers configuration
 RUN chmod 0755 *.sh && chmod 0755 Scripts/*.sh
 RUN Scripts/update-templates.sh || true
-# import server configuration
-COPY /etc/apache2 etc/apache2
+
 # configure server variables
 RUN ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development
-# export configuration
-COPY etc /etc
-
 
 # RUN [ "cross-build-end" ]
 RUN printf "TO LOGIN INSIDE 'ACAKE2PHP' CONTAINER: \n"
