@@ -4,9 +4,9 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . init_functions .
 WWW="${1:-$TOPDIR/app/webroot}"
 CNF="${2:-$TOPDIR/etc/apache2}"
-log_daemon_msg "Add VirtualHost $HTTPD_LISTEN ${WWW} with ${CNF}/conf.d/site.conf, ${BASH_SOURCE[0]} [www_directory:app/webroot] [site.conf_directory:/etc/apache2]"
+log_daemon_msg "Shell call : $0 $@ ${WWW} host ${CNF}/conf.d/site.conf}"
 envsubst < "${CNF}/site.tpl" > "${CNF}/conf.d/site.conf"
-log_daemon_msg "SSL VirtualHost"
+log_daemon_msg "SSL VirtualHost (not set)"
 envsubst < "${CNF}/ssl_site.tpl" > "${CNF}/conf.d/ssl_site.conf"
 log_daemon_msg "Enable mod_rewrite"
 if [ -f "${CNF}/httpd.conf" ]; then
