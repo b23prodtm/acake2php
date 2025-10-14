@@ -2,7 +2,7 @@
     AllowOverride All
     Require all denied
 </Directory>
-<VirtualHost ${HTTPD_LISTEN}>
+<VirtualHost *:${HTTP_PORT}>
     DocumentRoot ${WWW}
     ServerAdmin webmaster@${SERVER_NAME}
     ServerName ${SERVER_NAME}
