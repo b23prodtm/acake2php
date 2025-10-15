@@ -1,4 +1,4 @@
-<VirtualHost ${HTTPD_LISTEN_SSL}>
+<VirtualHost ${SSL_PORT}>
     DocumentRoot ${WWW}
     ServerAdmin webmaster@${SERVER_NAME}
     ServerName ${SERVER_NAME}:${SSL_PORT}
