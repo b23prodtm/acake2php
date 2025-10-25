@@ -42,7 +42,7 @@ orbs:
 jobs:
   build:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    # resource_class: b23prodtm/linux
+    resource_class: b23prodtm/linux
     docker:
       - image: betothreeprod/apache-php7:latest-x86_64
       - image: betothreeprod/mysqldb:latest-x86_64
@@ -97,7 +97,7 @@ jobs:
           when: always
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    #resource_class: b23prodtm/linux
+    resource_class: b23prodtm/linux
     docker:
       - image: cimg/aws:2025.01
     shell: /bin/bash -leo pipefail
