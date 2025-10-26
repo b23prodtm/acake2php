@@ -2,8 +2,9 @@
 # Make changes to the Dockefile.template
 # Docker architecture (x86_64, armhf, aarch64 )
 ARG PRIMARY_HUB
+ARG PRIMARY_TAG
 # Primary image is a Linux PHP with Apache 2 server pre-installed
-FROM ${PRIMARY_HUB:-betothreeprod/apache-php7}:${PRIMARY_TAG:-latest-aarch64}
+FROM ${PRIMARY_HUB:-library/php}:${PRIMARY_TAG:-7.4.33-alpine3.15}
 
 # ----------------------
 # About Dockerfile ARGS:
@@ -64,38 +65,53 @@ ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'maria-abc'}
 ARG HASH_PASSWORD
 ENV HASH_PASSWORD ${HASH_PASSWORD:-'password'}
 ARG HTDOCS
-ENV HTDOCS /var/www/localhost/htdocs
-# Use the default production configuration
-#COPY $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
-RUN [ "cross-build-start" ]
-RUN install_packages \
-    git \
-    openssh-client \
-    tar \
-    gzip \
-    ca-certificates \
-    zip \
-    unzip \
-    mariadb-client \
-    yarn
+ENV HTDOCS /var/www/htdocs/localhost
 
-RUN install_packages \
-    memcached \
-    libmemcached-dev \
-    php7-pecl-xdebug \
-    gettext
-    # libicu libicu-dev
+## Install base packages
+RUN apk add \
+    apache2 \
+    apache2-ctl \
+    apache2-ssl \
+    curl
 
+RUN apk del build-base \
+    && rm -rf /var/cache/apk/*
+
+# COPY apache site.conf file
+RUN envsubst < etc/apache2/site.conf > /etc/apache2/sites-available/000-default.conf
+
+# COPY apache site.conf file
+RUN envsubst < etc/apache2/site_ssl.conf /etc/apache2/sites-available/000-ssl.conf
+
+# Stream apache logs to standard outputs
+RUN ln -sf /dev/stdout /var/log/apache2/access.log && \
+    ln -sf /dev/stderr /var/log/apache2/error.log
+
+# Set default working directory
 WORKDIR ${HTDOCS}
 
-# Copy the app source code inside the image
-COPY app app
+# Create tmp directory and make it writable by the web server
+RUN mkdir -p \
+    app/tmp/cache/models \
+    app/tmp/cache/persistent \
+  && chown -R :www-data \
+    app/tmp \
+  && chmod -R 770 \
+    app/tmp
+
+RUN pecl install redis-5.3.7 \
+	&& pecl install xdebug-3.2.1 \
+	&& docker-php-ext-enable redis xdebug
+
+RUN apk add \
+    libmemcached-dev \
+    libssl-dev \
+    zlib1g-dev \
+	&& pecl install memcached-3.2.0 \
+	&& docker-php-ext-enable memcached
 
 COPY package.json .
 COPY yarn.lock .
-
-# Helper packages (just a long node process...)
-RUN yarn && npm link balena-cloud-apps
 
 # Add cake and composer command to system path
 ENV PATH "${PATH}:${HTDOCS}/app/bin"
@@ -103,24 +119,33 @@ ENV PATH "${PATH}:${HTDOCS}/bin"
 
 # Copy the code inside the image root
 COPY . .
-COPY etc /etc
 
+RUN chmod 0755 *.sh && chmod 0755 Scripts/*.sh
 # Password Hash Verbosity (MAYBE SECURITY LACK)
 # RUN cat app/webroot/php-cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
 
-# just containers configuration
-RUN chmod 0755 *.sh && chmod 0755 Scripts/*.sh
+# Download Node.js 18 (balenalib compatible)
+RUN Scripts/nodejs-install.sh
+
+# Helper packages (just a long node process...)
+RUN yarn && npm link balena-cloud-apps
+
 RUN Scripts/update-templates.sh || true
 
 # configure server variables
 RUN ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development
 
-RUN [ "cross-build-end" ]
 RUN printf "TO LOGIN INSIDE 'ACAKE2PHP' CONTAINER: \n"
 RUN printf "docker exec -it \$(docker ps | grep acake2php | awk {'printf \$1'}) bash \n"
 
-ENTRYPOINT ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
+RUN ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
 && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test \
-&& /init
 
+# Expose the ports for apache
 EXPOSE 80 443
+
+# Enable Apache modules and restart
+RUN a2enmod rewrite \
+  && service apache2 restart
+
+ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]
