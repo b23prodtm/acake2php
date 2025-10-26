@@ -77,11 +77,14 @@ RUN apk add \
 RUN apk del build-base \
     && rm -rf /var/cache/apk/*
 
-# COPY apache site.conf file
-RUN envsubst < etc/apache2/site.conf > /etc/apache2/site.conf
+# Copy the code inside the image root
+COPY . .
 
 # COPY apache site.conf file
-RUN envsubst < etc/apache2/site_ssl.conf /etc/apache2/site_ssl.conf
+RUN envsubst < etc/apache2/site.conf > /etc/apache2/sites-available/000-default.conf
+
+# COPY apache site.conf file
+RUN envsubst < etc/apache2/site_ssl.conf > /etc/apache2/sites-available/000-ssl.conf
 
 # Stream apache logs to standard outputs
 RUN ln -sf /dev/stdout /var/log/apache2/access.log && \
@@ -110,15 +113,9 @@ RUN apk add \
 	&& pecl install memcached-3.2.0 \
 	&& docker-php-ext-enable memcached
 
-COPY package.json .
-COPY yarn.lock .
-
 # Add cake and composer command to system path
 ENV PATH "${PATH}:${HTDOCS}/app/bin"
 ENV PATH "${PATH}:${HTDOCS}/bin"
-
-# Copy the code inside the image root
-COPY . .
 
 RUN chmod 0755 *.sh && chmod 0755 Scripts/*.sh
 # Password Hash Verbosity (MAYBE SECURITY LACK)
