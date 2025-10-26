@@ -44,7 +44,7 @@ RUN install-php-extensions \
     tokenizer \
     simplexml \
     xmlwriter \
-    fpm \
+    #fpm \
     zlib
 
 # Install composer
