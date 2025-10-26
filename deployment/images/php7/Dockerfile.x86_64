@@ -1,112 +1,63 @@
-#
-# Source DockerFile:  https://github.com/ulsmith/rpi-raspbian-apache-php/blob/master/Dockerfile
-# S6 Overlay:         https://github.com/smebberson/docker-alpine/blob/master/alpine-apache/Dockerfile
-#
-FROM balenalib/intel-nuc-alpine-node:18-3.15-build
-# RUN [ "cross-build-start" ]
-ARG PHP_LIB
-ENV PHP_LIB ${PHP_LIB:-7}
-ARG BALENA_ARCH
-ENV S6_ARCH ${BALENA_ARCH:-x86_64}
 
-## Install add-apt-repository packages
+FROM php:7.4.33-fpm-alpine3.15
+
+ARG HTDOCS
+ENV HTDOCS /var/www/htdocs/localhost
+
+# Use the default production configuration
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
 RUN apk update \
     && apk add \
-    bash \
-    sudo \
-    curl \
     git \
-    openssh-client \
-    tar \
-    gzip \
-    ca-certificates \
     zip \
     unzip \
-    icu-dev \
-    libmcrypt-dev \
-    freetype-dev \
-    libjpeg-turbo-dev \
-    libpng-dev \
-    netcat-openbsd
-
-RUN apk add \
-    php${PHP_LIB} \
-    php${PHP_LIB}-curl \
-    php${PHP_LIB}-gd \
-    php${PHP_LIB}-intl \
-    php${PHP_LIB}-json \
-    php${PHP_LIB}-mbstring \
-    php${PHP_LIB}-opcache \
-    php${PHP_LIB}-openssl \
-    php${PHP_LIB}-pcntl \
-    php${PHP_LIB}-xml \
-    php${PHP_LIB}-mysqlnd \
-    php${PHP_LIB}-phar \
-    php${PHP_LIB}-mysqli \
-    php${PHP_LIB}-pdo_mysql \
-    php${PHP_LIB}-dom \
-    php${PHP_LIB}-tokenizer \
-    php${PHP_LIB}-simplexml \
-    php${PHP_LIB}-xmlwriter \
-    php${PHP_LIB}-fpm \
-    php${PHP_LIB}-zlib \
-    mariadb-client 
-
-## Install base packages
-RUN apk add \
-    apache2 \
-    apache2-ctl \
-    apache2-ssl \
-    php${PHP_LIB}-dev \
-    php${PHP_LIB}-apache2 \
-    curl \
-    php${PHP_LIB}-odbc \
-    php${PHP_LIB}-pdo_sqlite \
-    php${PHP_LIB}-sqlite3
-
-RUN apk del build-base \
-    && rm -rf /var/cache/apk/*
-
-# Backup default instance
-RUN mkdir -p /etc/apache2/conf-available/ \
-  && cp /etc/apache2/*.conf /etc/apache2/conf-available/
-
-# just containers configuration
-COPY etc /etc
- 
-# Expose the ports for apache
-EXPOSE 80 443
-
-# Stream apache logs to standard outputs
-RUN ln -sf /dev/stdout /var/log/apache2/access.log && \
-    ln -sf /dev/stderr /var/log/apache2/error.log
-
-# ADD S6 Overlay
-ARG S6_OVERLAY_VERSION=3.2.0.2
-
-RUN apk update \
-    && apk add \
-               nginx \
-               xz \
+    mariadb-client \
+    nginx \
+    xz \
     && apk del build-base \
     && rm -rf /var/cache/apk/*
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 CMD ["/usr/sbin/nginx"]
 
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-symlinks-noarch.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-${S6_ARCH}.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-symlinks-arch.tar.xz
+COPY php-ini-overrides.ini /etc/php/7.4.33/fpm/conf.d/99-overrides.ini
 
-ENV UDEV on
+# Enable PHP extensions
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-ADD "https://raw.githubusercontent.com/b23prodtm/docker-systemctl-replacement/master/files/docker/systemctl3.py" /bin/systemctl
-RUN chmod g+xs /bin/systemctl
+RUN install-php-extensions \
+    dev \
+    odbc \
+    curl \
+    gd \
+    intl \
+    json \
+    mbstring \
+    opcache \
+    openssl \
+    pcntl \
+    xml \
+    mysqlnd \
+    phar \
+    mysqli \
+    pdo_mysql \
+    dom \
+    tokenizer \
+    simplexml \
+    xmlwriter \
+    fpm \
+    zlib
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+
+# php-fpm configuration
+COPY etc/php-fpm.d /etc/php-fpm.d
+
+RUN useradd -d ${HTDOCS} -s /sbin/nologin -g apache cakephp
+RUN useradd -d ${HTDOCS} -s /sbin/nologin -g apache cakephp_ssl
+
+# Download Node.js 18 (balenalib compatible)
+RUN Scripts/nodejs-install.sh
 
 RUN node -v && npm -v
-ENTRYPOINT ["/init"]
-# RUN [ "cross-build-end" ]
