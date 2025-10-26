@@ -29,8 +29,8 @@ services:
       - common.env
       - .env
     build:
-      context: .
-      dockerfile: deployment/images/php7/Dockerfile.armhf
+      context: deployment/images/php7
+      dockerfile: Dockerfile.armhf
     volumes:
       - localtime:/etc/localtime:ro
       - app:/var/www/htdocs/localhost/app
