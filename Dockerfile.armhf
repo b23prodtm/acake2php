@@ -1,13 +1,12 @@
 # THIS file was generated for $BALENA_ARCH raspberrypi3
 # Make changes to the Dockefile.template
 # Docker architecture (x86_64, armhf, aarch64 )
-ARG NODE_VERSION=18
-ARG ALPINE_VERSION=3.15
+ARG NODE_VERSION
+ENV NODE_VERSION ${NODE_VERSION:-18}
+ARG ALPINE_VERSION
+ENV ALPINE_VERSION ${ALPINE_VERSION:-3.15}
 
-ARG PRIMARY_HUB
-ARG PRIMARY_TAG
-# edit armhf.env file to select docker image
-FROM ${PRIMARY_HUB:-library/php}:${PRIMARY_TAG:-7.4.33-alpine3.15}
+FROM php:7.4.33-alpine${ALPINE_VERSION}
 
 # ----------------------
 # About Dockerfile ARGS:
