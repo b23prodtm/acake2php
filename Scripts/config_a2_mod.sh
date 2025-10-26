@@ -10,7 +10,7 @@ load () {
     library="$2"
     file="${CNF}/$3"
     if [ -f "$file" ]; then
-        sed -i.old -E -e "/$library/s/^#+"$directive"//g" "$file"
+        sed -i.old -E -e "/$library/s/^#+${directive}//g" "$file"
         grep "$library" < "$file"
     else
         log_warning_msg "APACHE2 SERVER CONFIG: $file file not found"
@@ -46,7 +46,7 @@ load_module "mod_rewrite.so"
 load_module "mod_mpm_event.so"
 unload_module "mod_php${PHP_LIB_MAJOR}.so"
 unload "DirectoryIndex" "index.html" "php${PHP_LIB_MAJOR}-module.conf"
-unload "FilesMatch" ".php" "php${PHP_LIB_MAJOR}-module.conf" ",+3d"
+unload "<FilesMatch" ".php" "php${PHP_LIB_MAJOR}-module.conf" ",+3d"
 
 log_daemon_msg "Add /etc/hosts $SERVER_NAME"
 if [ -w "/etc/hosts" ]; then
