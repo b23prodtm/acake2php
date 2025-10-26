@@ -26,7 +26,6 @@ COPY php-ini-overrides.ini /etc/php/7.4.33/fpm/conf.d/99-overrides.ini
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 RUN install-php-extensions \
-    dev \
     odbc \
     curl \
     gd \
