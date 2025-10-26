@@ -4,23 +4,10 @@
 ARG NODE_VERSION=18
 ARG ALPINE_VERSION=3.15
 
-FROM node:${NODE_VERSION}-alpine AS node
-
 ARG PRIMARY_HUB
 ARG PRIMARY_TAG
 # edit %%BALENA_ARCH%%.env file to select docker image
 FROM ${PRIMARY_HUB:-%%PRIMARY_HUB%%}:${PRIMARY_TAG:-%%PRIMARY_TAG%%}
-
-COPY --from=node /usr/lib /usr/lib
-COPY --from=node /usr/local/lib /usr/local/lib
-COPY --from=node /usr/local/include /usr/local/include
-COPY --from=node /usr/local/bin /usr/local/bin
-
-RUN node -v
-
-RUN npm install -g yarn --force
-
-RUN yarn -v
 
 # ----------------------
 # About Dockerfile ARGS:
@@ -143,6 +130,12 @@ ENV PATH "${PATH}:${HTDOCS}/bin"
 RUN chmod 0755 *.sh && chmod 0755 Scripts/*.sh
 # Password Hash Verbosity (MAYBE SECURITY LACK)
 # RUN cat app/webroot/php-cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
+
+# node JS install
+RUN chmod +x Scripts/*.sh 
+RUN chmod +x deployment/images/php7/Scripts/*.sh
+RUN deployment/images/php7/Scripts/nodejs-install.sh
+RUN node -v && npm -v && yarn -v
 
 # Helper packages (just a long node process...)
 RUN yarn && npm link balena-cloud-apps
