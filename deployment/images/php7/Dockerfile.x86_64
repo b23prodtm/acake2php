@@ -29,13 +29,10 @@ RUN apk update \
     git \
     zip \
     unzip \
-    mariadb-client \
-    nginx \
-    xz \
-    && apk del build-base \
+    mariadb-client
+
+RUN apk del build-base \
     && rm -rf /var/cache/apk/*
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
-CMD ["/usr/sbin/nginx"]
 
 COPY php-ini-overrides.ini /etc/php/7.4.33/fpm/conf.d/99-overrides.ini
 
