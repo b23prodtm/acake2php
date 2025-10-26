@@ -1,18 +1,35 @@
 ARG NODE_VERSION   
 ENV NODE_VERSION ${NODE_VERSION:-"18"}
+
+ARG HTDOCS
+ENV HTDOCS /var/www/htdocs/localhost
+
+# Use multi-stage build for Node.js
+FROM node:${NODE_VERSION}-alpine as node-builder
+
+RUN mkdir -p ${HTDOCS}
+WORKDIR ${HTDOCS}
+
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+
 ARG ALPINE_VERSION
 ENV ALPINE_VERSION ${ALPINE_VERSION:-"3.15"}
 
 FROM php:7.4.33-fpm-alpine${ALPINE_VERSION}
 
-ARG HTDOCS
-ENV HTDOCS /var/www/htdocs/localhost
+# Copy Node.js dependencies from builder
+COPY --from=node-builder node_modules node_modules
+
+# Add non-root user
+RUN addgroup -S www-data && adduser -h ${HTDOCS} -S www-data -G www-data -u ${PUID} -D
+USER www-data
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 RUN apk update \
-    && apk add \
+    && apk add --no-cache \
     python3 \
     bash \
     git \
@@ -56,12 +73,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 # php-fpm configuration install
 COPY etc/php-fpm.d /etc/php-fpm.d
 
-# mkdir localhost web server folder for apache2 itself
-RUN mkdir -p ${HTDOCS}
-RUN adduser -h ${HTDOCS} -s /sbin/nologin -g apache -D apache
-
 # node JS install
-COPY Scripts Scripts
-RUN chmod +x Scripts/*.sh
-RUN Scripts/nodejs-install.sh
+#COPY Scripts Scripts
+#RUN chmod +x Scripts/*.sh
+#RUN Scripts/nodejs-install.sh
+
 RUN node -v && npm -v
