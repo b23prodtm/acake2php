@@ -69,6 +69,7 @@ ENV HTDOCS /var/www/htdocs/localhost
 
 ## Install base packages
 RUN apk add \
+    bash \
     envsubst \
     apache2 \
     apache2-ctl \
