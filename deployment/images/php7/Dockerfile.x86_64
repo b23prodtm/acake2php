@@ -53,8 +53,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 # php-fpm configuration
 COPY etc/php-fpm.d /etc/php-fpm.d
 
-RUN useradd -d ${HTDOCS} -s /sbin/nologin -g apache cakephp
-RUN useradd -d ${HTDOCS} -s /sbin/nologin -g apache cakephp_ssl
+RUN adduser -h ${HTDOCS} -s /sbin/nologin -g apache cakephp
+RUN adduser -h ${HTDOCS} -s /sbin/nologin -g apache cakephp_ssl
 
 # Download Node.js 18 (balenalib compatible)
 RUN Scripts/nodejs-install.sh
