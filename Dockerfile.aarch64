@@ -1,12 +1,30 @@
-# THIS file was generated for $BALENA_ARCH raspberrypi3-64
-# Make changes to the Dockefile.template
-# Docker architecture (x86_64, armhf, aarch64 )
 ARG NODE_VERSION
 ENV NODE_VERSION ${NODE_VERSION:-"18"}
+
+ARG HTDOCS
+ENV HTDOCS /var/www/htdocs/localhost
+
+# Use multi-stage build for Node.js
+FROM node:${NODE_VERSION}-alpine as node-builder
+
+RUN mkdir -p ${HTDOCS}
+WORKDIR ${HTDOCS}
+
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+RUN yarn && npm link balena-cloud-apps
+
 ARG ALPINE_VERSION
 ENV ALPINE_VERSION ${ALPINE_VERSION:-"3.15"}
 
 FROM php:7.4.33-alpine${ALPINE_VERSION}
+
+# Copy Node.js dependencies from builder
+COPY --from=node-builder node_modules node_modules
+
+# Add non-root user
+RUN addgroup -S www-data && adduser -h ${HTDOCS} -S www-data -G www-data -u ${PUID} -D
+USER www-data
 
 # ----------------------
 # About Dockerfile ARGS:
@@ -36,9 +54,9 @@ ARG SERVER_NAME
 ENV SERVER_NAME ${SERVER_NAME:-'acake2php.local'}
 # Change uid and gid of apache to docker user uid/gid
 ARG PUID
-ENV PUID ${PUID:-0}
+ENV PUID ${PUID:-1000}
 ARG PGID
-ENV PGID ${PGID:-0}
+ENV PGID ${PGID:-1000}
 # Must own the ip address
 ARG HTTP_PORT
 ENV HTTP_PORT ${HTTP_PORT:-'80'}
@@ -71,7 +89,7 @@ ENV HTDOCS /var/www/htdocs/localhost
 
 ## Install base packages
 RUN apk update \
-    && apk add \
+    && apk add --no-cache \
     bash \
     envsubst \
     apache2 \
@@ -94,9 +112,6 @@ RUN envsubst < etc/apache2/site_ssl.conf > /etc/apache2/conf.d/001-ssl.conf
 # Stream apache logs to standard outputs
 RUN ln -sf /dev/stdout /var/log/apache2/access.log && \
     ln -sf /dev/stderr /var/log/apache2/error.log
-
-# Set default working directory
-WORKDIR ${HTDOCS}
 
 # Create tmp directory and make it writable by the web server
 RUN mkdir -p \
@@ -130,15 +145,8 @@ RUN chmod 0755 *.sh && chmod 0755 Scripts/*.sh
 # Password Hash Verbosity (MAYBE SECURITY LACK)
 # RUN cat app/webroot/php-cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
 
-# node JS install
-RUN chmod +x Scripts/*.sh 
-RUN chmod +x deployment/images/php7/Scripts/*.sh
-RUN deployment/images/php7/Scripts/nodejs-install.sh
-RUN node -v && npm -v && yarn -v
-
 # Helper packages (just a long node process...)
-RUN yarn && npm link balena-cloud-apps
-
+RUN chmod +x Scripts/*.sh 
 RUN Scripts/update-templates.sh || true
 
 # configure server variables
