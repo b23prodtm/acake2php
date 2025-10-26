@@ -60,7 +60,7 @@ jobs:
           name: Build Docker image
           command: |
             cd $WORK_DIR
-            docker build -t $DOCKER_USER/$IMAGE:$TAG $FILE .
+            docker build -t $DOCKER_USER/$IMAGE:$TAG -f $FILE .
       - run:
           name: Push application Docker image
           command: |
