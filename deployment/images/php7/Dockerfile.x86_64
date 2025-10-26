@@ -55,7 +55,7 @@ COPY etc/php-fpm.d /etc/php-fpm.d
 
 # mkdir localhost web server folder for apache2 itself
 RUN mkdir -p ${HTDOCS}
-RUN addgro -h ${HTDOCS} -s /sbin/nologin -g apache -D apache
+RUN adduser -h ${HTDOCS} -s /sbin/nologin -g apache -D apache
 
 # Download Node.js 18 (balenalib compatible)
 RUN Scripts/nodejs-install.sh
