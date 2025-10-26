@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Update package list and install Python and required build tools
+apk update && apk add --no-cache python3 build-base
+
 # Download and install nvm:
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 
