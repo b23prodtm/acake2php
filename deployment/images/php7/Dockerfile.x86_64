@@ -53,6 +53,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 # php-fpm configuration
 COPY etc/php-fpm.d /etc/php-fpm.d
 
+# mkdir localhost web server folder for apache2 itself
+RUN mkdir -p ${HTDOCS}
 RUN adduser -h ${HTDOCS} -s /sbin/nologin -g apache cakephp
 RUN adduser -h ${HTDOCS} -s /sbin/nologin -g apache cakephp_ssl
 
