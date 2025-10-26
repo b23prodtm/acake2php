@@ -122,7 +122,7 @@ RUN chmod 0755 *.sh && chmod 0755 Scripts/*.sh
 # RUN cat app/webroot/php-cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
 
 # Download Node.js 18 (balenalib compatible)
-RUN Scripts/nodejs-install.sh
+RUN deployment/images/php7/Scripts/nodejs-install.sh
 
 # Helper packages (just a long node process...)
 RUN yarn && npm link balena-cloud-apps
