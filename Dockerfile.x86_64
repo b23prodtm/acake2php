@@ -81,10 +81,10 @@ RUN apk del build-base \
 COPY . .
 
 # COPY apache site.conf file
-RUN envsubst < etc/apache2/site.conf > /etc/apache2/sites-available/000-default.conf
+RUN envsubst < etc/apache2/site.conf > /etc/apache2/conf.d/000-default.conf
 
 # COPY apache site.conf file
-RUN envsubst < etc/apache2/site_ssl.conf > /etc/apache2/sites-available/000-ssl.conf
+RUN envsubst < etc/apache2/site_ssl.conf > /etc/apache2/conf.d/001-ssl.conf
 
 # Stream apache logs to standard outputs
 RUN ln -sf /dev/stdout /var/log/apache2/access.log && \
