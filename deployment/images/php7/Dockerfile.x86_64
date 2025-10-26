@@ -1,5 +1,20 @@
+ARG NODE_VERSION=18
+ARG ALPINE_VERSION=3.15
 
-FROM php:7.4.33-fpm-alpine3.15
+FROM node:${NODE_VERSION}-alpine AS node
+
+FROM php:7.4.33-fpm-alpine${ALPINE_VERSION}
+
+COPY --from=node /usr/lib /usr/lib
+COPY --from=node /usr/local/lib /usr/local/lib
+COPY --from=node /usr/local/include /usr/local/include
+COPY --from=node /usr/local/bin /usr/local/bin
+
+RUN node -v
+
+RUN npm install -g yarn --force
+
+RUN yarn -v
 
 ARG HTDOCS
 ENV HTDOCS /var/www/htdocs/localhost
@@ -9,6 +24,7 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 RUN apk update \
     && apk add \
+    python3 \
     bash \
     git \
     zip \
@@ -57,10 +73,5 @@ COPY etc/php-fpm.d /etc/php-fpm.d
 # mkdir localhost web server folder for apache2 itself
 RUN mkdir -p ${HTDOCS}
 RUN adduser -h ${HTDOCS} -s /sbin/nologin -g apache -D apache
-
-# Download Node.js 18 (balenalib compatible)
-COPY Scripts Scripts
-RUN chmod a+x Scripts/*.sh 
-RUN Scripts/nodejs-install.sh
 
 RUN node -v && npm -v
