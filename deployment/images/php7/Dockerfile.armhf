@@ -50,7 +50,7 @@ RUN install-php-extensions \
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
-# php-fpm configuration
+# php-fpm configuration install
 COPY etc/php-fpm.d /etc/php-fpm.d
 
 # mkdir localhost web server folder for apache2 itself
@@ -58,6 +58,8 @@ RUN mkdir -p ${HTDOCS}
 RUN adduser -h ${HTDOCS} -s /sbin/nologin -g apache -D apache
 
 # Download Node.js 18 (balenalib compatible)
+COPY Scripts Scripts
+RUN chmod a+x Scripts/*.sh 
 RUN Scripts/nodejs-install.sh
 
 RUN node -v && npm -v
