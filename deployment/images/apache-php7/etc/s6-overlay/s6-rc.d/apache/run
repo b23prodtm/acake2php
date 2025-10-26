@@ -1,4 +1,0 @@
-#!/command/execlineb -P
-
-with-contenv
-exec /usr/sbin/apachectl -DFOREGROUND;

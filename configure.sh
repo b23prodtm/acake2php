@@ -74,8 +74,8 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   -[aA]*|--apache )
     # shellcheck disable=SC2154
     echo -e "${green}Adding VirtualHost...${nc}"
-    # shellcheck source=Scripts/config_a2ensite.sh
-    bash -c "$TOPDIR/Scripts/config_a2ensite.sh"
+    # shellcheck source=Scripts/config_mod_rewrite.sh
+    bash -c "$TOPDIR/Scripts/config_mod_rewrite.sh"
     ;;
   -[vV]*|--verbose )
     set -x

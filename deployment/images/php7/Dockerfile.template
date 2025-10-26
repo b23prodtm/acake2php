@@ -1,0 +1,63 @@
+
+FROM php:7.4.33-fpm-alpine3.15
+
+ARG HTDOCS
+ENV HTDOCS /var/www/htdocs/localhost
+
+# Use the default production configuration
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+RUN apk update \
+    && apk add \
+    git \
+    zip \
+    unzip \
+    mariadb-client \
+    nginx \
+    xz \
+    && apk del build-base \
+    && rm -rf /var/cache/apk/*
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+CMD ["/usr/sbin/nginx"]
+
+COPY php-ini-overrides.ini /etc/php/7.4.33/fpm/conf.d/99-overrides.ini
+
+# Enable PHP extensions
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+
+RUN install-php-extensions \
+    dev \
+    odbc \
+    curl \
+    gd \
+    intl \
+    json \
+    mbstring \
+    opcache \
+    openssl \
+    pcntl \
+    xml \
+    mysqlnd \
+    phar \
+    mysqli \
+    pdo_mysql \
+    dom \
+    tokenizer \
+    simplexml \
+    xmlwriter \
+    fpm \
+    zlib
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+
+# php-fpm configuration
+COPY etc/php-fpm.d /etc/php-fpm.d
+
+RUN useradd -d ${HTDOCS} -s /sbin/nologin -g apache cakephp
+RUN useradd -d ${HTDOCS} -s /sbin/nologin -g apache cakephp_ssl
+
+# Download Node.js 18 (balenalib compatible)
+RUN Scripts/nodejs-install.sh
+
+RUN node -v && npm -v

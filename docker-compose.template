@@ -13,7 +13,7 @@ services:
       - localtime:/etc/localtime:ro
       - db-data:/config
       - db-socket:/var/run/mysqld
-      - db-config:/var/www/htdocs/localhost/app/config
+      - app:/var/www/htdocs/localhost/app
     ports:
       - "3306:3306"
     restart: unless-stopped
@@ -24,7 +24,22 @@ services:
       - .env
     labels:
       io.balena.features.dbus: "1"
-  acake2php:
+  php-fpm:
+    env_file:
+      - common.env
+      - .env
+    build:
+      context: .
+      dockerfile: deployment/images/php7/Dockerfile.%%BALENA_ARCH%%
+    volumes:
+      - localtime:/etc/localtime:ro
+      - app:/var/www/htdocs/localhost/app
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - cake
+  apache:
     env_file:
       - common.env
       - .env
@@ -35,17 +50,12 @@ services:
         CAKEPHP_DEBUG_LEVEL: "2"
         PUID: 1000
         PGID: 1000
-    labels:
-      io.balena.features.dbus: "1"
     volumes:
       - localtime:/etc/localtime:ro
-      - db-config:/var/www/htdocs/localhost/app/config
-      - db-socket:/var/run/mysqld
+      - app:/var/www/htdocs/localhost/app
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - db
     networks:
       - cake
   balena-storage:
@@ -68,13 +78,10 @@ services:
     volumes:
       - db-backup:/mnt/external-drives
 volumes:
+  app:
   hostapcache:
-  db-config:
-    external: false
   db-data:
-    external: false
   db-socket:
-    external: false
   config:
   localtime:
   db-backup:

@@ -2,18 +2,13 @@
 set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . init_functions .
-WWW="${1:-$TOPDIR/app/webroot}"
-CNF="${2:-/etc/apache2}"
-log_daemon_msg "Shell call : $0 $* ${WWW} host ${CNF}/conf.d/site.conf}"
-envsubst < "${CNF}/site.tpl" > "${CNF}/conf.d/site.conf"
-log_daemon_msg "SSL VirtualHost (not set)"
-envsubst < "${CNF}/ssl_site.tpl" > "${CNF}/conf.d/ssl_site.conf"
+CNF="/etc/apache2"
 log_daemon_msg "Enable mod_rewrite"
 if [ -f "${CNF}/httpd.conf" ]; then
   sed -i.old -E -e "/mod_rewrite.so/s/^#+//g" "${CNF}/httpd.conf"
   grep mod_rewrite.so < "${CNF}/httpd.conf"
 else
-  log_warning_msg "APACHE2 SERVER CONFIG: ${CNF}/httpd.conf file not found, check second arg $0 $WWW $CNF"
+  log_warning_msg "APACHE2 SERVER CONFIG: ${CNF}/httpd.conf file not found"
 fi
 log_daemon_msg "Add /etc/hosts $SERVER_NAME"
 if [ -w "/etc/hosts" ]; then
