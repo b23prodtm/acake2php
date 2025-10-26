@@ -53,7 +53,8 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASS
     steps:
-      - checkout
+      - checkout:
+          method: blobless
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
@@ -90,7 +91,8 @@ jobs:
       - TEST_MYSQL_DATABASE: test_aria_db_test
     working_directory: /var/www/html/
     steps:
-      - checkout
+      - checkout: 
+          method: blobless
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "yarn.lock" }}
@@ -132,7 +134,8 @@ jobs:
       - BASH_ENV: /etc/profile
       - BALENA_ARCH: x86_64
     steps:
-      - checkout
+      - checkout: 
+          method: blobless
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "yarn.lock" }}
