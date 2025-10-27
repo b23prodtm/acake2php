@@ -1,9 +1,12 @@
 ARG ALPINE_VERSION=3.15
+ARG PUID
+ARG GUID
 ARG HTDOCS
 
 FROM php:7.4.33-fpm-alpine${ALPINE_VERSION}
 
 ENV HTDOCS ${HTDOCS:-"/var/www/htdocs/localhost"}
+
 RUN mkdir -p ${HTDOCS}
 WORKDIR ${HTDOCS}
 
