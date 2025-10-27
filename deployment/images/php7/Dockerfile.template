@@ -11,9 +11,6 @@ ENV GUID ${GUID:-1000}
 RUN mkdir -p ${HTDOCS}
 WORKDIR ${HTDOCS}
 
-# Add non-root user
-RUN adduser -h ${HTDOCS} -s /usr/sbin/nologin -G www-data -u ${PUID} -D www-data
-
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
