@@ -12,7 +12,7 @@ ENV GUID ${GUID:-1000}
 RUN mkdir -p ${HTDOCS}
 WORKDIR ${HTDOCS}
 
-COPY package.json yarn.lock .
+COPY package.json yarn.lock ./
 # --- Install Node.js and Yarn ---
 RUN apk add --no-cache nodejs npm && \
     corepack enable && \
