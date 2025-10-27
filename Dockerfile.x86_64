@@ -22,9 +22,6 @@ RUN yarn && npm link balena-cloud-apps
 
 FROM php:7.4.33-alpine3.15
 
-# Add non-root user
-RUN adduser -h ${HTDOCS} -s /usr/sbin/nologin -G www-data -u ${PUID} -D www-data
-
 # ----------------------
 # About Dockerfile ARGS:
 # ALL the following ARGS are DUPLICATED in common.env and $BALENA_ARCH.env
