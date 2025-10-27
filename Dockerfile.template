@@ -131,11 +131,11 @@ RUN pecl install redis-5.1.1 \
 	&& docker-php-ext-enable redis xdebug
 
 RUN apk update \
-    && apk add \
-    libmemcached-dev \
-    libssl-dev \
-    zlib1g-dev \
-	&& pecl install memcached-3.2.0 \
+  && apk add --no-cache \
+     libmemcached-dev \
+     openssl \
+     zlib \
+  && pecl install memcached-3.2.0 \
 	&& docker-php-ext-enable memcached
 
 RUN apk del build-base \
