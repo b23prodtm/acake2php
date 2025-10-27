@@ -1,12 +1,10 @@
-ARG ALPINE_VERSION
-ARG NODE_VERSION
+ARG ALPINE_VERSION=3.15
+ARG NODE_VERSION=18
 
 ARG HTDOCS
 
 # Use multi-stage build for Node.js
 FROM node:${NODE_VERSION}-alpine as node-builder
-
-ENV NODE_VERSION ${NODE_VERSION:-"18"}
 
 ENV HTDOCS ${HTDOCS:-"/var/www/htdocs/localhost"}
 
@@ -15,8 +13,7 @@ WORKDIR ${HTDOCS}
 
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
-
-ENV ALPINE_VERSION ${ALPINE_VERSION:-"3.15"}
+RUN yarn && npm link balena-cloud-apps
 
 FROM php:7.4.33-fpm-alpine${ALPINE_VERSION}
 
