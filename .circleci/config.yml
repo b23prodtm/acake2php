@@ -4,7 +4,7 @@ aliases:
     run:
       name: Install dependencies
       command: |
-	git config --global --add safe.directory /var/www/htdocs/localhost
+        git config --global --add safe.directory /var/www/htdocs/localhost
         git submodule sync
         git submodule update --init --recursive
         apk update \
@@ -21,7 +21,7 @@ aliases:
     run:
       name: Install dependencies
       command: |
-	git config --global --add safe.directory /var/www/htdocs/localhost
+        git config --global --add safe.directory /var/www/htdocs/localhost
         git submodule sync
         git submodule update --init --recursive
         sudo apt-get update && sudo apt-get install --yes --no-install-recommends \
