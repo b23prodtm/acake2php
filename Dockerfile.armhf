@@ -1,6 +1,7 @@
 ARG ALPINE_VERSION=3.15
 ARG NODE_VERSION=22
-
+ARG PUID
+ARG GUID
 ARG HTDOCS
 
 # Use multi-stage build for Node.js
