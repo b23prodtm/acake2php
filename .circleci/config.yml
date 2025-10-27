@@ -1,42 +1,4 @@
 version: 2.1
-aliases:
-  - &deps-apk
-    run:
-      name: Install dependencies
-      command: |
-        git submodule sync
-        git submodule update --init --recursive
-        apk update \
-          && apk upgrade \
-          && apk add \
-            nodejs \
-            npm \
-          && apk del build-base \
-          && rm -rf /var/cache/apk/*
-        yarn
-        npm link balena-cloud-apps
-        balena_deploy . $BALENA_ARCH --nobuild --exit
-  - &deps-apt
-    run:
-      name: Install dependencies
-      command: |
-        git submodule sync
-        git submodule update --init --recursive
-        sudo apt-get update && sudo apt-get install --yes --no-install-recommends \
-            nodejs \
-            npm \
-        && sudo rm -rf /var/lib/apt/lists/*
-        yarn
-        sudo npm link balena-cloud-apps
-        balena_deploy . $BALENA_ARCH --nobuild --exit
-  - &caches
-    save_cache:
-      key: v1-dependencies-{{ checksum "yarn.lock" }}
-      paths:
-        - app/vendor
-        - webroot/php-cms
-        - node_modules
-
 orbs:
   shellcheck: circleci/shellcheck@1.3.16
 jobs:  
@@ -109,14 +71,9 @@ jobs:
     steps:
       - checkout: 
           method: blobless
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "yarn.lock" }}
       - setup_remote_docker:
           version: edge
           docker_layer_caching: true
-      - *deps-apt
-      - *caches
       - run:
           command: |
             set -u
