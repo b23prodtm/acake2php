@@ -87,7 +87,7 @@ ENV HTDOCS /var/www/htdocs/localhost
 RUN apk update \
     && apk add --no-cache \
     bash \
-    envsubst \
+    gettext \
     apache2 \
     apache2-ctl \
     apache2-ssl \
