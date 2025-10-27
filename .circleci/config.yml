@@ -70,26 +70,17 @@ jobs:
   build-test:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     # resource_class: b23prodtm/linux
-    docker:
-      - image: betothreeprod/php7:latest-x86_64
-      - image: betothreeprod/mysqldb:latest-x86_64
-        environment:
-          PUID: 0
-          PGID: 0
-          TZ: Europe/Paris
-    shell: /bin/bash -leo pipefail
-    environment:
-      - BASH_ENV: /etc/profile
-      - BALENA_ARCH: x86_64
-      - MYSQL_HOST: 127.0.0.1
-      - MYSQL_TCP_PORT: 3306
-      - MYSQL_ROOT_PASSWORD: mariadb
-      - MYSQL_HOST: 127.0.0.1
-      - MYSQL_DATABASE: aria_db
-      - MYSQL_USER: maria
-      - MYSQL_PASSWORD: maria-abc
-      - TEST_MYSQL_DATABASE: test_aria_db_test
     working_directory: ~/app
+    docker:
+      - image: cimg/base:2022.09       
+        environment:
+          TAG: latest-x86_64
+          IMAGE: mariadb
+          FILE: Dockerfile.x86_64
+          WORK_DIR: deployment/images/mysqldb
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
     steps:
       - checkout: 
           method: blobless
@@ -102,28 +93,15 @@ jobs:
       - *deps-apk
       - *caches
       - run:
-          name: Waiting for Mysql to be ready
+          name: Build Docker image
           command: |
-            set -x
-            for i in `seq 1 10`;
-            do
-              nc -z $MYSQL_HOST $MYSQL_TCP_PORT && echo Success && exit 0
-              echo -n .
-              sleep 1
-            done
-            echo 'Failed waiting for Mysql' && exit 1
+            cd $WORK_DIR
+            docker build -t $DOCKER_USER/$IMAGE:$TAG -f $FILE .
       - run:
+          name: Push application Docker image
           command: |
-            set -u
-            mkdir -p ./app/build/logs
-            mkdir -p ~/phpunit
-            ./test-cake.sh --runner
-            . common.env && cat $MYPHPCMS_DIR/e13/etc/constantes.properties | grep PASSWORD_ADMIN | head -c 18
-      - store_test_results:
-          path: ~/phpunit
-      - store_artifacts:
-          path: ~/phpunit
-          when: always
+            echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            docker push $DOCKER_USER/$IMAGE:$TAG
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     # resource_class: b23prodtm/linux
