@@ -84,14 +84,9 @@ jobs:
     steps:
       - checkout: 
           method: blobless
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "yarn.lock" }}
       - setup_remote_docker:
           version: edge
           docker_layer_caching: false
-      - *deps-apk
-      - *caches
       - run:
           name: Build Docker image
           command: |
