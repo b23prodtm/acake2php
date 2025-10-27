@@ -12,7 +12,7 @@ ENV GUID ${GUID:-1000}
 RUN mkdir -p ${HTDOCS}
 WORKDIR ${HTDOCS}
 
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .
 # --- Install Node.js and Yarn ---
 RUN apk add --no-cache nodejs npm && \
     corepack enable && \
@@ -21,9 +21,6 @@ RUN apk add --no-cache nodejs npm && \
 RUN yarn && npm link balena-cloud-apps
 
 FROM php:7.4.33-alpine3.15
-
-# Copy Node.js dependencies from builder
-COPY --from=node-builder node_modules node_modules
 
 # Add non-root user
 RUN adduser -h ${HTDOCS} -s /usr/sbin/nologin -G www-data -u ${PUID} -D www-data
