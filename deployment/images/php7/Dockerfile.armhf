@@ -1,24 +1,11 @@
 ARG ALPINE_VERSION=3.15
-ARG NODE_VERSION=22
-
 ARG HTDOCS
-
-# Use multi-stage build for Node.js
-FROM node:${NODE_VERSION}-alpine as node-builder
-
-ENV HTDOCS ${HTDOCS:-"/var/www/htdocs/localhost"}
-
-RUN mkdir -p ${HTDOCS}
-WORKDIR ${HTDOCS}
-
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
-RUN yarn && npm link balena-cloud-apps
 
 FROM php:7.4.33-fpm-alpine${ALPINE_VERSION}
 
-# Copy Node.js dependencies from builder
-COPY --from=node-builder node_modules node_modules
+ENV HTDOCS ${HTDOCS:-"/var/www/htdocs/localhost"}
+RUN mkdir -p ${HTDOCS}
+WORKDIR ${HTDOCS}
 
 # Add non-root user
 RUN addgroup -S www-data && adduser -h ${HTDOCS} -S www-data -G www-data -u ${PUID} -D
@@ -71,10 +58,3 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 
 # php-fpm configuration install
 COPY etc/php-fpm.d /etc/php-fpm.d
-
-# node JS install
-#COPY Scripts Scripts
-#RUN chmod +x Scripts/*.sh
-#RUN Scripts/nodejs-install.sh
-
-RUN node -v && npm -v
