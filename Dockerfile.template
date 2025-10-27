@@ -1,13 +1,13 @@
-ARG ALPINE_VERSION=3.15
-ARG NODE_VERSION=22
-ARG PUID=1000
-ARG GUID=1000
+ARG PUID
+ARG GUID
 ARG HTDOCS
 
 # Use multi-stage build for Node.js
-FROM node:${NODE_VERSION}-alpine as node-builder
+FROM node:22-alpine as node-builder
 
 ENV HTDOCS ${HTDOCS:-"/var/www/htdocs/localhost"}
+ENV PUID ${PUID:-1000}
+ENV GUID ${GUID:-1000}
 
 RUN mkdir -p ${HTDOCS}
 WORKDIR ${HTDOCS}
@@ -20,7 +20,7 @@ RUN apk add --no-cache nodejs npm && \
     node -v && yarn --version
 RUN yarn && npm link balena-cloud-apps
 
-FROM php:7.4.33-alpine${ALPINE_VERSION}
+FROM php:7.4.33-alpine3.15
 
 # Copy Node.js dependencies from builder
 COPY --from=node-builder node_modules node_modules
