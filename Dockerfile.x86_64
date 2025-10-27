@@ -13,6 +13,11 @@ RUN mkdir -p ${HTDOCS}
 WORKDIR ${HTDOCS}
 
 COPY package.json yarn.lock ./
+# --- Install Node.js and Yarn ---
+RUN apk add --no-cache nodejs npm && \
+    corepack enable && \
+    corepack prepare yarn@stable --activate && \
+    node -v && yarn --version
 RUN yarn && npm link balena-cloud-apps
 
 FROM php:7.4.33-alpine${ALPINE_VERSION}
