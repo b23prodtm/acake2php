@@ -118,6 +118,14 @@ RUN mkdir -p \
   && chmod -R 770 \
     app/tmp
 
+# Install necessary development tools and dependencies
+RUN apk update && apk add --no-cache \
+    autoconf \
+    gcc \
+    make \
+    g++ \
+    && apk add --no-cache libtool
+
 RUN pecl install redis-5.3.7 \
 	&& pecl install xdebug-3.2.1 \
 	&& docker-php-ext-enable redis xdebug
