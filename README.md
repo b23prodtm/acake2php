@@ -107,7 +107,8 @@ However, if these files exist they will affect the behavior of the build process
        app/Plugin/<plugin-name>/
 
 * **.htaccess**
-
+  [no longer needed on Apache with FPM:]
+  [FilesMatch in etc/apache2/site.conf]
   To allow Apache server to browse directly to the app/webroot folder on server-side, use mod_rewrite rules, as provided by .htaccess files.
 
   >/.htaccess
@@ -125,7 +126,6 @@ However, if these files exist they will affect the behavior of the build process
 
       <IfModule mod_rewrite.c>
          RewriteEngine on
-         RewriteBase /app/
          RewriteRule    ^$    webroot/    [L]
          RewriteRule    (.*) webroot/$1    [L]
       </IfModule>
