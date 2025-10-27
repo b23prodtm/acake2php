@@ -18,7 +18,7 @@ RUN apk add --no-cache nodejs npm && \
     corepack enable && \
     corepack prepare yarn@stable --activate && \
     node -v && yarn --version
-RUN yarn && npm link balena-cloud-apps
+RUN yarn install && npm link balena-cloud-apps
 
 FROM php:7.4.33-alpine${ALPINE_VERSION}
 
@@ -26,8 +26,7 @@ FROM php:7.4.33-alpine${ALPINE_VERSION}
 COPY --from=node-builder node_modules node_modules
 
 # Add non-root user
-RUN adduser -h ${HTDOCS} -S www-data -G www-data -u ${PUID} -D
-USER www-data
+RUN adduser -h ${HTDOCS} -s /usr/sbin/nologin -G www-data -u ${PUID} -D www-data
 
 # ----------------------
 # About Dockerfile ARGS:
@@ -159,7 +158,7 @@ RUN printf "TO LOGIN INSIDE 'ACAKE2PHP' CONTAINER: \n"
 RUN printf "docker exec -it \$(docker ps | grep acake2php | awk {'printf \$1'}) bash \n"
 
 RUN ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
-&& ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test \
+&& ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
 
 # Expose the ports for apache
 EXPOSE 80 443
