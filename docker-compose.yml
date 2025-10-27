@@ -5,8 +5,8 @@ services:
       context: deployment/images/mysqldb
       dockerfile: Dockerfile.armhf
       args:
-        PUID: 0
-        PGID: 0
+        PUID: 1000
+        PGID: 1000
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: yes
     volumes:
@@ -31,6 +31,9 @@ services:
     build:
       context: deployment/images/php7
       dockerfile: Dockerfile.armhf
+      args:
+        PUID: 1000
+        PGID: 1000
     volumes:
       - localtime:/etc/localtime:ro
       - app:/var/www/htdocs/localhost/app
