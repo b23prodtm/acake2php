@@ -45,8 +45,8 @@ RUN apk update \
 
 # MYSQL_ROOT_PASSWORD secured configuration
 COPY mysql_secure_shell .
-RUN chmod 1755 mysql_secure_shell
-RUN MYSQL_RANDOM_ROOT_PASSWORD=mariadb ./mysql_secure_shell
+RUN chmod 1755 mysql_secure_shell \
+  && MYSQL_ALLOW_EMPTY_PASSWORD=false ./mysql_secure_shell
 
 RUN echo "***** Fix root PRIVILEGES AND CREATE USER ${MYSQL_USER} with ${MYSQL_DATABASE} PRIVILEGES " \
   && echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'% WITH GRANT OPTION;" | tee -a p.sql \
