@@ -112,6 +112,7 @@ RUN install-php-extensions ${PHP_EXTENSIONS}
 
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
+    && git init \
     && update_templates \
     && ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development \
     && ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
