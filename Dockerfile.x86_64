@@ -21,7 +21,7 @@ ENV HTDOCS=${HTDOCS:-"/var/www/htdocs/localhost"}
 RUN mkdir -p ${HTDOCS}
 WORKDIR ${HTDOCS}
 
-COPY --from=node-build /usr/local/lib/node_modules node_modules
+COPY --from=node-build /usr/local/lib/node_modules/ node_modules
 # END - Multi-stage Build
 
 # Install base packages
@@ -44,7 +44,6 @@ RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
 
 # Add mor NodeJS, CakePHP and Composer commands to system path
 ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
-RUN find / -name update_templates && sleep 10
 
 # ----------------------
 # About Dockerfile ARGS:
