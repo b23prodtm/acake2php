@@ -23,6 +23,10 @@ load_module () {
 }
 
 unload () {
+    unload_lines $1 $2 $3 ""
+}
+
+unload_lines () {
     directive="$1"
     library="$2"
     file="${CNF}/$3"
@@ -46,7 +50,7 @@ load_module "mod_rewrite.so"
 load_module "mod_mpm_event.so"
 unload_module "mod_php${PHP_LIB_MAJOR}.so"
 unload "DirectoryIndex" "index.html" "php${PHP_LIB_MAJOR}-module.conf"
-unload "<FilesMatch" ".php" "php${PHP_LIB_MAJOR}-module.conf" ",+3d"
+unload_lines "<FilesMatch" ".php" "php${PHP_LIB_MAJOR}-module.conf" ",+3d"
 
 log_daemon_msg "Add /etc/hosts $SERVER_NAME"
 if [ -w "/etc/hosts" ]; then
