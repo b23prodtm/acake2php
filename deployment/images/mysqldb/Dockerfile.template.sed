@@ -12,5 +12,5 @@ s#(BALENA_ARCH[=:-]+)[^$ }]+#\1armhf#g
 s#%%BALENA_ARCH%%#armhf#g
 s#(BALENA_MACHINE_NAME[=:-]+)[^$ }]+#\1raspberrypi3#g
 s#%%BALENA_MACHINE_NAME%%#raspberrypi3#g
-s#(PHP_EXTENSIONS[=:-]+)[^$ }]+#\1gd#g
-s#%%PHP_EXTENSIONS%%#gd#g
+s#(PHP_EXTENSIONS[=:-]+)[^$ }]+#\1#g
+s#%%PHP_EXTENSIONS%%##g
