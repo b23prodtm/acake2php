@@ -4,12 +4,14 @@ FROM node:22-alpine AS node-build
 
 WORKDIR ~/project
 
-# Copy Node.js dependency files
+# Copy Node.js dependency files, Fixing global modules issue
 COPY package.json yarn.lock ./
 RUN corepack enable \
     && corepack prepare yarn@stable --activate \
     && yarn install --immutable \
-    && yarn cache clean
+    && yarn cache clean \
+    && mkdir -p node_modules \
+    && cp -fR /usr/local/lib/node_modules/* node_modules/.
 
 # Stage 2: Build PHP and Apache environment
 FROM php:7.4.33-alpine3.15
@@ -19,7 +21,7 @@ ARG HTDOCS
 ENV HTDOCS=${HTDOCS:-"/usr/local/apache2/htdocs"}
 WORKDIR ${HTDOCS}
 
-COPY --from=node-build /usr/local/lib/node_modules/ node_modules
+COPY --from=node-build node_modules/ node_modules
 # END - Multi-stage Build
 
 # Install base packages
