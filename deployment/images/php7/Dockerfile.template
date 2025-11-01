@@ -31,26 +31,27 @@ COPY php-ini-overrides.ini /etc/php/7.4.33/fpm/conf.d/99-overrides.ini
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 RUN install-php-extensions \
-    odbc \
     curl \
+    dom \
+    ext-intl \
     gd \
     intl \
     json \
     mbstring \
+    mysqli \
+    mysqlnd \
+    odbc \
     opcache \
     openssl \
     pcntl \
-    xml \
-    mysqlnd \
     phar \
-    mysqli \
     pdo_mysql \
-    dom \
-    tokenizer \
     simplexml \
+    sodium
+    tokenizer \
     xmlwriter \
-    #fpm \
-    zlib
+    zlib \
+    xml
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer

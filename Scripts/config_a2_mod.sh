@@ -23,7 +23,7 @@ load_module () {
 }
 
 unload () {
-    unload_lines $1 $2 $3 ""
+    unload_lines "$1" "$2" "$3" ""
 }
 
 unload_lines () {
