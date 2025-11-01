@@ -117,6 +117,9 @@ RUN install-php-extensions ${PHP_EXTENSIONS} \
     pcntl \
     pdo_mysql
 
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
     && git init \
