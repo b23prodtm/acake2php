@@ -26,7 +26,7 @@ COPY --from=node-build /usr/local/lib/node_modules/ node_modules
 
 # Install base packages
 RUN apk add --no-cache \
-    bash gettext apache2 apache2-ctl apache2-ssl curl \
+    bash gettext apache2 apache2-ctl apache2-ssl curl git \
     && ln -sf /dev/stdout /var/log/apache2/access.log \
     && ln -sf /dev/stderr /var/log/apache2/error.log
 
