@@ -24,6 +24,7 @@ ENV MYSQL_PASSWORD=${MYSQL_PASSWORD:-'maria-abc'}
 # Optional
 ARG MYSQL_BIND_ADDRESS
 ENV MYSQL_BIND_ADDRESS=${MYSQL_BIND_ADDRESS:-0.0.0.0}
+ENV MYSQL_RANDOM_ROOT_PASSWORD=mariadb
 
 # The MariaDB/MySQL tools read configuration files in the following order:
 # 1. "/etc/mysql/my.cnf" to set global defaults,
@@ -46,7 +47,7 @@ RUN apk update \
 # MYSQL_ROOT_PASSWORD secured configuration
 COPY mysql_secure_shell .
 RUN chmod 1755 mysql_secure_shell \
-  && MYSQL_ALLOW_EMPTY_PASSWORD=false ./mysql_secure_shell
+  && ./mysql_secure_shell
 
 RUN echo "***** Fix root PRIVILEGES AND CREATE USER ${MYSQL_USER} with ${MYSQL_DATABASE} PRIVILEGES " \
   && echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'% WITH GRANT OPTION;" | tee -a p.sql \
