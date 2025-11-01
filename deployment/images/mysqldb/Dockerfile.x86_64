@@ -12,7 +12,9 @@ ENV PGID=${PGID:-0}
 ARG MYSQL_HOST
 ENV MYSQL_HOST=${MYSQL_HOST:-'localhost'}
 ARG TZ
-ENV TZ ${TZ:-'Europe/Paris'}
+ENV TZ=${TZ:-'Europe/Paris'}
+ARG MYSQL_ROOT_PASSWORD
+ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-'maria-abc'}
 # Optional
 ARG MYSQL_DATABASE
 ENV MYSQL_DATABASE=${MYSQL_DATABASE:-'aria_db'}
@@ -20,12 +22,11 @@ ENV MYSQL_DATABASE=${MYSQL_DATABASE:-'aria_db'}
 ARG MYSQL_USER
 ENV MYSQL_USER=${MYSQL_USER:-'maria'}
 # Optional
-# ARG MYSQL_PASSWORD
-# ENV MYSQL_PASSWORD=${MYSQL_PASSWORD:-'maria-abc'}
+ARG MYSQL_PASSWORD
+ENV MYSQL_PASSWORD=${MYSQL_PASSWORD:-'maria-abc'}
 # Optional
 ARG MYSQL_BIND_ADDRESS
 ENV MYSQL_BIND_ADDRESS=${MYSQL_BIND_ADDRESS:-0.0.0.0}
-ENV MYSQL_RANDOM_ROOT_PASSWORD=mariadb
 
 # The MariaDB/MySQL tools read configuration files in the following order:
 # 1. "/etc/mysql/my.cnf" to set global defaults,
