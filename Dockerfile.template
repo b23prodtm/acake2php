@@ -125,7 +125,7 @@ RUN install-php-extensions ${PHP_EXTENSIONS} \
     phar \
     pdo_mysql \
     simplexml \
-    sodium
+    sodium \
     tokenizer \
     xmlwriter \
     zlib \
