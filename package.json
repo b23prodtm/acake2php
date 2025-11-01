@@ -2,7 +2,7 @@
   "name": "myphpcms",
   "version": "1.0.0",
   "description": "A CakePHP and MariaDB website",
-  "main": "index.js",
+  "main": "index.php",
   "directories": {
     "lib": "lib",
     "app": "app"
@@ -24,8 +24,7 @@
   },
   "homepage": "https://github.com/b23prodtm/acake2php#readme",
   "dependencies": {
-    "balena-cloud-apps": "^1.0.47",
-    "global": "^4.4.0"
+    "balena-cloud-apps": "^1.0.47"
   },
   "packageManager": "yarn@4.6.0"
 }

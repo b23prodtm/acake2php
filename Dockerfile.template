@@ -1,26 +1,53 @@
-ARG PUID
-ARG GUID
 ARG HTDOCS
 
-# Use multi-stage build for Node.js
-FROM node:22-alpine as node-builder
+# BEGIN - Multi-stage Build
+# Stage 1: Install NodeJS dependencies
+FROM node:22-alpine AS node-build
 
-ENV HTDOCS ${HTDOCS:-"/var/www/htdocs/localhost"}
-ENV PUID ${PUID:-1000}
-ENV GUID ${GUID:-1000}
+WORKDIR ~/project
 
+# Copy Node.js dependency files
+COPY package.json yarn.lock ./
+RUN corepack enable \
+    && corepack prepare yarn@stable --activate \
+    && yarn install --immutable \
+    && yarn cache clean
+
+# Stage 2: Build PHP and Apache environment
+FROM php:7.4.33-alpine3.15
+
+# Set up working directory and environment
+ENV HTDOCS=${HTDOCS:-"/var/www/htdocs/localhost"}
 RUN mkdir -p ${HTDOCS}
 WORKDIR ${HTDOCS}
 
-COPY package.json yarn.lock ./
-# --- Install Node.js and Yarn ---
-RUN apk add --no-cache nodejs npm && \
-    corepack enable && \
-    corepack prepare yarn@stable --activate && \
-    node -v && yarn --version
-RUN yarn && npm link balena-cloud-apps
+COPY --from=node-build /usr/local/lib/node_modules node_modules
+# END - Multi-stage Build
 
-FROM php:7.4.33-alpine3.15
+# Install base packages
+RUN apk add --no-cache \
+    bash gettext apache2 apache2-ctl apache2-ssl curl \
+    && ln -sf /dev/stdout /var/log/apache2/access.log \
+    && ln -sf /dev/stderr /var/log/apache2/error.log
+
+# Install necessary PHP extensions and dependencies
+COPY --from=ghcr.io/mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+RUN install-php-extensions gd xdebug-3.0.4 redis memcached
+
+# Copy application files
+COPY . .
+
+# Set up Apache configuration
+RUN envsubst < etc/apache2/site.conf > /etc/apache2/conf.d/000-default.conf \
+    && envsubst < etc/apache2/site_ssl.conf > /etc/apache2/conf.d/001-ssl.conf
+
+# Set permissions for temporary directories
+RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
+    && chown -R :www-data app/tmp \
+    && chmod -R 770 app/tmp
+
+# Add mor NodeJS, CakePHP and Composer commands to system path
+ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
 
 # ----------------------
 # About Dockerfile ARGS:
@@ -50,9 +77,9 @@ ARG SERVER_NAME
 ENV SERVER_NAME ${SERVER_NAME:-'acake2php.local'}
 # Change uid and gid of apache to docker user uid/gid
 ARG PUID
-ENV PUID ${PUID:-1000}
+ENV PUID ${PUID:-0}
 ARG PGID
-ENV PGID ${PGID:-1000}
+ENV PGID ${PGID:-0}
 # Must own the ip address
 ARG HTTP_PORT
 ENV HTTP_PORT ${HTTP_PORT:-'80'}
@@ -80,93 +107,17 @@ ARG MYSQL_PASSWORD
 ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'maria-abc'}
 ARG HASH_PASSWORD
 ENV HASH_PASSWORD ${HASH_PASSWORD:-'password'}
-ARG HTDOCS
-ENV HTDOCS /var/www/htdocs/localhost
 
-## Install base packages
-RUN apk update \
-    && apk add --no-cache \
-    bash \
-    gettext \
-    apache2 \
-    apache2-ctl \
-    apache2-ssl \
-    curl
+# Run initialization scripts
+RUN chmod +x Scripts/*.sh \
+    && update_templates \
+    && ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development \
+    && ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
+    && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
 
-RUN apk del build-base \
-    && rm -rf /var/cache/apk/*
-
-# Copy the code inside the image root
-COPY . .
-
-# COPY apache site.conf file
-RUN envsubst < etc/apache2/site.conf > /etc/apache2/conf.d/000-default.conf
-
-# COPY apache site.conf file
-RUN envsubst < etc/apache2/site_ssl.conf > /etc/apache2/conf.d/001-ssl.conf
-
-# Stream apache logs to standard outputs
-RUN ln -sf /dev/stdout /var/log/apache2/access.log && \
-    ln -sf /dev/stderr /var/log/apache2/error.log
-
-# Create tmp directory and make it writable by the web server
-RUN mkdir -p \
-    app/tmp/cache/models \
-    app/tmp/cache/persistent \
-  && chown -R :www-data \
-    app/tmp \
-  && chmod -R 770 \
-    app/tmp
-
-# Install necessary development tools and dependencies
-RUN apk update && apk add --no-cache \
-    autoconf \
-    gcc \
-    make \
-    g++ \
-    && apk add --no-cache libtool
-
-RUN pecl install redis-5.1.1 \
-	&& pecl install xdebug-3.1.5 \
-	&& docker-php-ext-enable redis xdebug
-
-RUN apk update \
-  && apk add --no-cache \
-     libmemcached-dev \
-     openssl \
-     zlib \
-  && pecl install memcached-3.2.0 \
-	&& docker-php-ext-enable memcached
-
-RUN apk del build-base \
-    && rm -rf /var/cache/apk/*
-
-# Add cake and composer command to system path
-ENV PATH "${PATH}:${HTDOCS}/app/bin"
-ENV PATH "${PATH}:${HTDOCS}/bin"
-
-RUN chmod 0755 *.sh && chmod 0755 Scripts/*.sh
-# Password Hash Verbosity (MAYBE SECURITY LACK)
-# RUN cat app/webroot/php-cms/e13/etc/export_hash_password.sh | awk -F= '{print $2}' | tail -n 1
-
-# Helper packages (just a long node process...)
-RUN chmod +x Scripts/*.sh 
-RUN Scripts/update-templates.sh || true
-
-# configure server variables
-RUN ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development
-
-RUN printf "TO LOGIN INSIDE 'ACAKE2PHP' CONTAINER: \n"
-RUN printf "docker exec -it \$(docker ps | grep acake2php | awk {'printf \$1'}) bash \n"
-
-RUN ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
-&& ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
-
-# Expose the ports for apache
+# Expose Apache ports
 EXPOSE 80 443
 
-# Enable Apache modules and restart
-RUN a2enmod rewrite \
-  && service apache2 restart
-
+# Enable Apache modules and start the server
+RUN a2enmod rewrite
 ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]
