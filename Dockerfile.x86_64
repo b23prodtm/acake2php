@@ -48,6 +48,7 @@ RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
 
 # Add mor NodeJS, CakePHP and Composer commands to system path
 ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
+RUN find / -name update_templates && sleep 10
 
 # ----------------------
 # About Dockerfile ARGS:
