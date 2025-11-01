@@ -13,7 +13,6 @@ services:
       - localtime:/etc/localtime:ro
       - db-data:/config
       - db-socket:/var/run/mysqld
-      - app:/var/www/htdocs/localhost/app
     ports:
       - "3306:3306"
     restart: unless-stopped
@@ -34,9 +33,9 @@ services:
       args:
         PUID: 1000
         PGID: 1000
+        HTDOCS: /usr/local/apache2/htdocs
     volumes:
       - localtime:/etc/localtime:ro
-      - app:/var/www/htdocs/localhost/app
     ports:
       - "80:80"
       - "443:443"
@@ -53,9 +52,10 @@ services:
         CAKEPHP_DEBUG_LEVEL: "2"
         PUID: 1000
         PGID: 1000
+        HTDOCS: /usr/local/apache2/htdocs
     volumes:
       - localtime:/etc/localtime:ro
-      - app:/var/www/htdocs/localhost/app
+      - app:/usr/local/apache2/htdocs/app
     ports:
       - "80:80"
       - "443:443"
