@@ -127,5 +127,5 @@ RUN chmod +x Scripts/*.sh \
 EXPOSE 80 443
 
 # Enable Apache modules and start the server
-RUN a2enmod rewrite
+# RUN a2enmod rewrite
 ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]
