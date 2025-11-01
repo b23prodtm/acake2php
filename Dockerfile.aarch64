@@ -30,10 +30,6 @@ RUN apk add --no-cache \
     && ln -sf /dev/stdout /var/log/apache2/access.log \
     && ln -sf /dev/stderr /var/log/apache2/error.log
 
-# Install necessary PHP extensions and dependencies
-COPY --from=ghcr.io/mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
-RUN install-php-extensions gd xdebug-3.0.4 redis memcached
-
 # Copy application files
 COPY . .
 
@@ -68,6 +64,8 @@ ARG SECONDARY_HUB
 ENV SECONDARY_HUB ${SECONDARY_HUB:-linuxserver/mariadb}
 ARG BALENA_ARCH
 ENV BALENA_ARCH ${BALENA_ARCH:-aarch64}
+ARG PHP_EXTENSIONS
+ENV PHP_EXTENSIONS ${PHP_EXTENSIONS:-"gd redis memcached"}
 ARG COLLECT_COVERAGE
 ENV COLLECT_COVERAGE ${COLLECT_COVERAGE:-'False'}
 ARG MYPHPCMS_DIR
@@ -108,6 +106,10 @@ ARG MYSQL_PASSWORD
 ENV MYSQL_PASSWORD ${MYSQL_PASSWORD:-'maria-abc'}
 ARG HASH_PASSWORD
 ENV HASH_PASSWORD ${HASH_PASSWORD:-'password'}
+
+# Install necessary PHP extensions and dependencies
+COPY --from=ghcr.io/mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+RUN install-php-extensions ${PHP_EXTENSIONS}
 
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
