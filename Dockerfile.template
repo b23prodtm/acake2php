@@ -108,7 +108,28 @@ ENV HASH_PASSWORD ${HASH_PASSWORD:-'password'}
 
 # Install necessary PHP extensions and dependencies
 COPY --from=ghcr.io/mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
-RUN install-php-extensions ${PHP_EXTENSIONS}
+RUN install-php-extensions ${PHP_EXTENSIONS} \
+    curl \
+    dom \
+    ext-intl \
+    gd \
+    intl \
+    json \
+    mbstring \
+    mysqli \
+    mysqlnd \
+    odbc \
+    opcache \
+    openssl \
+    pcntl \
+    phar \
+    pdo_mysql \
+    simplexml \
+    sodium
+    tokenizer \
+    xmlwriter \
+    zlib \
+    xml
 
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
