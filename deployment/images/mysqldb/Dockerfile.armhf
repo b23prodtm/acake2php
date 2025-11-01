@@ -39,6 +39,7 @@ RUN sed -i.user "/user/s/=.*$/= ${USER}/" /etc/my.cnf.d/my.cnf
 RUN apk update \
     && apk upgrade \
     && apk add \
+      build-base \
       expect \
       xz \
     # auth_ed25519 support package \
