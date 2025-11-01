@@ -123,7 +123,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
     && git init \
-    && update_templates \
+    && node_modules/.bin/update_templates \
     && ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development \
     && ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
     && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
