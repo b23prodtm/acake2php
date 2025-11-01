@@ -1,0 +1,47 @@
+FROM php:7.4.33-fpm-alpine3.15
+
+ARG HTDOCS
+ENV HTDOCS=${HTDOCS:-"/usr/local/apache2/htdocs"}
+ARG PUID
+ENV PUID=${PUID:-1000}
+ARG GUID
+ENV GUID=${GUID:-1000}
+ARG PHP_EXTENSIONS
+ENV PHP_EXTENSIONS=${PHP_EXTENSIONS:-}
+
+WORKDIR ${HTDOCS}
+
+# Use the default production configuration
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+RUN apk update \
+    && apk add --no-cache \
+    python3 \
+    bash \
+    git \
+    zip \
+    unzip \
+    mariadb-client
+
+RUN apk del build-base \
+    && rm -rf /var/cache/apk/*
+
+COPY php-ini-overrides.ini /etc/php/7.4.33/fpm/conf.d/99-overrides.ini
+
+# Enable PHP extensions
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+
+RUN install-php-extensions ${PHP_EXTENSIONS} \
+    gd \
+    intl \
+    mysqli \
+    odbc \
+    opcache \
+    pcntl \
+    pdo_mysql
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+
+# php-fpm configuration install
+COPY etc/php-fpm.d /etc/php-fpm.d
