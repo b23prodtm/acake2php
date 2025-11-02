@@ -20,6 +20,8 @@ ARG HTDOCS
 ENV HTDOCS=${HTDOCS:-"/usr/local/apache2/htdocs"}
 WORKDIR ${HTDOCS}
 
+# Add mor NodeJS, CakePHP and Composer commands to system path
+ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
 COPY --from=node-build /usr/local/project/node_modules/ node_modules
 # END - Multi-stage Build
 
@@ -133,9 +135,6 @@ COPY . .
 RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
     && chown -R :www-data app/tmp \
     && chmod -R 770 app/tmp
-
-# Add mor NodeJS, CakePHP and Composer commands to system path
-ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
 
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
