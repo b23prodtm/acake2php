@@ -1,28 +1,9 @@
-# BEGIN - Multi-stage Build
-# Stage 1: Install NodeJS dependencies
-FROM node:22-alpine3.22 AS node-build
-
-
-WORKDIR /usr/local/project
-
-# Copy Node.js dependency files, Fixing global modules issue
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn/ .yarn 
-RUN corepack enable \
-    && corepack prepare yarn@stable --activate \
-    && yarn install --immutable \
-    && yarn cache clean
-
-# Stage 2: Build PHP and Apache environment
 FROM httpd:2.4-alpine3.22
 
 # Set up working directory and environment
 ARG HTDOCS
 ENV HTDOCS=${HTDOCS:-"/usr/local/apache2/htdocs"}
 WORKDIR ${HTDOCS}
-
-COPY --from=node-build /usr/local/project/node_modules/ node_modules
-# END - Multi-stage Build
 
 # Install base packages
 RUN apk add --no-cache \
@@ -34,8 +15,8 @@ RUN apk add --no-cache \
 COPY . .
 
 # Set up Apache configuration
-RUN envsubst < etc/apache2/site.conf > /etc/apache2/conf.d/000-default.conf \
-    && envsubst < etc/apache2/site_ssl.conf > /etc/apache2/conf.d/001-ssl.conf
+RUN envsubst < etc/apache2/000-default.conf > /etc/apache2/sites-available/000-default.conf \
+    && envsubst < etc/apache2/001-ssl.conf > /etc/apache2/sites-available/001-ssl.conf
 
 # Set permissions for temporary directories
 RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
@@ -45,81 +26,14 @@ RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
 # Add mor NodeJS, CakePHP and Composer commands to system path
 ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
 
-# ----------------------
-# About Dockerfile ARGS:
-# ALL the following ARGS are DUPLICATED in common.env and $BALENA_ARCH.env
-# and Scripts/fooargs.sh for development phase.
-# If not set in common.env, it must be set in the host machine environment
-# when ./start.sh or ./test.sh or in development phase.
-# ----------------------
-#                        Values in default (no-arg) production mode
-#                        May be overriden in docker-compose.yml
-#-----------------------
-ARG CAKEPHP_DEBUG_LEVEL
-ENV CAKEPHP_DEBUG_LEVEL=${CAKEPHP_DEBUG_LEVEL:-2}
-ARG BALENA_MACHINE_NAME
-ENV BALENA_MACHINE_NAME=${BALENA_MACHINE_NAME:-intel-nuc}
-ARG SECONDARY_HUB
-ENV SECONDARY_HUB=${SECONDARY_HUB:-linuxserver/mariadb}
-ARG BALENA_ARCH
-ENV BALENA_ARCH=${BALENA_ARCH:-x86_64}
-ARG PHP_EXTENSIONS
-ENV PHP_EXTENSIONS=${PHP_EXTENSIONS:-"xdebug redis memcached"}
-ARG COLLECT_COVERAGE
-ENV COLLECT_COVERAGE=${COLLECT_COVERAGE:-"False"}
-ARG MYPHPCMS_DIR
-ENV MYPHPCMS_DIR=${MYPHPCMS_DIR:-"app/webroot/php-cms"}
-ARG MYPHPCMS_LOG
-ENV MYPHPCMS_LOG=${MYPHPCMS_LOG:-"app/tmp/logs"}
-ARG SERVER_NAME
-ENV SERVER_NAME=${SERVER_NAME:-"acake2php.local"}
-# Change uid and gid of apache to docker user uid/gid
-ARG PUID
-ENV PUID=${PUID:-0}
-ARG PGID
-ENV PGID=${PGID:-0}
-ARG HTTP_PORT
-ENV HTTP_PORT=${HTTP_PORT:-80}
-ARG SSL_PORT
-ENV SSL_PORT=${SSL_PORT:-443}
-# Enable migrate-database.sh options
-ARG MIGRATE_OPTION
-ENV MIGRATE_OPTION=${MIGRATE_OPTION:-"-v"}
-# Database connection
-ARG DB
-ENV DB=${DB:-Mysql}
-ARG MYSQL_HOST
-ENV MYSQL_HOST=${MYSQL_HOST:-"db"}
-ARG MYSQL_TCP_PORT
-ENV MYSQL_TCP_PORT=${MYSQL_TCP_PORT:-3306}
-ARG MYSQL_DATABASE
-ENV MYSQL_DATABASE=${MYSQL_DATABASE:-"aria_db"}
-ARG MYSQL_ROOT_PASSWORD
-ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-"mariadb"}
-ARG TEST_MYSQL_DATABASE
-ENV TEST_MYSQL_DATABASE=${TEST_MYSQL_DATABASE:-"test"}
-ARG MYSQL_USER
-ENV MYSQL_USER=${MYSQL_USER:-"maria"}
-ARG MYSQL_PASSWORD
-ENV MYSQL_PASSWORD=${MYSQL_PASSWORD:-"maria-abc"}
-ARG HASH_PASSWORD
-ENV HASH_PASSWORD=${HASH_PASSWORD:-"password"}
-
-
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
-
-# Run initialization scripts
-RUN chmod +x Scripts/*.sh \
-    && git init \
-    && update_templates \
-    && ./configure.sh --runner -a -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development \
-    && ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
-    && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
-
 # Expose Apache ports
 EXPOSE 80 443
 
 # Enable Apache modules and start the server
-# RUN a2enmod rewrite
+RUN a2enmod proxy \
+    && a2enmod proxy_fcgi \
+    && a2enconf servername \
+    && a2ensite 000-default \
+    && a2ensite 001-ssl \
+    && a2enmod mpm_event_module
 ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]

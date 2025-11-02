@@ -28,7 +28,7 @@ services:
       - common.env
       - .env
     build:
-      context: deployment/images/php7
+      context: .
       dockerfile: Dockerfile.armhf
       args:
         PUID: 1000
@@ -46,7 +46,7 @@ services:
       - common.env
       - .env
     build:
-      context: .
+      context: deployment/images/httpd
       dockerfile: Dockerfile.armhf
       args:
         CAKEPHP_DEBUG_LEVEL: "2"
