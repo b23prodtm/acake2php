@@ -126,6 +126,8 @@ RUN install-php-extensions ${PHP_EXTENSIONS} \
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
+COPY . .
+
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
     && git init \
