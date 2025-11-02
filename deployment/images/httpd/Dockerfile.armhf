@@ -25,7 +25,7 @@ ENV PATH="${HTDOCS}/node_modules/.bin:${PATH}"
 
 # Install base packages
 RUN apk add --no-cache \
-    bash gettext apache2 apache2-mod_mpm_event apache2-mod_proxy apache2-mod_proxy_fcgi curl git \
+    bash gettext curl git \
     && ln -sf /dev/stdout /var/log/apache2/access.log \
     && ln -sf /dev/stderr /var/log/apache2/error.log
 
