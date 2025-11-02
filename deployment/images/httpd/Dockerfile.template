@@ -1,0 +1,38 @@
+FROM httpd:2.4-alpine3.22
+
+# Set up working directory and environment
+ARG HTDOCS
+ENV HTDOCS=${HTDOCS:-"/usr/local/apache2/htdocs"}
+WORKDIR ${HTDOCS}
+
+# Install base packages
+RUN apk add --no-cache \
+    bash gettext apache2 apache2-ctl apache2-ssl curl git \
+    && ln -sf /dev/stdout /var/log/apache2/access.log \
+    && ln -sf /dev/stderr /var/log/apache2/error.log
+
+# Copy application files
+COPY . .
+
+# Set up Apache configuration
+RUN envsubst < etc/apache2/000-default.conf > /etc/apache2/sites-available/000-default.conf \
+    && envsubst < etc/apache2/001-ssl.conf > /etc/apache2/sites-available/001-ssl.conf
+
+# Set permissions for temporary directories
+RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
+    && chown -R :www-data app/tmp \
+    && chmod -R 770 app/tmp
+
+# Add mor NodeJS, CakePHP and Composer commands to system path
+ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
+
+# Expose Apache ports
+EXPOSE 80 443
+
+# Enable Apache modules and start the server
+RUN a2enmod proxy \
+    && a2enmod proxy_fcgi \
+    && a2enconf servername \
+    && a2ensite 000-default \
+    && a2ensite 001-ssl
+ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]
