@@ -12,9 +12,6 @@ RUN corepack enable \
     && yarn install --immutable \
     && yarn cache clean
 
-# Add modules to the image files
-COPY node_modules/ node_modules
-
 # Stage 2: Build PHP and Apache environment
 FROM php:7.4.33-alpine3.15
 
