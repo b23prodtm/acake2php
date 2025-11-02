@@ -47,12 +47,13 @@ unload_module() {
 # Enable necessary modules directly in the Apache configuration.
 # For example, instead of `a2enmod proxy`, manually add
 # the following lines to the Apache configuration file.
-log_daemon_msg "Configuration mods ${CNF}/httpd.conf..."
+log_daemon_msg "Configuration of Apache 2 ${CNF}/httpd.conf..."
 load_module "mod_mpm_event.so"
 load_module "mod_proxy.so"
 load_module "mod_proxy_fcgi.so"
 unload_module "mod_mpm_prefork.so"
 unload_module "mod_rewrite.so"
+unload_lines "ServerRoot" "/var/www" "httpd.conf" ""
 unload_lines "DocumentRoot" "/var/www/localhost/htdocs" "httpd.conf" ""
 sed '#<Directory "/var/www/localhost/htdocs">#,#</Directory>#d' ${CNF}/httpd.conf
 
