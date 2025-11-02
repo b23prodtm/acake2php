@@ -6,13 +6,11 @@ FROM node:22-alpine AS node-build
 WORKDIR /usr/local/project
 
 # Copy Node.js dependency files, Fixing global modules issue
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .yarnrc.yml ./
 RUN corepack enable \
     && corepack prepare yarn@stable --activate \
     && yarn install --immutable \
-    && yarn cache clean \
-    && mkdir -p node_modules \
-    && cp -fR /usr/local/lib/node_modules/* node_modules/.
+    && yarn cache clean
 
 # Stage 2: Build PHP and Apache environment
 FROM php:7.4.33-alpine3.15
