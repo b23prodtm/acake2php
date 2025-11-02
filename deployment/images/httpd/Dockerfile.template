@@ -34,5 +34,6 @@ RUN a2enmod proxy \
     && a2enmod proxy_fcgi \
     && a2enconf servername \
     && a2ensite 000-default \
-    && a2ensite 001-ssl
+    && a2ensite 001-ssl \
+    && a2enmod mpm_event_module
 ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]
