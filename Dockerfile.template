@@ -144,3 +144,6 @@ RUN chmod +x Scripts/*.sh \
     && ./configure.sh --runner -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development \
     && ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
     && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
+
+# As set in /etc/php-fpm.d/
+EXPOSE 9001 9002
