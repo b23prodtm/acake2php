@@ -19,14 +19,6 @@ RUN mkdir -p /etc/apache2/sites-available \
     && envsubst < etc/apache2/sites-available/000-default.conf > /etc/apache2/sites-available/000-default.conf \
     && envsubst < etc/apache2/sites-available/001-ssl.conf > /etc/apache2/sites-available/001-ssl.conf
 
-# Set permissions for temporary directories
-RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
-    && chown -R :www-data app/tmp \
-    && chmod -R 770 app/tmp
-
-# Add mor NodeJS, CakePHP and Composer commands to system path
-ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
-
 # Expose Apache ports
 EXPOSE 80 443
 
