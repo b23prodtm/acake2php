@@ -15,8 +15,8 @@ RUN apk add --no-cache \
 COPY . .
 
 # Set up Apache configuration
-RUN envsubst < etc/apache2/000-default.conf > /etc/apache2/sites-available/000-default.conf \
-    && envsubst < etc/apache2/001-ssl.conf > /etc/apache2/sites-available/001-ssl.conf
+RUN envsubst < etc/apache2/sites-available/000-default.conf > /etc/apache2/sites-available/000-default.conf \
+    && envsubst < etc/apache2/sites-available/001-ssl.conf > /etc/apache2/sites-available/001-ssl.conf
 
 # Set permissions for temporary directories
 RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
