@@ -1,0 +1,32 @@
+FROM httpd:2.4-alpine3.22
+
+# Set up working directory and environment
+ARG HTDOCS
+ENV HTDOCS=${HTDOCS:-"/usr/local/apache2/htdocs"}
+WORKDIR ${HTDOCS}
+
+# Install base packages
+RUN apk add --no-cache \
+    bash gettext apache2 apache2-ctl apache2-ssl curl git \
+    && ln -sf /dev/stdout /var/log/apache2/access.log \
+    && ln -sf /dev/stderr /var/log/apache2/error.log
+
+# Copy application files
+COPY . .
+
+# Set up Apache configuration
+RUN envsubst < etc/apache2/sites-available/000-default.conf > /etc/apache2/conf.d/000-default.conf \
+    && envsubst < etc/apache2/sites-available/001-ssl.conf > /etc/apache2/conf.d/001-ssl.conf
+
+# Expose Apache ports
+EXPOSE 80 443
+
+# Enable Apache modules and start the server
+# Enable necessary modules directly in the Apache configuration.
+# For example, instead of `a2enmod proxy`, manually add
+# the following lines to the Apache configuration file.
+RUN echo "LoadModule proxy_module modules/mod_proxy.so" >> /usr/local/apache2/conf/httpd.conf \
+    && echo "LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so" >> /usr/local/apache2/conf/httpd.conf \
+    && echo "LoadModule mpm_event_module modules/mod_mpm_event.so" >> /usr/local/apache2/conf/httpd.conf
+
+ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]

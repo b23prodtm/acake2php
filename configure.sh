@@ -34,7 +34,6 @@ usage=("" \
 "          -d, --mig-database [options]" \
 "                         Migrate Database (see $0 --mig-database --help)" \
 "          --development  Install composer dependencies" \
-"          -a, --apache2  Make apache2 VirtualHost configuration from templates: etc/apache2/site.tpl..." \
 "")
 saved=( "$@" )
 show_password_status "root" "MYSQL_ROOT_PASSWORD" "is configuring ${runner} ${docker}..."
@@ -70,12 +69,6 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     ;;
   --development )
     composer_args="-d $APPPATH update --no-interaction --dev"
-    ;;
-  -[aA]*|--apache )
-    # shellcheck disable=SC2154
-    echo -e "${green}Configuring Apache2 Modules...${nc}"
-    # shellcheck source=Scripts/config_a2_mod.sh
-    bash -c "$TOPDIR/Scripts/config_a2_mod.sh"
     ;;
   -[vV]*|--verbose )
     set -x

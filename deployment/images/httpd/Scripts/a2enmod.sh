@@ -43,20 +43,11 @@ unload_module() {
     library="$1"
     unload "LoadModule" "$library" "php${PHP_LIB_MAJOR}-module.conf"
 }
-# =============
+# Examples
+# log_daemon_msg mpm_event module loading
+# load_module "mod_mpm_event.so"
+# unload_module "mod_php${PHP_LIB_MAJOR}.so"
+# unload "DirectoryIndex" "index.html" "php${PHP_LIB_MAJOR}-module.conf"
+# unload_lines "<FilesMatch" ".php" "php${PHP_LIB_MAJOR}-module.conf" ",+3d"
 
-log_daemon_msg "Enable mod_rewrite"
-load_module "mod_rewrite.so"
-load_module "mod_mpm_event.so"
-unload_module "mod_php${PHP_LIB_MAJOR}.so"
-unload "DirectoryIndex" "index.html" "php${PHP_LIB_MAJOR}-module.conf"
-unload_lines "<FilesMatch" ".php" "php${PHP_LIB_MAJOR}-module.conf" ",+3d"
 
-log_daemon_msg "Add /etc/hosts $SERVER_NAME"
-if [ -w "/etc/hosts" ]; then
-  tmpfile=$(mktemp)
-  sed -E -e "/127.0.0.1/s/(localhost)/\\1 ${SERVER_NAME} www.${SERVER_NAME}/" /etc/hosts > "$tmpfile"
-  cat "$tmpfile" > /etc/hosts
-else
-  log_warning_msg "/etc/hosts file not found"
-fi
