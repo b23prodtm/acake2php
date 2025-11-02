@@ -23,7 +23,7 @@ load_module () {
 }
 
 unload () {
-    unload_lines "$1" "$2" "$3" ""
+    unload_lines "$1" "$2" "$3" "g"
 }
 
 unload_lines () {
@@ -41,7 +41,7 @@ unload_lines () {
 
 unload_module() {
     library="$1"
-    unload "LoadModule" "$library" "php${PHP_LIB_MAJOR}-module.conf"
+    unload "LoadModule" "$library" "httpd.conf"
 }
 
 # Enable necessary modules directly in the Apache configuration.
