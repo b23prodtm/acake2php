@@ -129,7 +129,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 # Copy application files
 COPY . .
 
-
 # Set permissions for temporary directories
 RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
     && chown -R :www-data app/tmp \
