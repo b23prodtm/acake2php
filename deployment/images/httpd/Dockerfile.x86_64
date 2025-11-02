@@ -15,18 +15,18 @@ RUN apk add --no-cache \
 COPY . .
 
 # Set up Apache configuration
-RUN mkdir -p /etc/apache2/sites-available \
-    && envsubst < etc/apache2/sites-available/000-default.conf > /etc/apache2/sites-available/000-default.conf \
-    && envsubst < etc/apache2/sites-available/001-ssl.conf > /etc/apache2/sites-available/001-ssl.conf
+RUN envsubst < etc/apache2/sites-available/000-default.conf > /etc/apache2/conf.d/000-default.conf \
+    && envsubst < etc/apache2/sites-available/001-ssl.conf > /etc/apache2/conf.d/001-ssl.conf
 
 # Expose Apache ports
 EXPOSE 80 443
 
 # Enable Apache modules and start the server
-RUN a2enmod proxy \
-    && a2enmod proxy_fcgi \
-    && a2enconf servername \
-    && a2ensite 000-default \
-    && a2ensite 001-ssl \
-    && a2enmod mpm_event_module
+# Enable necessary modules directly in the Apache configuration.
+# For example, instead of `a2enmod proxy`, manually add
+# the following lines to the Apache configuration file.
+RUN echo "LoadModule proxy_module modules/mod_proxy.so" >> /usr/local/apache2/conf/httpd.conf \
+    && echo "LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so" >> /usr/local/apache2/conf/httpd.conf \
+    && echo "LoadModule mpm_event_module modules/mod_mpm_event.so" >> /usr/local/apache2/conf/httpd.conf \
+
 ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]
