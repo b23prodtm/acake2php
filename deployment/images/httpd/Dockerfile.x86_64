@@ -22,11 +22,7 @@ RUN envsubst < etc/apache2/sites-available/000-default.conf > /etc/apache2/conf.
 EXPOSE 80 443
 
 # Enable Apache modules and start the server
-# Enable necessary modules directly in the Apache configuration.
-# For example, instead of `a2enmod proxy`, manually add
-# the following lines to the Apache configuration file.
-RUN echo "LoadModule proxy_module modules/mod_proxy.so" >> /usr/local/apache2/conf/httpd.conf \
-    && echo "LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so" >> /usr/local/apache2/conf/httpd.conf \
-    && echo "LoadModule mpm_event_module modules/mod_mpm_event.so" >> /usr/local/apache2/conf/httpd.conf
+RUN chmod +x Scripts/*.sh \
+    && Scripts/a2enmod.sh
 
 ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]

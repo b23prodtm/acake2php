@@ -32,7 +32,7 @@ unload_lines () {
     file="${CNF}/$3"
     lines_delete="$4"
     if [ -f "${file}" ]; then
-        sed -i.old -E -e "/$library/s/(${directive}.*)/#\1/g${lines_delete}" "${file}"
+        sed -i.old -E -e "/$library/s/(${directive}.*)/#\1/${lines_delete}" "${file}"
         grep "$library" < "${file}"
     else
         log_warning_msg "APACHE2 SERVER CONFIG: ${file} file not found"
@@ -43,11 +43,17 @@ unload_module() {
     library="$1"
     unload "LoadModule" "$library" "php${PHP_LIB_MAJOR}-module.conf"
 }
-# Examples
-# log_daemon_msg mpm_event module loading
-# load_module "mod_mpm_event.so"
-# unload_module "mod_php${PHP_LIB_MAJOR}.so"
-# unload "DirectoryIndex" "index.html" "php${PHP_LIB_MAJOR}-module.conf"
-# unload_lines "<FilesMatch" ".php" "php${PHP_LIB_MAJOR}-module.conf" ",+3d"
+
+# Enable necessary modules directly in the Apache configuration.
+# For example, instead of `a2enmod proxy`, manually add
+# the following lines to the Apache configuration file.
+log_daemon_msg "Configuration mods ${CNF}/httpd.conf..."
+load_module "mod_mpm_event.so"
+load_module "mod_proxy.so"
+load_module "mod_proxy_fcgi.so"
+unload_module "mod_mpm_prefork.so"
+unload_module "mod_rewrite.so"
+unload_lines "DocumentRoot" "/var/www/localhost/htdocs" "httpd.conf" ""
+sed '#<Directory "/var/www/localhost/htdocs">#,#</Directory>#d' ${CNF}/httpd.conf
 
 
