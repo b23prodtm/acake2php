@@ -1,3 +1,16 @@
+# BEGIN - Multi-stage Build
+# Stage 1: Install NodeJS dependencies
+FROM node:20-alpine3.16 AS node-build
+
+WORKDIR /usr/local/project
+
+# Copy Node.js dependency files, Fixing global modules issue
+RUN apk update \
+    && apk add --no-cache yarn \
+    && yarn add balena-cloud-apps \
+    && yarn cache clean
+
+# Stage 2: Build environment
 FROM httpd:2.4-alpine3.22
 
 # Set up working directory and environment
@@ -5,28 +18,56 @@ ARG HTDOCS
 ENV HTDOCS=${HTDOCS:-"/usr/local/apache2/htdocs"}
 WORKDIR ${HTDOCS}
 
+# Add mor NodeJS, CakePHP and Composer commands to system path
+COPY --from=node-build /usr/local/project/node_modules/ node_modules
+ENV PATH="${HTDOCS}/node_modules/.bin:${PATH}"
+# END - Multi-stage Build
+
 # Install base packages
-RUN apk add --no-cache \
-    bash gettext apache2 apache2-ctl apache2-ssl curl git \
-    && ln -sf /dev/stdout /var/log/apache2/access.log \
-    && ln -sf /dev/stderr /var/log/apache2/error.log
+RUN apk update \
+    && apk add --no-cache \
+    bash gettext curl git
+
+RUN apk del build-base \
+    && rm -rf /var/cache/apk/*
 
 # Copy application files
 COPY . .
 
+ARG SERVER_ROOT
+ENV SERVER_ROOT=${SERVER_ROOT:-"/usr/local/apache2"}
+ARG SERVER_NAME
+ENV SERVER_NAME=${SERVER_NAME:-"acake2php.local"}
+ARG HTTP_PORT
+ENV HTTP_PORT=${HTTP_PORT:-80}
+ARG SSL_PORT
+ENV SSL_PORT=${SSL_PORT:-443}
+ARG USER
+ENV USER=${USER:-httpd}
+ENV GROUP=${GROUP:-www-data}
+ARG PUID
+ENV PUID=${PUID:-1000}
+ARG GUID
+ENV GUID=${GUID:-1000}
+
+# add dedicated user
+RUN adduser -h $PWD -G $GROUP -D -u $PUID $USER \
+    && sed -i -E -e "#User#s#www-data#$USER#g -e #Group#s#www-data#$GROUP#g" "${SERVER_ROOT}/conf/httpd.conf"
+
 # Set up Apache configuration
-RUN envsubst < etc/apache2/sites-available/000-default.conf > /etc/apache2/conf.d/000-default.conf \
-    && envsubst < etc/apache2/sites-available/001-ssl.conf > /etc/apache2/conf.d/001-ssl.conf
+RUN envsubst < etc/apache2/conf-available/servername.conf > ${SERVER_ROOT}/conf/extra/servername.conf \
+    && envsubst < etc/apache2/sites-available/000-default.conf > ${SERVER_ROOT}/conf/extra/000-default.conf \
+    && envsubst < etc/apache2/sites-available/001-ssl.conf > ${SERVER_ROOT}/conf/extra/001-ssl.conf \
+    && echo "Include extra/servername.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
+    && echo "Include extra/000-default.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
+    && echo "Include extra/001-ssl.conf" >> ${SERVER_ROOT}/conf/httpd.conf
+
 
 # Expose Apache ports
 EXPOSE 80 443
 
 # Enable Apache modules and start the server
-# Enable necessary modules directly in the Apache configuration.
-# For example, instead of `a2enmod proxy`, manually add
-# the following lines to the Apache configuration file.
-RUN echo "LoadModule proxy_module modules/mod_proxy.so" >> /usr/local/apache2/conf/httpd.conf \
-    && echo "LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so" >> /usr/local/apache2/conf/httpd.conf \
-    && echo "LoadModule mpm_event_module modules/mod_mpm_event.so" >> /usr/local/apache2/conf/httpd.conf
+RUN chmod +x Scripts/*.sh \
+    && Scripts/a2enmod.sh
 
 ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]

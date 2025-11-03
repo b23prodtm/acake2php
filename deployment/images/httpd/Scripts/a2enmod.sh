@@ -2,15 +2,14 @@
 set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . init_functions .
-CNF="/etc/apache2"
-PHP_LIB_MAJOR=7
+CNF="${SERVER_ROOT}/conf"
 # ============= functions
 load () {
     directive="$1"
     library="$2"
     file="${CNF}/$3"
     if [ -f "$file" ]; then
-        sed -i.old -E -e "/$library/s/^#+${directive}//g" "$file"
+        sed -i -E -e "/$library/s/^#+(${directive}.*)/\1/" "$file"
         grep "$library" < "$file"
     else
         log_warning_msg "APACHE2 SERVER CONFIG: $file file not found"
@@ -23,7 +22,7 @@ load_module () {
 }
 
 unload () {
-    unload_lines "$1" "$2" "$3" ""
+    unload_lines "$1" "$2" "$3" "g"
 }
 
 unload_lines () {
@@ -32,7 +31,7 @@ unload_lines () {
     file="${CNF}/$3"
     lines_delete="$4"
     if [ -f "${file}" ]; then
-        sed -i.old -E -e "/$library/s/(${directive}.*)/#\1/g${lines_delete}" "${file}"
+        sed -i -E -e "/$library/s/(${directive}.*)/#\1/${lines_delete}" "${file}"
         grep "$library" < "${file}"
     else
         log_warning_msg "APACHE2 SERVER CONFIG: ${file} file not found"
@@ -41,13 +40,17 @@ unload_lines () {
 
 unload_module() {
     library="$1"
-    unload "LoadModule" "$library" "php${PHP_LIB_MAJOR}-module.conf"
+    unload "LoadModule" "$library" "httpd.conf"
 }
-# Examples
-# log_daemon_msg mpm_event module loading
-# load_module "mod_mpm_event.so"
-# unload_module "mod_php${PHP_LIB_MAJOR}.so"
-# unload "DirectoryIndex" "index.html" "php${PHP_LIB_MAJOR}-module.conf"
-# unload_lines "<FilesMatch" ".php" "php${PHP_LIB_MAJOR}-module.conf" ",+3d"
 
+# Load and unload necessary modules directly in the Apache configuration.
+# For example, instead of `a2enmod proxy`, manually add
+# the following lines to the Apache configuration file.
+log_daemon_msg "Configuration of Apache 2 ${CNF}/httpd.conf..."
+load_module "mod_mpm_event.so"
+load_module "mod_proxy.so"
+load_module "mod_proxy_fcgi.so"
+unload_module "mod_mpm_prefork.so"
+unload_module "mod_rewrite.so"
+log_daemon_msg "...Done."
 
