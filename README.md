@@ -5,14 +5,13 @@
     - [Plugins](#plugins)
       + [NodeJs packages](#nodejs-packages)
       + [Composer Plugins](#composer-plugins)
-    + [Local Built-in Server](#local-built-in-server)
+    + [Built-in Server](#built-in-server)
     + [PHPUnit Test](#phpunit-test)
-    + [Device pod environment](#device-pod-environment)
     - [Database terminal](#database-terminal)
       + [More Database Configuration](#more-database-configuration)
       + [Generate new administrator password](#generate-new-administrator-password)
     + [Common Issues](FAQ.md#common-issues)
-    + [Cross Platform](#cross-platform)
+    + [Build Platform](#build-platform)
     + [Docker Hub](#docker-hub)
     + [License](#license)
 
@@ -37,9 +36,9 @@ Based on [Balena engine](http://www.balena.io). See more about [NodeJs dependenc
 Softwares
 ---------
 To deploy a server or onto a container manager like docker, you need at least a developer environment with the following software:
-+ PHP 7.4 FPM (Alpine)
-+ Apache 2.4 HTTPD (Alpine)
-+ MariaDB MySQL database
++ PHP 7.4 FPM (Alpine Linux)
++ Apache 2.4 HTTPD (Alpine Linux)
++ MariaDB 10.1 MySQL database
 + Balena Cloud Apps (NodeJS Package)
 
 Configuration
@@ -109,8 +108,8 @@ However, if these files exist they will affect the behavior of the build process
   [FilesMatch in etc/apache2/site.conf]
   
 
-Local Built-in Server
----------------------
+Built-in Server
+---------------
 * CakePHP application also supports Docker
 * MariaDB 10.1 and later
 
