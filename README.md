@@ -108,22 +108,22 @@ However, if these files exist they will affect the behavior of the build process
   [FilesMatch in etc/apache2/site.conf]
   
 
-Built-in Server
+Built-in Test Server
 ---------------
 * CakePHP application also supports Docker
 * MariaDB 10.1 and later
 
-Start a local server machine for testing on port 9000.
+Start a *local* tedt server machine for testing on port 9000.
 Open a Terminal window:
 
-    DB=Mysql ./configure.sh --mig-database -u
+    ./configure.sh -d -i -u
     ./start-cake.sh --docker -c server -p 9000
 
 > Ctrl-click the URL that appear on the terminal. It will open them in the browser. To get more help about the command line interface :
 
     ./start-cake.sh --help
 
-### PHPUnit Test
+#### PHPUnit Test
 JUNIT tests are available with the following call to CAKE server:
 Open a Terminal window:
 
@@ -134,7 +134,7 @@ There are options (--runner, --travis) dedicated to continuous integration build
 See [below](#common-issues) to allow access on the built-in local server.
 
 
-### **db** healthcheck
+#### **db** configuration
 
 Container engines provides a sanbox virtual system with some persistent storage. To check that the last database migration was successful, open a pod shell :
 
@@ -144,7 +144,7 @@ Issue some SQL statements, for instance :
 
     use aria_db; show tables;
 
-#### **php-fpm** pod healthcheck
+#### **php-fpm** configuration
 
 By editing the files `Config/app_local.template` and `Config/Schema/AppSchema.template` if you wish to modify the database connection and email transport.
 You can then re-configure and migrate databases (configuration and migration)
