@@ -25,9 +25,10 @@ ENV PATH="${HTDOCS}/node_modules/.bin:${PATH}"
 
 # Install base packages
 RUN apk add --no-cache \
-    bash gettext curl git \
-    && ln -sf /dev/stdout /var/log/apache2/access.log \
-    && ln -sf /dev/stderr /var/log/apache2/error.log
+    bash gettext curl git
+
+RUN apk del build-base \
+    && rm -rf /var/cache/apk/*
 
 # Copy application files
 COPY . .
