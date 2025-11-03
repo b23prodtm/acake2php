@@ -24,7 +24,8 @@ ENV PATH="${HTDOCS}/node_modules/.bin:${PATH}"
 # END - Multi-stage Build
 
 # Install base packages
-RUN apk add --no-cache \
+RUN apk update \
+    && apk add --no-cache \
     bash gettext curl git
 
 RUN apk del build-base \
