@@ -2,7 +2,7 @@
 set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . init_functions .
-CNF="/etc/apache2"
+CNF="/usr/local/apache2/conf"
 PHP_LIB_MAJOR=7
 # ============= functions
 load () {
@@ -54,10 +54,15 @@ load_module "mod_proxy_fcgi.so"
 unload_module "mod_mpm_prefork.so"
 unload_module "mod_rewrite.so"
 unload_lines "Listen" "80" "httpd.conf" ""
-unload_lines "ServerRoot" "/var/www" "httpd.conf" ""
-unload_lines "DocumentRoot" "/var/www/localhost/htdocs" "httpd.conf" ""
-sed -i.old -e "#<Directory \"/var/www/localhost/htdocs\">#,#</Directory>#d" "${CNF}/httpd.conf"
-sed -i.old -e "#User#s#apache#$USER#g -e #Group#s#apache#www-data#g" "${CNF}/httpd.conf"
+server_root="/usr/local/apache2"
+document_root="$server_root/htdocs"
+unload_lines "ServerRoot" "$server_root" "httpd.conf" ""
+unload_lines "DocumentRoot" "$document_root" "httpd.conf" ""
+sed -i.old -e "#<Directory \"$document_root\">#,#</Directory>#d" "${CNF}/httpd.conf"
+# Change default User and Group
+user="$USER"
+group="www-data"
+sed -i.old -e "#User#s#www-data#$user#g -e #Group#s#www-data#$group#g" "${CNF}/httpd.conf"
 grep User < "${CNF}/httpd.conf"
 grep Group < "${CNF}/httpd.conf"
 log_daemon_msg "...Done."
