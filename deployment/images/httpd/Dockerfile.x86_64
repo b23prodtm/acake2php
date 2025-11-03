@@ -63,7 +63,7 @@ RUN envsubst < etc/apache2/conf-available/servername.conf > ${SERVER_ROOT}/conf/
     && echo "Include extra/001-ssl.conf" >> ${SERVER_ROOT}/conf/httpd.conf
 
 # Expose Apache ports
-EXPOSE 80 443
+EXPOSE ${HTTP_PORT} ${SSL_PORT}
 
 # Enable Apache modules and start the server
 RUN chmod +x Scripts/*.sh \
