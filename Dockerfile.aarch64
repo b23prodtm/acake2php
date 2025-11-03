@@ -135,5 +135,9 @@ RUN chmod +x Scripts/*.sh \
     && ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
     && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
 
+# add dedicated user
+RUN adduser -h $PWD -G www-data -D -u 1000 http-fpm \
+    && adduser -h $PWD -G www-data -D -u 1000 https-fpm
+
 # As set in /etc/php-fpm.d/
 EXPOSE 9001 9002

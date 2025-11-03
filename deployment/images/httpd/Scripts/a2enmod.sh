@@ -10,7 +10,7 @@ load () {
     library="$2"
     file="${CNF}/$3"
     if [ -f "$file" ]; then
-        sed -i.old -E -e "/$library/s/^#+${directive}//g" "$file"
+        sed -i.old -E -e "/$library/s/^#+${directive}/g" "$file"
         grep "$library" < "$file"
     else
         log_warning_msg "APACHE2 SERVER CONFIG: $file file not found"
@@ -55,6 +55,9 @@ unload_module "mod_mpm_prefork.so"
 unload_module "mod_rewrite.so"
 unload_lines "ServerRoot" "/var/www" "httpd.conf" ""
 unload_lines "DocumentRoot" "/var/www/localhost/htdocs" "httpd.conf" ""
-sed '#<Directory "/var/www/localhost/htdocs">#,#</Directory>#d' ${CNF}/httpd.conf
-
+sed -i.old -e "#<Directory \"/var/www/localhost/htdocs\">#,#</Directory>#d" "${CNF}/httpd.conf"
+sed -i.old -e "#User#s#apache#$USER#g -e #Group#s#apache#www-data#g" "${CNF}/httpd.conf"
+grep User < "${CNF}/httpd.conf"
+grep Group < "${CNF}/httpd.conf"
+log_daemon_msg "...Done."
 

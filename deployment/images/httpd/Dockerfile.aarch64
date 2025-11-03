@@ -41,6 +41,10 @@ ENV HTTP_PORT=${HTTP_PORT:-80}
 ARG SSL_PORT
 ENV SSL_PORT=${SSL_PORT:-443}
 
+# add dedicated user
+RUN adduser -h $PWD -G www-data -D -u 1000 httpd
+USER httpd
+
 # Set up Apache configuration
 RUN envsubst < etc/apache2/conf-available/servername.conf > /etc/apache2/conf.d/servername.conf \
     && envsubst < etc/apache2/sites-available/000-default.conf > /etc/apache2/conf.d/000-default.conf \
