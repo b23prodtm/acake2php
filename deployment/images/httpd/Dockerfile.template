@@ -58,9 +58,9 @@ RUN adduser -h $PWD -G $GROUP -D -u $PUID $USER \
 RUN envsubst < etc/apache2/conf-available/servername.conf > ${SERVER_ROOT}/conf/extra/servername.conf \
     && envsubst < etc/apache2/sites-available/000-default.conf > ${SERVER_ROOT}/conf/extra/000-default.conf \
     && envsubst < etc/apache2/sites-available/001-ssl.conf > ${SERVER_ROOT}/conf/extra/001-ssl.conf \
-    && echo "Include extra/servername.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
-    && echo "Include extra/000-default.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
-    && echo "Include extra/001-ssl.conf" >> ${SERVER_ROOT}/conf/httpd.conf
+    && echo "Include conf/extra/servername.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
+    && echo "Include conf/extra/000-default.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
+    && echo "Include conf/extra/001-ssl.conf" >> ${SERVER_ROOT}/conf/httpd.conf
 
 
 # Expose Apache ports
