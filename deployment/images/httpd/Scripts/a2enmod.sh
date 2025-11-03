@@ -2,8 +2,7 @@
 set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . init_functions .
-CNF="/usr/local/apache2/conf"
-PHP_LIB_MAJOR=7
+CNF="${SERVER_ROOT}/conf"
 # ============= functions
 load () {
     directive="$1"
@@ -44,7 +43,7 @@ unload_module() {
     unload "LoadModule" "$library" "httpd.conf"
 }
 
-# Unload default VirtualHost and load necessary modules directly in the Apache configuration.
+# Load and unload necessary modules directly in the Apache configuration.
 # For example, instead of `a2enmod proxy`, manually add
 # the following lines to the Apache configuration file.
 log_daemon_msg "Configuration of Apache 2 ${CNF}/httpd.conf..."
@@ -54,11 +53,6 @@ load_module "mod_proxy_fcgi.so"
 unload_module "mod_mpm_prefork.so"
 unload_module "mod_rewrite.so"
 unload_lines "Listen" "80" "httpd.conf" ""
-server_root="/usr/local/apache2"
-document_root="$server_root/htdocs"
-unload_lines "ServerRoot" "$server_root" "httpd.conf" ""
-unload_lines "DocumentRoot" "$document_root" "httpd.conf" ""
-sed -i.old -e "#<Directory \"$document_root\">#,#</Directory>#d" "${CNF}/httpd.conf"
 # Change default User and Group
 user="$USER"
 group="www-data"

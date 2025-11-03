@@ -48,9 +48,13 @@ RUN adduser -h $PWD -G www-data -D -u 1000 httpd
 USER httpd
 
 # Set up Apache configuration
-RUN envsubst < etc/apache2/conf-available/servername.conf > /usr/local/apache2/conf/servername.conf \
-    && envsubst < etc/apache2/sites-available/000-default.conf > /usr/local/apache2/conf/000-default.conf \
-    && envsubst < etc/apache2/sites-available/001-ssl.conf > /usr/local/apache2/conf/001-ssl.conf
+RUN envsubst < etc/apache2/conf-available/servername.conf > ${SERVER_ROOT}/conf/extra/servername.conf \
+    && envsubst < etc/apache2/sites-available/000-default.conf > ${SERVER_ROOT}/conf/extra/000-default.conf \
+    && envsubst < etc/apache2/sites-available/001-ssl.conf > ${SERVER_ROOT}/conf/extra/001-ssl.conf \
+    && echo "Include extra/servername.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
+    && echo "Include extra/000-default.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
+    && echo "Include extra/001-ssl.conf" >> ${SERVER_ROOT}/conf/httpd.conf
+
 
 # Expose Apache ports
 EXPOSE 80 443
