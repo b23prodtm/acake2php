@@ -126,8 +126,8 @@ RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
     && chmod -R 770 app/tmp
 
 # add dedicated user
-RUN adduser -h $PWD -G www-data -D -u 1000 http-fpm \
-    && adduser -h $PWD -G www-data -D -u 1000 https-fpm
+RUN adduser -h $PWD -G www-data -D -u 1001 http-fpm \
+    && adduser -h $PWD -G www-data -D -u 1002 https-fpm
 
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
