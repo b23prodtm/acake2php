@@ -44,7 +44,8 @@ ARG SSL_PORT
 ENV SSL_PORT=${SSL_PORT:-443}
 
 # add dedicated user
-RUN adduser -h $PWD -G www-data -D -u 1000 httpd
+RUN user=httpd group=www-data uid=1000 adduser -h $PWD -G $group -D -u $uid $user \
+    && sed -i -E -e "#User#s#www-data#$user#g -e #Group#s#www-data#$group#g" "${SERVER_ROOT}/conf/httpd.conf"
 
 # Set up Apache configuration
 RUN envsubst < etc/apache2/conf-available/servername.conf > ${SERVER_ROOT}/conf/extra/servername.conf \

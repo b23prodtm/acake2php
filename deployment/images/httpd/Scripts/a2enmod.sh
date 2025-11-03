@@ -52,11 +52,5 @@ load_module "mod_proxy.so"
 load_module "mod_proxy_fcgi.so"
 unload_module "mod_mpm_prefork.so"
 unload_module "mod_rewrite.so"
-# Change default User and Group
-user="$USER"
-group="www-data"
-sed -i -E -e "#User#s#www-data#$user#g -e #Group#s#www-data#$group#g" "${CNF}/httpd.conf"
-grep User < "${CNF}/httpd.conf"
-grep Group < "${CNF}/httpd.conf"
 log_daemon_msg "...Done."
 
