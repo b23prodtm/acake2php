@@ -37,8 +37,8 @@ services:
     volumes:
       - localtime:/etc/localtime:ro
     ports:
-      - "80:80"
-      - "443:443"
+      - "9001:9001"
+      - "9002:9002"
     networks:
       - cake
   apache:
