@@ -9,7 +9,7 @@ load () {
     library="$2"
     file="${CNF}/$3"
     if [ -f "$file" ]; then
-        sed -i.old -E -e "/$library/s/^#+${directive}/g" "$file"
+        sed -i -E -e "/$library/s/^#+(${directive}.*)/\1/" "$file"
         grep "$library" < "$file"
     else
         log_warning_msg "APACHE2 SERVER CONFIG: $file file not found"
@@ -31,7 +31,7 @@ unload_lines () {
     file="${CNF}/$3"
     lines_delete="$4"
     if [ -f "${file}" ]; then
-        sed -i.old -E -e "/$library/s/(${directive}.*)/#\1/${lines_delete}" "${file}"
+        sed -i -E -e "/$library/s/(${directive}.*)/#\1/${lines_delete}" "${file}"
         grep "$library" < "${file}"
     else
         log_warning_msg "APACHE2 SERVER CONFIG: ${file} file not found"
@@ -55,7 +55,7 @@ unload_module "mod_rewrite.so"
 # Change default User and Group
 user="$USER"
 group="www-data"
-sed -i.old -e "#User#s#www-data#$user#g -e #Group#s#www-data#$group#g" "${CNF}/httpd.conf"
+sed -i -E -e "#User#s#www-data#$user#g -e #Group#s#www-data#$group#g" "${CNF}/httpd.conf"
 grep User < "${CNF}/httpd.conf"
 grep Group < "${CNF}/httpd.conf"
 log_daemon_msg "...Done."
