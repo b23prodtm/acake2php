@@ -3,6 +3,7 @@ set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . init_functions .
 CNF="${SERVER_ROOT}/conf"
+SSL=/etc/ssl/apache2
 # ============= functions
 load () {
     directive="$1"
@@ -59,10 +60,10 @@ load_module "mod_ssl.so"
 unload_module "mod_mpm_prefork.so"
 unload_module "mod_rewrite.so"
 log_daemon_msg "...Done."
-if [ ! -f "${CNF}/ssl/server.pem" ]; then
+if [ ! -f "${SSL}/server.pem" ]; then
     gen_selfsigned_cert
-    mv -f server.key "${CNF}/ssl/server.key"
-    mv -f server.pem "${CNF}/ssl/server.pem"
+    mv -f server.key "${SSL}/server.key"
+    mv -f server.pem "${SSL}/server.pem"
 fi
 apachectl configtest
 
