@@ -64,8 +64,8 @@ unload_module "mod_rewrite.so"
 log_daemon_msg "...Done."
 if [ ! -f "${SSL}/server.pem" ]; then
     gen_selfsigned_cert
-    mv -f server.key "${SSL}/server.key"
-    mv -f server.pem "${SSL}/server.pem"
+    cp -vf server.key "${SSL}/server.key"
+    cp -vf server.pem "${SSL}/server.pem"
 fi
 apachectl configtest
 
