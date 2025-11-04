@@ -42,7 +42,12 @@ unload_module() {
     library="$1"
     unload "LoadModule" "$library" "httpd.conf"
 }
-
+gen_selfsigned_cert () {
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout server.key -out server.crt
+    cat server.crt server.key > server.pem
+}
+    
 # Load and unload necessary modules directly in the Apache configuration.
 # For example, instead of `a2enmod proxy`, manually add
 # the following lines to the Apache configuration file.
@@ -54,6 +59,11 @@ load_module "mod_ssl.so"
 unload_module "mod_mpm_prefork.so"
 unload_module "mod_rewrite.so"
 log_daemon_msg "...Done."
+if [ ! -f "${CNF}/ssl/server.pem" ]; then
+    gen_selfsigned_cert
+    mv -f server.key "${CNF}/ssl/server.key"
+    mv -f server.pem "${CNF}/ssl/server.pem"
+fi
 apachectl configtest
 
 
