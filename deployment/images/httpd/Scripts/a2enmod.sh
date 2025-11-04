@@ -3,7 +3,7 @@ set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . init_functions .
 CNF="${SERVER_ROOT}/conf"
-SSL=/etc/ssl/apache2
+SSL="${SERVER_ROOT}/ssl"
 # ============= functions
 load () {
     directive="$1"
@@ -45,6 +45,7 @@ unload_module() {
 }
 
 gen_selfsigned_cert () {
+    mkdir -p "${SSL}"
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -keyout server.key -out server.crt \
     -subj "/C=FR/ST=Rhone/L=Vaulx-en-Velin/O=www.b23prodtm.info/CN=TinaBRakoto"
