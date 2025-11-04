@@ -43,9 +43,11 @@ unload_module() {
     library="$1"
     unload "LoadModule" "$library" "httpd.conf"
 }
+
 gen_selfsigned_cert () {
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout server.key -out server.crt
+  -keyout server.key -out server.crt \
+    -subj "/C=FR/ST=Rhone/L=Vaulx-en-Velin/O=www.b23prodtm.info/CN=TinaBRakoto"
     cat server.crt server.key > server.pem
 }
     
