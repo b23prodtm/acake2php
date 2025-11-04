@@ -26,7 +26,7 @@ ENV PATH="${HTDOCS}/node_modules/.bin:${PATH}"
 # Install base packages
 RUN apk update \
     && apk add --no-cache \
-    bash gettext curl git 
+    bash gettext curl git openssl
 
 RUN apk del build-base \
     && rm -rf /var/cache/apk/*
