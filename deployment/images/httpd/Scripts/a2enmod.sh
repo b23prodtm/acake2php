@@ -54,4 +54,6 @@ load_module "mod_ssl.so"
 unload_module "mod_mpm_prefork.so"
 unload_module "mod_rewrite.so"
 log_daemon_msg "...Done."
+apachectl configtest
+
 
