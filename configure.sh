@@ -81,6 +81,6 @@ bash -c "$TOPDIR/Scripts/cp_bkp_old.sh $APPPATH/Config/ app_local.template app_l
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
 slogger -st sed "Cake patches $APPPATH and $SRCPATH"
 #; patches
-patches "$APPPATH/app/bin/cake.php"
+patches "$APPPATH/bin/cake.php"
 patches "$APPPATH/Config/core.php"
 patches "$SRCPATH/Console/ShellDispatcher.php" "$SRCPATH/Console/ConsoleOutput.php" 
