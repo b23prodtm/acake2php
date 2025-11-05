@@ -2,14 +2,14 @@
 
 - [A Cake2PHP website](#a-cake2php-3.x-application)
     + [Quickstart](#quickstart)
-    - [Plugins](#plugins)
-      + [NodeJs packages](#nodejs-packages)
-      + [Composer Plugins](#composer-plugins)
+    + [Softwares](#softwares)
+    + [Configuration](#configuration)
+    + [Generate new administrator password](#generate-new-administrator-password)
+    + [Plugins](#plugins)
+    + [NodeJs packages](#nodejs-packages)
+    + [Composer Plugins](#composer-plugins)
     + [Built-in Server](#built-in-server)
     + [PHPUnit Test](#phpunit-test)
-    - [Database terminal](#database-terminal)
-      + [More Database Configuration](#more-database-configuration)
-      + [Generate new administrator password](#generate-new-administrator-password)
     + [Common Issues](FAQ.md#common-issues)
     + [Build Platform](#build-platform)
     + [Docker Hub](#docker-hub)
@@ -61,79 +61,6 @@ You can also test the configuration, lauch Cake Tests from `/usr/local/apache2/h
 
     ./test-cake.sh
 
-Plugins
--------
-You do not need to change anything in your existing PHP project's repository.
-However, if these files exist they will affect the behavior of the build process:
-
-* Packagist **composer.json**
-
-  Update all required plugins
-
-      composer update
-
-  [Packagist](https://packagist.org).
-
-
-#### Node modules 
-
-* **package.json**
-
-  List of dependencies to be installed with `npmjs` [here](https://www.npmjs.com).
-
-      yarn install
-
-  Re-Install the helper package [balena-cloud-apps](https://www.npmjs.com/package/balena-cloud-apps).
-    
-      ysrn add balena-cloud-apps
-
-  whenever the system complains about `balena_deploy` not found.
-
-* **Templates files**
-
-  Setup environment variables, build files, ready for deployment with any of the available targets:
-
-      Scripts/update-templates.sh
-
-#### Composer Plugins 
-
-   Plugins are registered in both _git submodule_ and _composer.json_. To make them ready for build, edit _composer.json_ as needed and launch the command ```composer update```. 
-   Plugins home folder: 
-       
-       app/Vendor/<package-name>
-       app/Plugin/<plugin-name>/
-
-* mod_rewrite.so
-  [no longer needed on Apache with FPM Proxy FCGI]
-  [FilesMatch in etc/apache2/site.conf]
-  
-
-Built-in Test Server
----------------
-* CakePHP application also supports Docker
-* MariaDB 10.1 and later
-
-Start a *local* tedt server machine for testing on port 9000.
-Open a Terminal window:
-
-    ./configure.sh -d -i -u
-    ./start-cake.sh --docker -c server -p 9000
-
-> Ctrl-click the URL that appear on the terminal. It will open them in the browser. To get more help about the command line interface :
-
-    ./start-cake.sh --help
-
-#### PHPUnit Test
-JUNIT tests are available with the following call to CAKE server:
-Open a Terminal window:
-
-    ./test-cake.sh
-
-There are options (--runner, --travis) dedicated to continuous integration build environments. Use --help to see more about options.
-
-See [below](#common-issues) to allow access on the built-in local server.
-
-
 #### **db** configuration
 
 Container engines provides a sanbox virtual system with some persistent storage. To check that the last database migration was successful, open a pod shell :
@@ -179,6 +106,77 @@ or:
     GET_HASH_PASSWORD=<encrypted Password>
 
 One of them must be stored in the local server environment as a system readable variable.
+
+#### PHPUnit Test
+JUNIT tests are available with the following call to CAKE server:
+Open a Terminal window:
+
+    ./test-cake.sh
+
+There are options (--runner, --travis) dedicated to continuous integration build environments. Use --help to see more about options.
+
+See [below](#common-issues) to allow access on the built-in local service.
+
+Plugins
+-------
+You do not need to change anything in your existing PHP project's repository.
+There are various dependencies.
+Plugins are registered in both _packages.json_ and  _app/composer.json_
+
+#### Node modules 
+
+* **package.json**
+
+  List of dependencies to be installed with `npmjs` [here](https://www.npmjs.com).
+
+      yarn install
+
+  Re-Install the helper package [balena-cloud-apps](https://www.npmjs.com/package/balena-cloud-apps).
+    
+      ysrn add balena-cloud-apps
+
+  whenever the system complains about `balena_deploy` not found.
+
+#### Composer Plugins 
+
+* Packagist **composer.json**
+
+  Update all required plugins
+
+      Scripts/composer.sh update
+
+  [Packagist](https://packagist.org).
+
+  ```. 
+   Plugins home folder: 
+       
+       app/Vendor/<package-name>
+       app/Plugin/<plugin-name>/
+* **Templates files**
+
+  Setup environment variables, build files, ready for deployment with any of the available targets:
+
+      Scripts/update-templates.sh
+  
+* mod_rewrite.so
+  The Apache rewrite module for URL becomes [obsolete on Apache with FPM Proxy FCGI]
+  [FilesMatch in etc/apache2/site.conf]
+  
+
+Built-in Test Server
+---------------
+* CakePHP application also supports Docker
+* MariaDB 10.1 and later
+
+Start a *local* tedt server machine for testing on port 9000.
+Open a Terminal window:
+
+    ./configure.sh -d -i -u
+    ./start-cake.sh --docker -c server -p 9000
+
+> Ctrl-click the URL that appear on the terminal. It will open them in the browser. To get more help about the command line interface :
+
+    ./start-cake.sh --help
 
 Build Platform
 --------------
