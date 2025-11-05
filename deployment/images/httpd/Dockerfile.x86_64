@@ -52,7 +52,8 @@ ENV GUID=${GUID:-1000}
 
 # add dedicated user
 RUN adduser -h $PWD -G $GROUP -D -u $PUID $USER \
-    && sed -i -E -e "#User#s#www-data#$USER#g -e #Group#s#www-data#$GROUP#g" "${SERVER_ROOT}/conf/httpd.conf"
+    && sed -i -E -e "#User#s#www-data#$USER#g" \
+       -e "#Group#s#www-data#$GROUP#g" "${SERVER_ROOT}/conf/httpd.conf"
 
 # Set up Apache configuration
 RUN envsubst < etc/apache2/conf-available/servername.conf > ${SERVER_ROOT}/conf/extra/servername.conf \
