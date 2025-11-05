@@ -76,7 +76,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     *) echo "Unknown parameter: ${BASH_SOURCE[0]} $1"; exit 1;;
 esac; shift; done
 #; push configuration template
-bash -c "$TOPDIR/Scripts/cp_bkp_old.sh $APPPATH/Config/ app_local.template app.php"
+bash -c "$TOPDIR/Scripts/cp_bkp_old.sh $APPPATH/Config/ app_local.template app_local.pphp"
 #; update plugins and dependencies
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
 slogger -st sed "Cake patches $APPPATH and $SRCPATH"
