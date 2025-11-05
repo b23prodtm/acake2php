@@ -79,5 +79,6 @@ esac; shift; done
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
 slogger -st sed "Cake patches $APPPATH and $SRCPATH"
 #; patches
+patches "$APPPATH/app/bin/cake.php"
 patches "$APPPATH/Config/core.php"
 patches "$SRCPATH/Console/ShellDispatcher.php" "$SRCPATH/Console/ConsoleOutput.php" 
