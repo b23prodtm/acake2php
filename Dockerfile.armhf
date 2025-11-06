@@ -49,10 +49,10 @@ RUN apk update \
 RUN apk del build-base \
     && rm -rf /var/cache/apk/*
 
-COPY php-ini-overrides.ini /etc/php/7.4.33/fpm/conf.d/99-overrides.ini
+COPY php-ini-overrides.ini /usr/local/etc/php/99-overrides.ini
 
 # php-fpm configuration install
-COPY etc/php-fpm.d /etc/php-fpm.d
+COPY etc/php-fpm.d /usr/local/etc/php-fpm.d
 
 # ----------------------
 # About Dockerfile ARGS:
