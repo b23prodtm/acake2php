@@ -52,7 +52,7 @@ RUN apk del build-base \
 COPY php-ini-overrides.ini /usr/local/etc/php/99-overrides.ini
 
 # php-fpm configuration install
-COPY etc/php-fpm.d /etc/php-fpm.d
+COPY etc/php-fpm.d /usr/local/etc/php-fpm.d
 
 # ----------------------
 # About Dockerfile ARGS:
