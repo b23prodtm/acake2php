@@ -60,7 +60,7 @@ load_module "mod_mpm_event.so"
 load_module "mod_proxy.so"
 load_module "mod_proxy_fcgi.so"
 load_module "mod_ssl.so"
-unload_module "mod_mpm_prefork.so"
+load_module "mod_mpm_prefork.so"
 unload_module "mod_rewrite.so"
 log_daemon_msg "...Done."
 if [ ! -f "${SSL}/server.pem" ]; then
