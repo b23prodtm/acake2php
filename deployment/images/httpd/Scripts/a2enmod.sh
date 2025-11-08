@@ -65,6 +65,7 @@ unload_module "mod_rewrite.so"
 log_daemon_msg "...Done."
 if [ ! -f "${SSL}/server.pem" ]; then
     gen_selfsigned_cert
+    cp -vf server.key "${SSL}/server.crt"
     cp -vf server.key "${SSL}/server.key"
     cp -vf server.pem "${SSL}/server.pem"
 fi
