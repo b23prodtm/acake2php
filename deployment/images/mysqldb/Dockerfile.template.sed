@@ -1,4 +1,4 @@
-s/%%BALENA_MACHINE_NAME%%/raspberrypi2/g
+s/%%BALENA_MACHINE_NAME%%/raspberrypi3/g
 s/(Dockerfile\.)[^\.]*/\1armhf/g
 s/%%BALENA_ARCH%%/armhf/g
 s/(BALENA_ARCH[=:-]+)[^$ }]+/\1armhf/g
@@ -10,7 +10,7 @@ s#(SECONDARY_TAG[=:-]+)[^$ }]+#\1arm32v7-10.6.13#g
 s#%%SECONDARY_TAG%%#arm32v7-10.6.13#g
 s#(BALENA_ARCH[=:-]+)[^$ }]+#\1armhf#g
 s#%%BALENA_ARCH%%#armhf#g
-s#(BALENA_MACHINE_NAME[=:-]+)[^$ }]+#\1raspberrypi2#g
-s#%%BALENA_MACHINE_NAME%%#raspberrypi2#g
+s#(BALENA_MACHINE_NAME[=:-]+)[^$ }]+#\1raspberrypi3#g
+s#%%BALENA_MACHINE_NAME%%#raspberrypi3#g
 s#(PHP_EXTENSIONS[=:-]+)[^$ }]+#\1#g
 s#%%PHP_EXTENSIONS%%##g
