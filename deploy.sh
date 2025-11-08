@@ -2,6 +2,10 @@
 if [ ! $(command -v balena > /dev/null) ]; then
    printf "%s\n" "balena client not found, install it along with NodeJS 22 (https://nvm.sh)"
    printf "%s\n" "https://github.com/balena-io/balena-cli/blob/master/INSTALL-LINUX.md"
+   printf "%s\n" "You must be logged in"
+   printf "%s\n" "[ $(command -v podman) ] && alias docker=podman; docker login"
+   printf "%s\n" "balena login"
+
 fi
 if [ ! $(command -v balena_deploy > /dev/null) ]; then
    printf "%s\n" "balena cloud apps not found, install it"

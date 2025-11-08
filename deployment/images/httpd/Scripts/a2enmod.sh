@@ -48,7 +48,8 @@ gen_selfsigned_cert () {
     mkdir -p "${SSL}"
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -keyout server.key -out server.crt \
-    -subj "/C=FR/ST=Rhone/L=Vaulx-en-Velin/O=b23prodtm/CN=${SERVER_NAME}/BasicConstraints=CA:false/"
+    -subj "/C=FR/ST=Rhone/L=Vaulx-en-Velin/O=b23prodtm/CN=${SERVER_NAME}/" \
+    -addext "basicConstraints=CA:FALSE"
     cat server.crt server.key > server.pem
 }
     
