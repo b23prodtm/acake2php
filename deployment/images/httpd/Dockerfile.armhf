@@ -65,7 +65,7 @@ RUN envsubst < etc/apache2/conf-available/servername.conf > ${SERVER_ROOT}/conf/
 
 
 # Expose Apache ports
-EXPOSE ${HTTP_PORT} ${SSL_PORT}
+EXPOS ${HTTP_PORT} ${SSL_PORT}
 
 # Enable Apache modules and start the server
 RUN chmod +x Scripts/*.sh \
