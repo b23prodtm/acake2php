@@ -80,8 +80,6 @@ ARG MYPHPCMS_DIR
 ENV MYPHPCMS_DIR=${MYPHPCMS_DIR:-"app/webroot/php-cms"}
 ARG MYPHPCMS_LOG
 ENV MYPHPCMS_LOG=${MYPHPCMS_LOG:-"app/tmp/logs"}
-ARG SERVER_NAME
-ENV SERVER_NAME=${SERVER_NAME:-"acake2php.local"}
 # Enable migrate-database.sh options
 ARG MIGRATE_OPTION
 ENV MIGRATE_OPTION=${MIGRATE_OPTION:-"-v"}
@@ -127,6 +125,10 @@ RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
     && chown -R :www-data app/tmp \
     && chmod -R 770 app/tmp
 
+# add dedicated user
+RUN adduser -h $PWD -G www-data -D -u 1001 http-fpm \
+    && adduser -h $PWD -G www-data -D -u 1002 https-fpm
+
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
     && git init \
@@ -136,9 +138,7 @@ RUN chmod +x Scripts/*.sh \
     && ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
     && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
 
-# add dedicated user
-RUN adduser -h $PWD -G www-data -D -u 1001 http-fpm \
-    && adduser -h $PWD -G www-data -D -u 1002 https-fpm
-
 # As set in /etc/php-fpm.d/
 EXPOSE 9001 9002
+
+ENTRYPOINT ["php-fpm", "-F"] 
