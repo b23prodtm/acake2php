@@ -1,4 +1,4 @@
-FROM balenalib/raspberrypi3-alpine-node
+FROM balenalib/raspberrypi2-alpine-node
 
 # requires node 20
 #RUN yarn add balena-cli
