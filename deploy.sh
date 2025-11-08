@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+if [ ! $(command -v balena > /dev/null) ]; then
+   printf "%s\n" "balena client not found, install it with"
+   printf "%s\n" "sudo npm install -g balena-cli"
+fi
+if [ ! $(command -v balena_deploy > /dev/null) ]; then
+   printf "%s\n" "balena cloud apps not found, install it with"
+   printf "%s\n" "sudo npm install -g balena-cloud-apps"
+fi
 rm -f deployment/images/mysqldb/conf.d/custom.cnf
 # Fixes: unbound variables on ubuntu
 REV=$(git -C .git rev-parse 2>/dev/null)
