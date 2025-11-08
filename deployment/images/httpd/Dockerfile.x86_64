@@ -63,6 +63,7 @@ RUN envsubst < etc/apache2/conf-available/servername.conf > ${SERVER_ROOT}/conf/
     && echo "Include conf/extra/000-default.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
     && echo "Include conf/extra/001-ssl.conf" >> ${SERVER_ROOT}/conf/httpd.conf
 
+
 # Expose Apache ports
 EXPOSE ${HTTP_PORT} ${SSL_PORT}
 
