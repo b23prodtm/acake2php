@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 if [ ! $(command -v balena > /dev/null) ]; then
    printf "%s\n" "balena client not found, install it along with NodeJS 22 (https://nvm.sh)"
-   printf "%s\n" "sudo npm install balena-cli --global --omit=dev --unsafe-perm"
+   printf "%s\n" "https://github.com/balena-io/balena-cli/blob/master/INSTALL-LINUX.md"
 fi
 if [ ! $(command -v balena_deploy > /dev/null) ]; then
-   printf "%s\n" "balena cloud apps not found, install it with"
-   printf "%s\n" "sudo npm install -g balena-cloud-apps"
+   printf "%s\n" "balena cloud apps not found, install it"
+   printf "%s\n" "sudo npm install -g yarn"
+   printf "%s\n" "yarn"
 fi
 rm -f deployment/images/mysqldb/conf.d/custom.cnf
 # Fixes: unbound variables on ubuntu
