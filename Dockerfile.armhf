@@ -141,4 +141,4 @@ RUN chmod +x Scripts/*.sh \
 # As set in /etc/php-fpm.d/
 EXPOSE 9001 9002
 
-ENTRYPOINT php-fpm
+ENTRYPOINT ["php-fpm", "-F"] 
