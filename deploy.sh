@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 if [ ! $(command -v balena > /dev/null) ]; then
-   printf "%s\n" "balena client not found, install it with"
-   printf "%s\n" "sudo npm install -g balena-cli"
+   printf "%s\n" "balena client not found, install it along with NodeJS 22 (https://nvm.sh)"
+   printf "%s\n" "sudo npm install balena-cli --global --omit=dev --unsafe-perm"
 fi
 if [ ! $(command -v balena_deploy > /dev/null) ]; then
    printf "%s\n" "balena cloud apps not found, install it with"
