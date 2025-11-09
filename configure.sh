@@ -60,8 +60,8 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   -[rR]*|--runner|--travis )
     # shellcheck disable=SC2154
     echo -e "${green}--runner mode: Fixing some file permissions...${nc}"
-    # shellcheck source=Scripts/configure_tmp.sh
-    bash -c "$TOPDIR/Scripts/configure_tmp.sh"
+    # shellcheck source=Scripts/configure_path.sh
+    bash -c "$TOPDIR/Scripts/configure_path.sh"
     ;;
   --docker )
     slogger -st docker "check database container id"
@@ -81,6 +81,7 @@ bash -c "$TOPDIR/Scripts/cp_bkp_old.sh $APPPATH/Config/ app_local.template app_l
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
 slogger -st sed "Cake patches $APPPATH and $SRCPATH"
 #; patches
+patches "$APPPATH/webroot/index.php"
 patches "$APPPATH/bin/cake.php"
 patches "$APPPATH/Config/core.php"
 patches "$SRCPATH/Console/ShellDispatcher.php" "$SRCPATH/Console/ConsoleOutput.php" 
