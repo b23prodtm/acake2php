@@ -28,14 +28,17 @@ if (!defined('DS')) {
 /*
  * The full path to the directory which holds "src", WITHOUT a trailing DS.
  */
-define('ROOT', dirname(__DIR__));
+if (!defined('ROOT')) {
+    define('ROOT', dirname(__DIR__));
+}
 
 /*
  * The actual directory name for the application directory. Normally
  * named 'src'.
  */
-define('APP_DIR', 'src');
-
+if (!defined('APP_DIR')) {
+    define('APP_DIR', 'src');
+}
 /*
  * Path to the application's directory.
  */
@@ -53,8 +56,9 @@ define('CONFIG', APP . DS . 'config' . DS);
  *
  * `define('WWW_ROOT', rtrim($_SERVER['DOCUMENT_ROOT'], DS) . DS);`
  */
-define('WWW_ROOT', APP . DS . 'webroot' . DS);
-
+if (!defined('WWW_ROOT')) {
+    define('WWW_ROOT', APP . DS . 'webroot' . DS);
+}
 /*
  * Path to the tests directory.
  */
