@@ -44,7 +44,8 @@ RUN apk update \
     git \
     zip \
     unzip \
-    mariadb-client
+    mariadb-client \
+    gettext
 
 RUN apk del build-base \
     && rm -rf /var/cache/apk/*
