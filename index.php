@@ -23,5 +23,4 @@
 /**
  *  Get CakePHP's root directory
  */
-require "app/config/paths.php"
-include APP_DIR . DS . WEBROOT_DIR . DS . 'index.php';
+require 'app' . DIRECTORY_SEPARATOR . 'webroot' . DIRECTORY_SEPARATOR . 'index.php';
