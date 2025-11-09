@@ -7,4 +7,4 @@ mkdir -p "$TOPDIR/app/tmp/tests"
 mkdir -p "$TOPDIR/app/tmp/logs"
 touch "$TOPDIR/app/tmp/logs/error.log"
 chmod -Rv 1776 "$TOPDIR/app/tmp"
-ln -vs $TOPDIR/app/Config $TOPDIR/app/config
+ln -vs "$TOPDIR/app/Config" "$TOPDIR/app/config"
