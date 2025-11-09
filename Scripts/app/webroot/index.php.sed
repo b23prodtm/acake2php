@@ -1,0 +1,1 @@
+s#/\/config#/\/Config#g
