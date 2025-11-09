@@ -1,1 +1,1 @@
-s#/\/config#/\/Config#g
+s#/config#/Config#g
