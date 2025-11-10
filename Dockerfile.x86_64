@@ -117,9 +117,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 COPY . .
 
 # php-fpm configuration install
-RUN envsubst < php-ini-overrides.ini  > /usr/local/etc/php/99-overrides.ini
-RUN envsubst < etc/php-fpm.d/http-fpm.conf > /usr/local/etc/php-fpm.d/http-fpm.conf
-RUN envsubst < etc/php-fpm.d/https-fpm.conf > /usr/local/etc/php-fpm.d/https-fpm.conf 
+COPY php-ini-overrides.ini /usr/local/etc/php/99-overrides.ini
+COPY etc/php-fpm.d /usr/local/etc/php-fpm.d
 
 # Set permissions for temporary directories
 RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
