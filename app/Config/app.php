@@ -53,7 +53,7 @@ return [
         'defaultLocale' => env('APP_DEFAULT_LOCALE', 'en_US'),
         'defaultTimezone' => env('APP_DEFAULT_TIMEZONE', 'UTC'),
         'base' => false,
-        'dir' => 'src',
+        'dir' => APP,
         'webroot' => 'webroot',
         'wwwRoot' => WWW_ROOT,
         //'baseUrl' => env('SCRIPT_NAME'),
@@ -62,9 +62,9 @@ return [
         'cssBaseUrl' => 'css/',
         'jsBaseUrl' => 'js/',
         'paths' => [
-            'plugins' => [ROOT . DS . 'plugins' . DS],
-            'templates' => [APP . 'Template' . DS],
-            'locales' => [APP . 'Locale' . DS],
+            'plugins' => [APP . DS . 'plugins' . DS],
+            'templates' => [APP . DS . 'Template' . DS],
+            'locales' => [APP . DS . 'Locale' . DS],
         ],
     ],
 
