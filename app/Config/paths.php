@@ -37,7 +37,7 @@ if (!defined('ROOT')) {
  * named 'src'.
  */
 if (!defined('APP_DIR')) {
-    define('APP_DIR', 'src');
+    define('APP_DIR', 'app');
 }
 /*
  * Path to the application's directory.
