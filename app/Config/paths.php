@@ -29,7 +29,7 @@ if (!defined('DS')) {
  * The full path to the directory which holds "src", WITHOUT a trailing DS.
  */
 if (!defined('ROOT')) {
-    define('ROOT', dirname(__DIR__));
+    define('ROOT', dirname(dirname(__DIR__)));
 }
 
 /*
