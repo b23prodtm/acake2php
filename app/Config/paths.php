@@ -42,12 +42,12 @@ if (!defined('APP_DIR')) {
 /*
  * Path to the application's directory.
  */
-define('APP', ROOT . DS . APP_DIR . DS);
+define('APP', ROOT . APP_DIR . DS);
 
 /*
  * Path to the config directory.
  */
-define('CONFIG', APP . DS . 'config' . DS);
+define('CONFIG', APP . 'config' . DS);
 
 /*
  * File path to the webroot directory.
@@ -57,22 +57,22 @@ define('CONFIG', APP . DS . 'config' . DS);
  * `define('WWW_ROOT', rtrim($_SERVER['DOCUMENT_ROOT'], DS) . DS);`
  */
 if (!defined('WWW_ROOT')) {
-    define('WWW_ROOT', APP . DS . 'webroot' . DS);
+    define('WWW_ROOT', APP . 'webroot' . DS);
 }
 /*
  * Path to the tests directory.
  */
-define('TESTS', APP . DS . 'tests' . DS);
+define('TESTS', APP . 'tests' . DS);
 
 /*
  * Path to the temporary files directory.
  */
-define('TMP', APP . DS . 'tmp' . DS);
+define('TMP', APP . 'tmp' . DS);
 
 /*
  * Path to the logs directory.
  */
-define('LOGS', APP . DS . 'logs' . DS);
+define('LOGS', APP . 'logs' . DS);
 
 /*
  * Path to the cache files directory. It can be shared between hosts in a multi-server setup.
@@ -84,7 +84,7 @@ define('CACHE', TMP . 'cache' . DS);
  *
  * CakePHP should always be installed with composer, so look there.
  */
-define('CAKE_CORE_INCLUDE_PATH', APP . DS . 'vendor' . DS . 'cakephp' . DS . 'cakephp');
+define('CAKE_CORE_INCLUDE_PATH', APP . 'vendor' . DS . 'cakephp' . DS . 'cakephp');
 
 /*
  * Path to the cake directory.
