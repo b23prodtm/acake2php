@@ -36,6 +36,7 @@ services:
         HTDOCS: /usr/local/apache2/htdocs
     volumes:
       - localtime:/etc/localtime:ro
+      - htdocs:/usr/local/apache2/htdocs
     ports:
       - "9001:9001"
       - "9002:9002"
@@ -55,7 +56,7 @@ services:
         HTDOCS: /usr/local/apache2/htdocs
     volumes:
       - localtime:/etc/localtime:ro
-      - app:/usr/local/apache2/htdocs/app
+      - htdocs:/usr/local/apache2/htdocs
     ports:
       - "80:80"
       - "443:443"
@@ -81,7 +82,7 @@ services:
     volumes:
       - db-backup:/mnt/external-drives
 volumes:
-  app:
+  htdocs:
   hostapcache:
   db-data:
   db-socket:
