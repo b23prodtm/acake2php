@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -e
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
-APPDIR="$TOPDIR/app/vendor/cakephp/cakephp/src/"
 . init_functions .
 shell_prompt() {
   [ $# -lt 2 ] && printf "Usage: %s <file> <name> [-y|n]" "${FUNCNAME[0]}" && exit 1
@@ -40,20 +39,8 @@ show_password_status() {
   slogger -st "${FUNCNAME[0]}" "User ${1} (using password: $([ -z "$2" ] && echo "NO" || echo "YES")) $3..."
 }
 #; export -f show_password_status
-patches() {
-  [ "$#" -lt 1 ] && echo "Usage: ${FUNCNAME[0]} '<srcfile-relative-path>'" && exit 1
-  for f in "$@"; do
-    file="$(basename "${f}")"
-    dir="$(dirname "${f}")"
-    [ ! -f "$dir/$file" ] && file="${file,,}"
-    [ ! -f "$dir/$file" ] && dir="${dir,,}"
-    #; sed in Scripts/app folder
-    sed -i.old -E -f "$(dirname "${BASH_SOURCE[0]}")/../${f}.sed" "$dir/$file"
-  done
-}
-#; export -f patches
 cakephp() {
-  "${APPDIR}/Console/cake.php" "$@"
+  "$TOPDIR"/bin/cake
 }
 #; export -f cakephp
 docker_name() {

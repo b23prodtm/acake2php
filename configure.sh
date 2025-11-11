@@ -5,12 +5,15 @@ set -eu
 DOCKER_USER="${DOCKER_USER:-betothreeprod}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0
 
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-APPPATH="$TOPDIR/app"
-SRCPATH="$TOPDIR/vendor/cakephp/cakephp/src"
+# relative paths for patches
+APPPATH="app"
+SRCPATH="vendor/cakephp/cakephp/src"
 # shellcheck source=Scripts/lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=Scripts/lib/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
+# shellcheck source=Scripts/lib/util.sh
+. "$TOPDIR/Scripts/lib/util.sh"
 runner=$(parse_arg "-[rR]+|--runner"  "$@")
 docker=$(parse_arg "--docker" "$@")
 pargs=$(parse_arg_trim "--docker|-[rR]+|--runner" "$@")
