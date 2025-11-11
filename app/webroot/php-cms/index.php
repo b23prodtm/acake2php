@@ -1,6 +1,6 @@
 <?php
 <!--// DO NOT ADD ANY HOMEPAGE CONTENTS HERE
-PLEASE USE Views/E14/index.ctp //-->
+PLEASE USE app/Template/home.ctp //-->
 $nouvelleAdresse="$_SERVER['SERVER_NAME']";	//Nouvelle adresse
 if (isset($_SERVER['QUERY_STRING'])&&($_SERVER['QUERY_STRING']!=''))
  $nouvelleAdresse.='?'.substr($_SERVER['QUERY_STRING'],0,2048);	//Recupere les parametres
