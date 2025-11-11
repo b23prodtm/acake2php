@@ -9,6 +9,7 @@ services:
         PGID: 1000
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: yes
+      TZ: Europe/Paris
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
@@ -20,23 +21,33 @@ services:
       - cake
     env_file:
       - common.env
-      - .env
+      - armhf.env
     labels:
       io.balena.features.dbus: "1"
   php-fpm:
     env_file:
       - common.env
-      - .env
+      - armhf.env
     build:
       context: .
       dockerfile: Dockerfile.armhf
       args:
         PUID: 1000
         PGID: 1000
-        HTDOCS: /var/wwww
+    env_file:
+      - common.env
+      - armhf.env
+    environment:
+      CAKEPHP_DEBUG_LEVEL: "2"
+   COLLECT_COVERAGE: false
+TZ: Europe/Paris
+CAKEPHP_SECURITY_SALT: Word
+CAKEPHP_SECURITY_CIPHER_SEED: 01234
+MYPHPCMS_DIR: app/webroot/php-cms
+MYPHPCMS_LOG: app/tmp/logs
+HTDOCS: /var/wwww
     volumes:
       - localtime:/etc/localtime:ro
-      - htdocs:/var/wwww
     ports:
       - "9001:9001"
       - "9002:9002"
@@ -45,18 +56,19 @@ services:
   apache:
     env_file:
       - common.env
-      - .env
+      - armhf.env
+    environment:
+TZ: Europe/Paris
+HTDOCS: /var/www
     build:
       context: deployment/images/httpd
       dockerfile: Dockerfile.armhf
       args:
-        CAKEPHP_DEBUG_LEVEL: "2"
         PUID: 1000
         PGID: 1000
-        HTDOCS: /var/wwww
     volumes:
       - localtime:/etc/localtime:ro
-      - htdocs:/var/wwww
+      - htdocs:/var/www
     ports:
       - "80:80"
       - "443:443"
@@ -69,7 +81,7 @@ services:
     privileged: true
     env_file:
       - common.env
-      - .env
+      - armhf.env
     networks:
       - cake
 # v3.4 compose file
@@ -82,7 +94,7 @@ services:
     volumes:
       - db-backup:/mnt/external-drives
 volumes:
-  htdocs:
+  app:
   hostapcache:
   db-data:
   db-socket:

@@ -39,13 +39,13 @@ services:
       - aarch64.env
     environment:
       CAKEPHP_DEBUG_LEVEL: "2"
-      COLLECT_COVERAGE: false
-      TZ: Europe/Paris
-      CAKEPHP_SECURITY_SALT: Word
-      CAKEPHP_SECURITY_CIPHER_SEED: 01234
-      MYPHPCMS_DIR: app/webroot/php-cms
-      MYPHPCMS_LOG: app/tmp/logs
-      HTDOCS: /var/wwww
+   COLLECT_COVERAGE: false
+TZ: Europe/Paris
+CAKEPHP_SECURITY_SALT: Word
+CAKEPHP_SECURITY_CIPHER_SEED: 01234
+MYPHPCMS_DIR: app/webroot/php-cms
+MYPHPCMS_LOG: app/tmp/logs
+HTDOCS: /var/wwww
     volumes:
       - localtime:/etc/localtime:ro
     ports:
@@ -58,8 +58,8 @@ services:
       - common.env
       - aarch64.env
     environment:
-      TZ: Europe/Paris
-      HTDOCS: /var/www
+TZ: Europe/Paris
+HTDOCS: /var/www
     build:
       context: deployment/images/httpd
       dockerfile: Dockerfile.aarch64
