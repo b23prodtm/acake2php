@@ -59,9 +59,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     exit 0;;
   -[rR]*|--runner|--travis )
     # shellcheck disable=SC2154
-    echo -e "${green}--runner mode: Fixing some file permissions...${nc}"
-    # shellcheck source=Scripts/configure_path.sh
-    bash -c "$TOPDIR/Scripts/configure_path.sh"
+    echo -e "${green}--runner mode...${nc}"
     ;;
   --docker )
     slogger -st docker "check database container id"
@@ -75,6 +73,9 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     echo "Passed params : ${BASH_SOURCE[*]} ${saved[*]}";;
     *) echo "Unknown parameter: ${BASH_SOURCE[0]} $1"; exit 1;;
 esac; shift; done
+#; Setup paths and file permissions 
+# shellcheck source=Scripts/configure_path.sh
+bash -c "$TOPDIR/Scripts/configure_path.sh"
 #; push configuration template
 bash -c "$TOPDIR/Scripts/cp_bkp_old.sh $APPPATH/Config/ app_local.template app_local.php"
 #; update plugins and dependencies
