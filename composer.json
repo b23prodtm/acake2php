@@ -48,7 +48,7 @@
     "autoload": {
         "psr-4": {
 	    "App\\": "vendor/cakephp/app/src",
-            "Config\\Schema\\": "config/Schema/",
+            "Config\\Schema\\": "app/Config/Schema/",
             "Michelf\\": "vendor/michelf/php-markdown/michelf/michelf"
         }
     },

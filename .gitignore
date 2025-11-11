@@ -6,8 +6,9 @@
 *.old
 .circleci/config-compat.yml
 acake2php*.zip
-app/config/database.sql*
-app/config/Schema/AppSchema.php*
+app/Config/database.sql*
+app/Config/Schema/AppSchema.php
+app/Config/app_local.php
 app/tmp
 app/webroot/e13/nbproject/private/
 app/tmp/cache/
@@ -15,11 +16,9 @@ app/tmp/logs/
 app/tmp/persistent/
 app/tmp/sessions/
 app/webroot/php-cms/e13/nbproject/private/
-app/src/Console/Templates/skel/tmp/
-app/plugins
-app/vendor
+var/log/
 Plugin
-Vendor
+vendor
 build
 dist
 tags
@@ -30,8 +29,6 @@ mysqldb/config/
 mysqldb/conf.d/custom.cnf
 node_modules
 *.log
-etc/apache2/conf.d/site.conf
-etc/apache2/conf.d/ssl_site.conf
 
 # IDE and editor specific files #
 #################################
@@ -54,7 +51,4 @@ nbproject/private/
 mysqldb/mysqld/
 mysqld/conf.d/custom.cnf
 upgrade/
-/app/Config/Schema/AppSchema.php
-/app/Config/app_local.php
-!/Scripts/app/Config/core.php.sed
-/package-lock.json
+package-lock.json

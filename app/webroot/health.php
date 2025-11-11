@@ -1,6 +1,6 @@
 <?php
 
-$servername = getenv(strtoupper(getenv("DB"))."_SERVICE_HOST");
+$servername = getenv(strtoupper(getenv("DB"))."_HOST");
 $username = getenv("DATABASE_USER");
 $password = getenv("MYSQL_ROOT_PASSWORD");
 

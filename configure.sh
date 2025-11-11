@@ -5,16 +5,19 @@ set -eu
 DOCKER_USER="${DOCKER_USER:-betothreeprod}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0
 
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# relative paths for patches
 APPPATH="app"
-SRCPATH="app/vendor/cakephp/cakephp/src"
+SRCPATH="vendor/cakephp/cakephp/src"
 # shellcheck source=Scripts/lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=Scripts/lib/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
+# shellcheck source=Scripts/lib/util.sh
+. "$TOPDIR/Scripts/lib/util.sh"
 runner=$(parse_arg "-[rR]+|--runner"  "$@")
 docker=$(parse_arg "--docker" "$@")
 pargs=$(parse_arg_trim "--docker|-[rR]+|--runner" "$@")
-composer_args="-d $APPPATH update --no-interaction --no-dev"
+composer_args="-d $TOPDIR update --no-interaction"
 if [ -n "$runner" ]; then
   slogger -st "$0" "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
@@ -59,22 +62,23 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     exit 0;;
   -[rR]*|--runner|--travis )
     # shellcheck disable=SC2154
-    echo -e "${green}--runner mode: Fixing some file permissions...${nc}"
-    # shellcheck source=Scripts/configure_path.sh
-    bash -c "$TOPDIR/Scripts/configure_path.sh"
+    echo -e "${green}--runner mode...${nc}"
     ;;
   --docker )
     slogger -st docker "check database container id"
     docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
     ;;
   --development )
-    composer_args="-d $APPPATH update --no-interaction --dev"
+    composer_args="$composer_args --dev"
     ;;
   -[vV]*|--verbose )
     set -x
     echo "Passed params : ${BASH_SOURCE[*]} ${saved[*]}";;
     *) echo "Unknown parameter: ${BASH_SOURCE[0]} $1"; exit 1;;
 esac; shift; done
+#; Setup paths and file permissions 
+# shellcheck source=Scripts/configure_path.sh
+bash -c "$TOPDIR/Scripts/configure_path.sh"
 #; push configuration template
 bash -c "$TOPDIR/Scripts/cp_bkp_old.sh $APPPATH/Config/ app_local.template app_local.php"
 #; update plugins and dependencies
@@ -83,7 +87,5 @@ slogger -st sed "Cake patches $APPPATH and $SRCPATH"
 #; patches
 patches "$APPPATH/tests/bootstrap.php"
 patches "$APPPATH/tests/TestCase/ApplicationTest.php"
-patches "$APPPATH/webroot/index.php"
-patches "$APPPATH/bin/cake.php"
 patches "$APPPATH/Config/core.php"
 patches "$SRCPATH/Console/ShellDispatcher.php" "$SRCPATH/Console/ConsoleOutput.php" 
