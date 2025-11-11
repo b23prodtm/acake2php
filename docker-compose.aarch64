@@ -61,7 +61,6 @@ services:
     env_file:
       - common.env
       - aarch64.env
-    environment:
     volumes:
       - localtime:/etc/localtime:ro
       - www:/var/www
