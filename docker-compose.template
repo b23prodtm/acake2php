@@ -33,7 +33,7 @@ services:
       args:
         PUID: 1000
         PGID: 1000
-        HTDOCS: /var/wwww
+        HTDOCS: %%HTDOCS%%
     volumes:
       - localtime:/etc/localtime:ro
     ports:
@@ -52,10 +52,10 @@ services:
         CAKEPHP_DEBUG_LEVEL: "2"
         PUID: 1000
         PGID: 1000
-        HTDOCS: /var/wwww
+        HTDOCS: %%HTDOCS%%
     volumes:
       - localtime:/etc/localtime:ro
-      - htdocs:/var/wwww
+      - htdocs:%%HTDOCS%%
     ports:
       - "80:80"
       - "443:443"
