@@ -6,7 +6,7 @@ DOCKER_USER="${DOCKER_USER:-betothreeprod}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0
 
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 APPPATH="app"
-SRCPATH="app/vendor/cakephp/cakephp/src"
+SRCPATH="vendor/cakephp/cakephp/src"
 # shellcheck source=Scripts/lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=Scripts/lib/shell_prompt.sh
@@ -83,7 +83,5 @@ slogger -st sed "Cake patches $APPPATH and $SRCPATH"
 #; patches
 patches "$APPPATH/tests/bootstrap.php"
 patches "$APPPATH/tests/TestCase/ApplicationTest.php"
-patches "$APPPATH/webroot/index.php"
-patches "$APPPATH/bin/cake.php"
 patches "$APPPATH/Config/core.php"
 patches "$SRCPATH/Console/ShellDispatcher.php" "$SRCPATH/Console/ConsoleOutput.php" 

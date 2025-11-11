@@ -35,7 +35,7 @@ class ApplicationTest extends IntegrationTestCase
      */
     public function testBootstrap()
     {
-        $app = new Application(dirname(dirname(__DIR__)) . '/Config');
+        $app = new Application(ROOT . DS . '/config');
         $app->bootstrap();
         $plugins = $app->getPlugins();
 
