@@ -42,7 +42,7 @@ if (!defined('APP_DIR')) {
 /*
  * Path to the application's directory.
  */
-define('APP', ROOT . APP_DIR . DS);
+define('APP', ROOT . DS . APP_DIR . DS);
 
 /*
  * Path to the config directory.
