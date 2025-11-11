@@ -1,7 +1,2 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_URI} !^/(webroot/)?(img|css|js)/(.*)$
-    RewriteRule ^ index.php [L]
-    ErrorDocument 404 /404-not-found
-</IfModule>
+<!--// DO NOT ADD ANY rewrite URL here
+PLEASE USE apache with virtual host proxy //-->
