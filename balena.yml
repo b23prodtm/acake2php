@@ -15,9 +15,10 @@ assets:
         https://raw.githubusercontent.com/b23prodtm/acake2php/master/acake2php.jpeg
 data:
   applicationEnvironmentVariables:
-    # Open https://${SERVER_NAME}/etc/getHashPassword.php or type $ ./configure.sh -h -p pass -s salt
-    # Get new staff credentials (url=/admin/index.php)
-    # It's printed out in startup script
+    # Browse to /etc/getHashPassword.php 
+    # Call terminal $ ./configure.sh -h -p pass -s salt
+    # Get new staff credentials  /admin/index.php
+    # gets printed out in docker build log
     - GET_HASH_PASSWORD: Encrypt_it_with_getHashPassword_php
     - HASH_PASSWORD: Let_us_encrypt_it_from_startup
 
@@ -28,6 +29,7 @@ data:
     # Database Root Password
     - MYSQL_USER: Acake2php
     - MYSQL_PASSWORD: Ac4ke2php
+    - MYSQL_ROOT_PASSWORD: a-strong-password
 
 # Some optional configuration. The following default variables may be setup as your server preferences, set in open source:
 
@@ -45,12 +47,12 @@ data:
     - MYSQL_TCP_PORT: 3306
 
     # Run as a different user-group space ($ id -g $USER)
-    - PGID: 0
+    - PGID: 1000
     # Run as a different user space ($ id -u $USER)
-    - PUID: 0
+    - PUID: 1000
 
-    # Apache 2 httpd, or DNS CNAME of the host machine ($ hostname)
-    - SERVER_NAME: www-machine.local
+    # Domain Name Host address, CNAME without www. as virtual host 
+    - SERVER_NAME: mydomain.info
 
     # MariaDB Timezone
     - TZ: Europe/Paris
