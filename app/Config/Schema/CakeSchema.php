@@ -1,7 +1,7 @@
 <?php
 namespace Config\Schema;
 /** Cake App */
-require_once(__DIR__."/../../vendor/autoload.php");
+require_once(__DIR__."/../../../vendor/autoload.php");
 /* CreateProducts fieldName:fieldType?[length]:indexType:indexName */
 class Field {
 	public $name;

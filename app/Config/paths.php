@@ -47,7 +47,7 @@ define('APP', ROOT . DS . APP_DIR . DS);
 /*
  * Path to the config directory.
  */
-define('CONFIG', ROOT . DS . 'config' . DS);
+define('CONFIG', APP . 'Config' . DS);
 
 /*
  * File path to the webroot directory.
@@ -93,4 +93,5 @@ define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'src' . DS);
 
 /* CMS root path */
-define('CMS_ROOT', WWW_ROOT . 'php-cms' . DS . 'e13');
+define('CMS_ROOT', WWW_ROOT . 'php-cms');
+define('CMS_INCLUDE_PATH', CMS_ROOT . DS . 'e13' . DS . 'include' . DS);

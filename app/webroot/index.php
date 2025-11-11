@@ -16,7 +16,7 @@
  */
 
 // Check platform requirements
-require ROOT . DS . '/config/requirements.php';
+require dirname(dirname(__DIR__)) . '/config/requirements.php';
 
 // For built-in server
 if (PHP_SAPI === 'cli-server') {
@@ -28,7 +28,7 @@ if (PHP_SAPI === 'cli-server') {
         return false;
     }
 }
-require dirname(__DIR__) . '/vendor/autoload.php';
+require dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 use App\Application;
 use Cake\Http\Server;
