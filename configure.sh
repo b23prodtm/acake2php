@@ -5,8 +5,8 @@ set -eu
 DOCKER_USER="${DOCKER_USER:-betothreeprod}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0
 
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-APPPATH="app"
-SRCPATH="vendor/cakephp/cakephp/src"
+APPPATH="$TOPDIR/app"
+SRCPATH="$TOPDIR/vendor/cakephp/cakephp/src"
 # shellcheck source=Scripts/lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=Scripts/lib/shell_prompt.sh
@@ -14,7 +14,7 @@ SRCPATH="vendor/cakephp/cakephp/src"
 runner=$(parse_arg "-[rR]+|--runner"  "$@")
 docker=$(parse_arg "--docker" "$@")
 pargs=$(parse_arg_trim "--docker|-[rR]+|--runner" "$@")
-composer_args="-d $APPPATH update --no-interaction --no-dev"
+composer_args="-d $TOPDIR update --no-interaction"
 if [ -n "$runner" ]; then
   slogger -st "$0" "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
@@ -66,7 +66,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
     ;;
   --development )
-    composer_args="-d $APPPATH update --no-interaction --dev"
+    composer_args="$composer_args --dev"
     ;;
   -[vV]*|--verbose )
     set -x
