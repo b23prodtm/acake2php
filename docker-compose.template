@@ -9,6 +9,7 @@ services:
         PGID: 1000
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: yes
+			TZ: Europe/Paris
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
@@ -20,20 +21,31 @@ services:
       - cake
     env_file:
       - common.env
-      - .env
+      - %%BALENA_ARCH%%
     labels:
       io.balena.features.dbus: "1"
   php-fpm:
     env_file:
       - common.env
-      - .env
+      - %%BALENA_ARCH%%.env
     build:
       context: .
       dockerfile: Dockerfile.%%BALENA_ARCH%%
       args:
         PUID: 1000
         PGID: 1000
-        HTDOCS: /usr/local/apache2/htdocs
+    env_file:
+      - common.env
+      - %%BALENA_ARCH%%.env
+    environment:
+      CAKEPHP_DEBUG_LEVEL: "2"
+   		COLLECT_COVERAGE: false
+			TZ: Europe/Paris
+			CAKEPHP_SECURITY_SALT: Word
+			CAKEPHP_SECURITY_CIPHER_SEED: 01234
+			MYPHPCMS_DIR: app/webroot/php-cms
+			MYPHPCMS_LOG: app/tmp/logs
+			HTDOCS: /var/wwww
     volumes:
       - localtime:/etc/localtime:ro
     ports:
@@ -44,15 +56,16 @@ services:
   apache:
     env_file:
       - common.env
-      - .env
+      - %%BALENA_ARCH%%.env
+    environment:
+			TZ: Europe/Paris
+			HTDOCS: /var/www
     build:
       context: deployment/images/httpd
       dockerfile: Dockerfile.%%BALENA_ARCH%%
       args:
-        CAKEPHP_DEBUG_LEVEL: "2"
         PUID: 1000
         PGID: 1000
-        HTDOCS: /usr/local/apache2/htdocs
     volumes:
       - localtime:/etc/localtime:ro
       - app:/usr/local/apache2/htdocs/app
@@ -68,7 +81,7 @@ services:
     privileged: true
     env_file:
       - common.env
-      - .env
+      - %%BALENA_ARCH%%.env
     networks:
       - cake
 # v3.4 compose file
