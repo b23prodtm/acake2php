@@ -15,6 +15,7 @@ app/tmp/logs/
 app/tmp/persistent/
 app/tmp/sessions/
 app/webroot/php-cms/e13/nbproject/private/
+var/log/
 Plugin
 vendor
 build
