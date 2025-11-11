@@ -3,7 +3,7 @@ services:
   db:
     build:
       context: deployment/images/mysqldb
-      dockerfile: Dockerfile.aarch64
+      dockerfile: Dockerfile.armhf
       args:
         PUID: 1000
         PGID: 1000
@@ -21,13 +21,13 @@ services:
       - cake
     env_file:
       - common.env
-      - aarch64.env
+      - armhf.env
     labels:
       io.balena.features.dbus: "1"
   php-fpm:
     build:
       context: .
-      dockerfile: Dockerfile.aarch64
+      dockerfile: Dockerfile.armhf
       args:
         PUID: 1000
         PGID: 1000
@@ -36,7 +36,7 @@ services:
         HTDOCS: /var/www
     env_file:
       - common.env
-      - aarch64.env
+      - armhf.env
     environment:
       CAKEPHP_DEBUG_LEVEL: "2"
       COLLECT_COVERAGE: false
@@ -53,14 +53,14 @@ services:
   apache:
     build:
       context: deployment/images/httpd
-      dockerfile: Dockerfile.aarch64
+      dockerfile: Dockerfile.armhf
       args:
         PUID: 1000
         PGID: 1000
         HTDOCS: /var/www
     env_file:
       - common.env
-      - aarch64.env
+      - armhf.env
     environment:
     volumes:
       - localtime:/etc/localtime:ro
@@ -74,11 +74,11 @@ services:
   balena-storage:
     build:
       context: balena-storage
-      dockerfile: Dockerfile.aarch64
+      dockerfile: Dockerfile.armhf
     privileged: true
     env_file:
       - common.env
-      - aarch64.env
+      - armhf.env
     networks:
       - cake
 # v3.4 compose file
