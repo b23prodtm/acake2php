@@ -25,9 +25,6 @@ services:
     labels:
       io.balena.features.dbus: "1"
   php-fpm:
-    env_file:
-      - common.env
-      - x86_64.env
     build:
       context: .
       dockerfile: Dockerfile.x86_64
@@ -55,10 +52,6 @@ services:
     networks:
       - cake
   apache:
-    env_file:
-      - common.env
-      - x86_64.env
-    environment:
     build:
       context: deployment/images/httpd
       dockerfile: Dockerfile.x86_64
@@ -66,6 +59,10 @@ services:
         PUID: 1000
         PGID: 1000
         HTDOCS: /var/www
+    env_file:
+      - common.env
+      - x86_64.env
+    environment:
     volumes:
       - localtime:/etc/localtime:ro
       - www:/var/www
