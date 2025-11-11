@@ -36,9 +36,6 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ "$incFOO_ARGS" -eq 0 ]; then
   [ ! "$travis" ] && export MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-'mariadb'}
   #; To override, use shell parameter -tbase=<name> instead
   export TEST_MYSQL_DATABASE=${TEST_MYSQL_DATABASE:-'test'}
-  export FTP_SERVICE_HOST=localhost
-  export FTP_SERVICE_USER=test
-  export FTP_SERVICE_PASSWORD=mypassword
   export HASH_PASSWORD=password
   if [ -n "$(parse_arg "-[vV]+|--verbose" "$@")" ]; then
     echo "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"

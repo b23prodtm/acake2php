@@ -68,7 +68,7 @@ services:
         PGID: 1000
     volumes:
       - localtime:/etc/localtime:ro
-      - app:/usr/local/apache2/htdocs/app
+      - htdocs:%%HTDOCS%%
     ports:
       - "80:80"
       - "443:443"
