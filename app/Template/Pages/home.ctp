@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-include CMS_ROOT . 'include' . DS . 'Index.php';
+include CMS_ROOT . DS . 'include' . DS . 'Index.php';
 ${__FILE__} = new Index($this, __FILE__, true, dirname(__DIR__));
 ?>
 <html lang="fr">
