@@ -48,7 +48,6 @@ services:
       - etc:/usr/local/etc
     ports:
       - "9001:9001"
-      - "9002:9002"
     networks:
       - cake
   apache:
@@ -94,6 +93,7 @@ services:
 volumes:
   www:
   etc:
+  apache2:
   hostapcache:
   db-data:
   db-socket:

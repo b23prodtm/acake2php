@@ -6,8 +6,8 @@
 *.old
 .circleci/config-compat.yml
 acake2php*.zip
-config/database.sql*
-config/Schema/AppSchema.php*
+app/Config/database.sql*
+app/Config/Schema/AppSchema.php*
 app/tmp
 app/webroot/e13/nbproject/private/
 app/tmp/cache/
