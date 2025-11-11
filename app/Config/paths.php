@@ -28,14 +28,17 @@ if (!defined('DS')) {
 /*
  * The full path to the directory which holds "src", WITHOUT a trailing DS.
  */
-define('ROOT', dirname(__DIR__));
+if (!defined('ROOT')) {
+    define('ROOT', dirname(dirname(__DIR__)));
+}
 
 /*
  * The actual directory name for the application directory. Normally
  * named 'src'.
  */
-define('APP_DIR', 'src');
-
+if (!defined('APP_DIR')) {
+    define('APP_DIR', 'app');
+}
 /*
  * Path to the application's directory.
  */
@@ -44,7 +47,7 @@ define('APP', ROOT . DS . APP_DIR . DS);
 /*
  * Path to the config directory.
  */
-define('CONFIG', ROOT . DS . 'config' . DS);
+define('CONFIG', APP . 'config' . DS);
 
 /*
  * File path to the webroot directory.
@@ -53,22 +56,23 @@ define('CONFIG', ROOT . DS . 'config' . DS);
  *
  * `define('WWW_ROOT', rtrim($_SERVER['DOCUMENT_ROOT'], DS) . DS);`
  */
-define('WWW_ROOT', ROOT . DS . 'webroot' . DS);
-
+if (!defined('WWW_ROOT')) {
+    define('WWW_ROOT', APP . 'webroot' . DS);
+}
 /*
  * Path to the tests directory.
  */
-define('TESTS', ROOT . DS . 'tests' . DS);
+define('TESTS', APP . 'tests' . DS);
 
 /*
  * Path to the temporary files directory.
  */
-define('TMP', ROOT . DS . 'tmp' . DS);
+define('TMP', APP . 'tmp' . DS);
 
 /*
  * Path to the logs directory.
  */
-define('LOGS', ROOT . DS . 'logs' . DS);
+define('LOGS', APP . 'logs' . DS);
 
 /*
  * Path to the cache files directory. It can be shared between hosts in a multi-server setup.
@@ -80,10 +84,13 @@ define('CACHE', TMP . 'cache' . DS);
  *
  * CakePHP should always be installed with composer, so look there.
  */
-define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'vendor' . DS . 'cakephp' . DS . 'cakephp');
+define('CAKE_CORE_INCLUDE_PATH', APP . 'vendor' . DS . 'cakephp' . DS . 'cakephp');
 
 /*
  * Path to the cake directory.
  */
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'src' . DS);
+
+/* CMS root path */
+define('CMS_ROOT', WWW_ROOT . 'php-cms' . DS . 'e13');

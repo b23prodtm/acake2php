@@ -2,9 +2,9 @@
 work_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 usage=("" \
 "Usage: $0" \
-"    CircleCI needs a primary image with docker-in-docker backend." \
+"    CircleCI needs a primary image backend." \
 "    To build it use deployment/build.sh script to push to image registry and tag it:" \
-"        deployment/images/build.sh secondary betothreeprod/cci-mariadb arm64v8-latest" \
+"        deployment/images/build.sh deployment/images/php7 betothreeprod/php7 x86_64-latest" \
 "Then you can run composition process: sudo docker-compose up --build" \
 "")
 [ ! "$(command -v circleci)" ] && curl -fLSs https://circle.ci/cli | bash

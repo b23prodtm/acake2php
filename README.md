@@ -2,17 +2,16 @@
 
 - [A Cake2PHP website](#a-cake2php-3.x-application)
     + [Quickstart](#quickstart)
-    - [Plugins](#plugins)
-      + [NodeJs packages](#nodejs-packages)
-      + [Composer Plugins](#composer-plugins)
-    + [Local Built-in Server](#local-built-in-server)
+    + [Softwares](#softwares)
+    + [Configuration](#configuration)
+    + [Generate new administrator password](#generate-new-administrator-password)
+    + [Plugins](#plugins)
+    + [NodeJs packages](#nodejs-packages)
+    + [Composer Plugins](#composer-plugins)
+    + [Built-in Server](#built-in-server)
     + [PHPUnit Test](#phpunit-test)
-    + [Device pod environment](#device-pod-environment)
-    - [Database terminal](#database-terminal)
-      + [More Database Configuration](#more-database-configuration)
-      + [Generate new administrator password](#generate-new-administrator-password)
     + [Common Issues](FAQ.md#common-issues)
-    + [Cross Platform](#cross-platform)
+    + [Build Platform](#build-platform)
     + [Docker Hub](#docker-hub)
     + [License](#license)
 
@@ -34,15 +33,13 @@ Based on [Balena engine](http://www.balena.io). See more about [NodeJs dependenc
 
 [![balena deploy button](https://www.balena.io/deploy.svg)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/b23prodtm/acake2php)
 
-Requirements
-------------
+Softwares
+---------
 To deploy a server or onto a container manager like docker, you need at least a developer environment with the following software:
-+ PHP 7.4 or later in PATH
-+ NodeJS 19 or later in PATH and NPM or Yarn (recommended in Windows)
-+ Package managers NPM or Yarn, also HomeBrew, MacPorts or Chocolatey, etc.
-+ a Docker setup (Mac or PC) or BalenaEngine (Linux)
-+ (recommended for Windows) git unix-style shell, like Git Bash
-+ OpenSSH Agent with key-pair (.ssh/*.pub) must be added to the webserver host
++ PHP 7.4 FPM (Alpine Linux)
++ Apache 2.4 HTTPD (Alpine Linux)
++ MariaDB 10.1 MySQL database
++ Balena Cloud Apps (NodeJS Package)
 
 Configuration
 -------------
@@ -55,163 +52,16 @@ Otherwise use:
 
     ssh -ttp <port> <user@host-ip> docker exec -it <container-name> "/bin/sh"
 
-Once you're logged in, run as a normal user in `/var/www/localhost/htdocs #` :
+Once you're logged in, run as a normal user in `/usr/local/apache2/htdocs #` :
 
     ./configure.sh -d -i -u
 
 It will configure PHP plugins and migrate the table in databases.
-You can also test the configuration, lauch Cake Tests from `/var/www/localhost/htdocs #` :
+You can also test the configuration, lauch Cake Tests from `/usr/local/apache2/htdocs #` :
 
     ./test-cake.sh
 
-Plugins
--------
-You do not need to change anything in your existing PHP project's repository.
-However, if these files exist they will affect the behavior of the build process:
-
-* Packagist **composer.json**
-
-  Update all required plugins
-
-      composer update
-
-  [Packagist](https://packagist.org).
-
-
-#### Node modules 
-
-* **package.json**
-
-  List of dependencies to be installed with `npmjs` [here](https://www.npmjs.com).
-
-      yarn
-
-  Install the balenaCloud helper package [balena-cloud-apps](https://www.npmjs.com/package/balena-cloud-apps).
-    
-      sudo npm link balena-cloud-apps
-
-  whenever the system complains about `balena_deploy` not found.
-
-* **Templates files**
-
-  Setup environment variables, build files, ready for deployment with any of the available targets:
-
-      Scripts/update-templates.sh
-
-#### Composer Plugins 
-
-   Plugins are registered in both _git submodule_ and _composer.json_. To make them ready for build, edit _composer.json_ as needed and launch the command ```composer update```. 
-   Plugins home folder: 
-       
-       app/Vendor/<package-name>
-       app/Plugin/<plugin-name>/
-
-* **.htaccess**
-
-  To allow Apache server to browse directly to the app/webroot folder on server-side, use mod_rewrite rules, as provided by .htaccess files.
-
-  >/.htaccess
-
-      <IfModule mod_rewrite.c>
-        RewriteEngine on
-        # Uncomment if you have a .well-known directory in the root folder, e.g. for the Let's Encrypt challenge
-        # https://tools.ietf.org/html/rfc5785
-        #RewriteRule ^(\.well-known/.*)$ $1 [L]
-        RewriteRule ^$ app/webroot/ [L]
-        RewriteRule (.*) app/webroot/$1 [L]
-      </IfModule>
-
-  >/app/.htaccess
-
-      <IfModule mod_rewrite.c>
-         RewriteEngine on
-         RewriteBase /app/
-         RewriteRule    ^$    webroot/    [L]
-         RewriteRule    (.*) webroot/$1    [L]
-      </IfModule>
-
-Local Built-in Server
----------------------
-* CakePHP application also supports Docker
-* MariaDB 10.1 and later
-
-Start a local server machine for testing on port 9000.
-Open a Terminal window:
-
-    DB=Mysql ./configure.sh --mig-database -u
-    ./start-cake.sh --docker -c server -p 9000
-
-> Ctrl-click the URL that appear on the terminal. It will open them in the browser. To get more help about the command line interface :
-
-    ./start-cake.sh --help
-
-### PHPUnit Test
-JUNIT tests are available with the following call to CAKE server:
-Open a Terminal window:
-
-    ./test-cake.sh
-
-There are options (--runner, --travis) dedicated to continuous integration build environments. Use --help to see more about options.
-
-See [below](#common-issues) to allow access on the built-in local server.
-
-Device pod environment
-----------------------
-When deployment happens on device or is triggered by a git push event, 'source-to-image (s2i)', the httpd-server  or pod needs proper environment variables to be set ready. Otherwise the scripts will fail with an error state, unable to connect to the database
-
-The following variables must be set up as server environment, provided by your **database administrator**:
-
-    # Sqlite, Postgres
-    DB:Mysql
-
-> Note: DB selects CakePhp Model/Datasource/Database DBOSource class to configure SQL connections.    
-
-    MYSQL_DATABASE:default
-    # a hostname or IP address
-    MYSQL_HOST:mysql
-
-> Note: Prefixed with *TEST_* they are used by the index.php?test=1 URLs and ./test-cake.sh (--travis)
-
-The following additional variables must be set up as server secrets environment, provided by your database administrator:
-
-    #(optional)
-    WEBHOOK_URL:<discordapp-url>
-    # Persistent connection credentials
-    DATABASE_USER:<provided-user>
-    MYSQL_ROOT_PASSWORD:<provided-password>
-    # Just add MYSQL_USER and MYSQL_PASSWORD
-    MYSQL_USER:<test-user>
-    MYSQL_PASSWORD:<test-password>
-    # CakePHP generated
-    CAKEPHP_SECRET_TOKEN:<secret-token>
-    CAKEPHP_SECRET_SALT:<secret-salt>
-    CAKEPHP_SECURITY_CIPHER_SEED:<cipher-seed>
-    # Generated by ./configure.sh -h
-    GET_HASH_PASSWORD:<hashed-password>
-
-    MYSQL_DATABASE
-    aria_db
-
-    MYSQL_HOST
-    db
-
-    MYSQL_PASSWORD
-    maria-abc
-
-    MYSQL_ROOT_PASSWORD
-    mariadb
-
-    MYSQL_TCP_PORT
-    3306
-
-    MYSQL_USER
-    maria
-
-    SERVER_NAME
-    <Domain-Name>
-
-
-#### **db** pod healthcheck
+#### **db** configuration
 
 Container engines provides a sanbox virtual system with some persistent storage. To check that the last database migration was successful, open a pod shell :
 
@@ -221,30 +71,19 @@ Issue some SQL statements, for instance :
 
     use aria_db; show tables;
 
-To temporarily change the MYSQL_ROOT_PASSWORD in a pod:
+#### **php-fpm** configuration
 
-    mysql_secure_installation
+By editing the files `Config/app_local.template` and `Config/Schema/AppSchema.template` if you wish to modify the database connection and email transport.
+You can then re-configure and migrate databases (configuration and migration)
 
-
-This should list all the migrated tables
-
-#### **acake2php** pod healthcheck
-
+     ./configure.sh -d -i -u
     cake schema update --connection=default
 
-This should migrate the databases.
+This migrates the databases.
 
     cake schema update --connection=test
 
-This should migrate the test databases.
-
-#### Database
-
-By editing the files `Config/app_local.template` and `Config/Schema/AppSchema.template` if you wish to modify the database connection and email transport.
-You can then configure and migrate databases (configuration and migration)
-
-     ./configure.sh -d -i -u
-
+This should mogrates the *test* databases.
 
 More about configuration:
 
@@ -268,25 +107,94 @@ or:
 
 One of them must be stored in the local server environment as a system readable variable.
 
-Cross Platform
---------------
+#### PHPUnit Test
+JUNIT tests are available with the following call to CAKE server:
+Open a Terminal window:
 
-   If selecting an ARM device target from an ordinary X86 machine, first enable the RUN [ cross-build-start ] and RUN [ cross-build-end ] balenaOS cross-platform build modes, run `./deploy.sh`:
-   
-    1:local-balena
-  
-  Choose the target architecture, and then choose the option:
+    ./test-cake.sh
+
+There are options (--runner, --travis) dedicated to continuous integration build environments. Use --help to see more about options.
+
+See [below](#common-issues) to allow access on the built-in local service.
+
+Plugins
+-------
+You do not need to change anything in your existing PHP project's repository.
+There are various dependencies.
+Plugins are registered in both _packages.json_ and  _app/composer.json_
+
+#### Node modules 
+
+* **package.json**
+
+  List of dependencies to be installed with `npmjs` [here](https://www.npmjs.com).
+
+      yarn install
+
+  Re-Install the helper package [balena-cloud-apps](https://www.npmjs.com/package/balena-cloud-apps).
     
-    6:build dependencies
+      ysrn add balena-cloud-apps
 
-  Only balenaOS baselib images can use cross-build based on balenaEngine. You should otherwise run `docker buildx build --platform=linux/arm64` from an ARM computer.
-  BalenaOS and BalenaCloud as an open source platform allow us to maintain a small devices fleet (aka swarm, cluster).
-  Use Balena one button deployment, update the source code as your needs, and deploy to BalenaCloud, this will disable cross-platform build:
+  whenever the system complains about `balena_deploy` not found.
 
+#### Composer Plugins 
+
+* Packagist **composer.json**
+
+  Update all required plugins
+
+      Scripts/composer.sh update
+
+  [Packagist](https://packagist.org).
+
+  ```. 
+   Plugins home folder: 
+       
+       app/Vendor/<package-name>
+       app/Plugin/<plugin-name>/
+* **Templates files**
+
+  Setup environment variables, build files, ready for deployment with any of the available targets:
+
+      Scripts/update-templates.sh
+  
+* mod_rewrite.so
+  The Apache rewrite module for URL becomes [obsolete on Apache with FPM Proxy FCGI]
+  [FilesMatch in etc/apache2/site.conf]
+  
+
+Built-in Test Server
+---------------
+* CakePHP application also supports Docker
+* MariaDB 10.1 and later
+
+Start a *local* tedt server machine for testing on port 9000.
+Open a Terminal window:
+
+    ./configure.sh -d -i -u
+    ./start-cake.sh --docker -c server -p 9000
+
+> Ctrl-click the URL that appear on the terminal. It will open them in the browser. To get more help about the command line interface :
+
+    ./start-cake.sh --help
+
+Build Platform
+--------------
+   Make changes to **.template** files and update the various arch files. 
+    
+    update_templates
+    ./deploy.sh
+
+   Choose the target architecture 1, 2 or 3 , and then push to balena:
+    
     2:balena
-    5:push
 
-You are able to deploy to a balena fleet, using their original deployment process.
+   Once connected to your Github account you'll have to push the source files.
+   Deploy from a machine that has acces to the internet.
+   
+   Try local build options if you want to make a Build Test but balena is reliable and secure way.
+
+   You are ready able to deploy to a balena fleet, using their original deployment process.
 
 Docker Hub
 ----------

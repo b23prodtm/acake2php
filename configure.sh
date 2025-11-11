@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 set -eu
+
+# Fixes env variables unset
+DOCKER_USER="${DOCKER_USER:-betothreeprod}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0
+
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 APPPATH="app"
 SRCPATH="app/vendor/cakephp/cakephp/src"
@@ -30,7 +34,6 @@ usage=("" \
 "          -d, --mig-database [options]" \
 "                         Migrate Database (see $0 --mig-database --help)" \
 "          --development  Install composer dependencies" \
-"          -a, --apache2  Make apache2 VirtualHost configuration from templates: etc/apache2/site.tpl..." \
 "")
 saved=( "$@" )
 show_password_status "root" "MYSQL_ROOT_PASSWORD" "is configuring ${runner} ${docker}..."
@@ -57,8 +60,8 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   -[rR]*|--runner|--travis )
     # shellcheck disable=SC2154
     echo -e "${green}--runner mode: Fixing some file permissions...${nc}"
-    # shellcheck source=Scripts/configure_tmp.sh
-    bash -c "$TOPDIR/Scripts/configure_tmp.sh"
+    # shellcheck source=Scripts/configure_path.sh
+    bash -c "$TOPDIR/Scripts/configure_path.sh"
     ;;
   --docker )
     slogger -st docker "check database container id"
@@ -67,20 +70,20 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   --development )
     composer_args="-d $APPPATH update --no-interaction --dev"
     ;;
-  -[aA]*|--apache )
-    # shellcheck disable=SC2154
-    echo -e "${green}Adding VirtualHost...${nc}"
-    # shellcheck source=Scripts/config_a2ensite.sh
-    bash -c "$TOPDIR/Scripts/config_a2ensite.sh $TOPDIR/app/webroot $TOPDIR/etc/apache2"
-    ;;
   -[vV]*|--verbose )
     set -x
     echo "Passed params : ${BASH_SOURCE[*]} ${saved[*]}";;
     *) echo "Unknown parameter: ${BASH_SOURCE[0]} $1"; exit 1;;
 esac; shift; done
+#; push configuration template
+bash -c "$TOPDIR/Scripts/cp_bkp_old.sh $APPPATH/Config/ app_local.template app_local.php"
 #; update plugins and dependencies
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
 slogger -st sed "Cake patches $APPPATH and $SRCPATH"
 #; patches
+patches "$APPPATH/tests/bootstrap.php"
+patches "$APPPATH/tests/TestCase/ApplicationTest.php"
+patches "$APPPATH/webroot/index.php"
+patches "$APPPATH/bin/cake.php"
 patches "$APPPATH/Config/core.php"
 patches "$SRCPATH/Console/ShellDispatcher.php" "$SRCPATH/Console/ConsoleOutput.php" 

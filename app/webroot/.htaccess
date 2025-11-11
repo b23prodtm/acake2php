@@ -1,5 +1,2 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
-</IfModule>
+<!--// DO NOT ADD ANY rewrite URL here
+PLEASE USE apache with virtual host proxy //-->

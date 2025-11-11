@@ -5,15 +5,14 @@ services:
       context: deployment/images/mysqldb
       dockerfile: Dockerfile.x86_64
       args:
-        PUID: 0
-        PGID: 0
+        PUID: 1000
+        PGID: 1000
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: yes
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
       - db-socket:/var/run/mysqld
-      - db-config:/var/www/htdocs/localhost/app/config
     ports:
       - "3306:3306"
     restart: unless-stopped
@@ -24,7 +23,7 @@ services:
       - .env
     labels:
       io.balena.features.dbus: "1"
-  acake2php:
+  php-fpm:
     env_file:
       - common.env
       - .env
@@ -32,20 +31,35 @@ services:
       context: .
       dockerfile: Dockerfile.x86_64
       args:
+        PUID: 1000
+        PGID: 1000
+        HTDOCS: /usr/local/apache2/htdocs
+    volumes:
+      - localtime:/etc/localtime:ro
+      - htdocs:/usr/local/apache2/htdocs
+    ports:
+      - "9001:9001"
+      - "9002:9002"
+    networks:
+      - cake
+  apache:
+    env_file:
+      - common.env
+      - .env
+    build:
+      context: deployment/images/httpd
+      dockerfile: Dockerfile.x86_64
+      args:
         CAKEPHP_DEBUG_LEVEL: "2"
         PUID: 1000
         PGID: 1000
-    labels:
-      io.balena.features.dbus: "1"
+        HTDOCS: /usr/local/apache2/htdocs
     volumes:
       - localtime:/etc/localtime:ro
-      - db-config:/var/www/htdocs/localhost/app/config
-      - db-socket:/var/run/mysqld
+      - htdocs:/usr/local/apache2/htdocs
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - db
     networks:
       - cake
   balena-storage:
@@ -68,13 +82,10 @@ services:
     volumes:
       - db-backup:/mnt/external-drives
 volumes:
+  htdocs:
   hostapcache:
-  db-config:
-    external: false
   db-data:
-    external: false
   db-socket:
-    external: false
   config:
   localtime:
   db-backup:
