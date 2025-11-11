@@ -120,11 +120,6 @@ COPY . .
 COPY php-ini-overrides.ini /usr/local/etc/php/99-overrides.ini
 COPY etc/php-fpm.d /usr/local/etc/php-fpm.d
 
-# Set permissions for temporary directories
-RUN mkdir -p app/tmp/cache/models app/tmp/cache/persistent \
-    && chown -R :www-data app/tmp \
-    && chmod -R 770 app/tmp
-
 # add dedicated user
 RUN adduser -h $PWD -G www-data -D -u 1001 http-fpm
 
