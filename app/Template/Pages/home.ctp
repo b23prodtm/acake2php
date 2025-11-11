@@ -50,23 +50,24 @@
     </div>
 
     <script>
-        function acceptCookies() {
-            // Envoie une requête AJAX pour enregistrer le consentement côté serveur
-            fetch('<?php echo $this->Url->build(["action" => "acceptCookies"]); ?>', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ accept: true })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('cookieBanner').style.display = 'none';
-                }
-            })
-            .catch(error => console.error('Erreur:', error));
-        }
+    function acceptCookies() {
+        fetch('<?= $this->Url->build(["controller" => "Pages", "action" => "acceptCookies"]) ?>', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': document.querySelector('meta[name="csrfToken"]').content,
+            },
+            body: JSON.stringify({ accept: true })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('cookieBanner').style.display = 'none';
+            }
+        })
+        .catch(error => console.error('Erreur:', error));
+    }
     </script>
+
 </body>
 </html>
