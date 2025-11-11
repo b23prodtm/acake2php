@@ -91,3 +91,6 @@ define('CAKE_CORE_INCLUDE_PATH', APP . 'vendor' . DS . 'cakephp' . DS . 'cakephp
  */
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'src' . DS);
+
+/* CMS root path */
+define('CMS_ROOT', WWW_ROOT . 'php-cms' . DS . 'e13');
