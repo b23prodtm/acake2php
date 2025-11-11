@@ -22,7 +22,7 @@
 //Configure::write('Config.language', 'deu');
 
 // This is where we define the OpenShift specific secure variable functions
-include(dirname(dirname(dirname(__FILE__))) . DS . 'lib' . DS . 'openshift.php');
+include ROOT . DS . 'lib' . DS . 'openshift.php');
 
 // Set the default keys to use
 $_default_keys = array(
