@@ -9,7 +9,7 @@ services:
         PGID: 1000
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: yes
-			TZ: Europe/Paris
+      TZ: Europe/Paris
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
@@ -21,7 +21,7 @@ services:
       - cake
     env_file:
       - common.env
-      - %%BALENA_ARCH%%
+      - %%BALENA_ARCH%%.env
     labels:
       io.balena.features.dbus: "1"
   php-fpm:
@@ -68,7 +68,7 @@ services:
         PGID: 1000
     volumes:
       - localtime:/etc/localtime:ro
-      - htdocs:%%HTDOCS%%
+      - htdocs:/var/www
     ports:
       - "80:80"
       - "443:443"
