@@ -19,7 +19,7 @@ else
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi
 LOG=$(new_cake_log "$travis" "$runner" "$docker") && slogger -st "$0" "$LOG"
-dbfile=config/app_local.template
+dbfile=app/Config/app_local.template
 schemafile=app/Config/Schema/AppSchema.template
 usage=("" \
 "Usage: $0 [-r] [-i] [-u]" \
