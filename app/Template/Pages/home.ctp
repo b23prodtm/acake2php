@@ -1,9 +1,16 @@
 <!DOCTYPE html>
+<?php
+include CMS_ROOT . 'include' . DS . 'Index.php';
+${__FILE__} = new Index($this, __FILE__, true, dirname(__DIR__));
+?>
 <html lang="fr">
 <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+        <meta http-equiv="refresh" content="5;URL=<?php echo ${__FILE__}->sitemap['e13__index']; ?>">
+        <link rel="stylesheet" href=<?php echo ${__FILE__}->sitemap['etc__stylesheet.css']; ?> type="text/css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenue sur notre site</title>
+        <title><?php echo ${__FILE__}->lang("cgv", "shop"); ?></title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,7 +58,7 @@
 
     <script>
     function acceptCookies() {
-        fetch('<?= $this->Url->build(["controller" => "Pages", "action" => "acceptCookies"]) ?>', {
+        fetch('<?php $this->Url->build(["controller" => "Pages", "action" => "acceptCookies"]) ?>', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
