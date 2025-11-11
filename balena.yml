@@ -15,14 +15,17 @@ assets:
         https://raw.githubusercontent.com/b23prodtm/acake2php/master/acake2php.jpeg
 data:
   applicationEnvironmentVariables:
-    # Browse to /etc/getHashPassword.php 
+    # Browse to /etc/getHashPassword.php or
     # Call terminal $ ./configure.sh -h -p pass -s salt
     # Get new staff credentials  /admin/index.php
     # gets printed out in docker build log
     - GET_HASH_PASSWORD: Encrypt_it_with_getHashPassword_php
     - HASH_PASSWORD: Let_us_encrypt_it_from_startup
 
-    # Database name
+    # Database name must be first newly created: 
+    # Call SSH terminal into db (ssh gh_<user>@db -p 22222) 
+    # $ MySQL -u root -p <enter mysql root password> 
+    # $ CREATE DATABASE <write mysql database name>;
     - MYSQL_DATABASE: Acake2php
     # Persistent ROOT connection credentials
     - MYSQL_HOST: db
