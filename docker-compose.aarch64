@@ -34,20 +34,21 @@ services:
       args:
         PUID: 1000
         PGID: 1000
+        MYPHPCMS_DIR: app/webroot/php-cms
+        MYPHPCMS_LOG: app/tmp/logs
+        HTDOCS: /var/wwww
     env_file:
       - common.env
       - aarch64.env
     environment:
       CAKEPHP_DEBUG_LEVEL: "2"
-   COLLECT_COVERAGE: false
-TZ: Europe/Paris
-CAKEPHP_SECURITY_SALT: Word
-CAKEPHP_SECURITY_CIPHER_SEED: 01234
-MYPHPCMS_DIR: app/webroot/php-cms
-MYPHPCMS_LOG: app/tmp/logs
-HTDOCS: /var/wwww
+      COLLECT_COVERAGE: false
+      CAKEPHP_SECURITY_SALT: Word
+      CAKEPHP_SECURITY_CIPHER_SEED: 01234
     volumes:
       - localtime:/etc/localtime:ro
+      - www:/var/www
+      - etc:/usr/local/etc
     ports:
       - "9001:9001"
       - "9002:9002"
@@ -58,17 +59,17 @@ HTDOCS: /var/wwww
       - common.env
       - aarch64.env
     environment:
-TZ: Europe/Paris
-HTDOCS: /var/www
     build:
       context: deployment/images/httpd
       dockerfile: Dockerfile.aarch64
       args:
         PUID: 1000
         PGID: 1000
+        HTDOCS: /var/www
     volumes:
       - localtime:/etc/localtime:ro
-      - htdocs:/var/www
+      - www:/var/www
+      - apache2:/usr/local/apache2
     ports:
       - "80:80"
       - "443:443"
@@ -94,7 +95,8 @@ HTDOCS: /var/www
     volumes:
       - db-backup:/mnt/external-drives
 volumes:
-  app:
+  www:
+  etc:
   hostapcache:
   db-data:
   db-socket:
