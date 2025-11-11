@@ -14,3 +14,5 @@ s#(BALENA_MACHINE_NAME[=:-]+)[^$ }]+#\1raspberrypi3#g
 s#%%BALENA_MACHINE_NAME%%#raspberrypi3#g
 s#(PHP_EXTENSIONS[=:-]+)[^$ }]+#\1#g
 s#%%PHP_EXTENSIONS%%##g
+s#(HTDOCS[=:-]+)[^$ }]+#\1/usr/local/apache2/htdocs#g
+s#%%HTDOCS%%#/usr/local/apache2/htdocs#g
