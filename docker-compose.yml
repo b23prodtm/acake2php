@@ -33,10 +33,10 @@ services:
       args:
         PUID: 1000
         PGID: 1000
-        HTDOCS: /usr/local/apache2/htdocs
+        HTDOCS: /usr/local/http-fpm
     volumes:
       - localtime:/etc/localtime:ro
-      - htdocs:/usr/local/apache2/htdocs
+      - htdocs:/usr/local/http-fpm
     ports:
       - "9001:9001"
       - "9002:9002"
@@ -53,10 +53,10 @@ services:
         CAKEPHP_DEBUG_LEVEL: "2"
         PUID: 1000
         PGID: 1000
-        HTDOCS: /usr/local/apache2/htdocs
+        HTDOCS: /usr/local/http-fpm
     volumes:
       - localtime:/etc/localtime:ro
-      - htdocs:/usr/local/apache2/htdocs
+      - htdocs:/usr/local/http-fpm
     ports:
       - "80:80"
       - "443:443"
