@@ -1,5 +1,5 @@
 <?php
-$nouvelleAdresse='e13/';	//Nouvelle adresse
+$nouvelleAdresse="$_SERVER['SERVER_NAME']";	//Nouvelle adresse
 if (isset($_SERVER['QUERY_STRING'])&&($_SERVER['QUERY_STRING']!=''))
  $nouvelleAdresse.='?'.substr($_SERVER['QUERY_STRING'],0,2048);	//Recupere les parametres
 header('Location: '.$nouvelleAdresse);	//Redirection HTTP
