@@ -16,7 +16,7 @@
  */
 
 // Check platform requirements
-require dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'requirements.php';
+require dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'requirements.php';
 
 // For built-in server
 if (PHP_SAPI === 'cli-server') {
@@ -34,7 +34,7 @@ use App\Application;
 use Cake\Http\Server;
 
 // Bind your application to the server.
-$server = new Server(new Application(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config'));
+$server = new Server(new Application(dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'Config'));
 
 // Run the request/response through the application and emit the response.
 $server->emit($server->run());
