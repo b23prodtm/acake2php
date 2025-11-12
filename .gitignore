@@ -4,7 +4,7 @@
 !docker-compose.*
 *.sed
 *.old
-*.log
+*.log*
 .circleci/config-compat.yml
 acake2php*.zip
 Config/database.sql*
