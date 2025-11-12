@@ -29,7 +29,7 @@ if (!defined('DS')) {
  * The full path to the directory which holds "src", WITHOUT a trailing DS.
  */
 if (!defined('ROOT')) {
-    define('ROOT', dirname(dirname(__DIR__)));
+    define('ROOT', dirname(__DIR__));
 }
 
 /*
@@ -47,7 +47,7 @@ define('APP', ROOT . DS . APP_DIR . DS);
 /*
  * Path to the config directory.
  */
-define('CONFIG', APP . 'Config' . DS);
+define('CONFIG', ROOT . DS . 'Config' . DS);
 
 /*
  * File path to the webroot directory.

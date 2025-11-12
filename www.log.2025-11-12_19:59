@@ -1,0 +1,864 @@
+'/var/www/.env' -> '/var/www/armhf.env'
+* Found 6 flags set BALENA_PROJECTS_FLAGS
+* Found 4 projects set BALENA_PROJECTS
+/var/www/node_modules/.bin/balena_deploy: line 228: ssh-add: command not found
+* /var/www/node_modules/.bin/balena_deploy armhf 1
++ RUN [^a-z]*cross-build-start[^a-z]*
+'/var/www/./deployment/images/httpd/.env' -> '/var/www/armhf.env'
+'/var/www/./deployment/images/httpd/common.env' -> '/var/www/common.env'
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../../../.circleci/
+	../../../.editorconfig
+	../../../.env
+	../../../.gitattributes
+	../../../.gitignore
+	../../../.openshift/
+	../../../.stickler.yml
+	../../../.travis.yml
+	../../../.yarn/
+	../../../.yarnrc.yml
+	../../../Dockerfile.aarch64
+	../../../Dockerfile.armhf
+	../../../Dockerfile.template
+	../../../Dockerfile.x86_64
+	../../../FAQ.md
+	../../../INSTALL.md
+	../../../LICENSE
+	../../../README.md
+	../../../Scripts/
+	../../../aarch64.env
+	../../../acake2php.jpeg
+	../../../app/
+	../../../armhf.env
+	../../../balena-connect-it.sh
+	../../../balena-storage/
+	../../../balena.yml
+	../../../bin/
+	../../../bootstrap_phpunit.php
+	../../../common.env
+	../../../composer.json
+	../../../composer.lock
+	../../../config/
+	../../../configure.sh
+	../../../deploy.sh
+	../../
+	../../../discord.sh
+	../../../docker-compose-alias.sh
+	../../../docker-compose.aarch64
+	../../../docker-compose.armhf
+	../../../docker-compose.template
+	../../../docker-compose.x86_64
+	../../../docker-compose.yml
+	../../../docker-compose/
+	../../../etc/
+	../../../health.php
+	../../../index.php
+	../../../info.php
+	../../../kompose.sh
+	../../../kubernetes/
+	../../../lib/
+	../../../migrate-database.sh
+	../../../openshift/
+	../../../package.json
+	../../../php-ini-overrides.ini
+	../../../start-cake.sh
+	../../../test-cake.sh
+	../../../test-cake.sh~
+	../../../ubuntu.sh
+	../../../x86_64.env
+	../../../yarn.lock
+
+nothing added to commit but untracked files present (use "git add" to track)
+'/var/www/./deployment/images/mysqldb/.env' -> '/var/www/armhf.env'
+'/var/www/./deployment/images/mysqldb/common.env' -> '/var/www/common.env'
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../../../.circleci/
+	../../../.editorconfig
+	../../../.env
+	../../../.gitattributes
+	../../../.gitignore
+	../../../.openshift/
+	../../../.stickler.yml
+	../../../.travis.yml
+	../../../.yarn/
+	../../../.yarnrc.yml
+	../../../Dockerfile.aarch64
+	../../../Dockerfile.armhf
+	../../../Dockerfile.template
+	../../../Dockerfile.x86_64
+	../../../FAQ.md
+	../../../INSTALL.md
+	../../../LICENSE
+	../../../README.md
+	../../../Scripts/
+	../../../aarch64.env
+	../../../acake2php.jpeg
+	../../../app/
+	../../../armhf.env
+	../../../balena-connect-it.sh
+	../../../balena-storage/
+	../../../balena.yml
+	../../../bin/
+	../../../bootstrap_phpunit.php
+	../../../common.env
+	../../../composer.json
+	../../../composer.lock
+	../../../config/
+	../../../configure.sh
+	../../../deploy.sh
+	../../
+	../../../discord.sh
+	../../../docker-compose-alias.sh
+	../../../docker-compose.aarch64
+	../../../docker-compose.armhf
+	../../../docker-compose.template
+	../../../docker-compose.x86_64
+	../../../docker-compose.yml
+	../../../docker-compose/
+	../../../etc/
+	../../../health.php
+	../../../index.php
+	../../../info.php
+	../../../kompose.sh
+	../../../kubernetes/
+	../../../lib/
+	../../../migrate-database.sh
+	../../../openshift/
+	../../../package.json
+	../../../php-ini-overrides.ini
+	../../../start-cake.sh
+	../../../test-cake.sh
+	../../../test-cake.sh~
+	../../../ubuntu.sh
+	../../../x86_64.env
+	../../../yarn.lock
+
+nothing added to commit but untracked files present (use "git add" to track)
+'/var/www/./.env' -> '/var/www/armhf.env'
+'/var/www/./balena-storage/.env' -> '/var/www/armhf.env'
+'/var/www/./balena-storage/common.env' -> '/var/www/common.env'
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../.circleci/
+	../.editorconfig
+	../.env
+	../.gitattributes
+	../.gitignore
+	../.openshift/
+	../.stickler.yml
+	../.travis.yml
+	../.yarn/
+	../.yarnrc.yml
+	../Dockerfile.aarch64
+	../Dockerfile.armhf
+	../Dockerfile.template
+	../Dockerfile.x86_64
+	../FAQ.md
+	../INSTALL.md
+	../LICENSE
+	../README.md
+	../Scripts/
+	../aarch64.env
+	../acake2php.jpeg
+	../app/
+	../armhf.env
+	../balena-connect-it.sh
+	./
+	../balena.yml
+	../bin/
+	../bootstrap_phpunit.php
+	../common.env
+	../composer.json
+	../composer.lock
+	../config/
+	../configure.sh
+	../deploy.sh
+	../deployment/
+	../discord.sh
+	../docker-compose-alias.sh
+	../docker-compose.aarch64
+	../docker-compose.armhf
+	../docker-compose.template
+	../docker-compose.x86_64
+	../docker-compose.yml
+	../docker-compose/
+	../etc/
+	../health.php
+	../index.php
+	../info.php
+	../kompose.sh
+	../kubernetes/
+	../lib/
+	../migrate-database.sh
+	../openshift/
+	../package.json
+	../php-ini-overrides.ini
+	../start-cake.sh
+	../test-cake.sh
+	../test-cake.sh~
+	../ubuntu.sh
+	../x86_64.env
+	../yarn.lock
+
+nothing added to commit but untracked files present (use "git add" to track)
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.circleci/
+	.editorconfig
+	.env
+	.gitattributes
+	.gitignore
+	.openshift/
+	.stickler.yml
+	.travis.yml
+	.yarn/
+	.yarnrc.yml
+	Dockerfile.aarch64
+	Dockerfile.armhf
+	Dockerfile.template
+	Dockerfile.x86_64
+	FAQ.md
+	INSTALL.md
+	LICENSE
+	README.md
+	Scripts/
+	aarch64.env
+	acake2php.jpeg
+	app/
+	armhf.env
+	balena-connect-it.sh
+	balena-storage/
+	balena.yml
+	bin/
+	bootstrap_phpunit.php
+	common.env
+	composer.json
+	composer.lock
+	config/
+	configure.sh
+	deploy.sh
+	deployment/
+	discord.sh
+	docker-compose-alias.sh
+	docker-compose.aarch64
+	docker-compose.armhf
+	docker-compose.template
+	docker-compose.x86_64
+	docker-compose.yml
+	docker-compose/
+	etc/
+	health.php
+	index.php
+	info.php
+	kompose.sh
+	kubernetes/
+	lib/
+	migrate-database.sh
+	openshift/
+	package.json
+	php-ini-overrides.ini
+	start-cake.sh
+	test-cake.sh
+	test-cake.sh~
+	ubuntu.sh
+	x86_64.env
+	yarn.lock
+
+nothing added to commit but untracked files present (use "git add" to track)
+/var/www/node_modules/.bin/balena_deploy: line 228: ssh-add: command not found
+* /var/www/node_modules/.bin/balena_deploy armhf 0
+* deploy's exiting...
+'/var/www/.env' -> '/var/www/x86_64.env'
+* Found 6 flags set BALENA_PROJECTS_FLAGS
+* Found 4 projects set BALENA_PROJECTS
+/var/www/node_modules/.bin/balena_deploy: line 228: ssh-add: command not found
+* /var/www/node_modules/.bin/balena_deploy x86_64 1
++ RUN [^a-z]*cross-build-start[^a-z]*
+'/var/www/./deployment/images/httpd/.env' -> '/var/www/x86_64.env'
+'/var/www/./deployment/images/httpd/common.env' -> '/var/www/common.env'
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../../../.circleci/
+	../../../.editorconfig
+	../../../.env
+	../../../.gitattributes
+	../../../.gitignore
+	../../../.openshift/
+	../../../.stickler.yml
+	../../../.travis.yml
+	../../../.yarn/
+	../../../.yarnrc.yml
+	../../../Dockerfile.aarch64
+	../../../Dockerfile.armhf
+	../../../Dockerfile.template
+	../../../Dockerfile.x86_64
+	../../../FAQ.md
+	../../../INSTALL.md
+	../../../LICENSE
+	../../../README.md
+	../../../Scripts/
+	../../../aarch64.env
+	../../../acake2php.jpeg
+	../../../app/
+	../../../armhf.env
+	../../../balena-connect-it.sh
+	../../../balena-storage/
+	../../../balena.yml
+	../../../bin/
+	../../../bootstrap_phpunit.php
+	../../../common.env
+	../../../composer.json
+	../../../composer.lock
+	../../../config/
+	../../../configure.sh
+	../../../deploy.sh
+	../../
+	../../../discord.sh
+	../../../docker-compose-alias.sh
+	../../../docker-compose.aarch64
+	../../../docker-compose.armhf
+	../../../docker-compose.template
+	../../../docker-compose.x86_64
+	../../../docker-compose.yml
+	../../../docker-compose/
+	../../../etc/
+	../../../health.php
+	../../../index.php
+	../../../info.php
+	../../../kompose.sh
+	../../../kubernetes/
+	../../../lib/
+	../../../migrate-database.sh
+	../../../openshift/
+	../../../package.json
+	../../../php-ini-overrides.ini
+	../../../start-cake.sh
+	../../../test-cake.sh
+	../../../test-cake.sh~
+	../../../ubuntu.sh
+	../../../x86_64.env
+	../../../yarn.lock
+
+nothing added to commit but untracked files present (use "git add" to track)
+'/var/www/./deployment/images/mysqldb/.env' -> '/var/www/x86_64.env'
+'/var/www/./deployment/images/mysqldb/common.env' -> '/var/www/common.env'
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../../../.circleci/
+	../../../.editorconfig
+	../../../.env
+	../../../.gitattributes
+	../../../.gitignore
+	../../../.openshift/
+	../../../.stickler.yml
+	../../../.travis.yml
+	../../../.yarn/
+	../../../.yarnrc.yml
+	../../../Dockerfile.aarch64
+	../../../Dockerfile.armhf
+	../../../Dockerfile.template
+	../../../Dockerfile.x86_64
+	../../../FAQ.md
+	../../../INSTALL.md
+	../../../LICENSE
+	../../../README.md
+	../../../Scripts/
+	../../../aarch64.env
+	../../../acake2php.jpeg
+	../../../app/
+	../../../armhf.env
+	../../../balena-connect-it.sh
+	../../../balena-storage/
+	../../../balena.yml
+	../../../bin/
+	../../../bootstrap_phpunit.php
+	../../../common.env
+	../../../composer.json
+	../../../composer.lock
+	../../../config/
+	../../../configure.sh
+	../../../deploy.sh
+	../../
+	../../../discord.sh
+	../../../docker-compose-alias.sh
+	../../../docker-compose.aarch64
+	../../../docker-compose.armhf
+	../../../docker-compose.template
+	../../../docker-compose.x86_64
+	../../../docker-compose.yml
+	../../../docker-compose/
+	../../../etc/
+	../../../health.php
+	../../../index.php
+	../../../info.php
+	../../../kompose.sh
+	../../../kubernetes/
+	../../../lib/
+	../../../migrate-database.sh
+	../../../openshift/
+	../../../package.json
+	../../../php-ini-overrides.ini
+	../../../start-cake.sh
+	../../../test-cake.sh
+	../../../test-cake.sh~
+	../../../ubuntu.sh
+	../../../x86_64.env
+	../../../yarn.lock
+
+nothing added to commit but untracked files present (use "git add" to track)
+'/var/www/./.env' -> '/var/www/x86_64.env'
+'/var/www/./balena-storage/.env' -> '/var/www/x86_64.env'
+'/var/www/./balena-storage/common.env' -> '/var/www/common.env'
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../.circleci/
+	../.editorconfig
+	../.env
+	../.gitattributes
+	../.gitignore
+	../.openshift/
+	../.stickler.yml
+	../.travis.yml
+	../.yarn/
+	../.yarnrc.yml
+	../Dockerfile.aarch64
+	../Dockerfile.armhf
+	../Dockerfile.template
+	../Dockerfile.x86_64
+	../FAQ.md
+	../INSTALL.md
+	../LICENSE
+	../README.md
+	../Scripts/
+	../aarch64.env
+	../acake2php.jpeg
+	../app/
+	../armhf.env
+	../balena-connect-it.sh
+	./
+	../balena.yml
+	../bin/
+	../bootstrap_phpunit.php
+	../common.env
+	../composer.json
+	../composer.lock
+	../config/
+	../configure.sh
+	../deploy.sh
+	../deployment/
+	../discord.sh
+	../docker-compose-alias.sh
+	../docker-compose.aarch64
+	../docker-compose.armhf
+	../docker-compose.template
+	../docker-compose.x86_64
+	../docker-compose.yml
+	../docker-compose/
+	../etc/
+	../health.php
+	../index.php
+	../info.php
+	../kompose.sh
+	../kubernetes/
+	../lib/
+	../migrate-database.sh
+	../openshift/
+	../package.json
+	../php-ini-overrides.ini
+	../start-cake.sh
+	../test-cake.sh
+	../test-cake.sh~
+	../ubuntu.sh
+	../x86_64.env
+	../yarn.lock
+
+nothing added to commit but untracked files present (use "git add" to track)
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.circleci/
+	.editorconfig
+	.env
+	.gitattributes
+	.gitignore
+	.openshift/
+	.stickler.yml
+	.travis.yml
+	.yarn/
+	.yarnrc.yml
+	Dockerfile.aarch64
+	Dockerfile.armhf
+	Dockerfile.template
+	Dockerfile.x86_64
+	FAQ.md
+	INSTALL.md
+	LICENSE
+	README.md
+	Scripts/
+	aarch64.env
+	acake2php.jpeg
+	app/
+	armhf.env
+	balena-connect-it.sh
+	balena-storage/
+	balena.yml
+	bin/
+	bootstrap_phpunit.php
+	common.env
+	composer.json
+	composer.lock
+	config/
+	configure.sh
+	deploy.sh
+	deployment/
+	discord.sh
+	docker-compose-alias.sh
+	docker-compose.aarch64
+	docker-compose.armhf
+	docker-compose.template
+	docker-compose.x86_64
+	docker-compose.yml
+	docker-compose/
+	etc/
+	health.php
+	index.php
+	info.php
+	kompose.sh
+	kubernetes/
+	lib/
+	migrate-database.sh
+	openshift/
+	package.json
+	php-ini-overrides.ini
+	start-cake.sh
+	test-cake.sh
+	test-cake.sh~
+	ubuntu.sh
+	x86_64.env
+	yarn.lock
+
+nothing added to commit but untracked files present (use "git add" to track)
+/var/www/node_modules/.bin/balena_deploy: line 228: ssh-add: command not found
+* /var/www/node_modules/.bin/balena_deploy x86_64 0
+* deploy's exiting...
+'/var/www/.env' -> '/var/www/aarch64.env'
+* Found 6 flags set BALENA_PROJECTS_FLAGS
+* Found 4 projects set BALENA_PROJECTS
+/var/www/node_modules/.bin/balena_deploy: line 228: ssh-add: command not found
+* /var/www/node_modules/.bin/balena_deploy aarch64 1
++ RUN [^a-z]*cross-build-start[^a-z]*
+'/var/www/./deployment/images/httpd/.env' -> '/var/www/aarch64.env'
+'/var/www/./deployment/images/httpd/common.env' -> '/var/www/common.env'
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../../../.circleci/
+	../../../.editorconfig
+	../../../.env
+	../../../.gitattributes
+	../../../.gitignore
+	../../../.openshift/
+	../../../.stickler.yml
+	../../../.travis.yml
+	../../../.yarn/
+	../../../.yarnrc.yml
+	../../../Dockerfile.aarch64
+	../../../Dockerfile.armhf
+	../../../Dockerfile.template
+	../../../Dockerfile.x86_64
+	../../../FAQ.md
+	../../../INSTALL.md
+	../../../LICENSE
+	../../../README.md
+	../../../Scripts/
+	../../../aarch64.env
+	../../../acake2php.jpeg
+	../../../app/
+	../../../armhf.env
+	../../../balena-connect-it.sh
+	../../../balena-storage/
+	../../../balena.yml
+	../../../bin/
+	../../../bootstrap_phpunit.php
+	../../../common.env
+	../../../composer.json
+	../../../composer.lock
+	../../../config/
+	../../../configure.sh
+	../../../deploy.sh
+	../../
+	../../../discord.sh
+	../../../docker-compose-alias.sh
+	../../../docker-compose.aarch64
+	../../../docker-compose.armhf
+	../../../docker-compose.template
+	../../../docker-compose.x86_64
+	../../../docker-compose.yml
+	../../../docker-compose/
+	../../../etc/
+	../../../health.php
+	../../../index.php
+	../../../info.php
+	../../../kompose.sh
+	../../../kubernetes/
+	../../../lib/
+	../../../migrate-database.sh
+	../../../openshift/
+	../../../package.json
+	../../../php-ini-overrides.ini
+	../../../start-cake.sh
+	../../../test-cake.sh
+	../../../test-cake.sh~
+	../../../ubuntu.sh
+	../../../x86_64.env
+	../../../yarn.lock
+
+nothing added to commit but untracked files present (use "git add" to track)
+'/var/www/./deployment/images/mysqldb/.env' -> '/var/www/aarch64.env'
+'/var/www/./deployment/images/mysqldb/common.env' -> '/var/www/common.env'
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../../../.circleci/
+	../../../.editorconfig
+	../../../.env
+	../../../.gitattributes
+	../../../.gitignore
+	../../../.openshift/
+	../../../.stickler.yml
+	../../../.travis.yml
+	../../../.yarn/
+	../../../.yarnrc.yml
+	../../../Dockerfile.aarch64
+	../../../Dockerfile.armhf
+	../../../Dockerfile.template
+	../../../Dockerfile.x86_64
+	../../../FAQ.md
+	../../../INSTALL.md
+	../../../LICENSE
+	../../../README.md
+	../../../Scripts/
+	../../../aarch64.env
+	../../../acake2php.jpeg
+	../../../app/
+	../../../armhf.env
+	../../../balena-connect-it.sh
+	../../../balena-storage/
+	../../../balena.yml
+	../../../bin/
+	../../../bootstrap_phpunit.php
+	../../../common.env
+	../../../composer.json
+	../../../composer.lock
+	../../../config/
+	../../../configure.sh
+	../../../deploy.sh
+	../../
+	../../../discord.sh
+	../../../docker-compose-alias.sh
+	../../../docker-compose.aarch64
+	../../../docker-compose.armhf
+	../../../docker-compose.template
+	../../../docker-compose.x86_64
+	../../../docker-compose.yml
+	../../../docker-compose/
+	../../../etc/
+	../../../health.php
+	../../../index.php
+	../../../info.php
+	../../../kompose.sh
+	../../../kubernetes/
+	../../../lib/
+	../../../migrate-database.sh
+	../../../openshift/
+	../../../package.json
+	../../../php-ini-overrides.ini
+	../../../start-cake.sh
+	../../../test-cake.sh
+	../../../test-cake.sh~
+	../../../ubuntu.sh
+	../../../x86_64.env
+	../../../yarn.lock
+
+nothing added to commit but untracked files present (use "git add" to track)
+'/var/www/./.env' -> '/var/www/aarch64.env'
+'/var/www/./balena-storage/.env' -> '/var/www/aarch64.env'
+'/var/www/./balena-storage/common.env' -> '/var/www/common.env'
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../.circleci/
+	../.editorconfig
+	../.env
+	../.gitattributes
+	../.gitignore
+	../.openshift/
+	../.stickler.yml
+	../.travis.yml
+	../.yarn/
+	../.yarnrc.yml
+	../Dockerfile.aarch64
+	../Dockerfile.armhf
+	../Dockerfile.template
+	../Dockerfile.x86_64
+	../FAQ.md
+	../INSTALL.md
+	../LICENSE
+	../README.md
+	../Scripts/
+	../aarch64.env
+	../acake2php.jpeg
+	../app/
+	../armhf.env
+	../balena-connect-it.sh
+	./
+	../balena.yml
+	../bin/
+	../bootstrap_phpunit.php
+	../common.env
+	../composer.json
+	../composer.lock
+	../config/
+	../configure.sh
+	../deploy.sh
+	../deployment/
+	../discord.sh
+	../docker-compose-alias.sh
+	../docker-compose.aarch64
+	../docker-compose.armhf
+	../docker-compose.template
+	../docker-compose.x86_64
+	../docker-compose.yml
+	../docker-compose/
+	../etc/
+	../health.php
+	../index.php
+	../info.php
+	../kompose.sh
+	../kubernetes/
+	../lib/
+	../migrate-database.sh
+	../openshift/
+	../package.json
+	../php-ini-overrides.ini
+	../start-cake.sh
+	../test-cake.sh
+	../test-cake.sh~
+	../ubuntu.sh
+	../x86_64.env
+	../yarn.lock
+
+nothing added to commit but untracked files present (use "git add" to track)
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.circleci/
+	.editorconfig
+	.env
+	.gitattributes
+	.gitignore
+	.openshift/
+	.stickler.yml
+	.travis.yml
+	.yarn/
+	.yarnrc.yml
+	Dockerfile.aarch64
+	Dockerfile.armhf
+	Dockerfile.template
+	Dockerfile.x86_64
+	FAQ.md
+	INSTALL.md
+	LICENSE
+	README.md
+	Scripts/
+	aarch64.env
+	acake2php.jpeg
+	app/
+	armhf.env
+	balena-connect-it.sh
+	balena-storage/
+	balena.yml
+	bin/
+	bootstrap_phpunit.php
+	common.env
+	composer.json
+	composer.lock
+	config/
+	configure.sh
+	deploy.sh
+	deployment/
+	discord.sh
+	docker-compose-alias.sh
+	docker-compose.aarch64
+	docker-compose.armhf
+	docker-compose.template
+	docker-compose.x86_64
+	docker-compose.yml
+	docker-compose/
+	etc/
+	health.php
+	index.php
+	info.php
+	kompose.sh
+	kubernetes/
+	lib/
+	migrate-database.sh
+	openshift/
+	package.json
+	php-ini-overrides.ini
+	start-cake.sh
+	test-cake.sh
+	test-cake.sh~
+	ubuntu.sh
+	x86_64.env
+	yarn.lock
+
+nothing added to commit but untracked files present (use "git add" to track)
+/var/www/node_modules/.bin/balena_deploy: line 228: ssh-add: command not found
+* /var/www/node_modules/.bin/balena_deploy aarch64 0
+* deploy's exiting...
