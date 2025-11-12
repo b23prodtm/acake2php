@@ -5,15 +5,16 @@ set -eu
 DOCKER_USER="${DOCKER_USER:-betothreeprod}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0
 
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-# relative paths for patches
-APPPATH="app"
-SRCPATH="vendor/cakephp/cakephp/src"
 # shellcheck source=Scripts/lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=Scripts/lib/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 # shellcheck source=Scripts/lib/util.sh
 . "$TOPDIR/Scripts/lib/util.sh"
+# relative paths for patches
+SRCPATH="$(relative_path \
+  "$(cake_path 'ROOT')" "$(cake_path 'CAKE')"\
+)"
 runner=$(parse_arg "-[rR]+|--runner"  "$@")
 docker=$(parse_arg "--docker" "$@")
 pargs=$(parse_arg_trim "--docker|-[rR]+|--runner" "$@")
@@ -80,12 +81,10 @@ esac; shift; done
 # shellcheck source=Scripts/configure_path.sh
 bash -c "$TOPDIR/Scripts/configure_path.sh"
 #; push configuration template
-bash -c "$TOPDIR/Scripts/cp_bkp_old.sh $APPPATH/Config/ app_local.template app_local.php"
+bash -c "$TOPDIR/Scripts/cp_bkp_old.sh Config/ app_local.template app_local.php"
 #; update plugins and dependencies
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
-slogger -st sed "Cake patches $APPPATH and $SRCPATH"
+slogger -st sed "Cake patches $SRCPATH"
 #; patches
-patches "$APPPATH/tests/bootstrap.php"
-patches "$APPPATH/tests/TestCase/ApplicationTest.php"
-patches "$APPPATH/Config/core.php"
+patches "Config/core.php"
 patches "$SRCPATH/Console/ShellDispatcher.php" "$SRCPATH/Console/ConsoleOutput.php" 
