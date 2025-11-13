@@ -11,10 +11,6 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 # shellcheck source=Scripts/lib/util.sh
 . "$TOPDIR/Scripts/lib/util.sh"
-# relative paths for patches
-SRCPATH="$(relative_path \
-  "$(cake_path 'ROOT')" "$(cake_path 'CAKE')"\
-)"
 runner=$(parse_arg "-[rR]+|--runner"  "$@")
 docker=$(parse_arg "--docker" "$@")
 pargs=$(parse_arg_trim "--docker|-[rR]+|--runner" "$@")
@@ -78,13 +74,13 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     *) echo "Unknown parameter: ${BASH_SOURCE[0]} $1"; exit 1;;
 esac; shift; done
 #; Setup paths and file permissions 
-# shellcheck source=Scripts/configure_path.sh
 bash -c "$TOPDIR/Scripts/configure_path.sh"
-#; push configuration template
+#; filter template
 bash -c "$TOPDIR/Scripts/cp_bkp_old.sh Config/ app_local.template app_local.php"
-#; update plugins and dependencies
+#; download plugins and dependencies
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
-slogger -st sed "Cake patches $SRCPATH"
+slogger -st sed "Cake patches"
 #; patches
 patches "Config/core.php"
-patches "$SRCPATH/Console/ShellDispatcher.php" "$SRCPATH/Console/ConsoleOutput.php" 
+patches "vendor/cakephp/cakephp/src/Console/ShellDispatcher.php"
+patches "vendor/cakephp/cakephp/src/Console/ConsoleOutput.php" 
