@@ -2,6 +2,18 @@
 set -e
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 . init_functions .
+function relative_path() {
+  relative_path="${2#$1}"
+  echo "${relative_path#./}"
+}
+#; export -f relative_path
+function cake_path() {
+  bash -c "php -r '\
+    require \"${TOPDIR}/Config/paths.php\"; \
+    printf(constant(\"$1\"));\
+  '"
+}
+#; export -f cake_path
 function patches() {
   [ "$#" -lt 1 ] && echo "Only use relative paths: ${FUNCNAME[0]} '<srcfile-relative-path>'" && exit 1
   for f in "$@"; do
@@ -15,3 +27,4 @@ function patches() {
   done
 }
 #; export -f patches
+

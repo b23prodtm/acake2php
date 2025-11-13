@@ -4,11 +4,12 @@
 !docker-compose.*
 *.sed
 *.old
+*.log*
 .circleci/config-compat.yml
 acake2php*.zip
-app/Config/database.sql*
-app/Config/Schema/AppSchema.php
-app/Config/app_local.php
+Config/database.sql*
+Config/Schema/AppSchema.php
+Config/app_local.php
 app/tmp
 app/webroot/e13/nbproject/private/
 app/tmp/cache/

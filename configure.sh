@@ -5,9 +5,6 @@ set -eu
 DOCKER_USER="${DOCKER_USER:-betothreeprod}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0
 
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-# relative paths for patches
-APPPATH="app"
-SRCPATH="vendor/cakephp/cakephp/src"
 # shellcheck source=Scripts/lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=Scripts/lib/shell_prompt.sh
@@ -77,15 +74,13 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     *) echo "Unknown parameter: ${BASH_SOURCE[0]} $1"; exit 1;;
 esac; shift; done
 #; Setup paths and file permissions 
-# shellcheck source=Scripts/configure_path.sh
 bash -c "$TOPDIR/Scripts/configure_path.sh"
-#; push configuration template
-bash -c "$TOPDIR/Scripts/cp_bkp_old.sh $APPPATH/Config/ app_local.template app_local.php"
-#; update plugins and dependencies
+#; filter template
+bash -c "$TOPDIR/Scripts/cp_bkp_old.sh Config/ app_local.template app_local.php"
+#; download plugins and dependencies
 bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
-slogger -st sed "Cake patches $APPPATH and $SRCPATH"
+slogger -st sed "Cake patches"
 #; patches
-patches "$APPPATH/tests/bootstrap.php"
-patches "$APPPATH/tests/TestCase/ApplicationTest.php"
-patches "$APPPATH/Config/core.php"
-patches "$SRCPATH/Console/ShellDispatcher.php" "$SRCPATH/Console/ConsoleOutput.php" 
+patches "Config/core.php"
+patches "vendor/cakephp/cakephp/src/Console/ShellDispatcher.php"
+patches "vendor/cakephp/cakephp/src/Console/ConsoleOutput.php" 

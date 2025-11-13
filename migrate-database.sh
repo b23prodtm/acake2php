@@ -19,15 +19,15 @@ else
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi
 LOG=$(new_cake_log "$travis" "$runner" "$docker") && slogger -st "$0" "$LOG"
-dbfile=app/Config/app_local.template
-schemafile=app/Config/Schema/AppSchema.template
+dbfile=Config/app_local.template
+schemafile=Config/Schema/AppSchema.template
 usage=("" \
 "Usage: $0 [-r] [-i] [-u]" \
 "          -------------" \
 "          -r, --runner, --travis" \
 "                      CircleCI and self-host runner or Travis CI job" \
 "          -i          Make the migration files from ${dbfile} and ${schemafile}" \
-"          -u          Migrate the database in app/Config/Migrations/" \
+"          -u          Migrate the database in Config/Migrations/" \
 "          -v, --verbose" \
 "                      Outputs more debug information" \
 "          -h, --help  Displays this help" \
@@ -113,7 +113,7 @@ initialize() {
 	                . "${TOPDIR}/Scripts/cp_bkp_old.sh" "$TOPDIR" "$template" "${file}.php";;
 		*);;
 	esac; shift; done
-	rm -Rf "$TOPDIR/app/Config/Migrations/*"
+	rm -Rf "$TOPDIR/Config/Migrations/*"
 }
 #; export -f initialize
 
