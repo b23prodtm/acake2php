@@ -76,6 +76,9 @@
     "prefer-stable": true,
     "config": {
         "vendor-dir": "vendor/",
+        "audit": {
+            "block-insecure": false
+        },
         "sort-packages": true,
         "allow-plugins": {
             "composer/installers": true,
