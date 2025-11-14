@@ -15,6 +15,8 @@ runner=$(parse_arg "-[rR]+|--runner"  "$@")
 docker=$(parse_arg "--docker" "$@")
 pargs=$(parse_arg_trim "--docker|-[rR]+|--runner" "$@")
 composer_args="-d $TOPDIR update --no-interaction"
+composer_nodev="--no-dev"
+composer="${composer_args} ${composer_nodev}"
 if [ -n "$runner" ]; then
   slogger -st "$0" "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
@@ -66,7 +68,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
     ;;
   --development )
-    composer_args="$composer_args --dev"
+    composer="$composer_args -W"
     ;;
   -[vV]*|--verbose )
     set -x
@@ -78,7 +80,7 @@ bash -c "$TOPDIR/Scripts/configure_path.sh"
 #; filter template
 bash -c "$TOPDIR/Scripts/cp_bkp_old.sh Config/ app_local.template app_local.php"
 #; download plugins and dependencies
-bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
+bash -c "$TOPDIR/Scripts/composer.sh ${composer}"
 slogger -st sed "Cake patches"
 #; patches
 patches "Config/core.php"
