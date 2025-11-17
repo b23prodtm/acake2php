@@ -14,4 +14,4 @@ create_www_path "$TOPDIR/app/tmp/cache/models"
 create_www_path "$TOPDIR/app/tmp/sessions"
 create_www_path "$TOPDIR/app/logs"
 create_www_path "$TOPDIR/log"
-
+touch "$TOPDIR/log/www.access.log"
