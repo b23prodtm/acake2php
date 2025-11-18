@@ -44,8 +44,8 @@ services:
       CAKEPHP_SECURITY_CIPHER_SEED: 01234
     volumes:
       - localtime:/etc/localtime:ro
-      - www:/var/www
-      - etc:/usr/local/etc
+      - www:/var/www/html
+      - php-fpm:/usr/local/etc
     ports:
       - "9001:9001"
     networks:
@@ -63,7 +63,7 @@ services:
       - armhf.env
     volumes:
       - localtime:/etc/localtime:ro
-      - www:/var/www
+      - www:/var/www/html
       - apache2:/usr/local/apache2
     ports:
       - "80:80"
@@ -91,7 +91,7 @@ services:
       - db-backup:/mnt/external-drives
 volumes:
   www:
-  etc:
+  php-fpm:
   apache2:
   hostapcache:
   db-data:
