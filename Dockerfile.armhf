@@ -116,7 +116,7 @@ COPY php-ini-overrides.ini /usr/local/etc/php/99-overrides.ini
 COPY etc/php-fpm.d /usr/local/etc/php-fpm.d
 
 # add dedicated user
-RUN addgroup -g $GUID \
+RUN addgroup -g $GUID www-data \
     && adduser -h $PWD -G www-data -D -u $PUID http-fpm
 
 # Copy application files
