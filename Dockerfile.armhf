@@ -17,7 +17,7 @@ FROM php:7.4.33-fpm-alpine3.16
 
 # Set up working directory and environment
 ARG HTDOCS
-ENV HTDOCS=${HTDOCS:-"/var/www"}
+ENV HTDOCS=${HTDOCS:-"/var/www/html"
 WORKDIR ${HTDOCS}
 
 # Add mor NodeJS, CakePHP and Composer commands to system path
