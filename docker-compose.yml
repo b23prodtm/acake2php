@@ -33,7 +33,7 @@ services:
         PGID: 1000
         MYPHPCMS_DIR: app/webroot/php-cms
         MYPHPCMS_LOG: app/tmp/logs
-        HTDOCS: /var/www
+        HTDOCS: /var/www/
     env_file:
       - common.env
       - armhf.env
@@ -57,7 +57,7 @@ services:
       args:
         PUID: 1000
         PGID: 1000
-        HTDOCS: /var/www
+        HTDOCS: /var/www/html
     env_file:
       - common.env
       - armhf.env
