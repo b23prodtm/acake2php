@@ -22,7 +22,7 @@ WORKDIR ${HTDOCS}
 
 # Add mor NodeJS, CakePHP and Composer commands to system path
 ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
-COPY --from=node-build --chown :www-data /usr/local/project/node_modules/ node_modules
+COPY --from=node-build /usr/local/project/node_modules/ node_modules
 # END - Multi-stage Build
 
 ARG PUID
@@ -120,7 +120,7 @@ RUN addgroup -g $GUID \
     && adduser -h $PWD -G www-data -D -u $UID http-fpm
 
 # Copy application files
-COPY --chown $UID:$GUID . .
+COPY --chown $PUID:$GUID . .
 
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
