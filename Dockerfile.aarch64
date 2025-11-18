@@ -133,7 +133,7 @@ RUN chmod +x Scripts/*.sh \
     && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
 
 # As set in /etc/php-fpm.d/
-EXPOSE 9001 9002
+EXPOSE 9001
 
 RUN php-fpm -t
 ENTRYPOINT ["php-fpm", "-F"] 
