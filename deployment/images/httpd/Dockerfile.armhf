@@ -41,14 +41,15 @@ ARG SSL_PORT
 ENV SSL_PORT=${SSL_PORT:-443}
 ARG USER
 ENV USER=${USER:-httpd}
-ENV GROUP=${GROUP:-www-data}
+ENV GROUP=${GROUP:-httpd}
 ARG PUID
 ENV PUID=${PUID:-1000}
 ARG GUID
 ENV GUID=${GUID:-1000}
 
 # add dedicated user
-RUN adduser -h $PWD -G $GROUP -D -u $PUID $USER \
+RUN addgroup -g $GUID $GROUP \
+    && adduser -h $PWD -G $GROUP -D -u $PUID $USER \
     && sed -i -E -e "#User#s#www-data#$USER#g" \
        -e "#Group#s#www-data#$GROUP#g" "${SERVER_ROOT}/conf/httpd.conf"
 
