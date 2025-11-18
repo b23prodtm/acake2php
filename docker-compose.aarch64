@@ -57,7 +57,7 @@ services:
       args:
         PUID: 1000
         PGID: 1000
-        HTDOCS: /var/www
+        HTDOCS: /var/www/html
     env_file:
       - common.env
       - aarch64.env
