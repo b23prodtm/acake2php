@@ -31,9 +31,6 @@ RUN apk update \
 RUN apk del build-base \
     && rm -rf /var/cache/apk/*
 
-# Copy application files
-COPY . .
-
 ARG SERVER_ROOT
 ENV SERVER_ROOT=${SERVER_ROOT:-"/usr/local/apache2"}
 ARG SERVER_NAME
@@ -43,17 +40,21 @@ ENV HTTP_PORT=${HTTP_PORT:-80}
 ARG SSL_PORT
 ENV SSL_PORT=${SSL_PORT:-443}
 ARG USER
-ENV USER=${USER:-httpd}
-ENV GROUP=${GROUP:-www-data}
+ENV USER=${USER:-acake2php}
+ENV GROUP=${GROUP:-acake2php}
 ARG PUID
 ENV PUID=${PUID:-1000}
 ARG GUID
 ENV GUID=${GUID:-1000}
 
 # add dedicated user
-RUN adduser -h $PWD -G $GROUP -D -u $PUID $USER \
+RUN addgroup -g $GUID $GROUP \
+    && adduser -h $PWD -G $GROUP -D -u $PUID $USER \
     && sed -i -E -e "#User#s#www-data#$USER#g" \
        -e "#Group#s#www-data#$GROUP#g" "${SERVER_ROOT}/conf/httpd.conf"
+
+# Copy application files
+COPY --chown=$USER:$GROUP . .
 
 # Set up Apache configuration
 RUN envsubst < etc/apache2/conf-available/servername.conf > ${SERVER_ROOT}/conf/extra/servername.conf \

@@ -17,7 +17,7 @@ FROM php:7.4.33-fpm-alpine3.16
 
 # Set up working directory and environment
 ARG HTDOCS
-ENV HTDOCS=${HTDOCS:-"/var/www"}
+ENV HTDOCS=${HTDOCS:-"/var/www/html"}
 WORKDIR ${HTDOCS}
 
 # Add mor NodeJS, CakePHP and Composer commands to system path
@@ -31,8 +31,6 @@ ARG GUID
 ENV GUID=${GUID:-1000}
 ARG PHP_EXTENSIONS
 ENV PHP_EXTENSIONS=${PHP_EXTENSIONS:-%%PHP_EXTENSIONS%%}
-
-WORKDIR ${HTDOCS}
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
@@ -113,15 +111,16 @@ RUN install-php-extensions ${PHP_EXTENSIONS} \
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
-# Copy application files
-COPY . .
-
 # php-fpm configuration install
 COPY php-ini-overrides.ini /usr/local/etc/php/99-overrides.ini
 COPY etc/php-fpm.d /usr/local/etc/php-fpm.d
 
 # add dedicated user
-RUN adduser -h $PWD -G www-data -D -u 1001 http-fpm
+RUN addgroup -g $GUID acake2php \
+    && adduser -h $PWD -G acake2php -D -u $PUID acake2php
+
+# Copy application files
+COPY --chown=$PUID:$GUID . .
 
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
