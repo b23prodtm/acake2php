@@ -120,7 +120,7 @@ RUN addgroup -g $GUID acake2php \
     && adduser -h $PWD -G acake2php -D -u $PUID acake2php
 
 # Copy application files
-COPY --chown=$PUID:$GUID . .
+COPY --chown=acake2php:acake2php . .
 
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
