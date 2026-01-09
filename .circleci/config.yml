@@ -29,7 +29,7 @@ jobs:
             docker push $DOCKER_USER/$IMAGE:$TAG
   mysql:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    # resource_class: b23prodtm/linux
+    resource_class: b23prodtm/linux
     docker:
       - image: cimg/base:2025.11       
         environment:
@@ -57,7 +57,7 @@ jobs:
             docker push $DOCKER_USER/$IMAGE:$TAG
   php-fpm:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    # resource_class: b23prodtm/linux
+    resource_class: b23prodtm/linux
     docker:
       - image: cimg/base:2025.11       
         environment:
@@ -85,7 +85,7 @@ jobs:
             docker push $DOCKER_USER/$IMAGE:$TAG
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
-    # resource_class: b23prodtm/linux
+    resource_class: b23prodtm/linux
     docker:
       - image: cimg/aws:2025.01
     shell: /bin/bash -leo pipefail
