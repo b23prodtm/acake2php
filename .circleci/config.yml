@@ -6,10 +6,9 @@ jobs:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
     docker:
-      - image: cimg/base:2025.11               
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
+      - image: nestybox/ubuntu-noble-systemd-docker
+        entrypoint: ["dockerd"]
+        command: ["--host=unix:///var/run/docker.sock"]
     environment:
       TAG: latest-x86_64
       IMAGE: httpd
@@ -23,17 +22,15 @@ jobs:
           name: Build Docker image with BUILDKIT (Docker Rootless)
           command: |
             cd $WORK_DIR
-            curl -fsSL https://get.docker.com/rootless | sh
             echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
             docker buildx build --push -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
   mysql:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
     docker:
-     - image: cimg/base:2025.11       
-       auth:
-         username: $DOCKER_USER
-         password: $DOCKER_PASS
+      - image: nestybox/ubuntu-noble-systemd-docker
+        entrypoint: ["dockerd"]
+        command: ["--host=unix:///var/run/docker.sock"]
     environment:
       TAG: latest-x86_64
       IMAGE: mariadb
@@ -48,17 +45,15 @@ jobs:
           name: Build Docker image with BUILDKIT (Docker Rootless)
           command: |
             cd $WORK_DIR
-            curl -fsSL https://get.docker.com/rootless | sh
             echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
             docker buildx build --push -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
   php-fpm:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
     docker:
-      - image: cimg/base:2025.11       
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASS
+      - image: nestybox/ubuntu-noble-systemd-docker
+        entrypoint: ["dockerd"]
+        command: ["--host=unix:///var/run/docker.sock"]
     environment:
       TAG: latest-x86_64
       IMAGE: php-fpm
@@ -73,14 +68,15 @@ jobs:
           name: Build Docker image with BUILDKIT (Docker Rootless)
           command: |
             cd $WORK_DIR
-            curl -fsSL https://get.docker.com/rootless | sh
             echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
             docker buildx build --push -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
     docker:
-        - image: cimg/aws:2025.01
+      - image: nestybox/ubuntu-noble-systemd-docker
+        entrypoint: ["dockerd"]
+        command: ["--host=unix:///var/run/docker.sock"]
     shell: /bin/bash -leo pipefail
     environment:
         BASH_ENV: /etc/profile
@@ -92,7 +88,6 @@ jobs:
       #    docker_layer_caching: true
       - run:
           command: |
-            curl -fsSL https://get.docker.com/rootless | sh
             docker compose -f docker-compose.$BUILD_ARCH build
 workflows:
   cleanup:
