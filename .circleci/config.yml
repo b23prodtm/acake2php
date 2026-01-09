@@ -6,7 +6,7 @@ jobs:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
     docker:
-      - image: cimg/base:2025.11       
+      - image: cimg/base:2025.11               
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -15,6 +15,7 @@ jobs:
       IMAGE: httpd
       BUILD_ARCH: x86_64
       WORK_DIR: deployment/images/httpd
+      DOCKER_HOST: unix:///var/run/docker.sock
     steps:
       - checkout
       #- setup_remote_docker:
@@ -23,12 +24,6 @@ jobs:
           name: Build Docker image with BUILDKIT (Docker Rootless)
           command: |
             cd $WORK_DIR
-            docker run --rm -it -v /run/user/1000/docker.sock:/var/run/docker.sock \
-            -v ~/.docker:/root/.docker \
-            -v $(pwd):/workspace \
-            -w /workspace \
-            -e DOCKER_BUILDKIT=1 \
-            docker:cli \
             docker buildx build --push -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
   mysql:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
@@ -43,6 +38,7 @@ jobs:
       IMAGE: mariadb
       BUILD_ARCH: x86_64
       WORK_DIR: deployment/images/mysqldb
+      DOCKER_HOST: unix:///var/run/docker.sock
     steps:
       - checkout
       #- setup_remote_docker:
@@ -52,12 +48,6 @@ jobs:
           name: Build Docker image with BUILDKIT (Docker Rootless)
           command: |
             cd $WORK_DIR
-            docker run --rm -it -v /run/user/1000/docker.sock:/var/run/docker.sock \
-            -v ~/.docker:/root/.docker \
-            -v $(pwd):/workspace \
-            -w /workspace \
-            -e DOCKER_BUILDKIT=1 \
-            docker:cli \
             docker buildx build --push -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
   php-fpm:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
@@ -72,6 +62,7 @@ jobs:
       IMAGE: php-fpm
       BUILD_ARCH: x86_64
       WORK_DIR: .
+      DOCKER_HOST: unix:///var/run/docker.sock 
     steps:
       - checkout
       #- setup_remote_docker:
@@ -81,12 +72,6 @@ jobs:
           name: Build Docker image with BUILDKIT (Docker Rootless)
           command: |
             cd $WORK_DIR
-            docker run --rm -it -v /run/user/1000/docker.sock:/var/run/docker.sock \
-            -v ~/.docker:/root/.docker \
-            -v $(pwd):/workspace \
-            -w /workspace \
-            -e DOCKER_BUILDKIT=1 \
-            docker:cli \
             docker buildx build --push -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
@@ -97,6 +82,7 @@ jobs:
     environment:
         BASH_ENV: /etc/profile
         BUILD_ARCH: x86_64
+        DOCKER_HOST: unix:///var/run/docker.sock
     steps:
       - checkout
       #- setup_remote_docker:
@@ -106,12 +92,6 @@ jobs:
           command: |
             set -u
             TAG=0.1.$CIRCLE_BUILD_NUM
-            docker run --rm -it -v /run/user/1000/docker.sock:/var/run/docker.sock \
-            -v ~/.docker:/root/.docker \
-            -v $(pwd):/workspace \
-            -w /workspace \
-            -e DOCKER_BUILDKIT=1 \
-            docker:cli \
             docker compose -v /run/user/1000/docker.sock:/var/run/docker.sock \
             -f docker-compose.$BUILD_ARCH build
 workflows:
