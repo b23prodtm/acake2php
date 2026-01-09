@@ -15,7 +15,6 @@ jobs:
       IMAGE: httpd
       BUILD_ARCH: x86_64
       WORK_DIR: deployment/images/httpd
-      DOCKER_HOST: unix:///var/run/docker.sock
     steps:
       - checkout
       #- setup_remote_docker:
@@ -38,7 +37,6 @@ jobs:
       IMAGE: mariadb
       BUILD_ARCH: x86_64
       WORK_DIR: deployment/images/mysqldb
-      DOCKER_HOST: unix:///var/run/docker.sock
     steps:
       - checkout
       #- setup_remote_docker:
@@ -62,7 +60,6 @@ jobs:
       IMAGE: php-fpm
       BUILD_ARCH: x86_64
       WORK_DIR: .
-      DOCKER_HOST: unix:///var/run/docker.sock 
     steps:
       - checkout
       #- setup_remote_docker:
@@ -82,7 +79,6 @@ jobs:
     environment:
         BASH_ENV: /etc/profile
         BUILD_ARCH: x86_64
-        DOCKER_HOST: unix:///var/run/docker.sock
     steps:
       - checkout
       #- setup_remote_docker:
