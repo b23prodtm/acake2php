@@ -88,8 +88,7 @@ jobs:
           command: |
             set -u
             TAG=0.1.$CIRCLE_BUILD_NUM
-            docker compose -v /run/user/1000/docker.sock:/var/run/docker.sock \
-            -f docker-compose.$BUILD_ARCH build
+            docker compose -f docker-compose.$BUILD_ARCH build
 workflows:
   cleanup:
     jobs:
