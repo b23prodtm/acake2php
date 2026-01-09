@@ -15,7 +15,6 @@ jobs:
       IMAGE: httpd
       BUILD_ARCH: x86_64
       WORK_DIR: deployment/images/httpd
-      DOCKER_HOST: unix:///run/user/1000/docker.sock
     steps:
       - checkout
       #- setup_remote_docker:
@@ -37,8 +36,7 @@ jobs:
       TAG: latest-x86_64
       IMAGE: mariadb
       BUILD_ARCH: x86_64
-      WORK_DIR: deployment/images/mysqldb     
-      DOCKER_HOST: unix:///run/user/1000/docker.sock
+      WORK_DIR: deployment/images/mysqldb
     steps:
       - checkout
       #- setup_remote_docker:
@@ -62,7 +60,6 @@ jobs:
       IMAGE: php-fpm
       BUILD_ARCH: x86_64
       WORK_DIR: .
-      DOCKER_HOST: unix:///run/user/1000/docker.sock
     steps:
       - checkout
       #- setup_remote_docker:
@@ -82,7 +79,6 @@ jobs:
     environment:
         BASH_ENV: /etc/profile
         BUILD_ARCH: x86_64
-        DOCKER_HOST: unix:///run/user/1000/docker.sock
     steps:
       - checkout
       #- setup_remote_docker:
