@@ -23,7 +23,8 @@ jobs:
           name: Build Docker image with BUILDKIT (Docker Rootless)
           command: |
             cd $WORK_DIR
-            docker buildx build --push -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
+            docker buildx ls
+            docker buildx --builder rootless build --push -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
   mysql:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
