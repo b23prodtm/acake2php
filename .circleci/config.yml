@@ -1,16 +1,16 @@
 version: 2.1
 orbs:
   shellcheck: circleci/shellcheck@1.3.16
+  kubernetes: circleci/kubernetes@2.0.2
 jobs:  
   httpd:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
-    #docker:
-    #  - image: cimg/base:2025.11               
-    #    auth:
-    #      username: $DOCKER_USER
-    #      password: $DOCKER_PASS
-    machine: true
+    docker:
+      - image: cimg/base:2025.11               
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
     environment:
       TAG: latest-x86_64
       IMAGE: httpd
@@ -29,12 +29,11 @@ jobs:
   mysql:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
-    #docker:
-    # - image: cimg/base:2025.11       
-    #    auth:
-    #      username: $DOCKER_USER
-    #      password: $DOCKER_PASS
-    machine: true 
+    docker:
+     - image: cimg/base:2025.11       
+       auth:
+         username: $DOCKER_USER
+         password: $DOCKER_PASS
     environment:
       TAG: latest-x86_64
       IMAGE: mariadb
@@ -54,12 +53,11 @@ jobs:
   php-fpm:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
-    #docker:
-    #  - image: cimg/base:2025.11       
-    #    auth:
-    #      username: $DOCKER_USER
-    #      password: $DOCKER_PASS
-    machine: true
+    docker:
+      - image: cimg/base:2025.11       
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
     environment:
       TAG: latest-x86_64
       IMAGE: php-fpm
@@ -70,18 +68,20 @@ jobs:
       #- setup_remote_docker:
       #    version: edge
       #    docker_layer_caching: false
+      - kubernetes/install_kubectl
       - run:
           name: Build Docker image with BUILDKIT (Docker Rootless)
           command: |
             cd $WORK_DIR
             echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            docker buildx create --driver kubernetes --use
+            docker buildx ls
             docker buildx build --push -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
-    #docker:
-    #    - image: cimg/aws:2025.01
-    machine: true
+    docker:
+        - image: cimg/aws:2025.01
     shell: /bin/bash -leo pipefail
     environment:
         BASH_ENV: /etc/profile
