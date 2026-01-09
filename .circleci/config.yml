@@ -20,15 +20,11 @@ jobs:
       #- setup_remote_docker:
       #    docker_layer_caching: true
       - run:
-          name: Build Docker image
+          name: Build Docker image with BUILDKIT (Docker Rootless)
           command: |
             cd $WORK_DIR
-            docker build -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
-      - run:
-          name: Push application Docker image
-          command: |
             echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-            docker push $DOCKER_USER/$IMAGE:$TAG
+            docker buildx build --push -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
   mysql:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
@@ -48,15 +44,11 @@ jobs:
       #    version: edge
       #    docker_layer_caching: false
       - run:
-          name: Build Docker image
+          name: Build Docker image with BUILDKIT (Docker Rootless)
           command: |
             cd $WORK_DIR
-            docker build -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
-      - run:
-          name: Push application Docker image
-          command: |
             echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-            docker push $DOCKER_USER/$IMAGE:$TAG
+            docker buildx build --push -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
   php-fpm:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
@@ -76,15 +68,11 @@ jobs:
       #    version: edge
       #    docker_layer_caching: false
       - run:
-          name: Build Docker image
+          name: Build Docker image with BUILDKIT (Docker Rootless)
           command: |
             cd $WORK_DIR
-            docker build -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
-      - run:
-          name: Push application Docker image
-          command: |
             echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-            docker push $DOCKER_USER/$IMAGE:$TAG
+            docker buildx build --push -t $DOCKER_USER/$IMAGE:$TAG -f Dockerfile.$BUILD_ARCH .
   compose:
     # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
     resource_class: b23prodtm/linux
@@ -103,7 +91,7 @@ jobs:
           command: |
             set -u
             TAG=0.1.$CIRCLE_BUILD_NUM
-            docker-compose -f docker-compose.$BUILD_ARCH build
+            docker compose -f docker-compose.$BUILD_ARCH build
 workflows:
   cleanup:
     jobs:
