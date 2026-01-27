@@ -27,7 +27,7 @@ jobs:
     resource_class: medium #b23prodtm/linux
     docker:
       - image: cimg/base:2025.11
-    nvironment:
+    environment:
       TAG: latest-x86_64
       IMAGE: mariadb
       BUILD_ARCH: x86_64
