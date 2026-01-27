@@ -55,4 +55,25 @@ jobs:
       - name: Build & Push ${{ matrix.image.name }} (${{ matrix.arch }})
         working-directory: ${{ matrix.image.path }}
         run: |
-         
+          docker buildx build \
+            --platform linux/${{ matrix.arch }} \
+            --push \
+            -t ${{ env.DOCKER_ORG }}/${{ matrix.image.name }}:${{ env.TAG }}-${{ matrix.arch }} \
+            -f Dockerfile.${{ matrix.arch }} .
+
+  compose:
+    runs-on: ubuntu-latest
+    environment: AUTH
+    needs: build-images
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Docker Compose plugin
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose-plugin
+
+      - name: Build docker-compose stack (amd64)
+        run: |
+          docker compose -f docker-compose.amd64 build
