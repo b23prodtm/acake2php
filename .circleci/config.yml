@@ -98,13 +98,9 @@ workflows:
 
     jobs:
       - httpd
-          context: Info-B23prodtm
       - mysql
-          context: Info-B23prodtm
       - php-fpm
-          context: Info-B23prodtm
       - compose:
-          context: Info-B23prodtm
           requires:
             - httpd
             - mysql
