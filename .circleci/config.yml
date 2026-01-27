@@ -87,11 +87,6 @@ jobs:
           ignore: 'SC2154,SC1091,SC2034,SC2096,SC2038'
 
   httpd:
-    when:
-      condition:
-        changeset:
-          paths:
-            - "deployment/images/httpd/**"
     executor: docker-executor
     steps:
       - build-multiarch:
@@ -99,11 +94,6 @@ jobs:
           workdir: deployment/images/httpd
 
   mysql:
-    when:
-      condition:
-        changeset:
-          paths:
-            - "deployment/images/mysql/**"
     executor: docker-executor
     steps:
       - build-multiarch:
@@ -111,11 +101,6 @@ jobs:
           workdir: deployment/images/mysql
 
   php-fpm:
-    when:
-      condition:
-        changeset:
-          paths:
-            - "deployment/images/php-fpm/**"
     executor: docker-executor
     steps:
       - build-multiarch:
