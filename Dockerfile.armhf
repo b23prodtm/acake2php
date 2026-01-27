@@ -43,7 +43,8 @@ RUN apk update \
     zip \
     unzip \
     mariadb-client \
-    gettext
+    gettext \
+    openssh-client
 
 RUN apk del build-base \
     && rm -rf /var/cache/apk/*
