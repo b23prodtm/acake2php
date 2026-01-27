@@ -74,13 +74,6 @@ commands:
 
 
 jobs:
-  shellcheck-job:
-    executor: docker-executor
-    steps:
-      - checkout
-      - shellcheck/check:
-          ignore: 'SC2154,SC1091,SC2034,SC2096,SC2038'
-
   httpd:
     executor: docker-executor
     steps:
@@ -126,8 +119,7 @@ workflows:
   build:
     jobs:
       - shellcheck/check:
-          requires:
-            - shellcheck-job
+          ignore: 'SC2154,SC1091,SC2034,SC2096,SC2038'
           filters:
             tags:
               only: /^v.*/
