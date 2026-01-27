@@ -22,7 +22,7 @@ jobs:
           - { name: "httpd",     path: "deployment/images/httpd" }
           - { name: "mariadb",   path: "deployment/images/mysqldb" }
           - { name: "php-fpm",   path: "." }
-        arch: [ amd64, arm64, armhf ]
+        arch: [ x86_64, aarch64, armhf ]
 
     steps:
       - uses: actions/checkout@v4
@@ -41,12 +41,21 @@ jobs:
 
       - name: Build & Push ${{ matrix.image.name }} (${{ matrix.arch }})
         working-directory: ${{ matrix.image.path }}
+        env:
+          ARCH: ${{ matrix.arch }}
         run: |
+          case "$ARCH" in
+            x86_64)   PLATFORM="linux/amd64" ;;
+            aarch64)  PLATFORM="linux/arm64" ;;
+            armhf)    PLATFORM="linux/arm/v7" ;;
+            *)        echo "Unknown arch: $ARCH" >&2; exit 1 ;;
+          esac
+
           docker buildx build \
-            --platform linux/${{ matrix.arch }} \
+            --platform "${PLATFORM}" \
             --push \
-            -t ${{ env.DOCKER_ORG }}/${{ matrix.image.name }}:${{ env.TAG }}-${{ matrix.arch }} \
-            -f Dockerfile.${{ matrix.arch }} .
+            -t "${DOCKER_ORG}/${{ matrix.image.name }}:${TAG}-${ARCH}" \
+            -f "Dockerfile.${ARCH}" .
 
   compose:
     runs-on: ubuntu-latest
@@ -61,6 +70,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y docker-compose-plugin
 
-      - name: Build docker-compose stack (amd64)
+      - name: Build docker-compose stack (x86_64)
         run: |
-          docker compose -f docker-compose.amd64 build
+          docker compose -f docker-compose.x86_64 build
