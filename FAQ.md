@@ -23,12 +23,12 @@ Common Issues
     grant all PRIVILEGES on $TEST_DATABASE_NAME.* to '$MYSQL_USER'@'$MYSQL_HOST';
     exit
 
-    ./configure.sh -c
+    ./configure.sh -d -i -u
 
-  This will reset the connection profile in ..etc/ properties file with the template.
-  More about environment variables are located in the remote pod (OpenShift) settings and locally in ./Scripts/fooargs.sh.  
+  Try reset the connection profile in ..etc/ properties file with the template.
+  More about environment variables are located in the remote pod (OpenShift) settings and locally in ./Scripts/bootargs.sh (start-cake.sh) and fooargs.sh (test-cake.sh) 
 
-  > Note:
+  > Note:u
 
     ./configure.sh --mig-database -p -i --sql-password
 
