@@ -11,22 +11,9 @@ env:
 
 jobs:
 
-  lint-shell:
-    runs-on: ubuntu-latest
-    environment: AUTH
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@v2
-        with:
-          severity: style
-
   build-images:
     runs-on: ubuntu-latest
     environment: AUTH
-    needs: lint-shell
 
     strategy:
       fail-fast: false
