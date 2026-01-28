@@ -2,7 +2,7 @@ name: Multi-Arch Build
 
 on:
   push:
-    branches: [ "main", "development", "b23prodtm-patch-1" ]
+    branches: [ "main", "development" ]
   pull_request:
 
 env:
