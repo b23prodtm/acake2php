@@ -6,7 +6,7 @@ WORKDIR /usr/local/project
 
 # Copy Node.js dependency files, Fixing global modules issue
 COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn/ .yarn 
+COPY .yarn .yarn 
 RUN apk update \
     && apk add --no-cache yarn \
     && yarn install --immutable \
@@ -22,7 +22,7 @@ WORKDIR ${HTDOCS}
 
 # Add mor NodeJS, CakePHP and Composer commands to system path
 ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
-COPY --from=node-build /usr/local/project/node_modules/ node_modules
+COPY --from=node-build /usr/local/project/node_modules node_modules
 # END - Multi-stage Build
 
 ARG PUID
@@ -124,8 +124,7 @@ RUN addgroup -g $GUID acake2php \
 COPY --chown=acake2php:acake2php . .
 
 # Run initialization scripts
-RUN npm link balena-cloud-apps \
-    && chmod +x Scripts/*.sh \
+RUN chmod +x Scripts/*.sh \
     && git init \
     && git config --global --add safe.directory $PWD \
     && ./deploy.sh ${BALENA_ARCH} --no-build \
