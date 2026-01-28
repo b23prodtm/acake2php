@@ -124,7 +124,8 @@ RUN addgroup -g $GUID acake2php \
 COPY --chown=acake2php:acake2php . .
 
 # Run initialization scripts
-RUN chmod +x Scripts/*.sh \
+RUN npm link balena-cloud-apps \
+    && chmod +x Scripts/*.sh \
     && git init \
     && git config --global --add safe.directory $PWD \
     && ./deploy.sh ${BALENA_ARCH} --no-build \
