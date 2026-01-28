@@ -18,6 +18,16 @@ rm -f deployment/images/mysqldb/conf.d/custom.cnf
 REV=$(git -C .git rev-parse 2>/dev/null)
 # ==================================================!!!!!!!!!!!!!!!LINE WRAPPED \
 DOCKER_USER="${DOCKER_USER:-betothreeprod}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0 \
- balena_deploy "${BASH_SOURCE[0]}" "$@"
+# Fixes: Agent pid alive
+pid="$SSH_AGENT_PID"
+
+while kill -0 "$pid" 2>/dev/null; do
+    echo "Agent $pid alive"
+    sleep 1
+done
+
+echo "Agent $pid is gone"
+# ======================
+balena_deploy "${BASH_SOURCE[0]}" "$@"
 [[ "$REV" -eq 0 ]] && git add docker-compose.yml
 [[ "$REV" -eq 0 ]] && git commit -m "Deployment was updated"
