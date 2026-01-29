@@ -28,6 +28,10 @@ done
 
 echo "Agent $pid is gone"
 # ======================
-balena_deploy "${BASH_SOURCE[0]}" "$@"
+if [ -n "$pid" ]; then 
+   balena_deploy "${BASH_SOURCE[0]}" "$@";
+else 
+   update_templates
+fi
 [[ "$REV" -eq 0 ]] && git add docker-compose.yml
 [[ "$REV" -eq 0 ]] && git commit -m "Deployment was updated"
