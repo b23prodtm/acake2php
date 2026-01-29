@@ -62,16 +62,29 @@ jobs:
     #runs-on: self-hosted
     runs-on: ubuntu-latest
     environment: AUTH
+
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [ x86_64, aarch64, armhf ]
+
     needs: build-images
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Docker Compose plugin
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose-plugin
+      # Install Docker Engine (required before Compose plugin)
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v2
 
-      - name: Build docker-compose stack (x86_64)
+      # Install Docker Compose v2 plugin
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v2
+        with:
+          version: latest   # or a specific version like v2.27.0
+
+      - name: Build docker-compose stack
+        env:
+           ARCH: ${{ matrix.arch }}
         run: |
-          docker compose -f docker-compose.x86_64 build
+          docker compose -f "docker-compose.${ARCH}" build
