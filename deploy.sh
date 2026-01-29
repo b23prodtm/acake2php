@@ -15,9 +15,14 @@ if ! command -v balena_deploy > /dev/null; then
 fi
 rm -f deployment/images/mysqldb/conf.d/custom.cnf
 # Fixes: unbound variables on ubuntu
-REV=$(git -C .git rev-parse 2>/dev/null)
-# ==================================================!!!!!!!!!!!!!!!LINE WRAPPED \
-DOCKER_USER="${DOCKER_USER:-betothreeprod}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0 \
+REV=$(git rev-parse HEAD 2>/dev/null)
+
+# Export environment variables
+export DOCKER_USER="${DOCKER_USER:-betothreeprod}"
+export COLUMNS=0
+export LINES=0
+export SYSTEMD_NO_WRAP=0
+
 # Fixes: Agent pid alive
 pid="$SSH_AGENT_PID"
 
@@ -27,11 +32,15 @@ while kill -0 "$pid" 2>/dev/null; do
 done
 
 echo "Agent $pid is gone"
-# ======================
+
 if [ -n "$pid" ]; then 
-   balena_deploy "${BASH_SOURCE[0]}" "$@";
+   balena_deploy "${BASH_SOURCE[0]}" "$@"
 else 
    update_templates
 fi
-[[ "$REV" -eq 0 ]] && git add docker-compose.yml
-[[ "$REV" -eq 0 ]] && git commit -m "Deployment was updated"
+
+if [ -n "$REV" ]; then
+    git add docker-compose.yml
+    git commit -m "Deployment was updated"
+fi
+
