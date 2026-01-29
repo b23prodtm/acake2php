@@ -59,7 +59,8 @@ jobs:
             -f "Dockerfile.${ARCH}" .
 
   compose:
-    runs-on: self-hosted #ubuntu-latest
+    #runs-on: self-hosted
+    runs-on: ubuntu-latest
     environment: AUTH
     needs: build-images
 
