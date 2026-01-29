@@ -41,6 +41,6 @@ fi
 
 if [ -n "$REV" ]; then
     git add docker-compose.yml
-    git commit -m "Deployment was updated"
+    git commit -m "Deployment was updated" || true
 fi
 
