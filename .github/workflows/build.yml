@@ -12,8 +12,8 @@ env:
 jobs:
 
   build-images:
-    #runs-on: self-hosted
-    runs-on: ubuntu-latest
+    runs-on: disabled
+    #runs-on: ubuntu-latest
     environment: AUTH
 
     strategy:
@@ -73,6 +73,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Enable QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Enable Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+
       # Install Docker Engine (required before Compose plugin)
       - name: Set up Docker
         uses: docker/setup-docker-action@v2
@@ -87,4 +99,6 @@ jobs:
         env:
            ARCH: ${{ matrix.arch }}
         run: |
-          docker compose -f "docker-compose.${ARCH}" build
+          cp -vf "docker-compose.${ARCH}" docker-compose.yml
+          docker buildx bake --push
+          docker compose up -d
