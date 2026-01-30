@@ -83,6 +83,10 @@ services:
     networks:
       - cake
   balena-storage:
+    # Buildx multi‑arch metadata
+    x-bake:
+      platforms:
+        - %%PLATFORM%%
     build:
       context: balena-storage
       dockerfile: Dockerfile.%%BALENA_ARCH%%
