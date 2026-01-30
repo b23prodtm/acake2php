@@ -1,7 +1,7 @@
 version: "2.1"
 services:
 
-x-bake
+x-bake:
   db:
     # Buildx multi‑arch metadata
     platforms:
