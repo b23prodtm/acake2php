@@ -1,16 +1,64 @@
-version: "2.1"
-services:
-  db:
-    # Buildx multi‑arch metadata
-    x-bake:
+version: 3.9
+
+x-bake:
+  targets:
+    db:
+      # Buildx multi‑arch metadata
       platforms:
         - %%PLATFORM%%
-    build:
-      context: deployment/images/mysqldb
-      dockerfile: Dockerfile.%%BALENA_ARCH%%
-      args:
-        PUID: 1000
-        PGID: 1000
+      tags: 
+        - ${DOCKER_USER}/mysqldb:latest
+        - ${DOCKER_USER}/mysqldb:${BAKE_TAG}
+      build:
+        context: deployment/images/mysqldb
+        dockerfile: Dockerfile.%%BALENA_ARCH%%
+        args:
+          PUID: 1000
+          PGID: 1000
+    php-fpm:
+      # Buildx multi‑arch metadata
+      platforms:
+        - %%PLATFORM%%
+      tags:
+        - ${DOCKER_USER}/php-fpm:latest
+        - ${DOCKER_USER}/php-fpm:${BAKE_TAG}
+      build:
+        context: .
+        dockerfile: Dockerfile.%%BALENA_ARCH%%
+        args:
+          PUID: 1000
+          PGID: 1000
+          MYPHPCMS_DIR: app/webroot/php-cms
+          MYPHPCMS_LOG: app/tmp/logs
+          HTDOCS: /var/www/html
+    httpd:
+      # Buildx multi‑arch metadata
+      platforms:
+        - %%PLATFORM%%
+      tags:
+        - ${DOCKER_USER}/httpd:latest
+        - ${DOCKER_USER}/httpd:${BAKE_TAG}
+      build:
+        context: deployment/images/httpd
+        dockerfile: Dockerfile.%%BALENA_ARCH%%
+        args:
+          PUID: 1000
+          PGID: 1000
+          HTDOCS: /var/www/html
+    balena-storage:
+      # Buildx multi‑arch metadata
+      platforms:
+        - %%PLATFORM%%
+      tags:
+        - ${DOCKER_USER}/balena-storage:latest
+        - ${DOCKER_USER}/balena-storage:${BAKE_TAG}
+      build:
+        context: balena-storage
+        dockerfile: Dockerfile.%%BALENA_ARCH%%
+
+services:
+  db:
+    image: betothreeprod/mysqldb:latest
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: yes
       TZ: Europe/Paris
@@ -29,19 +77,7 @@ services:
     labels:
       io.balena.features.dbus: "1"
   php-fpm:
-    # Buildx multi‑arch metadata
-    x-bake:
-      platforms:
-        - %%PLATFORM%%
-    build:
-      context: .
-      dockerfile: Dockerfile.%%BALENA_ARCH%%
-      args:
-        PUID: 1000
-        PGID: 1000
-        MYPHPCMS_DIR: app/webroot/php-cms
-        MYPHPCMS_LOG: app/tmp/logs
-        HTDOCS: /var/www/html
+    image: betothreeprod/php-fpm:latest
     env_file:
       - common.env
       - %%BALENA_ARCH%%.env
@@ -58,18 +94,8 @@ services:
       - "9001:9001"
     networks:
       - cake
-  apache:
-    # Buildx multi‑arch metadata
-    x-bake:
-      platforms:
-        - %%PLATFORM%%
-    build:
-      context: deployment/images/httpd
-      dockerfile: Dockerfile.%%BALENA_ARCH%%
-      args:
-        PUID: 1000
-        PGID: 1000
-        HTDOCS: /var/www/html
+  httpd:
+    image: betothreeprod/httpd:latest
     env_file:
       - common.env
       - %%BALENA_ARCH%%.env
@@ -83,20 +109,13 @@ services:
     networks:
       - cake
   balena-storage:
-    # Buildx multi‑arch metadata
-    x-bake:
-      platforms:
-        - %%PLATFORM%%
-    build:
-      context: balena-storage
-      dockerfile: Dockerfile.%%BALENA_ARCH%%
+    image: betothreeprod/balena-storage:latest
     privileged: true
     env_file:
       - common.env
       - %%BALENA_ARCH%%.env
     networks:
       - cake
-# v3.4 compose file
 #    healthcheck:
 #      test: ["CMD", "/usr/src/scripts/backup-db.sh"]
 #      interval: 720h
