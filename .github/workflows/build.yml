@@ -85,10 +85,6 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
 
-      # Install Docker Engine (required before Compose plugin)
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v2
-
       # Install Docker Compose v2 plugin
       - name: Set up Docker Compose
         uses: docker/setup-compose-action@v1
