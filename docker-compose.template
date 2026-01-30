@@ -7,8 +7,8 @@ x-bake:
       platforms:
         - %%PLATFORM%%
       tags: 
-        - ${DOCKER_USER}/mysqldb:latest
-        - ${DOCKER_USER}/mysqldb:${BAKE_TAG}
+        - ${DOCKER_ORG}/mysqldb:latest
+        - ${DOCKER_ORG}/mysqldb:${BAKE_TAG}
       build:
         context: deployment/images/mysqldb
         dockerfile: Dockerfile.%%BALENA_ARCH%%
@@ -20,8 +20,8 @@ x-bake:
       platforms:
         - %%PLATFORM%%
       tags:
-        - ${DOCKER_USER}/php-fpm:latest
-        - ${DOCKER_USER}/php-fpm:${BAKE_TAG}
+        - ${DOCKER_ORG}/php-fpm:latest
+        - ${DOCKER_ORG}/php-fpm:${BAKE_TAG}
       build:
         context: .
         dockerfile: Dockerfile.%%BALENA_ARCH%%
@@ -36,8 +36,8 @@ x-bake:
       platforms:
         - %%PLATFORM%%
       tags:
-        - ${DOCKER_USER}/httpd:latest
-        - ${DOCKER_USER}/httpd:${BAKE_TAG}
+        - ${DOCKER_ORG}/httpd:latest
+        - ${DOCKER_ORG}/httpd:${BAKE_TAG}
       build:
         context: deployment/images/httpd
         dockerfile: Dockerfile.%%BALENA_ARCH%%
@@ -50,8 +50,8 @@ x-bake:
       platforms:
         - %%PLATFORM%%
       tags:
-        - ${DOCKER_USER}/balena-storage:latest
-        - ${DOCKER_USER}/balena-storage:${BAKE_TAG}
+        - ${DOCKER_ORG}/balena-storage:latest
+        - ${DOCKER_ORG}/balena-storage:${BAKE_TAG}
       build:
         context: balena-storage
         dockerfile: Dockerfile.%%BALENA_ARCH%%
