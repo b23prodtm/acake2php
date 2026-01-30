@@ -6,58 +6,9 @@ on:
   pull_request:
 
 env:
-  BAKE_TAG: ${{ github.ref_name }}
   DOCKER_ORG: ${{ secrets.DOCKER_USER }}
 
 jobs:
-
-  build-images:
-    runs-on: self-hosted
-    #runs-on: ubuntu-latest
-    environment: AUTH
-
-    strategy:
-      fail-fast: false
-      matrix:
-        image:
-          - { name: "httpd",     path: "deployment/images/httpd" }
-          - { name: "mariadb",   path: "deployment/images/mysqldb" }
-          - { name: "php-fpm",   path: "." }
-        arch: [ x86_64, aarch64, armhf ]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Enable QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Enable Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASS }}
-
-      - name: Build & Push ${{ matrix.image.name }} (${{ matrix.arch }})
-        working-directory: ${{ matrix.image.path }}
-        env:
-          ARCH: ${{ matrix.arch }}
-        run: |
-          case "$ARCH" in
-            x86_64)   PLATFORM="linux/amd64" ;;
-            aarch64)  PLATFORM="linux/arm64" ;;
-            armhf)    PLATFORM="linux/arm/v7" ;;
-            *)        echo "Unknown arch: $ARCH" >&2; exit 1 ;;
-          esac
-
-          docker buildx build \
-            --platform "${PLATFORM}" \
-            --push \
-            -t "${DOCKER_ORG}/${{ matrix.image.name }}:${BAKE_TAG}-${ARCH}" \
-            -f "Dockerfile.${ARCH}" .
-
   compose:
     #runs-on: self-hosted
     runs-on: ubuntu-latest
@@ -68,8 +19,6 @@ jobs:
       matrix:
         arch: [ x86_64, aarch64, armhf ]
 
-    #needs: build-images
-
     steps:
       - uses: actions/checkout@v4
 
@@ -84,6 +33,15 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
+      - name: Sanitize ref name for Docker tag
+        id: sanitize
+        run: |
+          RAW="${GITHUB_REF_NAME}"
+          # lowercase
+          TAG=$(echo "$RAW" | tr '[:upper:]' '[:lower:]')
+          # replace invalid chars with '-'
+          TAG=$(echo "$TAG" | sed 's/[^a-z0-9._-]/-/g')
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       # Install Docker Compose v2 plugin
       - name: Set up Docker Compose
@@ -94,6 +52,7 @@ jobs:
       - name: Build docker-compose stack
         env:
           ARCH: ${{ matrix.arch }}
+          BAKE_TAG: {{ steps.sanitize.outputs.tag }}
         run: |
           docker buildx bake --push -f "docker-compose.${ARCH}"
           docker compose up -d
