@@ -100,8 +100,8 @@ services:
         tags:
           - ${DOCKER_ORG}/balena-storage:latest
           - ${DOCKER_ORG}/balena-storage:${BAKE_TAG}
-        context: balena-storage
-        dockerfile: Dockerfile.aarch64
+      context: balena-storage
+      dockerfile: Dockerfile.aarch64
     image: betothreeprod/balena-storage:latest
     privileged: true
     env_file:
