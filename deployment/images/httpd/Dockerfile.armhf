@@ -1,16 +1,21 @@
 # BEGIN - Multi-stage Build
 # Stage 1: Install NodeJS dependencies
-FROM node:20-alpine3.16 AS node-build
+FROM node:20-alpine3.22 AS node-build
 
 WORKDIR /usr/local/project
 
 # Copy Node.js dependency files, Fixing global modules issue
-RUN apk update \
-    && apk add --no-cache yarn \
-    && yarn add balena-cloud-apps \
-    && yarn cache clean
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn .yarn
+RUN apk add --no-cache nodejs npm \
+ && npm install -g corepack \
+ && corepack enable \
+ && corepack prepare yarn@4 --activate \
+ && corepack install -g yarn \
+ && yarn install --immutable \
+ && yarn cache clean
 
-# Stage 2: Build environment
+# Stage 2: Build HTTPD environment
 FROM httpd:2.4-alpine3.22
 
 # Set up working directory and environment
@@ -19,8 +24,8 @@ ENV HTDOCS=${HTDOCS:-"/usr/local/apache2/htdocs"}
 WORKDIR ${HTDOCS}
 
 # Add mor NodeJS, CakePHP and Composer commands to system path
-COPY --from=node-build /usr/local/project/node_modules/ node_modules
-ENV PATH="${HTDOCS}/node_modules/.bin:${PATH}"
+ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
+COPY --from=node-build /usr/local/project/node_modules node_modules
 # END - Multi-stage Build
 
 # Install base packages
@@ -41,6 +46,7 @@ ARG SSL_PORT
 ENV SSL_PORT=${SSL_PORT:-443}
 ARG USER
 ENV USER=${USER:-acake2php}
+ARG GROUP
 ENV GROUP=${GROUP:-acake2php}
 ARG PUID
 ENV PUID=${PUID:-1000}
@@ -58,9 +64,11 @@ COPY --chown=$USER:$GROUP . .
 
 # Set up Apache configuration
 RUN envsubst < etc/apache2/conf-available/servername.conf > ${SERVER_ROOT}/conf/extra/servername.conf \
+    && envsubst < etc/apache2/conf-available/ssl.conf > ${SERVER_ROOT}/conf/extra/ssl.conf \
     && envsubst < etc/apache2/sites-available/000-default.conf > ${SERVER_ROOT}/conf/extra/000-default.conf \
     && envsubst < etc/apache2/sites-available/001-ssl.conf > ${SERVER_ROOT}/conf/extra/001-ssl.conf \
     && echo "Include conf/extra/servername.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
+    && echo "Include conf/extra/ssl.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
     && echo "Include conf/extra/000-default.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
     && echo "Include conf/extra/001-ssl.conf" >> ${SERVER_ROOT}/conf/httpd.conf
 
@@ -72,4 +80,5 @@ EXPOSE ${HTTP_PORT} ${SSL_PORT}
 RUN chmod +x Scripts/*.sh \
     && Scripts/a2enmod.sh
 
-ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]
+CMD ["apachectl", "-D", "FOREGROUND"]
+

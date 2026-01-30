@@ -24,4 +24,4 @@ if [[ -f $dst && -f $src && -n $(command -v md5) ]]; then
 fi
 cp -vf "$src" "$dst"
 cd "$pwd" || true
-slogger -st "$0" "${src} copied. Please, review the files.\n"
+log_daemon_msg "${src} copied. Please, review the files.\n"

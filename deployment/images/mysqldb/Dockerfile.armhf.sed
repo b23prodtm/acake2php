@@ -1,1 +1,1 @@
-/### ARM BEGIN/,/### ARM END/s/^(# )+(.*)/\2/g
+/### BALENA BEGIN/,/### BALENA END/s/^[# ]*(.*)/# \1/g

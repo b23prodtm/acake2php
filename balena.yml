@@ -19,8 +19,7 @@ data:
     # Call terminal $ ./configure.sh -h -p pass -s salt
     # Get new staff credentials  /admin/index.php
     # gets printed out in docker build log
-    - GET_HASH_PASSWORD: Encrypt_it_with_getHashPassword_php
-    - HASH_PASSWORD: Let_us_encrypt_it_from_startup
+    - MASTER_PASSWORD: Let_us_encrypt_it_from_startup
 
     # Database name must be first newly created: 
     # Call SSH terminal into db (ssh gh_<user>@db -p 22222) 
@@ -66,6 +65,7 @@ data:
     - raspberrypi3-64
     - raspberrypi4-64
     - raspberrypi400-64
+
 post-provisioning: >-
 
   # A CakePHP 2.x application

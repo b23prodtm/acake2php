@@ -1,0 +1,13 @@
+## YAML Template.
+build-secrets:
+  global:
+    - source: secret_mysql_root_password
+      dest: mysql_root_password      
+    - source: secret_mysql_user
+      dest: mysql_user
+    - source: secret_mysql_password
+      dest: mysql_password
+    - source: secret_mysql_database
+      dest: mysql_database
+    - source: secret_master_password
+      dest: master_password

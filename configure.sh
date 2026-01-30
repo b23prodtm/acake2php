@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 set -eu
-
-# Fixes env variables unset
-DOCKER_USER="${DOCKER_USER:-betothreeprod}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0
-
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=Scripts/lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
@@ -11,78 +7,87 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 # shellcheck source=Scripts/lib/util.sh
 . "$TOPDIR/Scripts/lib/util.sh"
-runner=$(parse_arg "-[rR]+|--runner"  "$@")
-docker=$(parse_arg "--docker" "$@")
-pargs=$(parse_arg_trim "--docker|-[rR]+|--runner" "$@")
-composer_args="-d $TOPDIR update --no-interaction"
-composer_nodev="--no-dev"
-composer="${composer_args} ${composer_nodev}"
-if [ -n "$runner" ]; then
-  slogger -st "$0" "Bootargs...: ${pargs}"
-  # shellcheck source=Scripts/bootargs.sh
-  . "$TOPDIR/Scripts/bootargs.sh" "$@"
+
+parse_args_lazy "$@" <<EOF
+flag verbose -v --verbose
+flag runner -r --runner
+flag docker -d --docker
+option password -p --password
+option salt -s --salt
+option file -f --file
+flag migrate -m --mig-data
+flag dev -x --dev
+flag help -h --help
+option group -g --group
+end
+EOF
+
+composer_args=( "-d" "$TOPDIR" "update" "--no-interaction" )
+composer_nodev=( "--no-dev" )
+usage() {
+  printf "%s\n" \
+  "Usage: ${BASH_SOURCE[0]} [-r|-d] [-p password -s hash [-f filename]]" \
+  "          [[-m|--mig-database] [options]]" \
+  "          -r,--runner    Production Mode with container runner" \
+  "          -d,--docker    Test with Docker Machine" \
+  "          -p,--password <password> -s <hash> [-f <save-filename>]" \
+  "                         Setup administrator <password> with md5 <hash>. " \
+  "                         (Optional) A filename to save secret to." \
+  "          -m, --mig-data [options]" \
+  "                         Migrate Database (see $0 --mig-data --help)" \
+  "          -v,--verbose   steps progress" \
+  "          -x,--dev       Install composer dependencies" \
+  "          -g, --group    Temp Paths and Files permissions: Group name (HTTPD Log)" \
+  "          -h, --help     Display Help" \
+  ""
+}
+saved=( "$@" )
+if [ "$help" -gt 0 ]; then 
+  usage
+  exit 0
+fi
+if [ ${#group} -gt 0 ]; then
+  group_args=( "-g" "$group" )
+fi
+if [ "$dev" -gt 0 ]; then
+  composer_args=( "${composer_args[@]}" "-W" )
 else
-  slogger -st "$0" "Locally Testing values, bootargs...: ${pargs}"
+  composer_args=( "${composer_args[@]}" "${composer_nodev[@]}" )
+fi
+if [ "$verbose" -gt 0 ]; then
+    set -x
+    log_progress_msg "Passed params : ${BASH_SOURCE[*]} ${saved[*]}"
+fi
+log_progress_msg "If the full set of the arguments exists, there won't be any prompt in the shell"
+if [ ${#password} -gt 0 ]; then
+  log_progress_msg "MASTER_PASSWORD"
+  shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh" \
+ "Step 1. Get an encrypted password.\n" "-Y" \
+ -p "$password" -s "$salt" -f "$file"
+  show_password_status "admin" "MASTER_PASSWORD_HASH" "was set up."
+fi
+[ "$runner" -gt 0 ] && set -- "--runner" "$@"
+if [ "$docker" -gt 0 ]; then
+  set -- "--docker" "$@"
+  log_progress_msg "Check database container id"
+  docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
   # shellcheck source=Scripts/fooargs.sh
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
+else
+  # shellcheck source=Scripts/bootargs.sh
+  . "$TOPDIR/Scripts/bootargs.sh" "$@"
 fi
-usage=("" \
-"Usage: $0 [-r|--runner|--travis] [-p password -s hash [-f filename]]" \
-"          [[-d|--mig-database] [options]]" \
-"          --runner       A test or migrate for CI self-host runner build" \
-"          -p,--password <password> -s <hash> [-f <save-filename>]" \
-"                         Setup administrator <password> with md5 <hash>. " \
-"                         (Optional) A filename to save a shell script export." \
-"          -d, --mig-database [options]" \
-"                         Migrate Database (see $0 --mig-database --help)" \
-"          --development  Install composer dependencies" \
-"")
-saved=( "$@" )
-show_password_status "root" "MYSQL_ROOT_PASSWORD" "is configuring ${runner} ${docker}..."
-#; if the full set of the arguments exists, there won't be any prompt in the shell
-while [[ "$#" -gt 0 ]]; do case $1 in
-  -[pP]*|--password)
-    #; GET_HASH_PASSWORD
-    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -p ${*:2}" "${cyan}Step 1. Get an encrypted password.\n${nc}" "-Y"
-    shift;;
-  -[dD]*|--mig-database)
-    shell_prompt "$TOPDIR/migrate-database.sh ${docker} ${runner} ${*:2}" "${cyan}Step 2. Migrate database\n${nc}" "-Y"
-    break;;
-  -[sS]*|-[fF]*)
-    #; void --password known args
-    OPTIND=1
-    if [[ "$#" -gt 1 ]]; then
-      arg=$2; [[ "${arg:0:1}" != '-' ]] && OPTIND=2
-    fi
-    shift $((OPTIND -1))
-    ;;
-  --help )
-    printf "%s\n" "${usage[@]}"
-    exit 0;;
-  -[rR]*|--runner|--travis )
-    # shellcheck disable=SC2154
-    echo -e "${green}--runner mode...${nc}"
-    ;;
-  --docker )
-    slogger -st docker "check database container id"
-    docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
-    ;;
-  --development )
-    composer="$composer_args -W"
-    ;;
-  -[vV]*|--verbose )
-    set -x
-    echo "Passed params : ${BASH_SOURCE[*]} ${saved[*]}";;
-    *) echo "Unknown parameter: ${BASH_SOURCE[0]} $1"; exit 1;;
-esac; shift; done
-#; Setup paths and file permissions 
-bash -c "$TOPDIR/Scripts/configure_path.sh"
-#; filter template
-bash -c "$TOPDIR/Scripts/cp_bkp_old.sh Config/ app_local.template app_local.php"
-#; download plugins and dependencies
-bash -c "$TOPDIR/Scripts/composer.sh ${composer}"
-slogger -st sed "Cake patches"
-#; patches
+if [ "$migrate" -gt 0 ]; then
+  log_progress_msg "MIGRATION"
+  shell_prompt "$TOPDIR/migrate-database.sh" "Step 2. Migrate database\n" "-Y" "$@"
+fi
+log_progress_msg "Setup paths and file permissions"
+. "$TOPDIR/Scripts/configure_path.sh" "${group_args[@]}"
+log_progress_msg "Filter templates"
+. "$TOPDIR/Scripts/cp_bkp_old.sh" "Config/" "app_local.template" "app_local.php"
+log_progress_msg "Download plugins and dependencies"
+. "$TOPDIR/Scripts/composer.sh" "${composer_args[@]}"
+log_progress_msg "Cake patches"
 patches "Config/core.php"
 patches "vendor/cakephp/cakephp/src/Console/ShellDispatcher.php"
 patches "vendor/cakephp/cakephp/src/Console/ConsoleOutput.php" 

@@ -1,113 +1,375 @@
-## Build the Docker VM images
-Docker :whale: VM or a remote fleet Balena/Kubernetes/etc.  
-A typical install script could look like the following script .circleci/config.yml
-It will eventually run the container as the startup script succeeds.
+# INSTALL.md (Version Développeur)
 
-## Quick VM Startup
-Everyting is ready to launch a container in real cluster environment. The process is described further.
-We have provided 3 ways to make use of this project. It supports:
-	- [Docker CE](https://docs.docker.com/machine/get-started/)
-		`docker-compose up` may be enough to run and test the configuration
-	- [Balena Cloud](https://www.balena.io/docs/learn/getting-started/raspberrypi3/nodejs/)
-		`./deploy.sh armhf --balena`
-	- [Kubernetes](https://kubernetes.io//docs/concepts/overview/what-is-kubernetes/)
-		`./kompose.sh up` may be run if your shell run on a valid working cluster environment
+*Guide complet pour configurer, développer, tester et déployer le projet (nginx + PHP-FPM + MariaDB) en Docker, Balena Cloud ou Kubernetes.*
 
-Please read README.md file to get more information on how to setup the cluster and handle common issues.
+---
 
-## Requirements
-- Broadband Internet access to the Worldwide Web, to download the packages and container images dependencies from the remote Docker registries.
-- The Docker CE described with the Dockerfile. >:whale: [Get Started](https://docs.docker.com/machine/get-started/) application.
-- NodeJS command line package manager interface, [npmjs](https://www.npmjs.com/get-npm) with yarn package manager
-- A BASH Terminal (Linux or Darwin OS are known to work)
+## 🛠️ Prérequis
 
-Once everything is installed, please reboot your system.
+### ✅ Obligatoires (pour tous les environnements)
 
-## Webserver configuration (Source balena.yml)
-Very few variables are defined by default. It provides host-container-server communication. Host Firewall and file attributes set to the host platform values.
-  
-  		# Open https://${SERVER_NAME}/etc/getHashPassword.php or type $ ./configure.sh -p password -s hash
-  		# Get new staff credentials (url=/admin/index.php)
-                - GET_HASH_PASSWORD: (let's encrypt it from above)
-  
-		# Database name
-  		- MYSQL_DATABASE: aria_db
-		# Persistent ROOT connection credentials
-		- MYSQL_HOST: localhost
-		- MYSQL_ROOT_PASSWORD: mariadb
 
-## Some configuration. All variables may be changed to your needs:
-      
-		# CakePHP secrets
-		- CAKEPHP_SECRET_TOKEN:<secret-token>
-		- CAKEPHP_SECRET_SALT:<secret-salt>
-		- CAKEPHP_SECURITY_CIPHER_SEED:<cipher-seed>
-  		
-    		# Deployed Migration option
-    		- MIGRATE_OPTION: -v
-		
-  		# The following values are options to change if needed
-		# Binding a mysql container to a specific (public) IP address or all (0.0.0.0)
-		- MYSQL_BIND_ADDRESS: 0.0.0.0
-		- MYSQL_TCP_PORT: 3306
+| Outil              | Version recommandée | Vérification               | Lien                                                    |
+| ------------------ | ------------------- | -------------------------- | ------------------------------------------------------- |
+| **Docker CE**      | ≥ 20.10             | `docker --version`         | [Installer Docker](https://docs.docker.com/get-docker/) |
+| **Docker Compose** | ≥ 2.0               | `docker-compose --version` | Inclus avec Docker Desktop                              |
+| **Git**            | ≥ 2.30              | `git --version`            | [Installer Git](https://git-scm.com/downloads)          |
+| **Bash**           | ≥ 5.0               | `bash --version`           | Terminal Linux/macOS                                    |
 
-		# Persistent USER connection credentials
-		- MYSQL_USER: maria
-		- MYSQL_PASSWORD: maria-abc
-  
-		# Run as a different user-group space ($ id -g $USER)
-		- PGID: 0
-		# Run as a different user space ($ id -u $USER)
-		- PUID: 0
 
-    		# Apache 2 httpd, or DNS CNAME of the host machine ($ hostname)
-		- SERVER_NAME: www-machine.local
-  
-		# MariaDB Timezone
-		- TZ: Europe/Paris
-  
-## Validate the configuration, and eventually test it:
-Requirements: A Docker or any compatible must be installed and running.
-Argument value `--docker` set up a local docker test configuration.
+### ⚠️ Optionnels (selon l'environnement cible)
 
-		./configure.sh --docker --mig-database -u -i
-                ./test-cake.sh --docker
 
-## Circle CI
-Developer build continuous integration
-The current project is a full PHP (CakePHP) with MySQL (MariaDB) container for Docker-CE, or even a ```Dockerfile``` compatible container interface. We choose Circle CI because it's able to achieve full remote tests with docker :whale: before we deploy to a devices swarm. It actually can run on self hosted runners and remote runnners from .circle/config.yml configuration file presets.
+| Outil                 | Nécessaire pour                                | Installation                                                 |
+| --------------------- | ---------------------------------------------- | ------------------------------------------------------------ |
+| **Node.js + Yarn**    | Déploiement Balena Cloud (`balena-cloud-apps`) | `npm install -g yarn`                                        |
+| **Balena CLI**        | Déploiement sur Balena Cloud                   | `npm install -g balena-cli`                                  |
+| **Kubectl + Kompose** | Déploiement Kubernetes                         | [Installer kubectl](https://kubernetes.io/docs/tasks/tools/) |
 
-### [developers] Update the Docker deployment image
-A. Fork the master repository (development branch).
-    
-    yarn
 
-B. Rebuild image registry from deployment folder if you make change to the primary. E.g. change of Linux distribution. Edit the file deployment/images/primary/Dockerfile.template to your needs and perform a build from the a Docker client machine.
-If you make use of [Balena OS base image list](https://www.balena.io/docs/reference/base-images/base-images-ref/) repository you can use blocks to cross build for ARM ```# [ "cross-build-start" ] # [ "cross-build-end" ]``` command lines in the Dockerfile.template files:
+> **⚡ Note** : Pour du **développement local pur**, seul **Docker + Bash** sont nécessaires.
 
-    ./deploy.sh aarch64 --local --build-deps
+---
 
-C. With the BalenaCloud and BalenaHub service, you may see the message on build logs:
-[Error]               Error: The command 'cross-build-start' returned a non-zero code: 1:
-Run a push, even if it's unsuccessful:
+## 🚀 Installation et Configuration Initiale
 
-    ./deploy.sh aarch64 --balena --push
+### 1️⃣ Cloner le dépôt
 
-You have now disabled the cross-build environment.
-Browse up to your github master fork-repository.
-Click on Deploy with Balena in the README, choose a fleet and deploy it!
+```bash
+git clone <URL_DU_DEPOT>
+cd <DOSSIER_DU_PROJET>
+```
 
-### License
-   Copyright 2016-2025 www.b23prodtm.info
+### 2️⃣ Initialiser l'environnement
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+#### Pour du développement local (Docker)
 
-   * [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+```bash
+# Configurer les variables et la base de données
+./configure.sh --docker --mig-database -u -i
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+# Lancer les conteneurs
+docker-compose up -d
+```
+
+> **Options de `configure.sh**` :
+>
+> - `--docker` : Configure pour Docker local.
+> - `--mig-database` : Applique les migrations MySQL.
+> - `-u` : Met à jour les dépendances.
+> - `-i` : Installe les paquets manquants.
+
+#### Pour le déploiement Balena Cloud
+
+```bash
+# Installer les dépendances Node.js (si balena-cloud-apps est utilisé)
+yarn install
+
+# Ajouter balena-cloud-apps (si non déjà installé)
+yarn add balena-cloud-apps
+
+# Exporter le chemin des binaires localement (optionnel)
+export PATH="./node_modules/.bin:$PATH"
+```
+
+---
+
+## ⚙️ Configuration du Projet
+
+### 📂 Fichiers de configuration principaux
+
+
+| Fichier                                    | Description                                       | Exemple                                                           |
+| ------------------------------------------ | ------------------------------------------------- | ----------------------------------------------------------------- |
+| `docker-compose.yml`                       | Définition des services (nginx, PHP-FPM, MariaDB) | [Voir la doc Docker](https://docs.docker.com/compose/)            |
+| `balena.yml`                               | Configuration pour Balena Cloud                   | [Doc Balena](https://www.balena.io/docs/learn/deploy/deployment/) |
+| `common.env`                               | Variables communes à toutes les architectures     | `BALENA_PROJECTS=(.)`                                             |
+| `armhf.env` / `aarch64.env` / `x86_64.env` | Variables spécifiques à l'architecture            | `BALENA_ARCH=armhf`                                               |
+
+
+---
+
+### 🔐 Variables d'Environnement Essentielles
+
+#### Base de Données (MariaDB/MySQL)
+
+```ini
+# common.env ou <arch>.env
+MYSQL_DATABASE=aria_db
+MYSQL_USER=maria
+MYSQL_USER_PASSWORD=Some-robust-Password
+MYSQL_ROOT_PASSWORD=SoMe-MorE-Robust-PAssWOrd!
+MYSQL_BIND_ADDRESS=0.0.0.0
+MYSQL_TCP_PORT=3306
+```
+
+#### Sécurité (CakePHP)
+
+```ini
+CAKEPHP_SECRET_TOKEN=your_random_token_here
+CAKEPHP_SECRET_SALT=your_random_salt_here
+CAKEPHP_SECURITY_CIPHER_SEED=your_cipher_seed_here
+```
+
+> **⚠️ Générer des valeurs sécurisées** :
+>
+> ```bash
+> # Pour un mot de passe hashé (MASTER_PASSWORD_HASH)
+> ./configure.sh -p "votre_mot_de_passe" -s hash
+>
+> # Ou via PHP (si disponible)
+> php -r 'echo password_hash("votre_mot_de_passe", PASSWORD_DEFAULT);'
+> ```
+
+#### Serveur Web (nginx/Apache)
+
+```ini
+SERVER_NAME=www-machine.local  # ou votre domaine
+PGID=0                         # ID du groupe (0 = root)
+PUID=0                         # ID de l'utilisateur (0 = root)
+TZ=Europe/Paris                # Timezone
+```
+
+---
+
+## 💻 Développement Local
+
+### Lancer le projet
+
+```bash
+# Démarrer tous les services
+docker-compose up -d
+
+# Accéder aux logs
+docker-compose logs -f
+
+# Arrêter les services
+docker-compose down
+```
+
+### Tester l'application
+
+1. **Valider la configuration** :
+  ```bash
+   ./configure.sh --docker --mig-database -u -i
+  ```
+2. **Exécuter les tests** :
+  ```bash
+   ./test-cake.sh --docker
+  ```
+3. **Accéder à l'application** :
+  - URL : `http://localhost` ou `http://${SERVER_NAME}`
+  - Admin : `/admin/index.php` (utilisez `MASTER_PASSWORD_HASH`)
+
+---
+
+
+
+
+| &nbsp; | &nbsp; |
+| ------ | ------ |
+| &nbsp; | &nbsp; |
+| &nbsp; | &nbsp; |
+| &nbsp; | &nbsp; |
+| &nbsp; | &nbsp; |
+
+
+---
+
+
+
+
+
+```bash
+docker-compose up -d --build
+```
+
+> &nbsp;
+
+---
+
+
+
+
+
+1. **Installer les dépendances** :
+  ```bash
+   yarn install
+   yarn add balena-cloud-apps  # Si non déjà présent
+  ```
+2. **Configurer les variables** :
+  - Éditez `balena.yml` et `<arch>.env` (ex: `armhf.env` pour Raspberry Pi 32 bits).
+  - Exemple de `balena.yml` :
+    ```yaml
+    name: mon-projet
+    type: sw
+    version: 1.0.0
+    ```
+
+
+
+```bash
+# Pour ARM 32 bits (Raspberry Pi 3/4)
+./deploy.sh armhf --balena
+
+# Pour ARM 64 bits
+./deploy.sh aarch64 --balena
+
+# Pour x86_64 (PC)
+./deploy.sh x86_64 --balena
+```
+
+> &nbsp;
+>
+> - `--balena` : Déploie sur Balena Cloud.
+> - `--local` : Construit localement (pour tests).
+> - `--push` : Force le push même en cas d'erreur de cross-build.
+> - `--build-deps` : Rebuild les dépendances Docker.
+
+
+
+&nbsp;
+
+```
+[Error] The command 'cross-build-start' returned a non-zero code: 1
+```
+
+&nbsp;
+
+```bash
+./deploy.sh aarch64 --balena --push
+```
+
+
+
+1. Forkez le dépôt.
+2. Cliquez sur **"Deploy with Balena"** dans le README.
+3. Sélectionnez une **fleet** et déployez.
+
+---
+
+
+
+1. **Convertir docker-compose en Kubernetes** :
+  ```bash
+   ./kompose.sh up
+  ```
+2. **Vérifier le déploiement** :
+  ```bash
+   kubectl get pods
+   kubectl get services
+  ```
+
+> &nbsp;
+
+---
+
+
+
+
+
+1. Éditez `deployment/images/primary/Dockerfile.template`.
+2. **Blocs de cross-build pour ARM** (Balena) :
+  ```dockerfile
+   # [ "cross-build-start" ]
+   RUN apt-get update && apt-get install -y \
+       build-essential \
+       && rm -rf /var/lib/apt/lists/*
+   # [ "cross-build-end" ]
+  ```
+3. **Rebuild l'image** :
+  ```bash
+   ./deploy.sh aarch64 --local --build-deps
+  ```
+
+
+
+```bash
+# Mettre à jour la version (ex: 1.0.0 -> 1.0.1)
+npm version patch  # ou minor/major
+
+# Pousser les tags
+git push --tags
+git push
+```
+
+> &nbsp;
+
+---
+
+
+
+
+| &nbsp; | &nbsp; | &nbsp; |
+| ------ | ------ | ------ |
+| &nbsp; | &nbsp; | &nbsp; |
+| &nbsp; | &nbsp; | &nbsp; |
+| &nbsp; | &nbsp; | &nbsp; |
+| &nbsp; | &nbsp; | &nbsp; |
+
+
+> &nbsp;
+
+---
+
+
+
+
+
+
+| &nbsp; | &nbsp; | &nbsp; |
+| ------ | ------ | ------ |
+| &nbsp; | &nbsp; | &nbsp; |
+| &nbsp; | &nbsp; | &nbsp; |
+| &nbsp; | &nbsp; | &nbsp; |
+| &nbsp; | &nbsp; | &nbsp; |
+| &nbsp; | &nbsp; | &nbsp; |
+
+
+
+
+```bash
+# Voir les logs de tous les services
+docker-compose logs -f
+
+# Entrer dans un conteneur (ex: php-fpm)
+docker-compose exec php-fpm bash
+
+# Vérifier les variables d'environnement
+docker-compose exec php-fpm env
+
+# Lister les conteneurs en cours
+docker ps
+
+# Nettoyer les volumes et réseaux
+docker system prune -a --volumes
+```
+
+---
+
+
+
+1. **Forker** le dépôt sur GitHub.
+2. **Créer une branche** pour votre fonctionnalité :
+  ```bash
+   git checkout -b feature/ma-fonctionnalité
+  ```
+3. **Commiter** vos changements :
+  ```bash
+   git commit -m "Ajout de ma fonctionnalité"
+  ```
+4. **Pousser** vers votre fork :
+  ```bash
+   git push origin feature/ma-fonctionnalité
+  ```
+5. **Ouvrir une Pull Request** sur le dépôt principal.
+
+---
+
+
+
+&nbsp;
+
+&nbsp;
+
+>

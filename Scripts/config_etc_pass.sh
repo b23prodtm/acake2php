@@ -1,27 +1,18 @@
 #!/usr/bin/env bash
-#; [ $# -lt 1 ] && echo "Usage: $0 -p=<pass> -s=<hash> [-f=<exec_hash_file.sh>]" && exit 1
-TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+set -e
+#; [ $# -lt 1 ] && echo "Usage: $0 -p <pass> -s <hash> [-f <hash_file>]" && exit 1
+TOPDIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 # shellcheck source=lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
-pwd=$(pwd)
-pass=""
-hash=""
-hash_file=""
-MYPHPCMS_DIR=${MYPHPCMS_DIR:-'app/webroot/php-cms'}
-dir="$TOPDIR/$MYPHPCMS_DIR/e13/etc/"
-cd "$dir" || log_failure_msg "No such directory %s\n" "$dir"
 # passed args from shell_prompt
-while [ "$#" -gt 0 ]; do case $1 in
-  -[pP]* )
-      parse_arg_export "pass" "some password" "$@";;
-  -[sS]* )
-      parse_arg_export "hash" "some hash" "$@";;
-  -[fF]* )
-      parse_arg_export "hash_file" "a filename.sh" "$@";;
-  *);;
-esac; shift; done
+parse_args_lazy "$@" <<EOF
+option pass -p --password
+option hash -s --salt
+option hash_file -f --file
+end
+EOF
 #; read password if not set
-if [ -z "$pass" ]; then while true; do
+while [ ${#pass} -eq 0 ]; do
    read -r -p "Please enter a password :" pass
    echo -e "\n"
    read -r -p "Please re-enter the password :" confirmpass
@@ -30,22 +21,23 @@ if [ -z "$pass" ]; then while true; do
       break
    else
      # shellcheck disable=SC2154
-      echo -e "${red}Passwords don't match.\n${nc}"
+      echo -e "Passwords don't match.\n"
    fi
-done; fi
+done
 
 # read hash if not set
-if [ -z "$hash" ]; then while [ "$hash" = "" ]; do
+while [ ${#hash} -eq 0 ]; do
    read -r -p "Please enter the hash word :" hash
-done; fi
-# read filename if not set
-if [ -z "$hash_file" ]; then
-    hash_file="export_hash_password.sh"
+done
+# set filename if not set
+if [ ${#hash_file} -eq 0 ]; then
+    hash_file="master_password_hash"
 fi
-php -f getHashPassword.php -- -p "$pass" -s "$hash" -f "$hash_file"
-#; so that the shell can execute export file
-chmod 777 $hash_file
-# shellcheck source=../app/webroot/php-cms/e13/etc/getHashPassword.php
-. "$hash_file"
-slogger -st "$0" "Saved in $hash_file .\n"
-cd "$pwd" || log_failure_msg "No such directory %s\n" "$dir"
+log_progress_msg "Master password auto configuration..."
+cd "${TOPDIR}/app/webroot/php-cms/e13/etc/" || exit 1
+log_progress_msg "Get hash from MASTER_PASSWORD..."
+php -f "getHashPassword.php" -- -p "$pass" -s "$hash" -f "$hash_file"
+MASTER_PASSWORD_HASH="$(cat "$hash_file")"
+export MASTER_PASSWORD_HASH
+cd "$pwd" || exit 1
+log_success_msg "Done MASTER_PASSWORD_HASH was exported from $(pwd)/$hash_file"

@@ -1,4 +1,4 @@
-version: "2.1"
+version: "2.4"
 services:
   db:
     build:
@@ -7,7 +7,9 @@ services:
       args:
         PUID: 1000
         PGID: 1000
+    image: betothreeprod/mysqldb:latest
     environment:
+# ignored if MYSQL_ROOT_PASSWORD is available on build time
       MYSQL_RANDOM_ROOT_PASSWORD: yes
       TZ: Europe/Paris
     volumes:
@@ -34,6 +36,7 @@ services:
         MYPHPCMS_DIR: app/webroot/php-cms
         MYPHPCMS_LOG: app/tmp/logs
         HTDOCS: /var/www/html
+    image: betothreeprod/php-fpm:latest
     env_file:
       - common.env
       - x86_64.env
@@ -50,7 +53,7 @@ services:
       - "9001:9001"
     networks:
       - cake
-  apache:
+  httpd:
     build:
       context: deployment/images/httpd
       dockerfile: Dockerfile.x86_64
@@ -58,6 +61,7 @@ services:
         PUID: 1000
         PGID: 1000
         HTDOCS: /var/www/html
+    image: betothreeprod/httpd:latest
     env_file:
       - common.env
       - x86_64.env
@@ -74,13 +78,14 @@ services:
     build:
       context: balena-storage
       dockerfile: Dockerfile.x86_64
+    image: betothreeprod/balena-storage:latest
     privileged: true
     env_file:
       - common.env
       - x86_64.env
     networks:
       - cake
-# v3.4 compose file
+# Docker-Compose >=3.4 only
 #    healthcheck:
 #      test: ["CMD", "/usr/src/scripts/backup-db.sh"]
 #      interval: 720h
@@ -102,3 +107,46 @@ volumes:
 networks:
   cake:
     external: false
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f02e68a1 (aarch64 pushed ./deployment/images/httpd)
+
+<<<<<<< HEAD
+
+# ---------------------------------------------------------------------------
+# Secrets — each file contains a single value, no trailing newline.
+# Create them before first run:
+#   echo -n "s3cr3t" > ./secrets/mysql_root_password.txt
+#   echo -n "maria" > ./secrets/mysql_user.txt
+#   ...
+# ---------------------------------------------------------------------------
+<<<<<<< HEAD
+secrets:
+  mysql_root_password:
+    file: ./secrets/mysql_root_password.txt
+  mysql_user:
+    file: ./secrets/mysql_user.txt
+  mysql_password:
+    file: ./secrets/mysql_password.txt
+  hash_password:
+    file: ./secrets/hash_password.txt
+<<<<<<< HEAD
+=======
+>>>>>>> 9f39dd2b (aarch64 pushed ./deployment/images/httpd)
+=======
+>>>>>>> f02e68a1 (aarch64 pushed ./deployment/images/httpd)
+=======
+#secrets:
+#  mysql_root_password:
+#    file: ./secrets/mysql_root_password.txt
+#  mysql_user:
+#    file: ./secrets/mysql_user.txt
+#  mysql_password:
+#    file: ./secrets/mysql_password.txt
+#  hash_password:
+#    file: ./secrets/hash_password.txt
+
+>>>>>>> f96d33fa (aarch64 pushed ./deployment/images/httpd)
+=======
+>>>>>>> 25e840e2 (armhf pushed ./deployment/images/httpd)

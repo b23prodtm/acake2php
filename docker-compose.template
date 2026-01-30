@@ -1,4 +1,4 @@
-version: "2.1"
+#version: "2.4"
 services:
   db:
     build:
@@ -7,7 +7,9 @@ services:
       args:
         PUID: 1000
         PGID: 1000
+    image: betothreeprod/mysqldb:latest
     environment:
+# ignored if MYSQL_ROOT_PASSWORD is available on build time
       MYSQL_RANDOM_ROOT_PASSWORD: yes
       TZ: Europe/Paris
     volumes:
@@ -34,6 +36,7 @@ services:
         MYPHPCMS_DIR: app/webroot/php-cms
         MYPHPCMS_LOG: app/tmp/logs
         HTDOCS: /var/www/html
+    image: betothreeprod/php-fpm:latest
     env_file:
       - common.env
       - %%BALENA_ARCH%%.env
@@ -50,7 +53,7 @@ services:
       - "9001:9001"
     networks:
       - cake
-  apache:
+  httpd:
     build:
       context: deployment/images/httpd
       dockerfile: Dockerfile.%%BALENA_ARCH%%
@@ -58,6 +61,7 @@ services:
         PUID: 1000
         PGID: 1000
         HTDOCS: /var/www/html
+    image: betothreeprod/httpd:latest
     env_file:
       - common.env
       - %%BALENA_ARCH%%.env
@@ -74,13 +78,14 @@ services:
     build:
       context: balena-storage
       dockerfile: Dockerfile.%%BALENA_ARCH%%
+    image: betothreeprod/balena-storage:latest
     privileged: true
     env_file:
       - common.env
       - %%BALENA_ARCH%%.env
     networks:
       - cake
-# v3.4 compose file
+# Docker-Compose >=3.4 only
 #    healthcheck:
 #      test: ["CMD", "/usr/src/scripts/backup-db.sh"]
 #      interval: 720h
@@ -102,3 +107,4 @@ volumes:
 networks:
   cake:
     external: false
+

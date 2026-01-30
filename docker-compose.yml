@@ -1,13 +1,15 @@
-version: "2.1"
+version: "2.4"
 services:
   db:
     build:
       context: deployment/images/mysqldb
-      dockerfile: Dockerfile.armhf
+      dockerfile: Dockerfile.aarch64
       args:
         PUID: 1000
         PGID: 1000
+    image: betothreeprod/mysqldb:latest
     environment:
+# ignored if MYSQL_ROOT_PASSWORD is available on build time
       MYSQL_RANDOM_ROOT_PASSWORD: yes
       TZ: Europe/Paris
     volumes:
@@ -21,22 +23,23 @@ services:
       - cake
     env_file:
       - common.env
-      - armhf.env
+      - aarch64.env
     labels:
       io.balena.features.dbus: "1"
   php-fpm:
     build:
       context: .
-      dockerfile: Dockerfile.armhf
+      dockerfile: Dockerfile.aarch64
       args:
         PUID: 1000
         PGID: 1000
         MYPHPCMS_DIR: app/webroot/php-cms
         MYPHPCMS_LOG: app/tmp/logs
         HTDOCS: /var/www/html
+    image: betothreeprod/php-fpm:latest
     env_file:
       - common.env
-      - armhf.env
+      - aarch64.env
     environment:
       CAKEPHP_DEBUG_LEVEL: "2"
       COLLECT_COVERAGE: false
@@ -50,17 +53,18 @@ services:
       - "9001:9001"
     networks:
       - cake
-  apache:
+  httpd:
     build:
       context: deployment/images/httpd
-      dockerfile: Dockerfile.armhf
+      dockerfile: Dockerfile.aarch64
       args:
         PUID: 1000
         PGID: 1000
         HTDOCS: /var/www/html
+    image: betothreeprod/httpd:latest
     env_file:
       - common.env
-      - armhf.env
+      - aarch64.env
     volumes:
       - localtime:/etc/localtime:ro
       - www:/var/www/html
@@ -73,14 +77,15 @@ services:
   balena-storage:
     build:
       context: balena-storage
-      dockerfile: Dockerfile.armhf
+      dockerfile: Dockerfile.aarch64
+    image: betothreeprod/balena-storage:latest
     privileged: true
     env_file:
       - common.env
-      - armhf.env
+      - aarch64.env
     networks:
       - cake
-# v3.4 compose file
+# Docker-Compose >=3.4 only
 #    healthcheck:
 #      test: ["CMD", "/usr/src/scripts/backup-db.sh"]
 #      interval: 720h
@@ -102,3 +107,4 @@ volumes:
 networks:
   cake:
     external: false
+

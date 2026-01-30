@@ -4,22 +4,26 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=lib/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
-runner=$(parse_arg "-[rR]+|--runner" "$@")
-docker=$(parse_arg "--docker" "$@")
-travis=$(parse_arg "--travis" "$@")
-ck_args=$(parse_arg_trim "-[rR]+|--runner|--docker|--travis" "$@")
-LOG=$(new_cake_log "$travis" "$docker" "$runner") && slogger -st "$0" "$LOG"
-MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
+parse_args_lazy "$@" <<EOF
+flag runner -r --runner
+flag docker -d --docker
+flag server -s --server
+flag create -c --create
+flag test -t --test
+flag update -u --update
+end
+EOF
+LOG=$(new_cake_log) && log_daemon_msg "$LOG"
 function wait_for_host() {
 	[ "$#" -lt 2 ] && printf "Usage: %s <host> <port>" "${FUNCNAME[0]}" && exit 1
 	for i in $(seq 1 10); do
 		# shellcheck disable=SC2154
-		nc -z "$1" "$2" && slogger -st "${FUNCNAME[0]}" "${green}Success${nc}" && sleep 2 && return 0
+		nc -z "$1" "$2" && log_success_msg "${FUNCNAME[0]}" && sleep 2 && return 0
 		echo -n .
 		sleep 1
 	done
 	# shellcheck disable=SC2154
-	slogger -st "${FUNCNAME[0]}"  "${red}Failed: Host's unavailable${nc}"
+	log_failure_msg "${FUNCNAME[0]}: Host's unavailable"
 	return 1
 }
 function run_ps() {
@@ -29,8 +33,9 @@ function run_ps() {
 		log_failure_msg "FAILED"
 	fi
 }
-if [ -n "$docker" ]; then
-	slogger -st "$0" "Docker list ${MARIADB_SHORT_NAME} containers ($SECONDARY_HUB)"
+if [ ${#docker} -gt 0 ]; then
+  MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
+	log_daemon_msg "Docker list ${MARIADB_SHORT_NAME} containers ($SECONDARY_HUB)"
 	#docker shows only running cid (not -q -a -f)
 	maria=$(docker ps -q -f "name=${MARIADB_SHORT_NAME}")
 	if [ -z "$maria" ]; then
@@ -38,13 +43,13 @@ if [ -n "$docker" ]; then
 	fi
 	CID="$TOPDIR/deployment/images/mysqldb/mysqld/mysqld.cid"
 	if [ -f "$CID" ] && [ "$(cat "$CID")" = "$maria" ]; then
-		slogger -st "$0" "Container $MARIADB_SHORT_NAME running."
+		log_daemon_msg "Container $MARIADB_SHORT_NAME running."
 	else
-		slogger -st "$0" "Container $MARIADB_SHORT_NAME already maybe running, was stopped."
+		log_daemon_msg "Container $MARIADB_SHORT_NAME already maybe running, was stopped."
 		maria_hub=$(docker ps -q -a -f "ancestor=${SECONDARY_HUB}")
 		docker stop "$maria" "$maria_hub" >> "$LOG" 2>&1 || true
 		docker rm -f "$maria" "$maria_hub" >> "$LOG" 2>&1 || true
-		slogger -st "$0" "Container $MARIADB_SHORT_NAME 's started up..."
+		log_daemon_msg "Container $MARIADB_SHORT_NAME 's started up..."
 		mysql_credentials=("-e MYSQL_DATABASE=${MYSQL_DATABASE} -e MYSQL_USER=${MYSQL_USER}" "-e MYSQL_PASSWORD=${MYSQL_PASSWORD}" \
 		"-e MYSQL_RANDOM_ROOT_PASSWORD=yes")
 		[ -z "$(docker network ls -q -f 'name=cake')" ] && docker network create cake
@@ -55,61 +60,52 @@ if [ -n "$docker" ]; then
 		-v "$TOPDIR/deployment/images/mysqldb/conf.d:/etc/mysql/conf.d" -v "$TOPDIR/deployment/images/mysqldb/config:/config" \
 		-v "$TOPDIR/deployment/images/mysqldb/mysqld:/var/run/mysqld/" \
 		"${SECONDARY_HUB}" >> "$LOG" 2>&1; then
-			slogger -st "$0" "Started docker --name=${MARIADB_SHORT_NAME} ref: $(docker ps -q -a -f "name=maria") host: $MYSQL_HOST}"
+			log_daemon_msg "Started docker --name=${MARIADB_SHORT_NAME} ref: $(docker ps -q -a -f "name=maria") host: $MYSQL_HOST}"
 		fi
 	fi
 	if ! wait_for_host "$MYSQL_HOST" "${MYSQL_TCP_PORT:-3306}"; then
-		slogger -st "$0" "${red}Failed waiting for Mysql${nc}"
+		log_daemon_msg "Failed waiting for Mysql"
 	fi
 	docker ps -q -f "name=${MARIADB_SHORT_NAME}" > "$CID"
 	check_log "$LOG"
 fi
 # shellcheck disable=SC2086
-if [ -n "$(parse_arg "server" $ck_args)" ]; then
-	show_password_status "${MYSQL_USER}" "${MYSQL_PASSWORD}" "is running development server"
-	url="http://${SERVER_NAME}:${CAKE_TCP_PORT:-8000}"
-	# shellcheck disable=SC2154
-	slogger -st "$0" "Welcome homepage ${cyan}${url}${nc}"
-	slogger -st "$0" "Administrator login ${cyan}${url}/admin/index${nc}"
-	# shellcheck disable=SC2154
-	slogger -st "$0" "Debugging echoes ${cyan}${url}${orange}?debug=1&verbose=1${nc}"
-	slogger -st "$0" "Another Test configuration ${cyan}${url}/admin/index.php${orange}?test=1${nc}"
-	slogger -st "$0" "Unit tests ${cyan}${url}/test.php${nc}"
-	slogger -st "$0" "Turnoff flags (fix captcha)${cyan}${url}/admin/logoff.php${nc}"
-	slogger -st "$0" "==============================================="
-	# shellcheck disable=SC2086
-	run_ps cakephp $ck_args
-elif [ -n "$(parse_arg "test" "$(parse_arg_trim "--connection*" $ck_args)")" ]; then
-	slogger -st "$0" "$(printf "Passed Cake Args: %s" "$ck_args")"
-	if [ "${COLLECT_COVERAGE}" = "true" ]; then
-    		run_ps "$TOPDIR/app/vendor/bin/phpunit" --log-junit ~/phpunit/junit.xml --coverage-clover \
-		app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist \
-		app/tests/TestCase/AllTestsTest.php
-	elif [ "${PHPCS}" = 1 ]; then
-		run_ps "$TOPDIR/app/vendor/bin/phpcs" --colors -p -s --extensions=php --cache "$TOPDIR/app"
-	else
-		# shellcheck disable=SC2086
-		run_ps cakephp $ck_args --coverage-clover app/build/logs/clover.xml
-	fi
-elif [ -n "$(parse_arg "create" $ck_args)" ]; then
-        #; cakephp shell
-        slogger -st "$0" "Migrating database 'cake bake migration' ..."
-	# shellcheck disable=SC2086
-	p=$(parse_arg_trim "create" $ck_args)
-	slogger -st "$0" "$(printf "Passed Cake Args:(%s) -> %s" "$ck_args" "$p")"
-	# shellcheck disable=SC2086
-	run_ps cakephp bake migration $p
-	# shellcheck disable=SC2086
-	run_ps cakephp migrations -n status
-elif [ -n "$(parse_arg "update" $ck_args)" ]; then
-        #; cakephp shell
-        slogger -st "$0" "Migrating database 'cake migrations' ..."
-	# shellcheck disable=SC2086
-	p=$(parse_arg_trim "update" $ck_args)
-	slogger -st "$0" "$(printf "Passed Cake Args:(%s) -> %s" "$ck_args" "$p")"
-	# shellcheck disable=SC2086
-	run_ps cakephp migrations -n status
-	# shellcheck disable=SC2086
-	run_ps cakephp migrations -n $p
+if [ ${#server} -gt 0 ]; then
+  show_password_status "${MYSQL_USER}" "${MYSQL_PASSWORD}" "is running development server"
+  url="http://${SERVER_NAME}:${CAKE_TCP_PORT:-8000}"
+  # shellcheck disable=SC2154
+  log_daemon_msg "Welcome homepage ${url}"
+  log_daemon_msg "Administrator login ${url}/admin/index"
+  # shellcheck disable=SC2154
+  log_daemon_msg "Debugging echoes ${url}${orange}?debug=1&verbose=1"
+  log_daemon_msg "Another Test configuration ${url}/admin/index.php${orange}?test=1"
+  log_daemon_msg "Unit tests ${url}/test.php"
+  log_daemon_msg "Turnoff flags (fix captcha)${url}/admin/logoff.php"
+  log_daemon_msg "==============================================="
+  if [ ${#test} -gt 0 ]; then
+    clover=""
+    if [ "${COLLECT_COVERAGE}" = "true" ]; then
+      run_ps "$TOPDIR/app/vendor/bin/phpunit" --log-junit ~/phpunit/junit.xml --coverage-clover \
+      app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist \
+      app/tests/TestCase/AllTestsTest.php
+      clover="--coverage-clover app/build/logs/clover.xml"
+    elif [ "${PHPCS}" = 1 ]; then
+      run_ps "$TOPDIR/app/vendor/bin/phpcs" --colors -p -s --extensions=php --cache "$TOPDIR/app"
+    fi
+  fi
+  # shellcheck disable=SC2086
+  run_ps cakephp "$@" "$clover"
+elif [ ${#create} -gt 0 ]; then
+  #; cakephp shell
+  log_daemon_msg "Migrating database 'cake migrations' ..."
+  # shellcheck disable=SC2086
+  run_ps cakephp bake migration "$@"
+  # shellcheck disable=SC2086
+  run_ps cakephp migrations -n status
+elif [ ${#update} -gt 0 ]; then
+  #; cakephp shell
+  log_daemon_msg "Migrating database 'cake migrations' ..."
+  # shellcheck disable=SC2086
+  run_ps cakephp migrations -n status "$@"
 fi
 check_log "$LOG"

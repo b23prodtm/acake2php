@@ -1,0 +1,85 @@
+name: Multi-Arch Build
+on:
+  push:
+    branches: [ "main", "development" ]
+  pull_request:
+env:
+  DOCKER_ORG: ${{ secrets.DOCKER_USER }}
+  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+  MYSQL_USER: ${{ secrets.MYSQL_USER }}
+  MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+  MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+  MASTER_PASSWORD: ${{ secrets.MASTER_PASSWORD }}
+jobs:
+  build-services:
+    runs-on: ubuntu-latest
+#    runs-on: self-hosted
+    environment: AUTH
+    strategy:
+      fail-fast: false
+      matrix:
+         arch: [ x86_64 ]
+    #    arch: [ x86_64, aarch64, armhf ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enable QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Enable Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+      - name: Sanitize ref name for Docker tag
+        id: sanitize
+        run: |
+          RAW="${{ github.ref_name }}"
+          TAG=$(echo "$RAW" | tr '[:upper:]' '[:lower:]')
+          TAG=$(echo "$TAG" | sed 's/[^a-z0-9._-]/-/g')
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+      - name: Build docker-compose stack
+        env:
+          BALENA_ARCH: ${{ matrix.arch }}
+          BAKE_TAG: ${{ steps.sanitize.outputs.tag }}
+        run: |
+          case "${BALENA_ARCH}" in
+            "armhf")    export PLATFORM="linux/arm/v7"  ;;
+            "aarch64")  export PLATFORM="linux/arm64"   ;;
+            "x86_64")   export PLATFORM="linux/amd64"   ;;
+            *)          export PLATFORM="linux/$(uname -m)" ;;
+          esac
+          ln -sf "${BALENA_ARCH}.env" ".env"
+          cp -vf "docker-compose.${BALENA_ARCH}" "docker-compose.yml"       
+          
+          echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > .balena/secrets/secret_mysql_root_password
+          echo "${{ secrets.MYSQL_USER }}" > .balena/secrets/secret_mysql_user
+          echo "${{ secrets.MYSQL_PASSWORD }}" > .balena/secrets/secret_mysql_password
+          echo "${{ secrets.MYSQL_DATABASE }}" > .balena/secrets/secret_mysql_database
+          echo "${{ secrets.MASTER_PASSWORD }}" > .balena/secrets/secret_master_password
+          
+          docker buildx bake -f docker-bake.hcl \
+            --set "*.platform=${PLATFORM}" \
+            --push
+
+  deploy:
+    runs-on: ubuntu-latest
+#    runs-on: self-hosted
+    environment: AUTH
+    needs: build-services
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v1
+        with:
+          version: latest
+      - name: Deploy stack
+        env:
+          BAKE_TAG: ${{ github.ref_name }}
+        run: docker compose up -d

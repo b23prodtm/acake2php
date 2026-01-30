@@ -19,7 +19,7 @@
 
 A Cake2PHP website
 ==================
-[![TravisCI Status](https://app.travis-ci.com/b23prodtm/acake2php.svg?token=VkN3AkpvB5yVGfXx1qj5&branch=development)](https://travis-ci.com/b23prodtm/acake2php)
+[![Build Status](https://github.com/b23prodtm/acake2php/actions/workflows/build.yml/badge.svg)](https://github.com/b23prodtm/acake2php/actions/workflows/build.yml)
 [![CircleCI Status](https://circleci.com/gh/b23prodtm/acake2php.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/acake2php)
 
 > [The PHP-CMS eShop project was at the origin of this application](https://sourceforge.net/projects/pohse/)
@@ -32,6 +32,15 @@ Currently the deployment script
 Based on [Balena engine](http://www.balena.io). See more about [NodeJs dependencies](#nodejs-dependencies)
 
 [![balena deploy button](https://www.balena.io/deploy.svg)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/b23prodtm/acake2php)
+
+Define Environment Secrets: 
+
+    - MYSQL_ROOT_PASSWORD=A-roOt!-Password
+    - MYSQL_USER=someUser
+    - MYSQL_PASSWORD=SomePassword
+    - MASTER_PASSWORD=AdminPassword
+
+MASTER_PASSWORD_HASH as described further in this file.
 
 Softwares
 ---------
@@ -93,17 +102,18 @@ More [common issues](#common-issues)
 
 #### Generate new administrator password
 
-To sign in with staff rights, at http://localhost/admin/index.php, somebody needs a unique password stored in `GET_HASH_PASSWORD`. One way to generate this hashed password with "hashed“ encryption and setup:
+To sign in with staff rights, at http://localhost/admin/index.php, somebody needs a unique password stored in `MASTER_PASSWORD_HASH`. One way to generate this hashed password with "hashed“ encryption and setup:
 
     ./configure.sh -p <password> -s <hash>
 
-To regenerate or read the current password hash again, simply browse to http://localhost/php-cms/e13/etc/getHashPassword.php
+To regenerate or read the current password hash again, simply browse to `http://localhost/php-cms/e13/etc/getHashPassword.php` or use php:
 
-    HASH_PASSWORD=<unencrypted Password>
+    php app/webroot/php-cms/e13/etc/getHashPassword.php -p password -s SomeSalt -f output.txt
 
-or:
+Then copy it to environment variable `MASTER_PASSWORD_HASH` in runtime context:
  
-    GET_HASH_PASSWORD=<encrypted Password>
+    MASTER_PASSWORD_HASH=<EncryptedPassword>
+
 
 One of them must be stored in the local server environment as a system readable variable.
 
@@ -147,11 +157,11 @@ Plugins are registered in both _packages.json_ and  _app/composer.json_
 
   [Packagist](https://packagist.org).
 
-  ```. 
    Plugins home folder: 
        
        app/Vendor/<package-name>
        app/Plugin/<plugin-name>/
+
 * **Templates files**
 
   Setup environment variables, build files, ready for deployment with any of the available targets:
