@@ -83,6 +83,10 @@ services:
     networks:
       - cake
   balena-storage:
+    # Buildx multi‑arch metadata
+    x-bake:
+      platforms:
+        - linux/arm/v7
     build:
       context: balena-storage
       dockerfile: Dockerfile.armhf
