@@ -19,7 +19,7 @@
 
 A Cake2PHP website
 ==================
-[![TravisCI Status](https://app.travis-ci.com/b23prodtm/acake2php.svg?token=VkN3AkpvB5yVGfXx1qj5&branch=development)](https://travis-ci.com/b23prodtm/acake2php)
+[![Build Status](https://github.com/b23prodtm/acake2php/actions/workflows/build.yml/badge.svg)](https://github.com/b23prodtm/acake2php/actions/workflows/build.yml)
 [![CircleCI Status](https://circleci.com/gh/b23prodtm/acake2php.svg?style=svg)](https://app.circleci.com/pipelines/github/b23prodtm/acake2php)
 
 > [The PHP-CMS eShop project was at the origin of this application](https://sourceforge.net/projects/pohse/)

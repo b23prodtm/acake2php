@@ -41,6 +41,7 @@ ARG SSL_PORT
 ENV SSL_PORT=${SSL_PORT:-443}
 ARG USER
 ENV USER=${USER:-acake2php}
+ARG GROUP
 ENV GROUP=${GROUP:-acake2php}
 ARG PUID
 ENV PUID=${PUID:-1000}
@@ -58,9 +59,11 @@ COPY --chown=$USER:$GROUP . .
 
 # Set up Apache configuration
 RUN envsubst < etc/apache2/conf-available/servername.conf > ${SERVER_ROOT}/conf/extra/servername.conf \
+    && envsubst < etc/apache2/conf-available/ssl.conf > ${SERVER_ROOT}/conf/extra/ssl.conf \
     && envsubst < etc/apache2/sites-available/000-default.conf > ${SERVER_ROOT}/conf/extra/000-default.conf \
     && envsubst < etc/apache2/sites-available/001-ssl.conf > ${SERVER_ROOT}/conf/extra/001-ssl.conf \
     && echo "Include conf/extra/servername.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
+    && echo "Include conf/extra/ssl.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
     && echo "Include conf/extra/000-default.conf" >> ${SERVER_ROOT}/conf/httpd.conf \
     && echo "Include conf/extra/001-ssl.conf" >> ${SERVER_ROOT}/conf/httpd.conf
 
