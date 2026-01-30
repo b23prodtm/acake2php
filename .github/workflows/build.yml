@@ -93,7 +93,8 @@ jobs:
 
       - name: Build docker-compose stack
         env:
-           ARCH: ${{ matrix.arch }}
+          BAKE_TAG: ${{ github.ref_name }}
+          ARCH: ${{ matrix.arch }}
         run: |
           cp -vf "docker-compose.${ARCH}" docker-compose.yml
           docker buildx bake --push
