@@ -1,6 +1,10 @@
 version: "2.1"
 services:
   db:
+    # Buildx multi‑arch metadata
+    x-bake:
+      platforms:
+        - %%PLATFORM%%
     build:
       context: deployment/images/mysqldb
       dockerfile: Dockerfile.%%BALENA_ARCH%%
@@ -25,6 +29,10 @@ services:
     labels:
       io.balena.features.dbus: "1"
   php-fpm:
+    # Buildx multi‑arch metadata
+    x-bake:
+      platforms:
+        - %%PLATFORM%%
     build:
       context: .
       dockerfile: Dockerfile.%%BALENA_ARCH%%
@@ -51,6 +59,10 @@ services:
     networks:
       - cake
   apache:
+    # Buildx multi‑arch metadata
+    x-bake:
+      platforms:
+        - %%PLATFORM%%
     build:
       context: deployment/images/httpd
       dockerfile: Dockerfile.%%BALENA_ARCH%%
