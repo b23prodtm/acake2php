@@ -1,63 +1,19 @@
 version: 3.9
 
-x-bake:
-  targets:
-    db:
-      # Buildx multi‑arch metadata
-      platforms:
-        - linux/arm/v7
-      tags: 
-        - ${DOCKER_ORG}/mysqldb:latest
-        - ${DOCKER_ORG}/mysqldb:${BAKE_TAG}
-      build:
-        context: deployment/images/mysqldb
-        dockerfile: Dockerfile.armhf
-        args:
-          PUID: 1000
-          PGID: 1000
-    php-fpm:
-      # Buildx multi‑arch metadata
-      platforms:
-        - linux/arm/v7
-      tags:
-        - ${DOCKER_ORG}/php-fpm:latest
-        - ${DOCKER_ORG}/php-fpm:${BAKE_TAG}
-      build:
-        context: .
-        dockerfile: Dockerfile.armhf
-        args:
-          PUID: 1000
-          PGID: 1000
-          MYPHPCMS_DIR: app/webroot/php-cms
-          MYPHPCMS_LOG: app/tmp/logs
-          HTDOCS: /var/www/html
-    httpd:
-      # Buildx multi‑arch metadata
-      platforms:
-        - linux/arm/v7
-      tags:
-        - ${DOCKER_ORG}/httpd:latest
-        - ${DOCKER_ORG}/httpd:${BAKE_TAG}
-      build:
-        context: deployment/images/httpd
-        dockerfile: Dockerfile.armhf
-        args:
-          PUID: 1000
-          PGID: 1000
-          HTDOCS: /var/www/html
-    balena-storage:
-      # Buildx multi‑arch metadata
-      platforms:
-        - linux/arm/v7
-      tags:
-        - ${DOCKER_ORG}/balena-storage:latest
-        - ${DOCKER_ORG}/balena-storage:${BAKE_TAG}
-      build:
-        context: balena-storage
-        dockerfile: Dockerfile.armhf
-
 services:
   db:
+    build:
+      x-bake:
+        platforms:
+          - linux/arm64
+        tags: 
+          - ${DOCKER_ORG}/mysqldb:latest
+          - ${DOCKER_ORG}/mysqldb:${BAKE_TAG}
+      context: deployment/images/mysqldb
+      dockerfile: Dockerfile.aarch64
+      args:
+        PUID: 1000
+        PGID: 1000
     image: betothreeprod/mysqldb:latest
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: yes
@@ -73,14 +29,29 @@ services:
       - cake
     env_file:
       - common.env
-      - armhf.env
+      - aarch64.env
     labels:
       io.balena.features.dbus: "1"
   php-fpm:
+    build:
+      x-bake:
+        platforms:
+          - linux/arm64
+        tags:
+          - ${DOCKER_ORG}/php-fpm:latest
+          - ${DOCKER_ORG}/php-fpm:${BAKE_TAG}
+      context: .
+      dockerfile: Dockerfile.aarch64
+      args:
+        PUID: 1000
+        PGID: 1000
+        MYPHPCMS_DIR: app/webroot/php-cms
+        MYPHPCMS_LOG: app/tmp/logs
+        HTDOCS: /var/www/html
     image: betothreeprod/php-fpm:latest
     env_file:
       - common.env
-      - armhf.env
+      - aarch64.env
     environment:
       CAKEPHP_DEBUG_LEVEL: "2"
       COLLECT_COVERAGE: false
@@ -95,10 +66,23 @@ services:
     networks:
       - cake
   httpd:
+    build:
+      x-bake:
+        platforms:
+          - linux/arm64
+        tags:
+          - ${DOCKER_ORG}/httpd:latest
+          - ${DOCKER_ORG}/httpd:${BAKE_TAG}
+      context: deployment/images/httpd
+      dockerfile: Dockerfile.aarch64
+      args:
+        PUID: 1000
+        PGID: 1000
+        HTDOCS: /var/www/html
     image: betothreeprod/httpd:latest
     env_file:
       - common.env
-      - armhf.env
+      - aarch64.env
     volumes:
       - localtime:/etc/localtime:ro
       - www:/var/www/html
@@ -109,11 +93,20 @@ services:
     networks:
       - cake
   balena-storage:
+    build:
+      x-bake:
+        platforms:
+          - linux/arm64
+        tags:
+          - ${DOCKER_ORG}/balena-storage:latest
+          - ${DOCKER_ORG}/balena-storage:${BAKE_TAG}
+      context: balena-storage
+      dockerfile: Dockerfile.aarch64
     image: betothreeprod/balena-storage:latest
     privileged: true
     env_file:
       - common.env
-      - armhf.env
+      - aarch64.env
     networks:
       - cake
 #    healthcheck:
