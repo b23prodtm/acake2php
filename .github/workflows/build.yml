@@ -41,7 +41,7 @@ jobs:
           TAG=$(echo "$RAW" | tr '[:upper:]' '[:lower:]')
           # replace invalid chars with '-'
           TAG=$(echo "$TAG" | sed 's/[^a-z0-9._-]/-/g')
-          echo "tag=$TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       # Install Docker Compose v2 plugin
       - name: Set up Docker Compose
@@ -52,7 +52,7 @@ jobs:
       - name: Build docker-compose stack
         env:
           ARCH: ${{ matrix.arch }}
-          BAKE_TAG: {{ steps.sanitize.outputs.tag }}
+          BAKE_TAG: ${{ steps.sanitize.outputs.tag }}
         run: |
           docker buildx bake --push -f "docker-compose.${ARCH}"
           docker compose up -d
