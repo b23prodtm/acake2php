@@ -95,6 +95,5 @@ jobs:
         env:
           ARCH: ${{ matrix.arch }}
         run: |
-          cp -vf "docker-compose.${ARCH}" docker-compose.yml
-          docker buildx bake --push
+          docker buildx bake --push -f "docker-compose.${ARCH}"
           docker compose up -d
