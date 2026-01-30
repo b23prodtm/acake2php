@@ -36,12 +36,12 @@ jobs:
       - name: Sanitize ref name for Docker tag
         id: sanitize
         run: |
-          RAW="${GITHUB_REF_NAME}"
+          RAW="${{ github.ref_name }}"
           # lowercase
           TAG=$(echo "$RAW" | tr '[:upper:]' '[:lower:]')
           # replace invalid chars with '-'
           TAG=$(echo "$TAG" | sed 's/[^a-z0-9._-]/-/g')
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "tag=$TAG"
 
       # Install Docker Compose v2 plugin
       - name: Set up Docker Compose
