@@ -6,7 +6,7 @@ on:
   pull_request:
 
 env:
-  TAG: latest
+  BAKE_TAG: ${{ github.ref_name }}
   DOCKER_ORG: ${{ secrets.DOCKER_USER }}
 
 jobs:
@@ -55,7 +55,7 @@ jobs:
           docker buildx build \
             --platform "${PLATFORM}" \
             --push \
-            -t "${DOCKER_ORG}/${{ matrix.image.name }}:${TAG}-${ARCH}" \
+            -t "${DOCKER_ORG}/${{ matrix.image.name }}:${BAKE_TAG}-${ARCH}" \
             -f "Dockerfile.${ARCH}" .
 
   compose:
@@ -93,7 +93,6 @@ jobs:
 
       - name: Build docker-compose stack
         env:
-          BAKE_TAG: ${{ github.ref_name }}
           ARCH: ${{ matrix.arch }}
         run: |
           cp -vf "docker-compose.${ARCH}" docker-compose.yml
