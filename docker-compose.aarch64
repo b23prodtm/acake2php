@@ -1,10 +1,11 @@
 version: "2.1"
 services:
+
+x-bake
   db:
     # Buildx multi‑arch metadata
-    x-bake:
-      platforms:
-        - linux/arm64
+    platforms:
+      - linux/arm64
     build:
       context: deployment/images/mysqldb
       dockerfile: Dockerfile.aarch64
@@ -30,9 +31,8 @@ services:
       io.balena.features.dbus: "1"
   php-fpm:
     # Buildx multi‑arch metadata
-    x-bake:
-      platforms:
-        - linux/arm64
+    platforms:
+      - linux/arm64
     build:
       context: .
       dockerfile: Dockerfile.aarch64
@@ -60,9 +60,8 @@ services:
       - cake
   apache:
     # Buildx multi‑arch metadata
-    x-bake:
-      platforms:
-        - linux/arm64
+    platforms:
+      - linux/arm64
     build:
       context: deployment/images/httpd
       dockerfile: Dockerfile.aarch64
@@ -84,9 +83,8 @@ services:
       - cake
   balena-storage:
     # Buildx multi‑arch metadata
-    x-bake:
-      platforms:
-        - linux/arm64
+    platforms:
+      - linux/arm64
     build:
       context: balena-storage
       dockerfile: Dockerfile.aarch64
