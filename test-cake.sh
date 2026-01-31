@@ -58,7 +58,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   --docker )
     config_args="--docker ${config_args}"
     migrate="--docker ${migrate}"
-    db_data="$(pwd)/mysqld$(echo ${db_data} | cut -d : -f 2)"
+    db_data="$(pwd)/mysqld$(echo "${db_data}" | cut -d : -f 2)"
     ;;
   *) echo "Unknown parameter, passed $0: $1"; exit 1;;
 esac; shift; done
