@@ -83,7 +83,7 @@ jobs:
           version: docker24
           docker_layer_caching: true
 
-      - setup-node-and-balena
+      #- setup-node-and-balena
       - setup-buildx
       - set-build-tag
 
@@ -92,11 +92,11 @@ jobs:
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
-      - run:
-          name: Prepare balena deployment for x86_64
-          command: |
-            export BALENA_ARCH=x86_64
-            balena_deploy . ${BALENA_ARCH} 2 0 || true
+      #- run:
+          #name: Prepare balena deployment for x86_64
+          #command: |
+            #export BALENA_ARCH=x86_64
+            #balena_deploy . ${BALENA_ARCH} 2 0 || true
 
       - run:
           name: Build and push x86_64
@@ -107,7 +107,7 @@ jobs:
             export PLATFORM=linux/amd64
             
             echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
-            
+            cp -vf "docker-compose.${BALENA_ARCH}" docker-compose.yml
             docker buildx bake -f docker-bake.hcl \
               --set "*.platform=${PLATFORM}" \
               --push
@@ -129,7 +129,7 @@ jobs:
           version: docker24
           docker_layer_caching: true
 
-      - setup-node-and-balena
+      #- setup-node-and-balena
       - setup-buildx
       - set-build-tag
 
@@ -138,11 +138,11 @@ jobs:
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
-      - run:
-          name: Prepare balena deployment for aarch64
-          command: |
-            export BALENA_ARCH=aarch64
-            balena_deploy . ${BALENA_ARCH} 2 0 || true
+      #- run:
+          #name: Prepare balena deployment for aarch64
+          #command: |
+            #export BALENA_ARCH=aarch64
+            #balena_deploy . ${BALENA_ARCH} 2 0 || true
 
       - run:
           name: Build and push aarch64
@@ -153,7 +153,7 @@ jobs:
             export PLATFORM=linux/arm64
             
             echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
-            
+            cp -vf "docker-compose.${BALENA_ARCH}" docker-compose.yml
             docker buildx bake -f docker-bake.hcl \
               --set "*.platform=${PLATFORM}" \
               --push
@@ -175,7 +175,7 @@ jobs:
           version: docker24
           docker_layer_caching: true
 
-      - setup-node-and-balena
+      #- setup-node-and-balena
       - setup-buildx
       - set-build-tag
 
@@ -184,11 +184,11 @@ jobs:
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
-      - run:
-          name: Prepare balena deployment for armhf
-          command: |
-            export BALENA_ARCH=armhf
-            balena_deploy . ${BALENA_ARCH} 2 0 || true
+      #- run:
+          #name: Prepare balena deployment for armhf
+          #command: |
+            #export BALENA_ARCH=armhf
+            #balena_deploy . ${BALENA_ARCH} 2 0 || true
 
       - run:
           name: Build and push armhf
@@ -199,7 +199,7 @@ jobs:
             export PLATFORM=linux/arm/v7
             
             echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
-            
+            cp -vf "docker-compose.${BALENA_ARCH}" docker-compose.yml
             docker buildx bake -f docker-bake.hcl \
               --set "*.platform=${PLATFORM}" \
               --push
