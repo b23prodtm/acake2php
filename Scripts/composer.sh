@@ -10,7 +10,7 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 composer="${TOPDIR}/bin/composer"
 if [ -n "$(command -v composer)" ]; then
         composer="composer"
-elif [ ! -f $composer ]; then
+elif [ ! -f "$composer" ]; then
         slogger -st "$0" "Composer setup...\n"
 	mkdir -p "$(dirname "$composer")"
 	curl -sS https://getcomposer.org/installer | php -- --install-dir="$(dirname "$composer")" --filename=composer

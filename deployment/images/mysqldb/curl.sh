@@ -3,7 +3,7 @@
 TOPDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # The top of our source tree is the parent of this scripts dir
 TOPDIR+="deployment/images/mariadb"
-mkdir -p $TOPDIR
+mkdir -p "$TOPDIR"
 cd "$TOPDIR" || exit 1
 MARIADB_MAJOR=${MARIADB_MAJOR:-10.4}
 curl -L "https://raw.githubusercontent.com/docker-library/mariadb/master/$MARIADB_MAJOR/docker-entrypoint.sh" -o docker-entrypoint.sh
