@@ -93,7 +93,7 @@ jobs:
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
       - run:
-          name: Prepare balena deployment for amd64
+          name: Prepare balena deployment for x86_64
           command: |
             export BALENA_ARCH=x86_64
             balena_deploy . ${BALENA_ARCH} 2 0 || true
@@ -117,7 +117,7 @@ jobs:
           command: |
             for service in mysqldb php-fpm httpd balena-storage; do
               docker buildx imagetools create \
-                --tag ${DOCKER_USER}/${service}:${BUILD_TAG}-amd64 \
+                --tag ${DOCKER_USER}/${service}:${BUILD_TAG}-x86_64 \
                 ${DOCKER_USER}/${service}:${BUILD_TAG}
             done
 
@@ -235,7 +235,7 @@ jobs:
               
               # Create multi-arch manifest
               docker manifest create ${DOCKER_USER}/${service}:${BUILD_TAG} \
-                ${DOCKER_USER}/${service}:${BUILD_TAG}-amd64 \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}-x86_64 \
                 ${DOCKER_USER}/${service}:${BUILD_TAG}-aarch64 \
                 ${DOCKER_USER}/${service}:${BUILD_TAG}-armhf
               
@@ -245,7 +245,7 @@ jobs:
               if [ "${CIRCLE_BRANCH}" = "main" ] || [ "${CIRCLE_BRANCH}" = "master" ]; then
                 echo "Updating latest tag for ${service}"
                 docker manifest create ${DOCKER_USER}/${service}:latest \
-                  ${DOCKER_USER}/${service}:${BUILD_TAG}-amd64 \
+                  ${DOCKER_USER}/${service}:${BUILD_TAG}-x86_64 \
                   ${DOCKER_USER}/${service}:${BUILD_TAG}-aarch64 \
                   ${DOCKER_USER}/${service}:${BUILD_TAG}-armhf
                 
@@ -287,7 +287,7 @@ workflows:
     jobs:
       - shellcheck
 
-      - build-amd64:
+      - build-x86_64:
           requires:
             - shellcheck
 
@@ -301,7 +301,7 @@ workflows:
 
       - create-manifests:
           requires:
-            - build-amd64
+            - build-x86_64
             - build-aarch64
             - build-armhf
 
