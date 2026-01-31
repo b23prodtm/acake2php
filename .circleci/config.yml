@@ -27,7 +27,6 @@ commands:
           command: |
             yarn add balena-cloud-apps
             sudo npm link balena-cloud-apps
-            balena_deploy --version || echo "balena_deploy installed"
 
   setup-buildx:
     steps:
