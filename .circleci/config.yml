@@ -261,27 +261,6 @@ jobs:
               docker manifest inspect ${DOCKER_USER}/${service}:${BUILD_TAG}
             done
 
-  deploy-compose:
-    executor: docker-executor
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: docker24
-
-      - run:
-          name: Login to Docker Hub
-          command: |
-            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
-      - run:
-          name: Deploy with docker compose
-          command: |
-            export BALENA_ARCH=$(uname -m)
-            echo "Deploying with architecture: ${BALENA_ARCH}"
-            docker compose pull
-            docker compose up -d
-            docker compose ps
-
 workflows:
   build-all-branches:
     jobs:
@@ -304,7 +283,3 @@ workflows:
             - build-x86_64
             - build-aarch64
             - build-armhf
-
-      - deploy-compose:
-          requires:
-            - create-manifests
