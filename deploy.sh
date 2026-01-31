@@ -23,21 +23,7 @@ export COLUMNS=0
 export LINES=0
 export SYSTEMD_NO_WRAP=0
 
-# Fixes: Agent pid alive
-pid="$SSH_AGENT_PID"
-
-while kill -0 "$pid" 2>/dev/null; do
-    echo "Agent $pid alive"
-    sleep 1
-done
-
-echo "Agent $pid is gone"
-
-if [ -n "$pid" ]; then 
-   balena_deploy "${BASH_SOURCE[0]}" "$@"
-else 
-   update_templates
-fi
+update_templates
 
 if [ -n "$REV" ]; then
     git add docker-compose.yml
