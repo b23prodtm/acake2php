@@ -10,6 +10,25 @@ executors:
     resource_class: medium
 
 commands:
+  setup-node-and-balena:
+    steps:
+      - run:
+          name: Install Node.js and Yarn
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            sudo npm install -g yarn
+            node --version
+            npm --version
+            yarn --version
+
+      - run:
+          name: Install balena-cloud-apps
+          command: |
+            yarn add balena-cloud-apps
+            sudo npm link balena-cloud-apps
+            balena_deploy --version || echo "balena_deploy installed"
+
   setup-buildx:
     steps:
       - run:
@@ -39,7 +58,7 @@ jobs:
           command: |
             find . -type f -name "*.sh" -exec shellcheck --exclude=SC2154,SC1091,SC2034,SC2096,SC2038 {} +
 
-  build-multiarch:
+  build-amd64:
     executor: docker-executor
     steps:
       - checkout
@@ -47,6 +66,7 @@ jobs:
           version: docker24
           docker_layer_caching: true
 
+      - setup-node-and-balena
       - setup-buildx
 
       - run:
@@ -55,26 +75,213 @@ jobs:
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
       - run:
-          name: Build and push multi-arch images
+          name: Set build tag
+          command: |
+            if [ -n "${CIRCLE_TAG}" ]; then
+              echo "export BUILD_TAG=${CIRCLE_TAG}" >> $BASH_ENV
+            else
+              echo "export BUILD_TAG=${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}" >> $BASH_ENV
+            fi
+            source $BASH_ENV
+            echo "Build tag: ${BUILD_TAG}"
+
+      - run:
+          name: Prepare balena deployment for amd64
+          command: |
+            export BALENA_ARCH=amd64
+            balena_deploy . ${BALENA_ARCH} 2 0 || true
+
+      - run:
+          name: Build and push amd64
           command: |
             export DOCKER_ORG=${DOCKER_USER}
-            export BAKE_TAG=${CIRCLE_TAG}
+            export BAKE_TAG=${BUILD_TAG}
+            export BALENA_ARCH=amd64
+            export PLATFORM=linux/amd64
             
-            echo "Building version: ${BAKE_TAG}"
+            echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
             
-            # Build for all platforms and push
             docker buildx bake -f docker-bake.hcl \
-              --set "*.platform=linux/amd64,linux/arm64,linux/arm/v7" \
+              --set "*.platform=${PLATFORM}" \
               --push
 
       - run:
-          name: Verify images
+          name: Tag images with architecture suffix
           command: |
-            echo "Verifying pushed images:"
-            docker manifest inspect ${DOCKER_USER}/mysqldb:${CIRCLE_TAG}
-            docker manifest inspect ${DOCKER_USER}/php-fpm:${CIRCLE_TAG}
-            docker manifest inspect ${DOCKER_USER}/httpd:${CIRCLE_TAG}
-            docker manifest inspect ${DOCKER_USER}/balena-storage:${CIRCLE_TAG}
+            for service in mysqldb php-fpm httpd balena-storage; do
+              docker buildx imagetools create \
+                --tag ${DOCKER_USER}/${service}:${BUILD_TAG}-amd64 \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}
+            done
+
+  build-aarch64:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: docker24
+          docker_layer_caching: true
+
+      - setup-node-and-balena
+      - setup-buildx
+
+      - run:
+          name: Login to Docker Hub
+          command: |
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - run:
+          name: Set build tag
+          command: |
+            if [ -n "${CIRCLE_TAG}" ]; then
+              echo "export BUILD_TAG=${CIRCLE_TAG}" >> $BASH_ENV
+            else
+              echo "export BUILD_TAG=${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}" >> $BASH_ENV
+            fi
+            source $BASH_ENV
+            echo "Build tag: ${BUILD_TAG}"
+
+      - run:
+          name: Prepare balena deployment for aarch64
+          command: |
+            export BALENA_ARCH=aarch64
+            balena_deploy . ${BALENA_ARCH} 2 0 || true
+
+      - run:
+          name: Build and push aarch64
+          command: |
+            export DOCKER_ORG=${DOCKER_USER}
+            export BAKE_TAG=${BUILD_TAG}
+            export BALENA_ARCH=aarch64
+            export PLATFORM=linux/arm64
+            
+            echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
+            
+            docker buildx bake -f docker-bake.hcl \
+              --set "*.platform=${PLATFORM}" \
+              --push
+
+      - run:
+          name: Tag images with architecture suffix
+          command: |
+            for service in mysqldb php-fpm httpd balena-storage; do
+              docker buildx imagetools create \
+                --tag ${DOCKER_USER}/${service}:${BUILD_TAG}-aarch64 \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}
+            done
+
+  build-armhf:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: docker24
+          docker_layer_caching: true
+
+      - setup-node-and-balena
+      - setup-buildx
+
+      - run:
+          name: Login to Docker Hub
+          command: |
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - run:
+          name: Set build tag
+          command: |
+            if [ -n "${CIRCLE_TAG}" ]; then
+              echo "export BUILD_TAG=${CIRCLE_TAG}" >> $BASH_ENV
+            else
+              echo "export BUILD_TAG=${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}" >> $BASH_ENV
+            fi
+            source $BASH_ENV
+            echo "Build tag: ${BUILD_TAG}"
+
+      - run:
+          name: Prepare balena deployment for armhf
+          command: |
+            export BALENA_ARCH=armhf
+            balena_deploy . ${BALENA_ARCH} 2 0 || true
+
+      - run:
+          name: Build and push armhf
+          command: |
+            export DOCKER_ORG=${DOCKER_USER}
+            export BAKE_TAG=${BUILD_TAG}
+            export BALENA_ARCH=armhf
+            export PLATFORM=linux/arm/v7
+            
+            echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
+            
+            docker buildx bake -f docker-bake.hcl \
+              --set "*.platform=${PLATFORM}" \
+              --push
+
+      - run:
+          name: Tag images with architecture suffix
+          command: |
+            for service in mysqldb php-fpm httpd balena-storage; do
+              docker buildx imagetools create \
+                --tag ${DOCKER_USER}/${service}:${BUILD_TAG}-armhf \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}
+            done
+
+  create-manifests:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: docker24
+
+      - run:
+          name: Login to Docker Hub
+          command: |
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - run:
+          name: Set build tag
+          command: |
+            if [ -n "${CIRCLE_TAG}" ]; then
+              echo "export BUILD_TAG=${CIRCLE_TAG}" >> $BASH_ENV
+            else
+              echo "export BUILD_TAG=${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}" >> $BASH_ENV
+            fi
+            source $BASH_ENV
+            echo "Build tag: ${BUILD_TAG}"
+
+      - run:
+          name: Create and push multi-arch manifests
+          command: |
+            for service in mysqldb php-fpm httpd balena-storage; do
+              echo "Creating manifest for ${service}:${BUILD_TAG}"
+              
+              # Create multi-arch manifest
+              docker manifest create ${DOCKER_USER}/${service}:${BUILD_TAG} \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}-amd64 \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}-aarch64 \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}-armhf
+              
+              docker manifest push ${DOCKER_USER}/${service}:${BUILD_TAG}
+              
+              # Also create/update latest tag for main branch
+              if [ "${CIRCLE_BRANCH}" = "main" ] || [ "${CIRCLE_BRANCH}" = "master" ]; then
+                echo "Updating latest tag for ${service}"
+                docker manifest create ${DOCKER_USER}/${service}:latest \
+                  ${DOCKER_USER}/${service}:${BUILD_TAG}-amd64 \
+                  ${DOCKER_USER}/${service}:${BUILD_TAG}-aarch64 \
+                  ${DOCKER_USER}/${service}:${BUILD_TAG}-armhf
+                
+                docker manifest push ${DOCKER_USER}/${service}:latest
+              fi
+            done
+
+      - run:
+          name: Verify manifests
+          command: |
+            for service in mysqldb php-fpm httpd balena-storage; do
+              echo "Verifying ${service}:${BUILD_TAG}"
+              docker manifest inspect ${DOCKER_USER}/${service}:${BUILD_TAG}
+            done
 
   deploy-compose:
     executor: docker-executor
@@ -92,35 +299,38 @@ jobs:
           name: Deploy with docker compose
           command: |
             export BALENA_ARCH=$(uname -m)
-            echo "Deploying with architecture: ${BALENA_ARCH}"            
+            echo "Deploying with architecture: ${BALENA_ARCH}"
             docker compose pull
             docker compose up -d
             docker compose ps
 
 workflows:
-  build-on-tag:
+  build-all-branches:
     jobs:
-      - shellcheck:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+      - shellcheck
 
-      - build-multiarch:
+      - build-amd64:
           requires:
             - shellcheck
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+
+      - build-aarch64:
+          requires:
+            - shellcheck
+
+      - build-armhf:
+          requires:
+            - shellcheck
+
+      - create-manifests:
+          requires:
+            - build-amd64
+            - build-aarch64
+            - build-armhf
 
       - deploy-compose:
           requires:
-            - build-multiarch
+            - create-manifests
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
+              only:
+                - development
