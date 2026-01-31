@@ -75,7 +75,7 @@ jobs:
           command: |
             find . -type f -name "*.sh" -exec shellcheck --exclude=SC2154,SC1091,SC2034,SC2096,SC2038 {} +
 
-  build-amd64:
+  build-x86_64:
     executor: docker-executor
     steps:
       - checkout
@@ -95,15 +95,15 @@ jobs:
       - run:
           name: Prepare balena deployment for amd64
           command: |
-            export BALENA_ARCH=amd64
+            export BALENA_ARCH=x86_64
             balena_deploy . ${BALENA_ARCH} 2 0 || true
 
       - run:
-          name: Build and push amd64
+          name: Build and push x86_64
           command: |
             export DOCKER_ORG=${DOCKER_USER}
             export BAKE_TAG=${BUILD_TAG}
-            export BALENA_ARCH=amd64
+            export BALENA_ARCH=x86_64
             export PLATFORM=linux/amd64
             
             echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
