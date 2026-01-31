@@ -1,163 +1,124 @@
 version: 2.1
 
 orbs:
-  shellcheck: circleci/shellcheck@1.3.16
+  shellcheck: circleci/shellcheck@3.2.0
 
 executors:
   docker-executor:
     docker:
-      - image: cimg/base:2025.11
+      - image: cimg/base:2025.01
     resource_class: medium
 
 commands:
-  build-multiarch:
-    parameters:
-      image:
-        type: string
-      workdir:
-        type: string
+  setup-buildx:
     steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.18
-          docker_layer_caching: true
+      - run:
+          name: Install Docker Buildx
+          command: |
+            mkdir -p ~/.docker/cli-plugins
+            BUILDX_VERSION=v0.12.1
+            wget -q "https://github.com/docker/buildx/releases/download/${BUILDX_VERSION}/buildx-${BUILDX_VERSION}.linux-amd64" \
+              -O ~/.docker/cli-plugins/docker-buildx
+            chmod +x ~/.docker/cli-plugins/docker-buildx
+            docker buildx version
 
       - run:
-          name: Enable QEMU for multi-arch
+          name: Create buildx builder
           command: |
-            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
-      - run:
-          name: Login to Docker Hub
-          command: |
-            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
-      - run:
-          name: Build amd64
-          command: |
-            cd << parameters.workdir >>
-            docker build \
-              --platform linux/amd64 \
-              -t "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-x86_64" \
-              -f Dockerfile.x86_64 .
-            docker push "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-x86_64"
-
-      - run:
-          name: Build arm64
-          command: |
-            cd << parameters.workdir >>
-            docker build \
-              --platform linux/arm64 \
-              -t "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-aarch64" \
-              -f Dockerfile.aarch64 .
-            docker push "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-aarch64"
-
-      - run:
-          name: Build armhf
-          command: |
-            cd << parameters.workdir >>
-            docker build \
-              --platform linux/arm/v7 \
-              -t "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-armhf" \
-              -f Dockerfile.armhf .
-            docker push "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-armhf"
-
-      - run:
-          name: Create multi-arch manifest
-          command: |
-            docker manifest create "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}" \
-              "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-x86_64" \
-              "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-aarch64" \
-              "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-armhf"
-
-            docker manifest push "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}"
-
+            docker buildx create --name multiarch --driver docker-container --use --bootstrap
+            docker buildx inspect multiarch
 
 jobs:
-  httpd:
-    executor: docker-executor
+  shellcheck:
+    docker:
+      - image: koalaman/shellcheck-alpine:stable
     steps:
-      - build-multiarch:
-          image: httpd
-          workdir: deployment/images/httpd
+      - checkout
+      - run:
+          name: Run shellcheck
+          command: |
+            find . -type f -name "*.sh" -exec shellcheck --exclude=SC2154,SC1091,SC2034,SC2096,SC2038 {} +
 
-  mysql:
-    executor: docker-executor
-    steps:
-      - build-multiarch:
-          image: mysql
-          workdir: deployment/images/mysql
-
-  php-fpm:
-    executor: docker-executor
-    steps:
-      - build-multiarch:
-          image: php-fpm
-          workdir: deployment/images/php-fpm
-
-  build-and-compose:
+  build-multiarch:
     executor: docker-executor
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.18
+          version: docker24
           docker_layer_caching: true
+
+      - setup-buildx
+
       - run:
           name: Login to Docker Hub
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - run:
+          name: Build and push multi-arch images
+          command: |
+            export DOCKER_ORG=${DOCKER_USER}
+            export BAKE_TAG=${CIRCLE_TAG}
+            
+            echo "Building version: ${BAKE_TAG}"
+            
+            # Build for all platforms and push
+            docker buildx bake -f docker-bake.hcl \
+              --set "*.platform=linux/amd64,linux/arm64,linux/arm/v7" \
+              --push
+
+      - run:
+          name: Verify images
+          command: |
+            echo "Verifying pushed images:"
+            docker manifest inspect ${DOCKER_USER}/mysqldb:${CIRCLE_TAG}
+            docker manifest inspect ${DOCKER_USER}/php-fpm:${CIRCLE_TAG}
+            docker manifest inspect ${DOCKER_USER}/httpd:${CIRCLE_TAG}
+            docker manifest inspect ${DOCKER_USER}/balena-storage:${CIRCLE_TAG}
+
+  deploy-compose:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: docker24
+
+      - run:
+          name: Login to Docker Hub
+          command: |
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
       - run:
           name: Deploy with docker compose
           command: |
-            cd deployment
+            export BALENA_ARCH=$(uname -m)
+            echo "Deploying with architecture: ${BALENA_ARCH}"            
             docker compose pull
             docker compose up -d
-
+            docker compose ps
 
 workflows:
-  version: 2
-  build:
+  build-on-tag:
     jobs:
-      - shellcheck/check:
-          ignore: 'SC2154,SC1091,SC2034,SC2096,SC2038'
+      - shellcheck:
           filters:
             tags:
               only: /^v.*/
             branches:
               ignore: /.*/
 
-      - httpd:
+      - build-multiarch:
           requires:
-            - shellcheck/check
+            - shellcheck
           filters:
             tags:
               only: /^v.*/
             branches:
               ignore: /.*/
 
-      - mysql:
+      - deploy-compose:
           requires:
-            - shellcheck/check
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-
-      - php-fpm:
-          requires:
-            - shellcheck/check
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-
-      - build-and-compose:
-          requires:
-            - httpd
-            - mysql
-            - php-fpm
+            - build-multiarch
           filters:
             tags:
               only: /^v.*/
