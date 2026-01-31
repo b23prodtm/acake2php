@@ -6,7 +6,7 @@ WORKDIR /usr/local/project
 
 # Copy Node.js dependency files, Fixing global modules issue
 COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn .yarn
+COPY .yarn yarn
 RUN apk update \
     && apk add --no-cache yarn \
     && yarn install --immutable \
