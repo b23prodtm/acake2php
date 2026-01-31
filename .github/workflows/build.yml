@@ -51,8 +51,22 @@ jobs:
 
       - name: Build docker-compose stack
         env:
-          ARCH: ${{ matrix.arch }}
+          BALENA_ARCH: ${{ matrix.arch }}
           BAKE_TAG: ${{ steps.sanitize.outputs.tag }}
         run: |
-          docker buildx bake --push -f "docker-compose.${ARCH}"
+	  case "${BALENA_ARCH}" in:
+            "armhf")
+              export PLATFORM="linux/arm/v7"
+              ;;
+            "aarch64")
+              export PLATFORM="linux/arm64"
+              ;;
+            "x86_64")
+              export PLATFORM="linux/amd64"
+              ;;
+            *)
+              export PLATFORM="linux/$(arch)"
+	      ;;
+          esac
+          docker buildx bake -f docker-bake.hcl --set "*.platform=${PLATFORM}"
           docker compose up -d
