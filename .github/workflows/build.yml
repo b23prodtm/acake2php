@@ -9,9 +9,9 @@ env:
   DOCKER_ORG: ${{ secrets.DOCKER_USER }}
 
 jobs:
-  compose:
-    #runs-on: self-hosted
-    runs-on: ubuntu-latest
+  build-services:
+    runs-on: self-hosted
+    #runs-on: ubuntu-latest
     environment: AUTH
 
     strategy:

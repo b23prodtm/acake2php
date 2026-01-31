@@ -46,6 +46,24 @@ commands:
             docker buildx create --name multiarch --driver docker-container --use --bootstrap
             docker buildx inspect multiarch
 
+  set-build-tag:
+    description: "Set BUILD_TAG environment variable based on branch or tag"
+    steps:
+      - run:
+          name: Set build tag
+          command: |
+            if [ -n "${CIRCLE_TAG}" ]; then
+              TAG="${CIRCLE_TAG}"
+            else
+              TAG="${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}"
+            fi
+            # lowercase
+            TAG=$(echo "$TAG" | tr '[:upper:]' '[:lower:]')
+            # replace invalid chars with '-'
+            echo "export BUILD_TAG=$(echo "$TAG" | sed 's/[^a-z0-9._-]/-/g')" >> $BASH_ENV
+            source $BASH_ENV
+            echo "Build tag: ${BUILD_TAG}"
+
 jobs:
   shellcheck:
     docker:
@@ -67,22 +85,12 @@ jobs:
 
       - setup-node-and-balena
       - setup-buildx
+      - set-build-tag
 
       - run:
           name: Login to Docker Hub
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
-      - run:
-          name: Set build tag
-          command: |
-            if [ -n "${CIRCLE_TAG}" ]; then
-              echo "export BUILD_TAG=${CIRCLE_TAG}" >> $BASH_ENV
-            else
-              echo "export BUILD_TAG=${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}" >> $BASH_ENV
-            fi
-            source $BASH_ENV
-            echo "Build tag: ${BUILD_TAG}"
 
       - run:
           name: Prepare balena deployment for amd64
@@ -123,22 +131,12 @@ jobs:
 
       - setup-node-and-balena
       - setup-buildx
+      - set-build-tag
 
       - run:
           name: Login to Docker Hub
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
-      - run:
-          name: Set build tag
-          command: |
-            if [ -n "${CIRCLE_TAG}" ]; then
-              echo "export BUILD_TAG=${CIRCLE_TAG}" >> $BASH_ENV
-            else
-              echo "export BUILD_TAG=${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}" >> $BASH_ENV
-            fi
-            source $BASH_ENV
-            echo "Build tag: ${BUILD_TAG}"
 
       - run:
           name: Prepare balena deployment for aarch64
@@ -179,22 +177,12 @@ jobs:
 
       - setup-node-and-balena
       - setup-buildx
+      - set-build-tag
 
       - run:
           name: Login to Docker Hub
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
-      - run:
-          name: Set build tag
-          command: |
-            if [ -n "${CIRCLE_TAG}" ]; then
-              echo "export BUILD_TAG=${CIRCLE_TAG}" >> $BASH_ENV
-            else
-              echo "export BUILD_TAG=${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}" >> $BASH_ENV
-            fi
-            source $BASH_ENV
-            echo "Build tag: ${BUILD_TAG}"
 
       - run:
           name: Prepare balena deployment for armhf
@@ -232,21 +220,12 @@ jobs:
       - setup_remote_docker:
           version: docker24
 
+      - set-build-tag
+
       - run:
           name: Login to Docker Hub
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
-      - run:
-          name: Set build tag
-          command: |
-            if [ -n "${CIRCLE_TAG}" ]; then
-              echo "export BUILD_TAG=${CIRCLE_TAG}" >> $BASH_ENV
-            else
-              echo "export BUILD_TAG=${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}" >> $BASH_ENV
-            fi
-            source $BASH_ENV
-            echo "Build tag: ${BUILD_TAG}"
 
       - run:
           name: Create and push multi-arch manifests
@@ -329,7 +308,3 @@ workflows:
       - deploy-compose:
           requires:
             - create-manifests
-          filters:
-            branches:
-              only:
-                - development
