@@ -23,8 +23,8 @@
     "url": "https://github.com/b23prodtm/acake2php/issues"
   },
   "homepage": "https://github.com/b23prodtm/acake2php#readme",
+  "packageManager": "yarn@4.6.0",
   "dependencies": {
-    "balena-cloud-apps": "^1.0.48"
-  },
-  "packageManager": "yarn@4.6.0"
+    "balena-cloud-apps": "^1.0.49"
+  }
 }

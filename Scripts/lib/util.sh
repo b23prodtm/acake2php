@@ -3,11 +3,13 @@ set -e
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 . init_functions .
 function relative_path() {
-  relative_path="${2#$1}"
+  [ "$#" -lt 1 ] && echo "${FUNCNAME[0]} '<srcfile-absolute-path>'" && exit 1
+  relative_path="${2#"$1"}"
   echo "${relative_path#./}"
 }
 #; export -f relative_path
 function cake_path() {
+  [ "$#" -lt 1 ] && echo "${FUNCNAME[0]} '<CONSTANT>'" && exit 1
   bash -c "php -r '\
     require \"${TOPDIR}/Config/paths.php\"; \
     printf(constant(\"$1\"));\

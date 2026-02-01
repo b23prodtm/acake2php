@@ -2,6 +2,8 @@ s/%%BALENA_MACHINE_NAME%%/raspberrypi3/g
 s/(Dockerfile\.)[^\.]*/\1armhf/g
 s/%%BALENA_ARCH%%/armhf/g
 s/(BALENA_ARCH[=:-]+)[^$ }]+/\1armhf/g
+s#(PLATFORM[=:-]+)[^$ }]+#\1linux/arm/v7#g
+s#%%PLATFORM%%#linux/arm/v7#g
 s#(IMG_TAG[=:-]+)[^$ }]+#\1latest#g
 s#%%IMG_TAG%%#latest#g
 s#(SECONDARY_HUB[=:-]+)[^$ }]+#\1linuxserver/mariadb#g

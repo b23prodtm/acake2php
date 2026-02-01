@@ -1,33 +1,24 @@
 name: Multi-Arch Build
-
 on:
   push:
     branches: [ "main", "development" ]
   pull_request:
-
 env:
   DOCKER_ORG: ${{ secrets.DOCKER_USER }}
-
 jobs:
-  compose:
-    #runs-on: self-hosted
-    runs-on: ubuntu-latest
+  build-services:
+    runs-on: self-hosted
     environment: AUTH
-
     strategy:
       fail-fast: false
       matrix:
         arch: [ x86_64, aarch64, armhf ]
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Enable QEMU
         uses: docker/setup-qemu-action@v3
-
       - name: Enable Buildx
         uses: docker/setup-buildx-action@v3
-
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -37,22 +28,46 @@ jobs:
         id: sanitize
         run: |
           RAW="${{ github.ref_name }}"
-          # lowercase
           TAG=$(echo "$RAW" | tr '[:upper:]' '[:lower:]')
-          # replace invalid chars with '-'
           TAG=$(echo "$TAG" | sed 's/[^a-z0-9._-]/-/g')
           echo "tag=$TAG" >> $GITHUB_OUTPUT
+      - name: Build docker-compose stack
+        env:
+          BALENA_ARCH: ${{ matrix.arch }}
+          BAKE_TAG: ${{ steps.sanitize.outputs.tag }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          HASH_PASSWORD: ${{ secrets.HASH_PASSWORD }}
+        run: |
+          case "${BALENA_ARCH}" in
+            "armhf")    export PLATFORM="linux/arm/v7"  ;;
+            "aarch64")  export PLATFORM="linux/arm64"   ;;
+            "x86_64")   export PLATFORM="linux/amd64"   ;;
+            *)          export PLATFORM="linux/$(uname -m)" ;;
+          esac
+          cp -vf "docker-compose.${BALENA_ARCH}" docker-compose.yml
+          docker buildx bake -f docker-bake.hcl \
+            --set "*.platform=${PLATFORM}" \
+            --push
 
-      # Install Docker Compose v2 plugin
+  deploy:
+    runs-on: self-hosted
+    environment: AUTH
+    needs: build-services
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
       - name: Set up Docker Compose
         uses: docker/setup-compose-action@v1
         with:
-          version: latest   # or a specific version like v2.27.0
-
-      - name: Build docker-compose stack
+          version: latest
+      - name: Deploy stack
         env:
-          ARCH: ${{ matrix.arch }}
-          BAKE_TAG: ${{ steps.sanitize.outputs.tag }}
-        run: |
-          docker buildx bake --push -f "docker-compose.${ARCH}"
-          docker compose up -d
+          BAKE_TAG: ${{ github.ref_name }}
+        run: docker compose up -d
