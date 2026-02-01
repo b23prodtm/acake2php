@@ -10,24 +10,6 @@ executors:
     resource_class: medium
 
 commands:
-  setup-node-and-balena:
-    steps:
-      - run:
-          name: Install Node.js and Yarn
-          command: |
-            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-            sudo apt-get install -y nodejs
-            sudo npm install -g yarn
-            node --version
-            npm --version
-            yarn --version
-
-      - run:
-          name: Install balena-cloud-apps
-          command: |
-            yarn add balena-cloud-apps
-            sudo npm link balena-cloud-apps
-
   setup-buildx:
     steps:
       - run:
@@ -83,7 +65,6 @@ jobs:
           version: docker24
           docker_layer_caching: true
 
-      #- setup-node-and-balena
       - setup-buildx
       - set-build-tag
 
@@ -91,12 +72,6 @@ jobs:
           name: Login to Docker Hub
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
-      #- run:
-          #name: Prepare balena deployment for x86_64
-          #command: |
-            #export BALENA_ARCH=x86_64
-            #balena_deploy . ${BALENA_ARCH} 2 0 || true
 
       - run:
           name: Build and push x86_64
@@ -129,7 +104,6 @@ jobs:
           version: docker24
           docker_layer_caching: true
 
-      #- setup-node-and-balena
       - setup-buildx
       - set-build-tag
 
@@ -137,12 +111,6 @@ jobs:
           name: Login to Docker Hub
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
-      #- run:
-          #name: Prepare balena deployment for aarch64
-          #command: |
-            #export BALENA_ARCH=aarch64
-            #balena_deploy . ${BALENA_ARCH} 2 0 || true
 
       - run:
           name: Build and push aarch64
@@ -175,7 +143,6 @@ jobs:
           version: docker24
           docker_layer_caching: true
 
-      #- setup-node-and-balena
       - setup-buildx
       - set-build-tag
 
@@ -183,12 +150,6 @@ jobs:
           name: Login to Docker Hub
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
-      #- run:
-          #name: Prepare balena deployment for armhf
-          #command: |
-            #export BALENA_ARCH=armhf
-            #balena_deploy . ${BALENA_ARCH} 2 0 || true
 
       - run:
           name: Build and push armhf
