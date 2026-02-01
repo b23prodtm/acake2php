@@ -115,20 +115,3 @@ volumes:
 networks:
   cake:
     external: false
-
-# ---------------------------------------------------------------------------
-# Secrets — each file contains a single value, no trailing newline.
-# Create them before first run:
-#   echo -n "s3cr3t" > ./secrets/mysql_root_password.txt
-#   echo -n "maria" > ./secrets/mysql_user.txt
-#   ...
-# ---------------------------------------------------------------------------
-secrets:
-  mysql_root_password:
-    file: ./secrets/mysql_root_password.txt
-  mysql_user:
-    file: ./secrets/mysql_user.txt
-  mysql_password:
-    file: ./secrets/mysql_password.txt
-  hash_password:
-    file: ./secrets/hash_password.txt
