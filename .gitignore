@@ -26,8 +26,11 @@ tags
 *.mo
 !*empty
 bin/composer
-mysqldb/config/
-mysqldb/conf.d/custom.cnf
+balena-storage/*.env
+deployment/images/httpd/*.env
+deployment/images/mysqldb/*.env
+deployment/images/mysqldb/config/
+deployment/images/mysqldb/conf.d/custom.cnf
 node_modules
 *.log
 
@@ -49,7 +52,5 @@ Icon?
 ehthumbs.db
 Thumbs.db
 nbproject/private/
-mysqldb/mysqld/
-mysqld/conf.d/custom.cnf
 upgrade/
 package-lock.json
