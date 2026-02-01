@@ -8,8 +8,7 @@ The x-bake configuration has been extracted from `docker-compose.yml` to `docker
 
 To build all images, e.g. x86_64 (linux/amd64):
 ```bash
-update_templates
-cp -vf docker-compose.x86_64 docker-compose.yml
+balena_deploy . x86_64 3 0
 docker buildx bake -f docker-bake.hcl
 ```
 
@@ -33,6 +32,7 @@ export PLATFORM=linux/amd64
 export BALENA_ARCH=x86_64
 
 # Using command-line
+balena_deploy . x86_64 3 0
 docker buildx bake -f docker-bake.hcl \
   --set "*.platform=linux/amd64" \
   --set "db.tags=myorg/mysqldb:v1.0.0"
@@ -42,8 +42,7 @@ docker buildx bake -f docker-bake.hcl \
 
 To build for other architecture platforms, e.g aarch64 (linux/arm64):
 ```bash
-update_templates
-cp -vf docker-compose.aarch64 docker-compose.yml
+balena_deploy . aarch64 3 0
 docker buildx bake -f docker-bake.hcl \
   --set "*.platform=linux/arm64"
 ```
@@ -54,8 +53,7 @@ This is due to the project structure (*.env, multiple Dockerfiles, etc.)
 
 To build and push to a registry, e.g. x86_64 (linux/amd64):
 ```bash
-update_templates
-cp -vf docker-compose.x86_64 docker-compose.yml
+balena_deploy . x86_64 3 0
 docker buildx bake -f docker-bake.hcl --push
 ```
 
