@@ -16,8 +16,9 @@ variable "BALENA_ARCH" {
 
 # ---------------------------------------------------------------------------
 # Secrets — values are NEVER baked into image layers.
-# CI writes each one to a temp file and passes it via --secret id=...,src=...
-# These variables exist only so bake can reference them in the secrets block.
+# The "env=" in each secrets entry tells BuildKit to read the secret value
+# from that environment variable in the shell that runs "bake".
+# CI just needs to export these vars before invoking bake — nothing else.
 # ---------------------------------------------------------------------------
 variable "MYSQL_ROOT_PASSWORD" {
   default   = ""
