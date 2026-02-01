@@ -31,6 +31,13 @@ jobs:
           TAG=$(echo "$RAW" | tr '[:upper:]' '[:lower:]')
           TAG=$(echo "$TAG" | sed 's/[^a-z0-9._-]/-/g')
           echo "tag=$TAG" >> $GITHUB_OUTPUT
+      - name: Write build secrets to temp files
+        run: |
+          mkdir -p /tmp/secrets
+          printf '%s' '${{ secrets.MYSQL_ROOT_PASSWORD }}' > /tmp/secrets/mysql_root_password.txt
+          printf '%s' '${{ secrets.MYSQL_USER }}'          > /tmp/secrets/mysql_user.txt
+          printf '%s' '${{ secrets.MYSQL_PASSWORD }}'      > /tmp/secrets/mysql_password.txt
+          printf '%s' '${{ secrets.HASH_PASSWORD }}'       > /tmp/secrets/hash_password.txt
       - name: Build docker-compose stack
         env:
           BALENA_ARCH: ${{ matrix.arch }}
@@ -44,7 +51,14 @@ jobs:
           esac
           docker buildx bake -f docker-bake.hcl \
             --set "*.platform=${PLATFORM}" \
+            --secret id=mysql_root_password,src=/tmp/secrets/mysql_root_password.txt \
+            --secret id=mysql_user,src=/tmp/secrets/mysql_user.txt \
+            --secret id=mysql_password,src=/tmp/secrets/mysql_password.txt \
+            --secret id=hash_password,src=/tmp/secrets/hash_password.txt \
             --push
+      - name: Remove secret files
+        if: always()
+        run: rm -rf /tmp/secrets
 
   deploy:
     runs-on: self-hosted

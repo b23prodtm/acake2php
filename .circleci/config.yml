@@ -74,6 +74,15 @@ jobs:
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
       - run:
+          name: Write build secrets to temp files
+          command: |
+            mkdir -p /tmp/secrets
+            printf '%s' "${MYSQL_ROOT_PASSWORD}" > /tmp/secrets/mysql_root_password.txt
+            printf '%s' "${MYSQL_USER}"          > /tmp/secrets/mysql_user.txt
+            printf '%s' "${MYSQL_PASSWORD}"      > /tmp/secrets/mysql_password.txt
+            printf '%s' "${HASH_PASSWORD}"       > /tmp/secrets/hash_password.txt
+
+      - run:
           name: Build and push x86_64
           command: |
             export DOCKER_ORG=${DOCKER_USER}
@@ -85,7 +94,16 @@ jobs:
             cp -vf "docker-compose.${BALENA_ARCH}" docker-compose.yml
             docker buildx bake -f docker-bake.hcl \
               --set "*.platform=${PLATFORM}" \
+              --secret id=mysql_root_password,src=/tmp/secrets/mysql_root_password.txt \
+              --secret id=mysql_user,src=/tmp/secrets/mysql_user.txt \
+              --secret id=mysql_password,src=/tmp/secrets/mysql_password.txt \
+              --secret id=hash_password,src=/tmp/secrets/hash_password.txt \
               --push
+
+      - run:
+          name: Remove secret files
+          when: always
+          command: rm -rf /tmp/secrets
 
       - run:
           name: Tag images with architecture suffix
@@ -113,6 +131,15 @@ jobs:
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
       - run:
+          name: Write build secrets to temp files
+          command: |
+            mkdir -p /tmp/secrets
+            printf '%s' "${MYSQL_ROOT_PASSWORD}" > /tmp/secrets/mysql_root_password.txt
+            printf '%s' "${MYSQL_USER}"          > /tmp/secrets/mysql_user.txt
+            printf '%s' "${MYSQL_PASSWORD}"      > /tmp/secrets/mysql_password.txt
+            printf '%s' "${HASH_PASSWORD}"       > /tmp/secrets/hash_password.txt
+
+      - run:
           name: Build and push aarch64
           command: |
             export DOCKER_ORG=${DOCKER_USER}
@@ -124,7 +151,16 @@ jobs:
             cp -vf "docker-compose.${BALENA_ARCH}" docker-compose.yml
             docker buildx bake -f docker-bake.hcl \
               --set "*.platform=${PLATFORM}" \
+              --secret id=mysql_root_password,src=/tmp/secrets/mysql_root_password.txt \
+              --secret id=mysql_user,src=/tmp/secrets/mysql_user.txt \
+              --secret id=mysql_password,src=/tmp/secrets/mysql_password.txt \
+              --secret id=hash_password,src=/tmp/secrets/hash_password.txt \
               --push
+
+      - run:
+          name: Remove secret files
+          when: always
+          command: rm -rf /tmp/secrets
 
       - run:
           name: Tag images with architecture suffix
@@ -152,6 +188,15 @@ jobs:
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
       - run:
+          name: Write build secrets to temp files
+          command: |
+            mkdir -p /tmp/secrets
+            printf '%s' "${MYSQL_ROOT_PASSWORD}" > /tmp/secrets/mysql_root_password.txt
+            printf '%s' "${MYSQL_USER}"          > /tmp/secrets/mysql_user.txt
+            printf '%s' "${MYSQL_PASSWORD}"      > /tmp/secrets/mysql_password.txt
+            printf '%s' "${HASH_PASSWORD}"       > /tmp/secrets/hash_password.txt
+
+      - run:
           name: Build and push armhf
           command: |
             export DOCKER_ORG=${DOCKER_USER}
@@ -163,7 +208,16 @@ jobs:
             cp -vf "docker-compose.${BALENA_ARCH}" docker-compose.yml
             docker buildx bake -f docker-bake.hcl \
               --set "*.platform=${PLATFORM}" \
+              --secret id=mysql_root_password,src=/tmp/secrets/mysql_root_password.txt \
+              --secret id=mysql_user,src=/tmp/secrets/mysql_user.txt \
+              --secret id=mysql_password,src=/tmp/secrets/mysql_password.txt \
+              --secret id=hash_password,src=/tmp/secrets/hash_password.txt \
               --push
+
+      - run:
+          name: Remove secret files
+          when: always
+          command: rm -rf /tmp/secrets
 
       - run:
           name: Tag images with architecture suffix
