@@ -6,8 +6,10 @@ The x-bake configuration has been extracted from `docker-compose.yml` to `docker
 
 ### Building with Docker Buildx Bake
 
-To build all images:
+To build all images, e.g. x86_64 (linux/amd64):
 ```bash
+update_templates
+cp -vf docker-compose.x86_64 docker-compose.yml
 docker buildx bake -f docker-bake.hcl
 ```
 
@@ -27,21 +29,21 @@ You can override variables using environment variables or command-line flags:
 # Using environment variables
 export DOCKER_ORG=myorg
 export BAKE_TAG=v1.0.0
-export PLATFORM=linux/arm64
-export BALENA_ARCH=aarch64
+export PLATFORM=linux/amd64
+export BALENA_ARCH=x86_64
 
 # Using command-line
 docker buildx bake -f docker-bake.hcl \
-  --set "*.platform=linux/arm64" \
+  --set "*.platform=linux/amd64" \
   --set "db.tags=myorg/mysqldb:v1.0.0"
 ```
 
 ### Cross-platform Builds
 
-To build for other architecture platforms:
+To build for other architecture platforms, e.g aarch64 (linux/arm64):
 ```bash
-> Select architectures, interactively, or presets 1: armhf 2:aarch64 3: x86_64
-balena_deploy . 2 0
+update_templates
+cp -vf docker-compose.aarch64 docker-compose.yml
 docker buildx bake -f docker-bake.hcl \
   --set "*.platform=linux/arm64"
 ```
@@ -50,9 +52,10 @@ This is due to the project structure (*.env, multiple Dockerfiles, etc.)
 
 ### Push to Registry
 
-To build and push to a registry:
+To build and push to a registry, e.g. x86_64 (linux/amd64):
 ```bash
-balena_deploy . 2 0
+update_templates
+cp -vf docker-compose.x86_64 docker-compose.yml
 docker buildx bake -f docker-bake.hcl --push
 ```
 
