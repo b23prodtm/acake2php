@@ -25,7 +25,7 @@ WORKDIR ${HTDOCS}
 
 # Add mor NodeJS, CakePHP and Composer commands to system path
 ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
-COPY --from=node-build /usr/local/project/node_modules node_modules
+COPY --from=node-build node_modules node_modules
 # END - Multi-stage Build
 
 ARG PUID
