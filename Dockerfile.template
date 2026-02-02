@@ -88,18 +88,16 @@ ARG MYSQL_HOST
 ENV MYSQL_HOST=${MYSQL_HOST:-"db"}
 ARG MYSQL_TCP_PORT
 ENV MYSQL_TCP_PORT=${MYSQL_TCP_PORT:-3306}
-ARG MYSQL_DATABASE
-ENV MYSQL_DATABASE=${MYSQL_DATABASE:-"aria_db"}
-ARG MYSQL_ROOT_PASSWORD
-ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-"mariadb"}
 ARG TEST_MYSQL_DATABASE
 ENV TEST_MYSQL_DATABASE=${TEST_MYSQL_DATABASE:-"test"}
-ARG MYSQL_USER
-ENV MYSQL_USER=${MYSQL_USER:-"maria"}
-ARG MYSQL_PASSWORD
-ENV MYSQL_PASSWORD=${MYSQL_PASSWORD:-"maria-abc"}
-ARG HASH_PASSWORD
-ENV HASH_PASSWORD=${HASH_PASSWORD:-"password"}
+
+# These are now expected at RUNTIME only — no ARG, no default values baked in
+# They must be provided via: docker run --env-file, Docker secrets, or a secrets manager
+# ENV MYSQL_ROOT_PASSWORD  <-- intentionally absent
+# ENV MYSQL_USER           <-- intentionally absent
+# ENV MYSQL_PASSWORD       <-- intentionally absent
+# ENV MYSQL_DATABASE       <-- intentionally absent
+# ENV HASH_PASSWORD        <-- intentionally absent
 
 # Install necessary PHP extensions and dependencies
 COPY --from=ghcr.io/mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
