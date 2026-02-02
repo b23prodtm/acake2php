@@ -32,6 +32,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"acake2php@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "acake2php@workspace:."
+  dependencies:
+    balena-cloud-apps: "npm:^1.0.49"
+  languageName: unknown
+  linkType: soft
+
 "balena-cloud-apps@npm:^1.0.49":
   version: 1.0.49
   resolution: "balena-cloud-apps@npm:1.0.49"
@@ -210,14 +218,6 @@ __metadata:
   checksum: 10c0/b26f5479d7ec6cc2bce275a08f146cf78f5e7b661b18114e2506dd91ec7ec47e7a25bf4360e5438094db0560bcc868079fb3b1fb3892b833c1ecbf63f80c95a4
   languageName: node
   linkType: hard
-
-"myphpcms@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "myphpcms@workspace:."
-  dependencies:
-    balena-cloud-apps: "npm:^1.0.49"
-  languageName: unknown
-  linkType: soft
 
 "npm-run-path@npm:^4.0.1":
   version: 4.0.1
