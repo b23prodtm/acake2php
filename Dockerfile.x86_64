@@ -11,6 +11,7 @@ RUN apk add --no-cache nodejs npm \
  && npm install -g corepack \
  && corepack enable \
  && corepack prepare yarn@4 --activate \
+ && corepack install -g yarn \
  && yarn install --immutable \
  && yarn cache clean
 
