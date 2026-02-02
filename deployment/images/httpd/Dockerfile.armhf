@@ -1,9 +1,32 @@
+# BEGIN - Multi-stage Build
+# Stage 1: Install NodeJS dependencies
+FROM node:20-alpine3.22 AS node-build
+
+WORKDIR /usr/local/project
+
+# Copy Node.js dependency files, Fixing global modules issue
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn .yarn
+RUN apk add --no-cache nodejs npm \
+ && npm install -g corepack \
+ && corepack enable \
+ && corepack prepare yarn@4 --activate \
+ && corepack install -g yarn \
+ && yarn install --immutable \
+ && yarn cache clean
+
+# Stage 2: Build HTTPD environment
 FROM httpd:2.4-alpine3.22
 
 # Set up working directory and environment
 ARG HTDOCS
 ENV HTDOCS=${HTDOCS:-"/usr/local/apache2/htdocs"}
 WORKDIR ${HTDOCS}
+
+# Add mor NodeJS, CakePHP and Composer commands to system path
+ENV PATH="${HTDOCS}/node_modules/.bin:${HTDOCS}/app/bin:${HTDOCS}/bin:${PATH}"
+COPY --from=node-build node_modules node_modules
+# END - Multi-stage Build
 
 # Install base packages
 RUN apk update \
