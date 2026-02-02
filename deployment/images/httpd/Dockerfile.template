@@ -5,14 +5,13 @@ FROM node:20-alpine3.22 AS node-build
 WORKDIR /usr/local/project
 
 # Copy Node.js dependency files, Fixing global modules issue
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn .yarn
 RUN apk add --no-cache nodejs npm \
  && npm install -g corepack \
  && corepack enable \
  && corepack prepare yarn@4 --activate \
  && corepack install -g yarn \
- && yarn install --immutable \
+ && yarn add balena-cloud-apps \
+ && npm link balena-cloud-apps \
  && yarn cache clean
 
 # Stage 2: Build HTTPD environment
