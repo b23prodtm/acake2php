@@ -1,27 +1,9 @@
-# BEGIN - Multi-stage Build
-# Stage 1: Install NodeJS dependencies
-FROM node:20-alpine3.16 AS node-build
-
-WORKDIR /usr/local/project
-
-# Copy Node.js dependency files, Fixing global modules issue
-RUN apk update \
-    && apk add --no-cache yarn \
-    && yarn add balena-cloud-apps \
-    && yarn cache clean
-
-# Stage 2: Build environment
 FROM httpd:2.4-alpine3.22
 
 # Set up working directory and environment
 ARG HTDOCS
 ENV HTDOCS=${HTDOCS:-"/usr/local/apache2/htdocs"}
 WORKDIR ${HTDOCS}
-
-# Add mor NodeJS, CakePHP and Composer commands to system path
-COPY --from=node-build /usr/local/project/node_modules/ node_modules
-ENV PATH="${HTDOCS}/node_modules/.bin:${PATH}"
-# END - Multi-stage Build
 
 # Install base packages
 RUN apk update \
@@ -76,3 +58,4 @@ RUN chmod +x Scripts/*.sh \
     && Scripts/a2enmod.sh
 
 ENTRYPOINT ["apachectl", "-D", "FOREGROUND"]
+
