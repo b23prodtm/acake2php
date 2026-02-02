@@ -6,11 +6,13 @@ WORKDIR /usr/local/project
 
 # Copy Node.js dependency files, Fixing global modules issue
 COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn yarn
-RUN apk update \
-    && apk add --no-cache yarn \
-    && yarn install --immutable \
-    && yarn cache clean
+COPY .yarn .yarn
+RUN apk add --no-cache nodejs npm \
+ && npm install -g corepack \
+ && corepack enable \
+ && corepack prepare yarn@4 --activate \
+ && yarn install --immutable \
+ && yarn cache clean
 
 # Stage 2: Build PHP-FPM environment
 FROM php:7.4.33-fpm-alpine3.16
