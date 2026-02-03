@@ -126,11 +126,11 @@ COPY --chown=acake2php:acake2php . .
 
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh \
+    && ./deploy.sh ${BALENA_ARCH} --no-build \
     && git init \
     && git config --global user.email "b23prodtm@users.sourceforge.net" \
     && git config --global user.name "B R T" \
     && git config --global --add safe.directory $PWD \
-    && ./deploy.sh ${BALENA_ARCH} --no-build \
     && ./configure.sh --runner -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development \
     && ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
     && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
