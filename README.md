@@ -38,7 +38,7 @@ Define Environment Secrets:
     - MYSQL_ROOT_PASSWORD
     - MYSQL_USER
     - MYSQL_PASSWORD
-    - *HASH_PASSWORD*
+    - *GET_HASH_PASSWORD*
 
 Softwares
 ---------
@@ -108,7 +108,7 @@ To regenerate or read the current password hash again, simply browse to `http://
 
     php app/webroot/php-cms/e13/etc/getHashPassword.php -p password -s SomeSalt -f output.txt
 
-or set at runtime (unsafe):
+Then set as environment variable in runtime context:
  
     GET_HASH_PASSWORD=<Password-to-encrypt>
 
@@ -155,11 +155,11 @@ Plugins are registered in both _packages.json_ and  _app/composer.json_
 
   [Packagist](https://packagist.org).
 
-  ```. 
    Plugins home folder: 
        
        app/Vendor/<package-name>
        app/Plugin/<plugin-name>/
+
 * **Templates files**
 
   Setup environment variables, build files, ready for deployment with any of the available targets:
