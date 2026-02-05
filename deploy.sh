@@ -23,7 +23,7 @@ export COLUMNS=0
 export LINES=0
 export SYSTEMD_NO_WRAP=0
 
-balena_deploy . "$@"
+balena_deploy "${BASH_SOURCE[0]}" "$@"
 
 if [ -n "$REV" ]; then
     git add docker-compose.yml
