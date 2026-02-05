@@ -5,6 +5,10 @@ on:
   pull_request:
 env:
   DOCKER_ORG: ${{ secrets.DOCKER_USER }}
+  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+  MYSQL_USER: ${{ secrets.MYSQL_USER }}
+  MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+  HASH_PASSWORD: ${{ secrets.HASH_PASSWORD }}
 jobs:
   build-services:
     runs-on: ubuntu-latest
@@ -36,10 +40,6 @@ jobs:
         env:
           BALENA_ARCH: ${{ matrix.arch }}
           BAKE_TAG: ${{ steps.sanitize.outputs.tag }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_USER: ${{ secrets.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          HASH_PASSWORD: ${{ secrets.HASH_PASSWORD }}
         run: |
           case "${BALENA_ARCH}" in
             "armhf")    export PLATFORM="linux/arm/v7"  ;;
