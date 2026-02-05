@@ -10,15 +10,15 @@ docker=$(parse_arg "--docker" "$@")
 travis=$(parse_arg "--travis" "$@")
 pargs=$(parse_arg_trim "-[cC]+|--runner|--docker|--travis" "$@")
 if [ -n "$runner" ]; then
-  slogger -st "$0" "Bootargs...: ${pargs}"
+  log_daemon_msg "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
   . "$TOPDIR/Scripts/bootargs.sh" "$@"
 else
-  slogger -st "$0" "Locally Testing values, bootargs...: ${pargs}"
+  log_daemon_msg "Locally Testing values, bootargs...: ${pargs}"
   # shellcheck source=Scripts/fooargs.sh
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi
-LOG=$(new_cake_log "$travis" "$runner" "$docker") && slogger -st "$0" "$LOG"
+LOG=$(new_cake_log "$travis" "$runner" "$docker") && log_daemon_msg "$LOG"
 dbfile=Config/app_local.template
 schemafile=Config/Schema/AppSchema.template
 usage=("" \

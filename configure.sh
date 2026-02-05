@@ -18,11 +18,11 @@ composer_args="-d $TOPDIR update --no-interaction"
 composer_nodev="--no-dev"
 composer="${composer_args} ${composer_nodev}"
 if [ -n "$runner" ]; then
-  slogger -st "$0" "Bootargs...: ${pargs}"
+  log_daemon_msg "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
   . "$TOPDIR/Scripts/bootargs.sh" "$@"
 else
-  slogger -st "$0" "Locally Testing values, bootargs...: ${pargs}"
+  log_daemon_msg "Locally Testing values, bootargs...: ${pargs}"
   # shellcheck source=Scripts/fooargs.sh
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi

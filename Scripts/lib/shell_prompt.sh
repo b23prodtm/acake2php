@@ -36,7 +36,7 @@ shell_prompt() {
 #; export -f shell_prompt
 show_password_status() {
   [ "$#" -lt 3 ] && echo "Usage: ${FUNCNAME[0]} '<VAR_USER>' '<VAR_PASSWORD>' <action-description>" && exit 1
-  slogger -st "${FUNCNAME[0]}" "User ${1} (using password: $([ -z "$2" ] && echo "NO" || echo "YES")) $3..."
+  log_daemon_msg "$0 User ${1} (using password: $([ -z "$2" ] && echo "NO" || echo "YES")) $3..."
 }
 #; export -f show_password_status
 cakephp() {
