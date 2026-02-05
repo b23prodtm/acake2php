@@ -35,10 +35,13 @@ Based on [Balena engine](http://www.balena.io). See more about [NodeJs dependenc
 
 Define Environment Secrets: 
 
-    - MYSQL_ROOT_PASSWORD
-    - MYSQL_USER
-    - MYSQL_PASSWORD
-    - *GET_HASH_PASSWORD*
+    - MYSQL_ROOT_PASSWORD=A-roOt!-Password
+    - MYSQL_USER=someUser
+    - MYSQL_PASSWORD=SomePassword
+    - HASH_PASSWORD=AdminPassword
+    - *GET_HASH_PASSWORD*=EncryptedAdminPassword
+
+GET_HASH_PASSWORD as described further in this file.
 
 Softwares
 ---------
@@ -108,9 +111,9 @@ To regenerate or read the current password hash again, simply browse to `http://
 
     php app/webroot/php-cms/e13/etc/getHashPassword.php -p password -s SomeSalt -f output.txt
 
-Then set as environment variable in runtime context:
+Then copy it to environment variable `GET_HASH_PASSWORD` in runtime context:
  
-    GET_HASH_PASSWORD=<Password-to-encrypt>
+    GET_HASH_PASSWORD=<EncryptedPassword>
 
 
 One of them must be stored in the local server environment as a system readable variable.
