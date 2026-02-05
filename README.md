@@ -33,6 +33,13 @@ Based on [Balena engine](http://www.balena.io). See more about [NodeJs dependenc
 
 [![balena deploy button](https://www.balena.io/deploy.svg)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/b23prodtm/acake2php)
 
+Define Environment Secrets: 
+
+    - MYSQL_ROOT_PASSWORD
+    - MYSQL_USER
+    - MYSQL_PASSWORD
+    - *HASH_PASSWORD*
+
 Softwares
 ---------
 To deploy a server or onto a container manager like docker, you need at least a developer environment with the following software:
@@ -97,13 +104,14 @@ To sign in with staff rights, at http://localhost/admin/index.php, somebody need
 
     ./configure.sh -p <password> -s <hash>
 
-To regenerate or read the current password hash again, simply browse to http://localhost/php-cms/e13/etc/getHashPassword.php
+To regenerate or read the current password hash again, simply browse to `http://localhost/php-cms/e13/etc/getHashPassword.php` or use php:
 
-    HASH_PASSWORD=<unencrypted Password>
+    php app/webroot/php-cms/e13/etc/getHashPassword.php -p password -s SomeSalt -f output.txt
 
-or:
+or set at runtime (unsafe):
  
-    GET_HASH_PASSWORD=<encrypted Password>
+    GET_HASH_PASSWORD=<Password-to-encrypt>
+
 
 One of them must be stored in the local server environment as a system readable variable.
 
