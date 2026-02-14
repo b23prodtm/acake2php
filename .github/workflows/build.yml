@@ -52,7 +52,7 @@ jobs:
             "x86_64")   export PLATFORM="linux/amd64"   ;;
             *)          export PLATFORM="linux/$(uname -m)" ;;
           esac
-          ln -s "${BALENA_ARCH}env" "${BALENA_ARCH}.env"
+          ln -sf "${BALENA_ARCH}.env" ".env"
           cp -vf "docker-compose.${BALENA_ARCH}" "docker-compose.yml"       
           docker buildx bake -f docker-bake.hcl \
             --set "*.platform=${PLATFORM}" \
