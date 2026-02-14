@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 [ $# -lt 1 ] && echo "Usage : $0 [<file.template.or.php>]..." && exit 1
-TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+TOPDIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 sqlversion="5.7"
 # shellcheck source=lib/logging.sh
 . "${TOPDIR}/Scripts/lib/logging.sh"

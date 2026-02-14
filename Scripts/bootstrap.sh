@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+TOPDIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 # shellcheck source=lib/logging.sh
 . "${TOPDIR}/Scripts/lib/logging.sh"
 # shellcheck source=lib/shell_prompt.sh

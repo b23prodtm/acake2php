@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #; [ $# -lt 1 ] && echo "Usage: $0 -p=<pass> -s=<hash> [-f=<exec_hash_file.sh>]" && exit 1
-TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+TOPDIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 # shellcheck source=lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
 pwd=$(pwd)

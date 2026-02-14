@@ -4,7 +4,7 @@
 #; Composer simplifies the process to add features like plugins
 #;
 #;
-TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+TOPDIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 # shellcheck source=lib/logging.sh
 . "${TOPDIR}/Scripts/lib/logging.sh"
 composer="${TOPDIR}/bin/composer"
