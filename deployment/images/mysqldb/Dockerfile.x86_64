@@ -14,11 +14,28 @@ ARG MYSQL_BIND_ADDRESS
 ENV MYSQL_BIND_ADDRESS=${MYSQL_BIND_ADDRESS:-0.0.0.0}
 
 # These are now expected at RUNTIME only — no ARG, no default values baked in
-# They must be provided via: docker run --env-file, Docker secrets, or a secrets manager
-# ENV MYSQL_ROOT_PASSWORD  <-- intentionally absent
+# They must be provided via: docker --run envfile
+# docker buildx build --secret id=mytoken,src=mytoken.txt
 # ENV MYSQL_USER           <-- intentionally absent
 # ENV MYSQL_PASSWORD       <-- intentionally absent
+# ENV MYSQL_ROOT_PASSWORD  <-- intentionally absent
 # ENV MYSQL_DATABASE       <-- intentionally absent
+# ENV MASTER_PASSWORD        <-- intentionally absent
+RUN --mount=type=secret,id=mysql_user \
+    MYSQL_USER=$(cat /run/secrets/mysql_user && \
+    echo "Using token of length: ${#MYSQL_USER}
+RUN --mount=type=secret,id=mysql_password \
+    MYSQL_PASSWORD=$(cat /run/secrets/mysql_password && \
+    echo "Using token of length: ${#MYSQL_PASSWORD}
+RUN --mount=type=secret,id=mysql_root_password \
+    MYSQL_ROOT_PASSWORD=$(cat /run/secrets/mysql_root_password && \
+    echo "Using token of length: ${#MYSQL_ROOT_PASSWORD}
+RUN --mount=type=secret,id=mysql_database \
+    MYSQL_DATABASE=$(cat /run/secrets/mysql_database && \
+    echo "Using token of length: ${#MYSQL_DATABASE}
+RUN --mount=type=secret,id=master_password \
+    MASTER_PASSWORD=$(cat /run/secrets/master_password && \
+    echo "Using token of length: ${#MASTER_PASSWORD}
 
 COPY conf.d/my.cnf /etc/my.cnf.d/my.cnf
 RUN sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS}/" /etc/my.cnf.d/my.cnf
