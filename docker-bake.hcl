@@ -22,38 +22,18 @@ variable "BALENA_ARCH" {
 # ---------------------------------------------------------------------------
 variable "MYSQL_ROOT_PASSWORD" {
   default   = "missing-root-password"
-  validation {
-    condition = MYSQL_ROOT_PASSWORD != ""
-    error_message = "The variable 'MYSQL_ROOT_PASSWORD' must not be empty."
-  }
 }
 variable "MYSQL_USER" {
   default   = "missing-user-name"
-  validation {
-    condition = MYSQL_USER != ""
-    error_message = "The variable 'MYSQL_USER' must not be empty."
-  }
 }
 variable "MYSQL_PASSWORD" {
   default   = "missing-password"
-  validation {
-    condition = MYSQL_PASSWORD != ""
-    error_message = "The variable 'MYSQL_PASSWORD' must not be empty."
-  }
 }
 variable "MYSQL_DATABASE" {
   default   = "missing-database-name"
-  validation {
-    condition = MYSQL_DATABASE != ""
-    error_message = "The variable 'MYSQL_DATABASE' must not be empty."
-  }
 }
 variable "MASTER_PASSWORD" {
   default   = "missing-master-password"
-  validation {
-    condition = MASTER_PASSWORD != ""
-    error_message = "The variable 'MASTER_PASSWORD' must not be empty."
-  }
 }
 
 group "default" {
