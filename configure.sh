@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 set -eu
-
-# Fixes env variables unset
-DOCKER_USER="${DOCKER_USER:-betothreeprod}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0
-
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=Scripts/lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
@@ -18,11 +14,11 @@ composer_args="-d $TOPDIR update --no-interaction"
 composer_nodev="--no-dev"
 composer="${composer_args} ${composer_nodev}"
 if [ -n "$docker" ]; then
-  log_daemon_msg "Local Test values, bootargs...: ${pargs}"
+  # Fixes env variables unset
+  DOCKER_USER="${DOCKER_USER:-"$USER"}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0
   # shellcheck source=Scripts/fooargs.sh
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
 else
-  log_daemon_msg "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
   . "$TOPDIR/Scripts/bootargs.sh" "$@"
 fi

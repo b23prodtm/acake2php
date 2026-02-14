@@ -17,12 +17,6 @@ rm -f deployment/images/mysqldb/conf.d/custom.cnf
 # Fixes: unbound variables on ubuntu
 REV=$(git rev-parse HEAD 2>/dev/null)
 
-# Export environment variables
-export DOCKER_USER="${DOCKER_USER:-betothreeprod}"
-export COLUMNS=0
-export LINES=0
-export SYSTEMD_NO_WRAP=0
-
 balena_deploy "${BASH_SOURCE[0]}" "$@"
 
 if [ -n "$REV" ]; then

@@ -7,9 +7,8 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 runner=$(parse_arg "-[rR]+|--runner" "$@")
 docker=$(parse_arg "-[dD]+|--docker" "$@")
-pargs=$(parse_arg_trim "-[rR]+|--runner" "$@")
+pargs=$(parse_arg_trim "-[rR]+|--runner|-[dD]+|--docker"  "$@")
 if [ -n "$docker" ]; then
-  log_daemon_msg "Local Test values, bootargs...: ${pargs}"
   # shellcheck source=Scripts/fooargs.sh
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
 else

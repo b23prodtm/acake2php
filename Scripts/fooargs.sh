@@ -3,8 +3,7 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ "$incFOO_ARGS" -eq 0 ]; then
   export incFOO_ARGS=1
   set -eu
   docker=$(parse_arg "--docker" "$@")
-  travis=$(parse_arg "--travis" "$@")
-  log_daemon_msg  "Locally Testing values, bootargs...: $*"
+  log_daemon_msg  "TEST MODE, $0...: $*"
   #; Common Environment profile
   [[ ! -e .env || ! -e common.env ]] \
   && printf "Missing environment configuration, please run ./deploy.sh %s --nobuild first." "$(arch)" \
@@ -20,7 +19,7 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ "$incFOO_ARGS" -eq 0 ]; then
   #             - Continuous Integration
   #               $ .circleci/build.sh
   #
-  if [ -n "$docker" ] || [ -n "$travis" ]; then
+  if [ -n "$docker" ]; then
     export MYSQL_HOST=${MYSQL_HOST:-$(hostname)}
     export PGSQL_HOST=${MYSQL_HOST:-$(hostname)}
   fi
@@ -29,12 +28,12 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ "$incFOO_ARGS" -eq 0 ]; then
   export MYSQL_TCP_PORT=${MYSQL_TCP_PORT:-'3306'}
   export MYSQL_USER=${MYSQL_USER:-'maria'}
   #; To override, use shell parameter -t <password> instead
-  [ ! "$travis" ] && export MYSQL_PASSWORD=${MYSQL_PASSWORD:-'maria-abc'}
+  export MYSQL_PASSWORD=${MYSQL_PASSWORD:-'maria-abc'}
   export MYSQL_DATABASE=${MYSQL_DATABASE:-'aria_db'}
   #; To override, use shell parameter -dbase=<name> instead
   export MYSQL_ROOT_USER=${MYSQL_ROOT_USER:-'root'}
   #; To override, shell parameter -p=<password> instead
-  [ ! "$travis" ] && export MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-'mariadb'}
+  xport MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-'mariadb'}
   #; To override, use shell parameter -tbase=<name> instead
   export TEST_MYSQL_DATABASE=${TEST_MYSQL_DATABASE:-'test'}
   export MASTER_PASSWORD=password
