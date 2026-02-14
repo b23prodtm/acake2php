@@ -42,7 +42,7 @@ done; fi
 if [ -z "$hash_file" ]; then
     hash_file="export_hash_password.sh"
 fi
-printf "%\n" "MASTER_PASSWORD_HASH will be exported as an environment value..."
+printf "%s\n" "MASTER_PASSWORD_HASH will be exported as an environment value..."
 sleep 1
 php -f getHashPassword.php -- -p "$pass" -s "$hash" -f "$hash_file"
 #; so that the shell can execute export file
