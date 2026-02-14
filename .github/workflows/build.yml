@@ -55,7 +55,7 @@ jobs:
           ln -s "%%BALENA_ARCH%%.env" %%BALENA_ARCH%%.env
           cp -vf "docker-compose.${BALENA_ARCH}" "docker-compose.yml"       
           docker buildx bake -f docker-bake.hcl \
-              --set "*.platform=${PLATFORM}" \
+            --set "*.platform=${PLATFORM}" \
             --push
 
   deploy:

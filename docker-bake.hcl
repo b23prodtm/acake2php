@@ -53,7 +53,7 @@ target "db" {
     PUID = "1000"
     PGID = "1000"
   }
-  secrets = [
+  secret = [
     "id=mysql_root_password,env=MYSQL_ROOT_PASSWORD",
     "id=mysql_user,env=MYSQL_USER",
     "id=mysql_password,env=MYSQL_PASSWORD",
@@ -77,7 +77,7 @@ target "php-fpm" {
     MYPHPCMS_LOG = "app/tmp/logs"
     HTDOCS      = "/var/www/html"
   }
-  secrets = [
+  secret = [
     "id=mysql_root_password,env=MYSQL_ROOT_PASSWORD",
     "id=mysql_user,env=MYSQL_USER",
     "id=mysql_password,env=MYSQL_PASSWORD",

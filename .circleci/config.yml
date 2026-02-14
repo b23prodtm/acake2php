@@ -66,6 +66,7 @@ jobs:
           docker_layer_caching: true
 
       - setup-buildx
+      - set-build-tag
 
       - run:
           name: Login to Docker Hub
