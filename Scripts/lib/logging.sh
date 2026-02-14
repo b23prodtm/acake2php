@@ -6,12 +6,10 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 runner=$(parse_arg "-[rR]+|--runner"  "$@")
 pargs=$(parse_arg_trim "-[rR]+|--runner"  "$@")
 if [ -n "$runner" ]; then
-  log_daemon_msg "Bootargs...: ${pargs}"
   export CAKEPHP_DEBUG_LEVEL=1
   # shellcheck source=bootargs.sh
   . "${TOPDIR}/Scripts/bootargs.sh" "$@"
 else
-  log_daemon_msg  "Locally Testing values, bootargs...: ${pargs}"
   export CAKEPHP_DEBUG_LEVEL=2
   # shellcheck source=fooargs.sh
   . "${TOPDIR}/Scripts/fooargs.sh" "$@"
