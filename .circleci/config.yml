@@ -232,25 +232,25 @@ workflows:
 
       - build-x86_64:
           context:
-            - Info-B23prodtm
+            - Info-b23prodtm
           requires:
             - shellcheck
 
       - build-aarch64:
           context:
-            - Info-B23prodtm
+            - Info-b23prodtm
           requires:
             - shellcheck
 
       - build-armhf:
           context:
-            - Info-B23prodtm
+            - Info-b23prodtm
           requires:
             - shellcheck
 
       - create-manifests:
           context:
-            - Info-B23prodtm
+            - Info-b23prodtm
           requires:
             - build-x86_64
             - build-aarch64
