@@ -9,12 +9,15 @@ services:
         PGID: 1000
     image: betothreeprod/mysqldb:latest
     environment:
+# ignored if MYSQL_ROOT_PASSWORD is available on build time
       MYSQL_RANDOM_ROOT_PASSWORD: yes
       TZ: Europe/Paris
 #    secrets:
 #      - mysql_root_password
 #      - mysql_user
 #      - mysql_password
+#      - mysql_database
+#      - master_password
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
@@ -43,11 +46,12 @@ services:
     env_file:
       - common.env
       - aarch64.env
- #   secrets:
- #     - mysql_root_password
- #     - mysql_user
- #     - mysql_password
- #     - hash_password
+#    secrets:
+#      - mysql_root_password
+#      - mysql_user
+#      - mysql_password
+#      - mysql_database
+#      - master_password
     environment:
       CAKEPHP_DEBUG_LEVEL: "2"
       COLLECT_COVERAGE: false
@@ -115,22 +119,4 @@ volumes:
 networks:
   cake:
     external: false
-
-
-# ---------------------------------------------------------------------------
-# Secrets — each file contains a single value, no trailing newline.
-# Create them before first run:
-#   echo -n "s3cr3t" > ./secrets/mysql_root_password.txt
-#   echo -n "maria" > ./secrets/mysql_user.txt
-#   ...
-# ---------------------------------------------------------------------------
-#secrets:
-#  mysql_root_password:
-#    file: ./secrets/mysql_root_password.txt
-#  mysql_user:
-#    file: ./secrets/mysql_user.txt
-#  mysql_password:
-#    file: ./secrets/mysql_password.txt
-#  hash_password:
-#    file: ./secrets/hash_password.txt
 
