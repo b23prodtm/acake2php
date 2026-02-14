@@ -82,7 +82,7 @@ jobs:
             export PLATFORM=linux/amd64
             
             echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
-            ln -s "%%BALENA_ARCH%%.env" %%BALENA_ARCH%%.env
+            ln -s "${BALENA_ARCH}env" "${BALENA_ARCH}.env"
             cp -vf "docker-compose.${BALENA_ARCH}" "docker-compose.yml"
             docker buildx bake -f docker-bake.hcl \
               --set "*.platform=${PLATFORM}" \
@@ -122,7 +122,7 @@ jobs:
             export PLATFORM=linux/arm64
             
             echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
-            ln -s "%%BALENA_ARCH%%.env" %%BALENA_ARCH%%.env
+            ln -s "${BALENA_ARCH}env" "${BALENA_ARCH}.env"
             cp -vf "docker-compose.${BALENA_ARCH}" "docker-compose.yml"            
             docker buildx bake -f docker-bake.hcl \
               --set "*.platform=${PLATFORM}" \
@@ -162,7 +162,7 @@ jobs:
             export PLATFORM=linux/arm/v7
             
             echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
-            ln -s "%%BALENA_ARCH%%.env" %%BALENA_ARCH%%.env
+            ln -s "${BALENA_ARCH}env" "${BALENA_ARCH}.env"
             cp -vf "docker-compose.${BALENA_ARCH}" "docker-compose.yml"       
             docker buildx bake -f docker-bake.hcl \
               --set "*.platform=${PLATFORM}" \
