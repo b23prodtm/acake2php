@@ -4,7 +4,7 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ "$incFOO_ARGS" -eq 0 ]; then
   set -eu
   docker=$(parse_arg "--docker" "$@")
   travis=$(parse_arg "--travis" "$@")
-  log_daemon_msg  "Locally Testing values, bootargs...: ${@}"
+  log_daemon_msg  "Locally Testing values, bootargs...: $*"
   #; Common Environment profile
   [[ ! -e .env || ! -e common.env ]] \
   && printf "Missing environment configuration, please run ./deploy.sh %s --nobuild first." "$(arch)" \
