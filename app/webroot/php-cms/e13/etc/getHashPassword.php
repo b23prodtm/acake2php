@@ -20,11 +20,11 @@ for ($i = 0; $i < $argc; $i++) {
         }
 }
 $encrypted = crypt(md5($pass), $salt);
-$msg = "Password was encrypted with $salt : " . $encrypted . "\nYou can use it as GET_HASH_PASSWORD. Goodbye !\n";
+$msg = "Password was encrypted with $salt : " . $encrypted . "\nYou can use it as MASTER_PASSWORD_HASH. Goodbye !\n";
 if ($argc > 0) {
         /** command line ./configure.sh script */
         echo $msg;
-        file_put_contents($hash_file, "#!/usr/bin/env bash\nexport GET_HASH_PASSWORD=" . $encrypted);
+        file_put_contents($hash_file, "#!/usr/bin/env bash\nexport MASTER_PASSWORD_HASH=" . $encrypted);
 }
 if ($argc == 0):
         /* no arg == HTTP REQUEST */

@@ -42,8 +42,8 @@ show_password_status "root" "MYSQL_ROOT_PASSWORD" "is configuring ${runner} ${do
 #; if the full set of the arguments exists, there won't be any prompt in the shell
 while [[ "$#" -gt 0 ]]; do case $1 in
   -[pP]*|--password)
-    #; GET_HASH_PASSWORD
     shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -p ${*:2}" "${cyan}Step 1. Get an encrypted password.\n${nc}" "-Y"
+    show_password_status "admin" "MASTER_PASSWORD_HASH" "was set up."
     shift;;
   -[dD]*|--mig-database)
     shell_prompt "$TOPDIR/migrate-database.sh ${docker} ${runner} ${*:2}" "${cyan}Step 2. Migrate database\n${nc}" "-Y"

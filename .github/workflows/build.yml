@@ -40,6 +40,11 @@ jobs:
         env:
           BALENA_ARCH: ${{ matrix.arch }}
           BAKE_TAG: ${{ steps.sanitize.outputs.tag }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          MASTER_PASSWORD: ${{ secrets.MASTER_PASSWORD }}
         run: |
           case "${BALENA_ARCH}" in
             "armhf")    export PLATFORM="linux/arm/v7"  ;;
@@ -47,9 +52,15 @@ jobs:
             "x86_64")   export PLATFORM="linux/amd64"   ;;
             *)          export PLATFORM="linux/$(uname -m)" ;;
           esac
-          cp -vf "docker-compose.${BALENA_ARCH}" docker-compose.yml
+          ln -s "%%BALENA_ARCH%%.env" %%BALENA_ARCH%%.env
+          cp -vf "docker-compose.${BALENA_ARCH}" "docker-compose.yml"       
           docker buildx bake -f docker-bake.hcl \
-            --set "*.platform=${PLATFORM}" \
+              --set "*.platform=${PLATFORM}" \
+              --secret id=mysql_user,env=MYSQL_USER \
+              --secret id=mysql_password,env=MYSQL_PASSWORD \
+              --secret id=mysql_root_password,env=MYSQL_ROOT_PASSWORD \
+              --secret id=mysql_database,env=MYSQL_DATABASE \
+              --secret id=master_password,env=MASTER_PASSWORD \
             --push
 
   deploy:

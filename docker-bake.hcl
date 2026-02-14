@@ -32,7 +32,7 @@ variable "MYSQL_PASSWORD" {
   default   = ""
 #  sensitive = true
 }
-variable "HASH_PASSWORD" {
+variable "MASTER_PASSWORD" {
   default   = ""
 #  sensitive = true
 }
@@ -57,6 +57,8 @@ target "db" {
     "id=mysql_root_password,env=MYSQL_ROOT_PASSWORD",
     "id=mysql_user,env=MYSQL_USER",
     "id=mysql_password,env=MYSQL_PASSWORD",
+    "id=mysql_database,env=MYSQL_DATABASE",
+    "id=master_password,env=MASTER_PASSWORD",
   ]
 }
 
@@ -79,7 +81,8 @@ target "php-fpm" {
     "id=mysql_root_password,env=MYSQL_ROOT_PASSWORD",
     "id=mysql_user,env=MYSQL_USER",
     "id=mysql_password,env=MYSQL_PASSWORD",
-    "id=hash_password,env=HASH_PASSWORD",
+    "id=mysql_database,env=MYSQL_DATABASE",
+    "id=master_password,env=MASTER_PASSWORD",
   ]
 }
 

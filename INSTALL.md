@@ -28,13 +28,14 @@ Very few variables are defined by default. It provides host-container-server com
   
   		# Open https://${SERVER_NAME}/etc/getHashPassword.php or type $ ./configure.sh -p password -s hash
   		# Get new staff credentials (url=/admin/index.php)
-                - GET_HASH_PASSWORD: (let's encrypt it from above)
+                - MASTER_PASSWORD_HASH: (let's encrypt it from above)
   
 		# Database name
   		- MYSQL_DATABASE: aria_db
 		# Persistent ROOT connection credentials
-		- MYSQL_HOST: localhost
-		- MYSQL_ROOT_PASSWORD: mariadb
+		- MYSQL_USER: maria
+                - MYSQL_USER_PASSWORD: Some-robust-Password
+		- MYSQL_ROOT_PASSWORD: SoMe-MorE-Robust-PAssWOrd!
 
 ## Some configuration. All variables may be changed to your needs:
       
