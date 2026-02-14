@@ -100,19 +100,19 @@ ENV TEST_MYSQL_DATABASE=${TEST_MYSQL_DATABASE:-"test"}
 # ENV MYSQL_DATABASE       <-- intentionally absent
 # ENV MASTER_PASSWORD        <-- intentionally absent
 RUN --mount=type=secret,id=mysql_user \
-    MYSQL_USER=$(cat /run/secrets/mysql_user && \
+    MYSQL_USER=$(cat /run/secrets/mysql_user) && \
     echo "Using token of length: ${#MYSQL_USER}"
 RUN --mount=type=secret,id=mysql_password \
-    MYSQL_PASSWORD=$(cat /run/secrets/mysql_password && \
+    MYSQL_PASSWORD=$(cat /run/secrets/mysql_password) && \
     echo "Using token of length: ${#MYSQL_PASSWORD}"
 RUN --mount=type=secret,id=mysql_root_password \
-    MYSQL_ROOT_PASSWORD=$(cat /run/secrets/mysql_root_password && \
+    MYSQL_ROOT_PASSWORD=$(cat /run/secrets/mysql_root_password) && \
     echo "Using token of length: ${#MYSQL_ROOT_PASSWORD}"
 RUN --mount=type=secret,id=mysql_database \
-    MYSQL_DATABASE=$(cat /run/secrets/mysql_database && \
+    MYSQL_DATABASE=$(cat /run/secrets/mysql_database) && \
     echo "Using token of length: ${#MYSQL_DATABASE}"
 RUN --mount=type=secret,id=master_password \
-    MASTER_PASSWORD=$(cat /run/secrets/master_password && \
+    MASTER_PASSWORD=$(cat /run/secrets/master_password) && \
     echo "Using token of length: ${#MASTER_PASSWORD}"
 
 # Install necessary PHP extensions and dependencies
