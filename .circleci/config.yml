@@ -72,7 +72,6 @@ jobs:
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
-      - pass-secrets
       - run:
           name: Build and push x86_64
           command: |
