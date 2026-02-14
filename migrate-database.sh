@@ -5,27 +5,28 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=Scripts/lib/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
-runner=$(parse_arg "-[cC]+|--runner" "$@")
-docker=$(parse_arg "--docker" "$@")
-travis=$(parse_arg "--travis" "$@")
-pargs=$(parse_arg_trim "-[cC]+|--runner|--docker|--travis" "$@")
-if [ -n "$runner" ]; then
+runner=$(parse_arg "-[rR]+|--runner" "$@")
+docker=$(parse_arg "-[dD]+|--docker" "$@")
+pargs=$(parse_arg_trim "-[rR]+|--runner" "$@")
+if [ -n "$docker" ]; then
+  log_daemon_msg "Local Test values, bootargs...: ${pargs}"
+  # shellcheck source=Scripts/fooargs.sh
+  . "$TOPDIR/Scripts/fooargs.sh" "$@"
+else
   log_daemon_msg "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
   . "$TOPDIR/Scripts/bootargs.sh" "$@"
-else
-  log_daemon_msg "Locally Testing values, bootargs...: ${pargs}"
-  # shellcheck source=Scripts/fooargs.sh
-  . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi
 LOG=$(new_cake_log "$travis" "$runner" "$docker") && log_daemon_msg "$LOG"
 dbfile=Config/app_local.template
 schemafile=Config/Schema/AppSchema.template
 usage=("" \
-"Usage: $0 [-r] [-i] [-u]" \
+"Usage: $0 [-r] [-i] [-u] [-d]" \
 "          -------------" \
-"          -r, --runner, --travis" \
-"                      CircleCI and self-host runner or Travis CI job" \
+"          -r, --runner" \
+"                      Environment variables are provided by remote container orchestrator (Production Mode)" \
+"          -d, --docker" \
+"                      Environment variables are provided by a DockerMachine (Local Test Mode)" \
 "          -i          Make the migration files from ${dbfile} and ${schemafile}" \
 "          -u          Migrate the database in Config/Migrations/" \
 "          -v, --verbose" \
@@ -45,7 +46,7 @@ cx_args="--connection=default"
 test_args="app Controller/PagesController --stderr >> $LOG"
 MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
 while [ "$#" -gt 0 ]; do case "$1" in
-  --docker )
+  -[dD]*|--docker )
     mode=$((mode | docker_bit))
     bash -c "$TOPDIR/Scripts/start_daemon.sh ${docker}"
     ;;
@@ -76,7 +77,7 @@ while [ "$#" -gt 0 ]; do case "$1" in
   -[hH]*|--help )
     printf "%s\n" "${usage[@]}"
     exit 0;;
-  -[rR]*|--runner|--travis)
+  -[rR]*|--runner)
     mode=$((mode | runner_bit))
     ;;
   --testunitbase*)

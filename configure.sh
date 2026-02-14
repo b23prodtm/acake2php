@@ -11,29 +11,30 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 # shellcheck source=Scripts/lib/util.sh
 . "$TOPDIR/Scripts/lib/util.sh"
-runner=$(parse_arg "-[rR]+|--runner"  "$@")
-docker=$(parse_arg "--docker" "$@")
-pargs=$(parse_arg_trim "--docker|-[rR]+|--runner" "$@")
+runner=$(parse_arg "-[rR]+|--runner" "$@")
+docker=$(parse_arg "-[dD]+|--docker" "$@")
+pargs=$(parse_arg_trim "-[rR]+|--runner|-[dD]+|--docker"  "$@")
 composer_args="-d $TOPDIR update --no-interaction"
 composer_nodev="--no-dev"
 composer="${composer_args} ${composer_nodev}"
-if [ -n "$runner" ]; then
+if [ -n "$docker" ]; then
+  log_daemon_msg "Local Test values, bootargs...: ${pargs}"
+  # shellcheck source=Scripts/fooargs.sh
+  . "$TOPDIR/Scripts/fooargs.sh" "$@"
+else
   log_daemon_msg "Bootargs...: ${pargs}"
   # shellcheck source=Scripts/bootargs.sh
   . "$TOPDIR/Scripts/bootargs.sh" "$@"
-else
-  log_daemon_msg "Locally Testing values, bootargs...: ${pargs}"
-  # shellcheck source=Scripts/fooargs.sh
-  . "$TOPDIR/Scripts/fooargs.sh" "$@"
 fi
 usage=("" \
-"Usage: $0 [-r|--runner|--travis] [-p password -s hash [-f filename]]" \
-"          [[-d|--mig-database] [options]]" \
-"          --runner       A test or migrate for CI self-host runner build" \
+"Usage: $0 [-r|-d] [-p password -s hash [-f filename]]" \
+"          [[-m|--mig-database] [options]]" \
+"          -r,--runner       Production Mode with container runner" \
+"          -d,--docker       Test with Docker Machine" \
 "          -p,--password <password> -s <hash> [-f <save-filename>]" \
 "                         Setup administrator <password> with md5 <hash>. " \
 "                         (Optional) A filename to save a shell script export." \
-"          -d, --mig-database [options]" \
+"          -m, --mig-database [options]" \
 "                         Migrate Database (see $0 --mig-database --help)" \
 "          --development  Install composer dependencies" \
 "")
@@ -45,7 +46,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -p ${*:2}" "${cyan}Step 1. Get an encrypted password.\n${nc}" "-Y"
     show_password_status "admin" "MASTER_PASSWORD_HASH" "was set up."
     shift;;
-  -[dD]*|--mig-database)
+  -[mM]*|--mig-database)
     shell_prompt "$TOPDIR/migrate-database.sh ${docker} ${runner} ${*:2}" "${cyan}Step 2. Migrate database\n${nc}" "-Y"
     break;;
   -[sS]*|-[fF]*)
@@ -59,15 +60,15 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   --help )
     printf "%s\n" "${usage[@]}"
     exit 0;;
-  -[rR]*|--runner|--travis )
+  -[rR]*|--runner )
     # shellcheck disable=SC2154
     echo -e "${green}--runner mode...${nc}"
     ;;
-  --docker )
+  -[dD]*|--docker )
     slogger -st docker "check database container id"
     docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
     ;;
-  --development )
+  --dev* )
     composer="$composer_args -W"
     ;;
   -[vV]*|--verbose )

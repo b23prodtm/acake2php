@@ -54,10 +54,9 @@ RUN apk del build-base \
 
 # ----------------------
 # About Dockerfile ARGS:
-# ALL the following ARGS are DUPLICATED in common.env and $BALENA_ARCH.env
-# and Scripts/fooargs.sh for development phase.
-# If not set in common.env, it must be set in the host machine environment
-# when ./start.sh or ./test.sh or in development phase.
+# ALL the following ARGS have defaults values in common.env and $BALENA_ARCH.env
+# and Scripts/fooargs.sh (testing fake values)
+# For Production, use environment variables in your container orchestrator (Docker).
 # ----------------------
 #                        Values in default (no-arg) production mode
 #                        May be overriden in docker-compose.yml
@@ -148,8 +147,8 @@ RUN chmod +x Scripts/*.sh \
     && git config --global user.name "B R T" \
     && git config --global --add safe.directory $PWD \
     && ./configure.sh --runner -p ${MASTER_PASSWORD} -s "$(openssl rand -hex 4)" --development \
-    && ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
-    && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
+    && ./migrate-database.sh --runner -i -u ${MIGRATE_OPTION} \
+    && ./migrate-database.sh --runner -u ${MIGRATE_OPTION} --connection=test
 
 # As set in /etc/php-fpm.d/
 EXPOSE 9001
