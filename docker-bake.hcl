@@ -21,23 +21,38 @@ variable "BALENA_ARCH" {
 # CI just needs to export these vars before invoking bake — nothing else.
 # ---------------------------------------------------------------------------
 variable "MYSQL_ROOT_PASSWORD" {
-  default   = ""
+  validation {
+    condition = MYSQL_ROOT_PASSWORD != ""
+    error_message = "The variable 'MYSQL_ROOT_PASSWORD' must not be empty."
+  }
 #  sensitive = true
 }
 variable "MYSQL_USER" {
-  default   = ""
+  validation {
+    condition = MYSQL_USER != ""
+    error_message = "The variable 'MYSQL_USER' must not be empty."
+  }
 #  sensitive = true
 }
 variable "MYSQL_PASSWORD" {
-  default   = ""
+  validation {
+    condition = MYSQL_PASSWORD != ""
+    error_message = "The variable 'MYSQL_PASSWORD' must not be empty."
+  }
 #  sensitive = true
 }
 variable "MYSQL_DATABASE" {
-  default   = ""
+  validation {
+    condition = MYSQL_DATABASE != ""
+    error_message = "The variable 'MYSQL_DATABASE' must not be empty."
+  }
 #  sensitive = true
 }
 variable "MASTER_PASSWORD" {
-  default   = ""
+  validation {
+    condition = MASTER_PASSWORD != ""
+    error_message = "The variable 'MASTER_PASSWORD' must not be empty."
+  }
 #  sensitive = true
 }
 
