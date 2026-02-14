@@ -22,19 +22,19 @@ variable "BALENA_ARCH" {
 # ---------------------------------------------------------------------------
 variable "MYSQL_ROOT_PASSWORD" {
   default   = ""
-#  sensitive = true
+  sensitive = true
 }
 variable "MYSQL_USER" {
   default   = ""
-#  sensitive = true
+  sensitive = true
 }
 variable "MYSQL_PASSWORD" {
   default   = ""
-#  sensitive = true
+  sensitive = true
 }
 variable "MASTER_PASSWORD" {
   default   = ""
-#  sensitive = true
+  sensitive = true
 }
 
 group "default" {
