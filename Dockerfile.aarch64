@@ -144,7 +144,12 @@ RUN chmod +x Scripts/*.sh \
     && git config --global user.name "B R T" \
     && git config --global --add safe.directory $PWD
 
-RUN ./configure.sh --runner -v -p ${MASTER_PASSWORD} -s "$(openssl rand -hex 4)" --dev \
+RUN --mount=type=secret,id=mysql_user,env=MYSQL_USER \
+    --mount=type=secret,id=mysql_password,env=MYSQL_PASSWORD \
+    --mount=type=secret,id=mysql_root_password,env=MYSQL_ROOT_PASSWORD \
+    --mount=type=secret,id=mysql_database,env=MYSQL_DATABASE \
+    --mount=type=secret,id=master_password,env=MASTER_PASSWORD \
+    && ./configure.sh --runner -v -p ${MASTER_PASSWORD} -s "$(openssl rand -hex 4)" --dev \
     && ./migrate-database.sh --runner -i -u ${MIGRATE_OPTION} \
     && ./migrate-database.sh --runner -u ${MIGRATE_OPTION} --connection=test
 
