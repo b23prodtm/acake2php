@@ -10,7 +10,7 @@ flag runner -r --runner
 end
 EOF
 log_progress_msg "Auto configuration..."
-log_debug "$(log_progress_msg "hash file that is stored in webroot to allow administrator privileges")
+log_debug "$(log_progress_msg "hash file that is stored in webroot to allow administrator privileges")"
 if [ -z "${MASTER_PASSWORD_HASH:-}" ] && [ -z "$runner" ]; then
   hash="${TOPDIR}/master_password_hash"
   while [ ! -f "$hash" ]; do
