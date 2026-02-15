@@ -149,7 +149,9 @@ RUN chmod +x Scripts/*.sh \
     && git config --global user.name "B R T" \
     && git config --global --add safe.directory $PWD
 
-RUN ./configure.sh --runner -v -p ${MASTER_PASSWORD} -s "$(openssl rand -hex 4)" --dev \
+RUN --mount=type=secret,id=master_password \
+    MASTER_PASSWORD="$(cat /run/secrets/master_password || true)" \
+    ./configure.sh --runner -v ${MASTER_PASSWORD:+-p "$MASTER_PASSWORD"} -s "$(openssl rand -hex 4)" --dev \
     && ./migrate-database.sh --runner -i -u ${MIGRATE_OPTION} \
     && ./migrate-database.sh --runner -u ${MIGRATE_OPTION} --connection=test
 
