@@ -124,7 +124,7 @@ parse_args() {
         done
 
         if [ "$matched" -eq 0 ]; then
-            printf "Unknown argument: %s\n" "$arg" >&2
+            printf "$0 [$_flags] [$_opts] [$_positional]: Unknown argument: %s\n" "$arg" >&2
             return 1
         fi
     done
