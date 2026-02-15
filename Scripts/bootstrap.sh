@@ -5,7 +5,10 @@ TOPDIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 . "${TOPDIR}/Scripts/lib/logging.sh"
 # shellcheck source=lib/shell_prompt.sh
 . "${TOPDIR}/Scripts/lib/shell_prompt.sh"
-runner=$(parse_arg "-[rR]+|--runner"  "$@")
+parse_args "$@" <<EOF
+flag runner -r --runner
+end
+EOF
 pargs=$(parse_arg_trim "-[rR]+|--runner"  "$@")
 log_daemon_msg "Auto configuration..."
 #; hash file that is stored in webroot to allow administrator privileges
