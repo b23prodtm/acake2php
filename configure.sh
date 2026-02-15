@@ -8,6 +8,7 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=Scripts/lib/util.sh
 . "$TOPDIR/Scripts/lib/util.sh"
 parse_args "$@" <<EOF
+flag verbose -v --verbose
 flag runner -r --runner
 flag docker -d --docker
 option password -p --password
@@ -19,13 +20,6 @@ end
 EOF
 composer_args="-d $TOPDIR update --no-interaction"
 composer_nodev="--no-dev"
-if [ -n "$docker" ]; then
-  # shellcheck source=Scripts/fooargs.sh
-  . "$TOPDIR/Scripts/fooargs.sh" "$@"
-else
-  # shellcheck source=Scripts/bootargs.sh
-  . "$TOPDIR/Scripts/bootargs.sh" "$@"
-fi
 usage=("" \
 "Usage: $0 [-r|-d] [-p password -s hash [-f filename]]" \
 "          [[-m|--mig-database] [options]]" \
@@ -65,6 +59,11 @@ if [ -n "$docker" ]; then
   set -- "--docker" "$@"
   log_debug "$(log_progress_msg "Check database container id")"
   docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
+  # shellcheck source=Scripts/fooargs.sh
+  . "$TOPDIR/Scripts/fooargs.sh" "$@"
+else
+  # shellcheck source=Scripts/bootargs.sh
+  . "$TOPDIR/Scripts/bootargs.sh" "$@"
 fi
 if [ -n "$migrate" ]; then
   log_debug "$(log_progress_msg "MIGRATION")"
