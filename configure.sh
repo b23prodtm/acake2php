@@ -10,6 +10,7 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 runner=$(parse_arg "-[rR]+|--runner" "$@")
 docker=$(parse_arg "-[dD]+|--docker" "$@")
 pargs=$(parse_arg_trim "-[rR]+|--runner|-[dD]+|--docker"  "$@")
+log_debug ": $0 [$runner] [$docker] [$pargs]"
 composer_args="-d $TOPDIR update --no-interaction"
 composer_nodev="--no-dev"
 composer="${composer_args} ${composer_nodev}"
