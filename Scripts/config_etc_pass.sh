@@ -30,11 +30,9 @@ if [ -z "$hash" ]; then while [ "$hash" = "" ]; do
 done; fi
 # read filename if not set
 if [ -z "$hash_file" ]; then
-    hash_file="/run/secrets/master_password_hash"
+    hash_file="master_password_hash"
 fi
-printf "%s\n" "MASTER_PASSWORD_HASH secret will be exported as an environment value..."
-sleep 1
-php -f "${TOPDIR}/app/webroot/php-cms/e13/etc/getHashPassword.php" -- -p "$pass" -s "$hash" -f "$hash_file"
-export MASTER_PASSWORD_HASH="$(cat "$hash_file")"
-log_daemon_msg "Saved in $hash_file .\n"
+printf "%s\n" "MASTER_PASSWORD ..."
+php -f "{TOPDIR}/app/webroot/php-cms/e13/etc/getHashPassword.php" -- -p "$pass" -s "$hash" -f "$hash_file"
+log_daemon_msg "Saved a hashed password in $hash_file .\n"MY
 cd "$pwd" || log_failure_msg "No such directory %s\n" "$dir"

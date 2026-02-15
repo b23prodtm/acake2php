@@ -12,12 +12,11 @@ EOF
 log_daemon_msg "Auto configuration..."
 #; hash file that is stored in webroot to allow administrator privileges
 if [ -z "${MASTER_PASSWORD_HASH:-}" ] && [ -z "$runner" ]; then
-  hash="$TOPDIR/${MYPHPCMS_DIR}/e13/etc/export_hash_password.sh"
+  hash="${TOPDIR}/master_password_hash"
   while [ ! -f "$hash" ]; do
-    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh" "define a value for missing MASTER_PASSWORD_HASH" "${DEBIAN_FRONTEND:-}"
+    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -f $hash" "define a value for missing MASTER_PASSWORD_HASH" "${DEBIAN_FRONTEND:-}"
   done
-  # shellcheck source=app/webroot/php-cms/e13/etc/export_hash_password.sh
-  . "$hash"
+  export MASTER_PASSWORD_HASH="$(cat "$hash")"
 fi
 # shellcheck disable=SC2154
 echo -e "${nc}Password ${green}${MASTER_PASSWORD_HASH}${nc}"

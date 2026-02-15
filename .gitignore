@@ -1,5 +1,6 @@
 # User specific & automatically generated files #
 #################################################
+master_password_hash
 !Dockerfile.*
 !docker-compose.*
 *.sed
