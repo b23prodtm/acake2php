@@ -14,28 +14,6 @@ variable "BALENA_ARCH" {
   default = "x86_64"
 }
 
-# ---------------------------------------------------------------------------
-# Secrets — values are NEVER baked into image layers.
-# The "env=" in each secrets entry tells BuildKit to read the secret value
-# from that environment variable in the shell that runs "bake".
-# CI just needs to export these vars before invoking bake — nothing else.
-# ---------------------------------------------------------------------------
-variable "MYSQL_ROOT_PASSWORD" {
-  default   = "missing-root-password"
-}
-variable "MYSQL_USER" {
-  default   = "missing-user-name"
-}
-variable "MYSQL_PASSWORD" {
-  default   = "missing-password"
-}
-variable "MYSQL_DATABASE" {
-  default   = "missing-database-name"
-}
-variable "MASTER_PASSWORD" {
-  default   = "missing-master-password"
-}
-
 group "default" {
   targets = ["db", "php-fpm", "httpd", "balena-storage"]
 }
@@ -53,11 +31,11 @@ target "db" {
     PGID = "1000"
   }
   secret = [
-    "id=mysql_root_password,env=MYSQL_ROOT_PASSWORD",
-    "id=mysql_user,env=MYSQL_USER",
-    "id=mysql_password,env=MYSQL_PASSWORD",
-    "id=mysql_database,env=MYSQL_DATABASE",
-    "id=master_password,env=MASTER_PASSWORD",
+    "id=mysql_root_password,src=.balena/secrets/secret_mysql_root_password",
+    "id=mysql_user,src=.balena/secrets/secret_mysql_user",
+    "id=mysql_password,src=.balena/secrets/secret_mysql_password",
+    "id=mysql_database,src=.balena/secrets/secret_mysql_database",
+    "id=master_password,src=.balena/secrets/secret_master_password",
   ]
 }
 
@@ -77,11 +55,11 @@ target "php-fpm" {
     HTDOCS      = "/var/www/html"
   }
   secret = [
-    "id=mysql_root_password,env=MYSQL_ROOT_PASSWORD",
-    "id=mysql_user,env=MYSQL_USER",
-    "id=mysql_password,env=MYSQL_PASSWORD",
-    "id=mysql_database,env=MYSQL_DATABASE",
-    "id=master_password,env=MASTER_PASSWORD",
+    "id=mysql_root_password,src=.balena/secrets/secret_mysql_root_password",
+    "id=mysql_user,src=.balena/secrets/secret_mysql_user",
+    "id=mysql_password,src=.balena/secrets/secret_mysql_password",
+    "id=mysql_database,src=.balena/secrets/secret_mysql_database",
+    "id=master_password,src=.balena/secrets/secret_master_password",
   ]
 }
 

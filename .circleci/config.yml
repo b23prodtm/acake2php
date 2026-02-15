@@ -28,6 +28,18 @@ commands:
             docker buildx create --name multiarch --driver docker-container --use --bootstrap
             docker buildx inspect multiarch
 
+  write-secrets:
+    description: "Store secrets in secret file on build-time"
+    steps:
+      - run:
+          name: Store secrets
+          command: |
+            echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > .balena/secrets/secret_mysql_root_password
+            echo "${{ secrets.MYSQL_USER }}" > .balena/secrets/secret_mysql_user
+            echo "${{ secrets.MYSQL_PASSWORD }}" > .balena/secrets/secret_mysql_password
+            echo "${{ secrets.MYSQL_DATABASE }}" > .balena/secrets/secret_mysql_database
+            echo "${{ secrets.MASTER_PASSWORD }}" > .balena/secrets/secret_master_password
+            
   set-build-tag:
     description: "Set BUILD_TAG environment variable based on branch or tag"
     steps:
@@ -67,12 +79,13 @@ jobs:
 
       - setup-buildx
       - set-build-tag
+      - write-secrets
 
       - run:
           name: Login to Docker Hub
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
+      
       - run:
           name: Build and push x86_64
           command: |
@@ -107,6 +120,7 @@ jobs:
 
       - setup-buildx
       - set-build-tag
+      - write-secrets
 
       - run:
           name: Login to Docker Hub
@@ -147,6 +161,7 @@ jobs:
 
       - setup-buildx
       - set-build-tag
+      - write-secrets
 
       - run:
           name: Login to Docker Hub
