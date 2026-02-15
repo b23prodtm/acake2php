@@ -36,6 +36,7 @@ function test_arg_trim() {
   set -- -o --data 0x500 -d 0x44 -resting-arg
   printf "arg list: %s\n" "$*"
 
+  # shellcheck disable=SC2046 
   set -- $(trim_args "$@" <<EOF
 flag T -o --open
 end
@@ -48,6 +49,7 @@ EOF
     printf "${Z[*]}" "FAILED" "1° trim" "-o" "$*"
   fi
 
+# shellcheck disable=SC2046 
   set -- $(trim_args "$@" <<EOF
 option P -d --data
 end
