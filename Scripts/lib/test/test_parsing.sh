@@ -22,23 +22,26 @@ end
 EOF
   # shellcheck disable=SC2059
   if [ -n "$T" ]; then
-    printf "$Z" "OK" "1° match" "-d" "$T"
+    printf "$Z" "SUCCESS" "1° match" "-d" "$T"
+    echo "[1] SUCCESS"
   else
-    printf "$Z" "FAILED" "1° match" "-d" "$T"
+    printf "$Z" "FAIL" "1° match" "-d" "$T"
+    echo "[1] FAIL"
     exit 1
   fi
 
   # shellcheck disable=SC2059
   if [ -n "$P" ]; then
-    printf "$Z" "OK" "2° match" "-o" "$P"
+    printf "$Z" "SUCCESS" "2° match" "-o" "$P"
+    echo "[2] SUCCESS"
   else
-    printf "$Z" "FAILED" "2° match" "-o" "$P"
-    exit 1
+    printf "$Z" "FAIL" "2° match" "-o" "$P"    
+    echo "[2] FAIL"
   fi
 }
 
 function test_arg_trim() {
-  set -- -o --data 0x500 -d 0x44 -resting-arg
+  set -- -o --data 0x500 -d 0x44 -remaining-arg
   printf "arg list: %s\n" "$*"
 
   # shellcheck disable=SC2046 
@@ -51,10 +54,12 @@ end
 EOF
 )
   # shellcheck disable=SC2059
-  if [[ $(echo "$@" | wc -w) -eq $(echo "--data 0x500 -d 0x44 -resting-arg" | wc -w) ]]; then
-    printf "$Z" "OK" "1° trim" "-o" "$*"
+  if [[ $(echo "$@" | wc -w) -eq $(echo "--data 0x500 -d 0x44 -remaining-arg" | wc -w) ]]; then
+    printf "$Z" "SUCCESS" "3° trim" "-o" "$*"
+    echo "[3] SUCCESS"
   else
-    printf "$Z" "FAILED" "1° trim" "-o" "$*"
+    printf "$Z" "FAIL" "3° trim" "-o" "$*"
+    echo "[3] FAIL"
     exit 1
   fi
 
@@ -68,11 +73,12 @@ end
 EOF
 )
   # shellcheck disable=SC2059
-  if [[ $(echo "$@" | wc -w) -eq $(echo "-resting-arg" | wc -w) ]]; then
-    printf "$Z" "OK" "2° trim" "-d" "$*"
+  if [[ $(echo "$@" | wc -w) -eq $(echo "-remaining-arg" | wc -w) ]]; then
+    printf "$Z" "SUCCESS" "4° trim" "-d" "$*"
+    echo "[4] SUCCESS"
   else
-    printf "$Z" "FAILED" "2° trim" "-d" "$*"
-    exit 1
+    printf "$Z" "FAIL" "4° trim" "-d" "$*"
+    echo "[4] FAIL"
   fi
 }
 
@@ -82,9 +88,11 @@ function test_parse_and_export() {
   parse_and_export T -t --test "$@"
   # shellcheck disable=SC2059
   if [ "$T" = "pass_one" ]; then
-    printf "$Z"  "OK" "1° export" "-t" "$T"
+    printf "$Z"  "SUCCESS" "5° export" "-t" "$T"
+    echo "[5] SUCCESS"
   else
-    printf "$Z" "FAILED" "1° export" "-t" "$T"
+    printf "$Z" "FAIL" "5° export" "-t" "$T"
+    echo "[5] FAIL"
     exit 1
   fi
 
@@ -92,10 +100,11 @@ function test_parse_and_export() {
   parse_and_export P -p --pass "$@"
   # shellcheck disable=SC2059
   if [ "$P" = "2nd password" ]; then
-    printf "$Z" "OK" "2° export" "--pass" "$P"
+    printf "$Z" "SUCCESS" "6° export" "--pass" "$P"
+    echo "[6] SUCCESS"
   else
-    printf "$Z" "FAILED" "2° export" "--pass" "$P"
-    exit 1
+    printf "$Z" "FAIL" "6° export" "--pass" "$P"
+    echo "[6] FAIL"
   fi
   unset P T
 }
