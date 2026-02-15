@@ -9,8 +9,8 @@ parse_args "$@" <<EOF
 flag runner -r --runner
 end
 EOF
-log_daemon_msg "Auto configuration..."
-#; hash file that is stored in webroot to allow administrator privileges
+log_progress_msg "Auto configuration..."
+log_debug "$(log_progress_msg "hash file that is stored in webroot to allow administrator privileges")
 if [ -z "${MASTER_PASSWORD_HASH:-}" ] && [ -z "$runner" ]; then
   hash="${TOPDIR}/master_password_hash"
   while [ ! -f "$hash" ]; do
@@ -20,7 +20,7 @@ if [ -z "${MASTER_PASSWORD_HASH:-}" ] && [ -z "$runner" ]; then
   export MASTER_PASSWORD_HASH
 fi
 # shellcheck disable=SC2154
-echo -e "${nc}Password ${green}${MASTER_PASSWORD_HASH}${nc}"
+log_debug "$(log_progress_msg "${nc}Password ${green}${MASTER_PASSWORD_HASH}${nc}")"
 #; Install PHPUnit, performs unit tests
 #; The website must pass health checks in order to be deployed
 if [ -n "$runner" ]; then
@@ -29,7 +29,7 @@ if [ -n "$runner" ]; then
     # shellcheck source=composer.sh
     "${TOPDIR}/Scripts/composer.sh" install --dev --no-interaction --ignore-platform-reqs
   else
-   log_daemon_msg "PHPUnit ${green}[OK]${nc}"
+   log_progress_msg "PHPUnit ${green}[OK]${nc}"
   fi
   printf "%s\n" "$($phpunit --version)"
   set -- "--runner" "$@"

@@ -43,7 +43,7 @@ if [ -n "$verbose" ]; then
   "and environment VARIABLES:" \
   "$(export -p | grep "DATABASE\|MYSQL|PASSWORD")" \
   "")
-  printf "%s\n" "${text[@]}"
+  log_debug "$(printf "%s\n" "${text[@]}")"
   cx_args="${cx_args} -v"
   test_args="${test_args} -v"
 fi
@@ -63,7 +63,7 @@ fi
 # shellcheck disable=SC2154
 initialize() {
 	[ "$#" -lt 1 ] && echo "Usage: ${FUNCNAME[0]} [<file.template or php]..." && exit 1
-	log_msg_daemon "${FUNCNAME[0]} $* ..."
+	log_debug "$(log_progress_msg "${FUNCNAME[0]} $* ...")"
 	while [[ "$#" -gt 0 ]]; do case $1 in
         	*.php|*.template)
                 	template=$1
@@ -77,7 +77,7 @@ initialize() {
 #; export -f initialize
 
 if [ -n "$initialize" ]; then
-	# INITIALIZATION STUFF
+	log_progress_msg "INITIALIZATION STUFF"
 	initialize "${dbfile}" "${schemafile}"
 	bash -c "$TOPDIR/Scripts/configure_database.sh $(echo "$schemafile" | cut -d . -f 1).php"
 fi
