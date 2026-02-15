@@ -25,6 +25,7 @@ EOF
     printf "$Z" "OK" "1° match" "-d" "$T"
   else
     printf "$Z" "FAILED" "1° match" "-d" "$T"
+    exit 1
   fi
 
   # shellcheck disable=SC2059
@@ -32,6 +33,7 @@ EOF
     printf "$Z" "OK" "2° match" "-o" "$P"
   else
     printf "$Z" "FAILED" "2° match" "-o" "$P"
+    exit 1
   fi
 }
 
@@ -53,6 +55,7 @@ EOF
     printf "$Z" "OK" "1° trim" "-o" "$*"
   else
     printf "$Z" "FAILED" "1° trim" "-o" "$*"
+    exit 1
   fi
 
 # shellcheck disable=SC2046 
@@ -69,6 +72,7 @@ EOF
     printf "$Z" "OK" "2° trim" "-d" "$*"
   else
     printf "$Z" "FAILED" "2° trim" "-d" "$*"
+    exit 1
   fi
 }
 
@@ -81,6 +85,7 @@ function test_parse_and_export() {
     printf "$Z"  "OK" "1° export" "-t" "$T"
   else
     printf "$Z" "FAILED" "1° export" "-t" "$T"
+    exit 1
   fi
 
   set -- -p "2nd password" -t pass_two
@@ -90,6 +95,7 @@ function test_parse_and_export() {
     printf "$Z" "OK" "2° export" "--pass" "$P"
   else
     printf "$Z" "FAILED" "2° export" "--pass" "$P"
+    exit 1
   fi
   unset P T
 }
