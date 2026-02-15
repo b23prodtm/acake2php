@@ -42,7 +42,7 @@ display_secrets
 
 # Prompt user to edit each secret file
 for secret in "${secrets[@]}"; do
-    read -p "Do you want to edit the secret file for $secret? (y/n): " choice
+    read -r -p "Do you want to edit the secret file for $secret? (y/n): " choice
     if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
         edit_secret "$SECRETS_DIR/$secret"
         echo "$secret file updated."
