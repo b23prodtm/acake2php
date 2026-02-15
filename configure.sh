@@ -15,8 +15,6 @@ composer_args="-d $TOPDIR update --no-interaction"
 composer_nodev="--no-dev"
 composer="${composer_args} ${composer_nodev}"
 if [ -n "$docker" ]; then
-  # Fixes env variables unset
-  DOCKER_USER="${DOCKER_USER:-"$USER"}" COLUMNS=0 LINES=0 SYSTEMD_NO_WRAP=0
   # shellcheck source=Scripts/fooargs.sh
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
 else
