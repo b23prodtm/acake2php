@@ -98,16 +98,21 @@ ENV TEST_MYSQL_DATABASE=${TEST_MYSQL_DATABASE:-"test"}
 # ENV MYSQL_ROOT_PASSWORD  <-- intentionally absent
 # ENV MYSQL_DATABASE       <-- intentionally absent
 # ENV MASTER_PASSWORD        <-- intentionally absent
-RUN --mount=type=secret,id=mysql_user,env=MYSQL_USER \
-    --mount=type=secret,id=mysql_password,env=MYSQL_PASSWORD \
-    --mount=type=secret,id=mysql_root_password,env=MYSQL_ROOT_PASSWORD \
-    --mount=type=secret,id=mysql_database,env=MYSQL_DATABASE \
-    --mount=type=secret,id=master_password,env=MASTER_PASSWORD \
-    echo "Using MYSQL_USER of length: ${#MYSQL_USER}" && \
-    echo "Using MYSQL_PASSWORD of length: ${#MYSQL_PASSWORD}" && \
-    echo "Using MYSQL_ROOT_PASSWORD of length: ${#MYSQL_ROOT_PASSWORD}" && \
-    echo "Using MYSQL_DATABASE of length: ${#MYSQL_DATABASE}"&& \
-    echo "Using MASTER_PASSWORD of length: ${#MASTER_PASSWORD}"
+RUN --mount=type=secret,id=mysql_user \
+    export MYSQL_USER=$(cat /run/secrets/mysql_user) && \
+    echo "Using token of length: ${#MYSQL_USER}"
+RUN --mount=type=secret,id=mysql_password \
+    export MYSQL_PASSWORD=$(cat /run/secrets/mysql_password) && \
+    echo "Using token of length: ${#MYSQL_PASSWORD}"
+RUN --mount=type=secret,id=mysql_root_password \
+    export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/mysql_root_password) && \
+    echo "Using token of length: ${#MYSQL_ROOT_PASSWORD}"
+RUN --mount=type=secret,id=mysql_database \
+    export MYSQL_DATABASE=$(cat /run/secrets/mysql_database) && \
+    echo "Using token of length: ${#MYSQL_DATABASE}"
+RUN --mount=type=secret,id=master_password \
+    export MASTER_PASSWORD=$(cat /run/secrets/master_password) && \
+    echo "Using token of length: ${#MASTER_PASSWORD}"
 
 # Install necessary PHP extensions and dependencies
 COPY --from=ghcr.io/mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
