@@ -1,15 +1,15 @@
 version: "2.4"
-secrets:
-  mysql_root_password:
-    environment: MYSQL_ROOT_PASSWORD
-  mysql_user:
-    environment: MYSQL_USER
-  mysql_password
-    environment: MYSQL_PASSWORD
-  mysql_database:
-    environment: MYSQL_DATABASE
-  master_password:
-    environment: MASTER_PASSWORD
+#secrets:
+#  mysql_root_password:
+#    environment: MYSQL_ROOT_PASSWORD
+#  mysql_user:
+#    environment: MYSQL_USER
+#  mysql_password
+#    environment: MYSQL_PASSWORD
+#  mysql_database:
+#    environment: MYSQL_DATABASE
+#  master_password:
+#    environment: MASTER_PASSWORD
 services:
   db:
     build:
@@ -23,12 +23,12 @@ services:
 # ignored if MYSQL_ROOT_PASSWORD is available on build time
       MYSQL_RANDOM_ROOT_PASSWORD: yes
       TZ: Europe/Paris
-    secrets:
-      - mysql_root_password
-      - mysql_user
-      - mysql_password
-      - mysql_database
-      - master_password
+#    secrets:
+#      - mysql_root_password
+#      - mysql_user
+#     - mysql_password
+#      - mysql_database
+#      - master_password
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
@@ -57,12 +57,12 @@ services:
     env_file:
       - common.env
       - x86_64.env
-    secrets:
-      - mysql_root_password
-      - mysql_user
-      - mysql_password
-      - mysql_database
-      - master_password
+#    secrets:
+#      - mysql_root_password
+#      - mysql_user
+#     - mysql_password
+#      - mysql_database
+#      - master_password
     environment:
       CAKEPHP_DEBUG_LEVEL: "2"
       COLLECT_COVERAGE: false
