@@ -11,7 +11,7 @@ variable "PLATFORM" {
 }
 
 variable "BALENA_ARCH" {
-  default = "amd64"
+  default = "x86_64"
 }
 
 # ---------------------------------------------------------------------------
