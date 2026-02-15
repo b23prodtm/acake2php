@@ -2,31 +2,6 @@
 set -e
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 
-#; export -f parse_arg_exists()
-parse_arg_trim() {
- [ $# -eq 1 ] && return
- [ $# -lt 2 ] && printf "%s\n" \
- "Usage: ${FUNCNAME[0]} <match_case> list-or-\$*" \
- "Prints the argument list that's not matched in the regex-arg-case (~ patn|patn2)" \
- && exit 1
-  export arg_case=$1
-  shift
-  echo "$@" | awk 'BEGIN{FS=" "; ORS=" "; split(ENVIRON["arg_case"], a, "|"); n[0]=""} {
-    for(f=1;f<=NF;f++) {
-      n[f]=$f
-      for(i in a) {
-        if($f ~ a[i]) n[f]=""
-      }
-    }
-  } END{
-      for(f in n) {
-        if(n[f] != "") print n[f]
-      }
-  }'
-}
-
-#; export -f parse_dom_host()
-
 # parse_args:
 #   Parse arguments inside a function without touching globals.
 #   Supports:
@@ -159,16 +134,23 @@ parse_args() {
 }
 #; export -f parse_args()
 
-### -------------------------
-# parse_and_export -n NAME "--name" "$@"
-#
+# parse_and_export:
+# set local variables from arg list
+#    Supports:
+#       short OPTION "--longOption" "arg-list"
+#    Usage examples:
+#      parse_and_export -f FILENAME "--file" "-f afile.txt"
+#      parse_and_export -f FILENAME "--file" "-s --file out"
+#    After parsing:
+#      FILENAME=afile.txt
+#      FILENAME=out
 parse_and_export() {
   [ $# -lt 4 ] && printf "%s\n" \
   "Usage: ${FUNCNAME[0]} <arg-name> <export-var> <long-arg-name> <-arg list> " \
   && exit 1
-  flag=$1
-  evar=$2
-  long=$3
+  local flag=$1
+  local evar=$2
+  local long=$3
   shift 3
   parse_args "$@" <<EOF
 option $evar $flag $long

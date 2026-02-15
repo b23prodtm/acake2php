@@ -9,7 +9,6 @@ parse_args "$@" <<EOF
 flag runner -r --runner
 end
 EOF
-pargs=$(parse_arg_trim "-[rR]+|--runner"  "$@")
 log_daemon_msg "Auto configuration..."
 #; hash file that is stored in webroot to allow administrator privileges
 if [ -z "${MASTER_PASSWORD_HASH:-}" ] && [ -z "$runner" ]; then
@@ -33,5 +32,6 @@ if [ -n "$runner" ]; then
    log_daemon_msg "PHPUnit ${green}[OK]${nc}"
   fi
   printf "%s\n" "$($phpunit --version)"
+  set -- "--runner" "$@"
 fi
-bash -c "$TOPDIR/Scripts/start_daemon.sh ${pargs} ${runner}"
+bash -c "$TOPDIR/Scripts/start_daemon.sh $@"

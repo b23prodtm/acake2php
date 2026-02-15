@@ -7,16 +7,37 @@ parse_args "$@" <<EOF
 flag runner -r --runner
 end
 EOF
+# ---------------------------------------------------------------------------
+# PUBLIC API (backward compatible)
+# ---------------------------------------------------------------------------
+
+function log_msg_daemon() {
+  log_daemon_msg "$*"
+}
+function log_msg_progress() {
+  log_progress_msg "$*"
+}
+function log_msg_success() {
+  log_success_msg "$*"
+}
+function log_msg_failure() {
+  log_failure_msg "$*"
+}
+
+# Debug logging
+function debug() {
+  log_debug "$*"
+}
 
 if [ -n "$runner" ]; then
   export CAKEPHP_DEBUG_LEVEL=1
-  # shellcheck source=bootargs.sh
-  . "${TOPDIR}/Scripts/bootargs.sh" "$@"
 else
   export CAKEPHP_DEBUG_LEVEL=2
-  # shellcheck source=fooargs.sh
-  . "${TOPDIR}/Scripts/fooargs.sh" "$@"
 fi
+# ---------------------------------------------------------------------------
+# LOG FILE SUPPORT (optional)
+# ---------------------------------------------------------------------------
+
 #; Make logs folders available
 mkdir -p "${MYPHPCMS_LOG}"
 function new_cake_log() {

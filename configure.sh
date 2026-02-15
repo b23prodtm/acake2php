@@ -9,14 +9,14 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/util.sh"
 parse_args "$@" <<EOF
 flag runner -r --runner
-end
-EOF
-parse_args "$@" <<EOF
 flag docker -d --docker
+option password -p --password
+option salt -s --salt
+option file -f --file
+flag migrate -m --mig-data
+flag dev -x --dev
 end
 EOF
-pargs=$(parse_arg_trim "-[rR]+|--runner|-[dD]+|--docker"  "$@")
-log_debug ": $0 [$runner] [$docker] [$pargs]"
 composer_args="-d $TOPDIR update --no-interaction"
 composer_nodev="--no-dev"
 composer="${composer_args} ${composer_nodev}"
@@ -34,60 +34,42 @@ usage=("" \
 "          -d,--docker       Test with Docker Machine" \
 "          -p,--password <password> -s <hash> [-f <save-filename>]" \
 "                         Setup administrator <password> with md5 <hash>. " \
-"                         (Optional) A filename to save a shell script export." \
-"          -m, --mig-database [options]" \
-"                         Migrate Database (see $0 --mig-database --help)" \
-"          --development  Install composer dependencies" \
+"                         (Optional) A filename to save secret to." \
+"          -m, --mig-data [options]" \
+"                         Migrate Database (see $0 --mig-data --help)" \
+"          -x,--dev  Install composer dependencies" \
 "")
 saved=( "$@" )
-#; if the full set of the arguments exists, there won't be any prompt in the shell
-while [[ "$#" -gt 0 ]]; do case $1 in
-  -[pP]*|--password)
-    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -p ${*:2}" "${cyan}Step 1. Get an encrypted password.\n${nc}" "-Y"
-    show_password_status "admin" "MASTER_PASSWORD_HASH" "was set up."
-    shift;;
-  -[mM]*|--mig-database)
-    if [ -n "$docker" ]; then
-       docker="--docker"
-    fi
-    if [ -n "$runner" ]; then
-       runner="--runner"
-    fi
-    shell_prompt "$TOPDIR/migrate-database.sh ${docker} ${runner} ${*:2}" "${cyan}Step 2. Migrate database\n${nc}" "-Y"
-    break;;
-  -[sS]*|-[fF]*)
-    #; void --password known args
-    OPTIND=1
-    if [[ "$#" -gt 1 ]]; then
-      arg=$2; [[ "${arg:0:1}" != '-' ]] && OPTIND=2
-    fi
-    shift $((OPTIND -1))
-    ;;
-  --help )
-    printf "%s\n" "${usage[@]}"
-    exit 0;;
-  -[rR]*|--runner )
-    # shellcheck disable=SC2154
-    log_debug "${green}--runner mode...${nc}"
-    ;;
-  -[dD]*|--docker )
-    log_daemon_msg "check database container id"
-    docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
-    ;;
-  --dev* )
-    composer="$composer_args -W"
-    ;;
-  -[vV]*|--verbose )
+if [ -n "$help" ]; then 
+  printf "%s\n" "${usage[@]}"
+  exit 0
+fi
+[ -n "$dev" ] && composer_args="$composer_args -W"
+if [ -n "$verbose" ]; then
     set -x
-    echo "Passed params : ${BASH_SOURCE[*]} ${saved[*]}";;
-    *) echo "Unknown parameter: ${BASH_SOURCE[0]} $1"; exit 1;;
-esac; shift; done
+    echo "Passed params : ${BASH_SOURCE[*]} ${saved[*]}"
+fi
+#; if the full set of the arguments exists, there won't be any prompt in the shell
+if [ -n "$password" ]; then
+    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -p $password -s $salt -f $file" \
+"${cyan}Step 1. Get an encrypted password.\n${nc}" "-Y"
+    show_password_status "admin" "MASTER_PASSWORD_HASH" "was set up."
+fi
+[ -n "$runner" ] && set -- "--runner" "$@"
+if [ -n "$docker" ]; then
+  set -- "--docker" "$@"
+  log_daemon_msg "check database container id"
+  docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
+fi
+if [ -n "$migrate" ]; then
+  shell_prompt "$TOPDIR/migrate-database.sh $@" "${cyan}Step 2. Migrate database\n${nc}" "-Y"
+fi
 #; Setup paths and file permissions 
 bash -c "$TOPDIR/Scripts/configure_path.sh"
 #; filter template
 bash -c "$TOPDIR/Scripts/cp_bkp_old.sh Config/ app_local.template app_local.php"
 #; download plugins and dependencies
-bash -c "$TOPDIR/Scripts/composer.sh ${composer}"
+bash -c "$TOPDIR/Scripts/composer.sh ${composer_args}"
 log_daemon_msg "Cake patches"
 #; patches
 patches "Config/core.php"

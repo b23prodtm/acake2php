@@ -6,25 +6,25 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 parse_args "$@" <<EOF
 flag runner -r --runner
-end
-EOF
-parse_args "$@" <<EOF
 flag docker -d --docker
+flag server -s --server
+flag create -c --create
+flag test -t --test
+flag update -u --update
 end
 EOF
-ck_args=$(parse_arg_trim "-[dDrR]+|--runner|--docker" "$@")
-LOG=$(new_cake_log "$docker" "$runner") && log_daemon_msg "$LOG"
+LOG=$(new_cake_log) && log_daemon_msg "$LOG"
 MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
 function wait_for_host() {
 	[ "$#" -lt 2 ] && printf "Usage: %s <host> <port>" "${FUNCNAME[0]}" && exit 1
 	for i in $(seq 1 10); do
 		# shellcheck disable=SC2154
-		nc -z "$1" "$2" && slogger -st "${FUNCNAME[0]}" "${green}Success${nc}" && sleep 2 && return 0
+		nc -z "$1" "$2" && log_success_msg "${green}${FUNCNAME[0]}{nc}" && sleep 2 && return 0
 		echo -n .
 		sleep 1
 	done
 	# shellcheck disable=SC2154
-	slogger -st "${FUNCNAME[0]}"  "${red}Failed: Host's unavailable${nc}"
+	log_failure_msg "${red}${FUNCNAME[0]}: Host's unavailable${nc}"
 	return 1
 }
 function run_ps() {
@@ -70,51 +70,42 @@ if [ -n "$docker" ]; then
 	check_log "$LOG"
 fi
 # shellcheck disable=SC2086
-if [ -n "$(parse_arg "server" $ck_args)" ]; then
-	show_password_status "${MYSQL_USER}" "${MYSQL_PASSWORD}" "is running development server"
-	url="http://${SERVER_NAME}:${CAKE_TCP_PORT:-8000}"
-	# shellcheck disable=SC2154
-	log_daemon_msg "Welcome homepage ${cyan}${url}${nc}"
-	log_daemon_msg "Administrator login ${cyan}${url}/admin/index${nc}"
-	# shellcheck disable=SC2154
-	log_daemon_msg "Debugging echoes ${cyan}${url}${orange}?debug=1&verbose=1${nc}"
-	log_daemon_msg "Another Test configuration ${cyan}${url}/admin/index.php${orange}?test=1${nc}"
-	log_daemon_msg "Unit tests ${cyan}${url}/test.php${nc}"
-	log_daemon_msg "Turnoff flags (fix captcha)${cyan}${url}/admin/logoff.php${nc}"
-	log_daemon_msg "==============================================="
-	# shellcheck disable=SC2086
-	run_ps cakephp $ck_args
-elif [ -n "$(parse_arg "test" "$(parse_arg_trim "--connection*" $ck_args)")" ]; then
-	log_daemon_msg "$(printf "Passed Cake Args: %s" "$ck_args")"
-	if [ "${COLLECT_COVERAGE}" = "true" ]; then
-    		run_ps "$TOPDIR/app/vendor/bin/phpunit" --log-junit ~/phpunit/junit.xml --coverage-clover \
-		app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist \
-		app/tests/TestCase/AllTestsTest.php
-	elif [ "${PHPCS}" = 1 ]; then
-		run_ps "$TOPDIR/app/vendor/bin/phpcs" --colors -p -s --extensions=php --cache "$TOPDIR/app"
-	else
-		# shellcheck disable=SC2086
-		run_ps cakephp $ck_args --coverage-clover app/build/logs/clover.xml
-	fi
-elif [ -n "$(parse_arg "create" $ck_args)" ]; then
-        #; cakephp shell
-        log_daemon_msg "Migrating database 'cake bake migration' ..."
-	# shellcheck disable=SC2086
-	p=$(parse_arg_trim "create" $ck_args)
-	log_daemon_msg "$(printf "Passed Cake Args:(%s) -> %s" "$ck_args" "$p")"
-	# shellcheck disable=SC2086
-	run_ps cakephp bake migration $p
-	# shellcheck disable=SC2086
-	run_ps cakephp migrations -n status
-elif [ -n "$(parse_arg "update" $ck_args)" ]; then
-        #; cakephp shell
-        log_daemon_msg "Migrating database 'cake migrations' ..."
-	# shellcheck disable=SC2086
-	p=$(parse_arg_trim "update" $ck_args)
-	log_daemon_msg "$(printf "Passed Cake Args:(%s) -> %s" "$ck_args" "$p")"
-	# shellcheck disable=SC2086
-	run_ps cakephp migrations -n status
-	# shellcheck disable=SC2086
-	run_ps cakephp migrations -n $p
+if [ -n "$server" ]; then
+  show_password_status "${MYSQL_USER}" "${MYSQL_PASSWORD}" "is running development server"
+  url="http://${SERVER_NAME}:${CAKE_TCP_PORT:-8000}"
+  # shellcheck disable=SC2154
+  log_daemon_msg "Welcome homepage ${cyan}${url}${nc}"
+  log_daemon_msg "Administrator login ${cyan}${url}/admin/index${nc}"
+  # shellcheck disable=SC2154
+  log_daemon_msg "Debugging echoes ${cyan}${url}${orange}?debug=1&verbose=1${nc}"
+  log_daemon_msg "Another Test configuration ${cyan}${url}/admin/index.php${orange}?test=1${nc}"
+  log_daemon_msg "Unit tests ${cyan}${url}/test.php${nc}"
+  log_daemon_msg "Turnoff flags (fix captcha)${cyan}${url}/admin/logoff.php${nc}"
+  log_daemon_msg "==============================================="
+  if [ -n "$test" ]; then
+    clover=""
+    if [ "${COLLECT_COVERAGE}" = "true" ]; then
+      run_ps "$TOPDIR/app/vendor/bin/phpunit" --log-junit ~/phpunit/junit.xml --coverage-clover \
+      app/build/logs/clover.xml --stop-on-failure -c app/phpunit.xml.dist \
+      app/tests/TestCase/AllTestsTest.php
+      clover="--coverage-clover app/build/logs/clover.xml"
+    elif [ "${PHPCS}" = 1 ]; then
+      run_ps "$TOPDIR/app/vendor/bin/phpcs" --colors -p -s --extensions=php --cache "$TOPDIR/app"
+    fi
+  fi
+  # shellcheck disable=SC2086
+  run_ps cakephp $@ $clover
+elif [ -n "$create" ]; then
+  #; cakephp shell
+  log_daemon_msg "Migrating database 'cake migrations' ..."
+  # shellcheck disable=SC2086
+  run_ps cakephp bake migration "$@"
+  # shellcheck disable=SC2086
+  run_ps cakephp migrations -n status
+elif [ -n "$update" ]; then
+  #; cakephp shell
+  log_daemon_msg "Migrating database 'cake migrations' ..."
+  # shellcheck disable=SC2086
+  run_ps cakephp migrations -n status "$@"
 fi
 check_log "$LOG"

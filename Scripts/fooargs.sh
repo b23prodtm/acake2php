@@ -4,6 +4,7 @@ incFOO_ARGS=${incFOO_ARGS:-0}; if [ "$incFOO_ARGS" -eq 0 ]; then
   set -eu
 parse_args "$@" <<EOF
 flag docker -d --docker
+flag verbose -v --verbose
 end
 EOF
   log_daemon_msg  "TEST MODE, $0...: $*"
@@ -40,7 +41,7 @@ EOF
   #; To override, use shell parameter -tbase=<name> instead
   export TEST_MYSQL_DATABASE=${TEST_MYSQL_DATABASE:-'test'}
   export MASTER_PASSWORD=password
-  if [ -n "$(parse_arg "-[vV]+|--verbose" "$@")" ]; then
+  if [ -n "$verbose" ]; then
     echo "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
     echo "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
   fi

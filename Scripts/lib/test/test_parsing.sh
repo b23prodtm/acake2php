@@ -48,18 +48,27 @@ EOF
 }
 
 function test_arg_trim() {
-  args=(-d me --open --data)
-  T=$(parse_arg_trim "-d|--data" "${args[@]}")
+  args=(--open --data "0x500" -d "0x44")
+  parse_args "${args[@]}" <<EOF
+option DATA -d --data
+end
+EOF
+  T="${args[@]}"
   # shellcheck disable=SC2059
-  [[ $(echo "$T" | wc -w) -eq $(echo "me --open" | wc -w) ]] \
-  && printf "${Z[*]}" "OK" "1° trim" "$T" $OPTIND \
-  || printf "${Z[*]}" "FAILED" "1° trim" "$T" $OPTIND
+  [[ $(echo "$T" | wc -w) -eq $(echo "--open" | wc -w) ]] \
+  && printf "${Z[*]}" "OK" "1° trim" "$T" $DATA \
+  || printf "${Z[*]}" "FAILED" "1° trim" "$T" $DATA
 
-  P=$(parse_arg_trim "--open" "${args[@]}")
+  args=(--open --data "0x500" -o)
+  parse_args "${args[@]}" <<EOF
+flag OPEN -o --open
+end
+EOF
+  P="${args[@]}"
   # shellcheck disable=SC2059
-  [[ $(echo "$P" | wc -w) -eq $(echo "-d me --data" | wc -w) ]] \
-  && printf "${Z[*]}" "OK" "2° trim" "$P" $OPTIND \
-  || printf "${Z[*]}" "FAILED" "2° trim" "$P" $OPTIND
+  [[ $(echo "$P" | wc -w) -eq $(echo "-d me --data 0X500" | wc -w) ]] \
+  && printf "${Z[*]}" "OK" "2° trim" "$P" $OPEN \
+  || printf "${Z[*]}" "FAILED" "2° trim" "$P" $OPEN
 }
 test=("test_args" "test_arg" "test_arg_trim" "test_parse_and_export")
 for t in "${test[@]}"; do
