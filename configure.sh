@@ -7,6 +7,7 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 # shellcheck source=Scripts/lib/util.sh
 . "$TOPDIR/Scripts/lib/util.sh"
+
 parse_args_lazy "$@" <<EOF
 flag verbose -v --verbose
 flag runner -r --runner
@@ -17,12 +18,14 @@ option file -f --file
 flag migrate -m --mig-data
 flag dev -x --dev
 flag help -h --help
+option group -g --group
 end
 EOF
+
 composer_args="-d $TOPDIR update --no-interaction"
 composer_nodev="--no-dev"
 usage=("" \
-"Usage: $0 [-r|-d] [-p password -s hash [-f filename]]" \
+"Usage: ${BASH_SOURCE[0]} [-r|-d] [-p password -s hash [-f filename]]" \
 "          [[-m|--mig-database] [options]]" \
 "          -r,--runner    Production Mode with container runner" \
 "          -d,--docker    Test with Docker Machine" \
@@ -33,6 +36,7 @@ usage=("" \
 "                         Migrate Database (see $0 --mig-data --help)" \
 "          -v,--verbose   steps progress" \
 "          -x,--dev       Install composer dependencies" \
+"          -g, --group    Temp Paths and Files permissions: Group name (HTTPD Log)" \
 "")
 saved=( "$@" )
 if [ -n "$help" ]; then 
@@ -71,7 +75,7 @@ if [ -n "$migrate" ]; then
   shell_prompt "$TOPDIR/migrate-database.sh $*" "${cyan}Step 2. Migrate database\n${nc}" "-Y"
 fi
 log_debug "$(log_progress_msg "Setup paths and file permissions")"
-bash -c "$TOPDIR/Scripts/configure_path.sh"
+bash -c "$TOPDIR/Scripts/configure_path.sh -g $group"
 log_debug "$(log_progress_msg "Filter templates")"
 bash -c "$TOPDIR/Scripts/cp_bkp_old.sh Config/ app_local.template app_local.php"
 log_debug "$(log_progress_msg "Download plugins and dependencies")"

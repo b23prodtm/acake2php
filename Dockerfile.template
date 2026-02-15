@@ -132,7 +132,7 @@ RUN export MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-$(cat /run/secrets/mysql_r
     && export MYSQL_PASSWORD=${MYSQL_PASSWORD:-$(cat /run/secrets/mysql_password)} \
     && export MYSQL_DATABASE=${MYSQL_DATABASE:-$(cat /run/secrets/mysql_database)}
 
-RUN ./configure.sh --runner -v -p $(cat /run/secrets/master_password) -s "$(openssl rand -hex 4)" --dev \
+RUN ./configure.sh --runner -g acake2php -p $(cat /run/secrets/master_password) -s "$(openssl rand -hex 4)" --dev \
     && ./migrate-database.sh --runner -i -u ${MIGRATE_OPTION} \
     && ./migrate-database.sh --runner -u ${MIGRATE_OPTION} --connection=test
 

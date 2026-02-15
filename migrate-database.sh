@@ -9,7 +9,7 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 dbfile=Config/app_local.template
 schemafile=Config/Schema/AppSchema.template
 usage=("" \
-"Usage: $0 [-r] [-i] [-u] [-d]" \
+"Usage: ${BASH_SOURCE[0]} [-r] [-i] [-u] [-d]" \
 "          -------------" \
 "          -r, --runner" \
 "                      Environment variables are provided by remote container orchestrator (Production Mode)" \
