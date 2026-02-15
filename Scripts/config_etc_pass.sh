@@ -13,11 +13,11 @@ cd "$dir" || log_failure_msg "No such directory %s\n" "$dir"
 # passed args from shell_prompt
 while [ "$#" -gt 0 ]; do case $1 in
   -[pP]* )
-      parse_arg_export "pass" "some password" "$@";;
+      parse_and_export "pass" "some password" "$@";;
   -[sS]* )
-      parse_arg_export "hash" "some hash" "$@";;
+      parse_and_export "hash" "some hash" "$@";;
   -[fF]* )
-      parse_arg_export "hash_file" "a filename.sh" "$@";;
+      parse_and_export "hash_file" "a filename.sh" "$@";;
   *);;
 esac; shift; done
 #; read password if not set
