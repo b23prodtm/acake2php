@@ -24,34 +24,27 @@ function test_parse_and_export() {
   unset P T
 }
 
-function test_arg_exists() {
+function test_args() {
   args=(-d me "--open=9" --data)
-  T=$(parse_arg_exists "-d" "${args[@]}")
+  parse_args "${args[@]}" <<EOF
+flag T -d --data
+end
+EOF
+
   # shellcheck disable=SC2059
   [ -n "$T" ] \
-  && printf "${Z[*]}" "OK" "1° match" "$T" $OPTIND \
-  || printf "${Z[*]}" "FAILED" "1° match" "$T" $OPTIND
+  && printf "${Z[*]}" "OK" "1° match" "$T" 0 \
+  || printf "${Z[*]}" "FAILED" "1° match" "$T" 0
+  
+  parse_args "${args[@]}" <<EOF
+option P -o --open
+end
+EOF
 
-  P=$(parse_arg_exists "-d|--data" "${args[@]}")
   # shellcheck disable=SC2059
   [ -n "$P" ] \
-  && printf "${Z[*]}" "OK" "2° match" "$P" $OPTIND \
-  || printf "${Z[*]}" "FAILED" "2° match" "$P" $OPTIND
-}
-
-function test_arg() {
-  args=(-d me --open --data)
-  T=$(parse_arg "-d|--data" "${args[@]}")
-  # shellcheck disable=SC2059
-  [ "$T" = "-d" ] \
-  && printf "${Z[*]}" "OK" "1° parse" "$T" $OPTIND \
-  || printf "${Z[*]}" "FAILED" "1° parse" "$T" $OPTIND
-
-  P=$(parse_arg "--open" "${args[@]}")
-  # shellcheck disable=SC2059
-  [ "$P" = "--open" ] \
-  && printf "${Z[*]}" "OK" "2° parse" "$P" $OPTIND \
-  || printf "${Z[*]}" "FAILED" "2° parse" "$P" $OPTIND
+  && printf "${Z[*]}" "OK" "2° match" "$P" 2 \
+  || printf "${Z[*]}" "FAILED" "2° match" "$P" 2
 }
 
 function test_arg_trim() {
@@ -68,7 +61,7 @@ function test_arg_trim() {
   && printf "${Z[*]}" "OK" "2° trim" "$P" $OPTIND \
   || printf "${Z[*]}" "FAILED" "2° trim" "$P" $OPTIND
 }
-test=("test_arg_exists" "test_arg" "test_arg_trim" "test_parse_and_export")
+test=("test_args" "test_arg" "test_arg_trim" "test_parse_and_export")
 for t in "${test[@]}"; do
   printf "TEST CASES : %s\n" "$t" && eval "$t"
 done
