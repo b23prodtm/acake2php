@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 
 # parse_args:
@@ -35,7 +35,6 @@ parse_args_lazy() {
     # Temporary arrays
     local _flags=""
     local _opts=""
-
     # Read spec
     while read -r type var short long; do
         [ "$type" = "end" ] && break
@@ -53,6 +52,9 @@ parse_args_lazy() {
                 ;;
         esac
     done
+
+    printf "Flags list: %s\n" "$_flags" >&2
+    printf "Options list: %s\n" "$_opts" >&2
 
     # Initialize all variables to empty/0
     for entry in $_flags; do
@@ -134,7 +136,7 @@ parse_args_lazy() {
 
 function parse_args() {
   parse_args_lazy "$@"
-  if [ "${#_positional}" -gt 0 ]; then printf "%s\n" "Unkown argument(s): $*"; exit 1; fi
+  if [ "${#_positional}" -gt 0 ]; then printf "%s\n" "Unkown argument(s): $_positional" >&2; exit 1; fi
 }
 #; export -f parse_args()
 
@@ -146,7 +148,7 @@ function parse_args() {
 #
 function trim_args() {
   parse_args_lazy "$@"
-  printf "%s\n" "$_positional"
+  echo -e "$_positional"
 }
 #; export -f trim_args()
 
@@ -162,7 +164,7 @@ function trim_args() {
 #      FILENAME=out
 parse_and_export() {
   [ $# -lt 4 ] && printf "%s\n" \
-  "Usage: ${FUNCNAME[0]} <export-var> <arg-name> <long-arg-name> <-arg list> " \
+  "Usage: ${FUNCNAME[0]} <export-var> <arg-name> <long-arg-name> <-arg list> " >&2 \
   && exit 1
   local evar=$1
   local flag=$2
