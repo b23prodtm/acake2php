@@ -2,7 +2,10 @@
 incFOO_ARGS=${incFOO_ARGS:-0}; if [ "$incFOO_ARGS" -eq 0 ]; then
   export incFOO_ARGS=1
   set -eu
-  docker=$(parse_arg "--docker" "$@")
+parse_args "$@" <<EOF
+flag docker -d --docker
+end
+EOF
   log_daemon_msg  "TEST MODE, $0...: $*"
   #; Common Environment profile
   [[ ! -e .env || ! -e common.env ]] \
