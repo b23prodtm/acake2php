@@ -14,7 +14,7 @@ log_debug "$(log_progress_msg "hash file that is stored in webroot to allow admi
 if [ -z "${MASTER_PASSWORD_HASH:-}" ] && [ -z "$runner" ]; then
   hash="${TOPDIR}/master_password_hash"
   while [ ! -f "$hash" ]; do
-    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -f $hash" "define a value for missing MASTER_PASSWORD_HASH" "${DEBIAN_FRONTEND:-}"
+    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh" "define a value for missing MASTER_PASSWORD_HASH" "${DEBIAN_FRONTEND:-}" -f "$hash"
   done
   MASTER_PASSWORD_HASH="$(cat "$hash")"
   export MASTER_PASSWORD_HASH
@@ -34,4 +34,4 @@ if [ -n "$runner" ]; then
   printf "%s\n" "$($phpunit --version)"
   set -- "--runner" "$@"
 fi
-bash -c "$TOPDIR/Scripts/start_daemon.sh $*"
+bash "$TOPDIR/Scripts/start_daemon.sh" "$@"

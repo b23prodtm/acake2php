@@ -19,4 +19,4 @@ fi
 log_daemon_msg "Composer ${green}[OK]${nc}"
 bash -c "${composer} --version"
 #; update plugins and dependencies (composer install is good enough to check for updates)
-bash -c "${composer} $*"
+"${composer}" "$@"

@@ -51,8 +51,9 @@ fi
 log_debug "$(log_progress_msg "If the full set of the arguments exists, there won't be any prompt in the shell")"
 if [ -n "$password" ]; then
   log_debug "$(log_progress_msg "MASTER_PASSWORD")"
-  shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -p $password -s $salt -f $file" \
- "${cyan}Step 1. Get an encrypted password.\n${nc}" "-Y"
+  shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh" \
+ "${cyan}Step 1. Get an encrypted password.\n${nc}" "-Y" \
+ -p "$password" -s "$salt" -f "$file"
   show_password_status "admin" "MASTER_PASSWORD_HASH" "was set up."
 fi
 [ -n "$runner" ] && set -- "--runner" "$@"
@@ -68,7 +69,7 @@ else
 fi
 if [ -n "$migrate" ]; then
   log_debug "$(log_progress_msg "MIGRATION")"
-  shell_prompt "$TOPDIR/migrate-database.sh $*" "${cyan}Step 2. Migrate database\n${nc}" "-Y"
+  shell_prompt "$TOPDIR/migrate-database.sh" "${cyan}Step 2. Migrate database\n${nc}" "-Y" "$@"
 fi
 log_debug "$(log_progress_msg "Setup paths and file permissions")"
 bash -c "$TOPDIR/Scripts/configure_path.sh"
