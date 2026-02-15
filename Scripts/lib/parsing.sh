@@ -1,59 +1,7 @@
 #!/usr/bin/env bash
 set -e
 TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
-banner=("" "[$0] BASH ${BASH_SOURCE[0]}" ""); printf "%s\n" "${banner[@]}"
-#; colorize shell script
-nc="\\e[0m"
-red="\\e[31m"
-green="\\e[32m"
-orange="\\e[33m"
-cyan="\\e[36m"
-parse_arg_export() {
-  [ $# -lt 3 ] && printf "%s\n" \
-  "Usage: ${FUNCNAME[0]} <environment-variable> <description> -<arg> <val>" \
-  && exit 1
-  evar="$1"
-  desc="$2"
-  shift 2
-  zval=$(echo "$@" | awk 'BEGIN{ FS="[ =]+" }{ print $2 }')
-  while true; do case "$zval" in
-    "")
-      read -r -s -p "
-Please, enter the $desc value now:
-" zval
-      ;;
-    *)
-      break;;
-  esac; done
-  eval "export ${evar}=${zval}"
-}
-#; export -f parse_arg_export
-parse_arg_exists() {
-  [ $# -eq 1 ] && return
-  [ $# -lt 2 ] && printf "%s\n" \
-  "Usage: ${FUNCNAME[0]} <match_case> list-or-\$*" \
-  "Prints the argument index that's matched in the regex-arg-case (~ patn|patn2)" \
-  && exit 1
-  # add mask case |---- to avoid unknown state in split when $# = 1
-  export arg_case="$1|----"
-  shift
-  echo "$@" | awk 'BEGIN{FS=" "; ORS=" "; split(ENVIRON["arg_case"], a, "|")} {
-    n=-1
-    for(i in a) {
-     for(f=1; f<=NF; f++) {
-      if($f ~ a[i]) {
-        n=f
-        break
-      }
-      if(n != -1) break
-     }
-    }
-  }
-  END {
-    if(n >= 0) print n
-  }'
- unset arg_case
-}
+
 #; export -f parse_arg_exists()
 parse_arg_trim() {
  [ $# -eq 1 ] && return
@@ -78,44 +26,154 @@ parse_arg_trim() {
 }
 
 #; export -f parse_dom_host()
+
+# parse_args:
+#   Parse arguments inside a function without touching globals.
+#   Supports:
+#     - Flags:        -v  --verbose
+#     - Key/Value:    -o X  --output=X  --output X
+#     - Positionals:  stored in "$@"
+#
+# Usage inside a function:
+#   parse_args "$@" <<EOF
+#   flag VERBOSE -v --verbose
+#   option OUT   -o --output
+#   end
+#   EOF
+#
+# After parsing:
+#   $VERBOSE = 0/1
+#   $OUT     = value or empty
+#   "$@"     = remaining positional args
+#
+parse_args() {
+    # Read spec from stdin
+    # Format:
+    #   flag   VAR  -s  --long
+    #   option VAR  -s  --long
+    #   end
+    #
+    # Output:
+    #   Sets variables in caller scope using 'eval'
+    #   Leaves positional args in "$@"
+
+    # Temporary arrays
+    _flags=""
+    _opts=""
+
+    # Read spec
+    while read -r type var short long; do
+        [ "$type" = "end" ] && break
+
+        case "$type" in
+            flag)
+                _flags="$_flags $short:$long:$var"
+                ;;
+            option)
+                _opts="$_opts $short:$long:$var"
+                ;;
+            *)
+                printf "parse_args: invalid spec line: %s\n" "$type" >&2
+                return 1
+                ;;
+        esac
+    done
+
+    # Initialize all variables to empty/0
+    for entry in $_flags; do
+        var=${entry##*:}
+        eval "$var=0"
+    done
+    for entry in $_opts; do
+        var=${entry##*:}
+        eval "$var=''"
+    done
+
+    # Now parse actual arguments
+    _positional=""
+    while [ $# -gt 0 ]; do
+        arg=$1
+        shift
+
+        case "$arg" in
+            --*=*)
+                key=${arg%%=*}
+                val=${arg#*=}
+                ;;
+            -*)
+                key=$arg
+                val=""
+                ;;
+            *)
+                _positional="$_positional \"$arg\""
+                continue
+                ;;
+        esac
+
+        # Match flags
+        matched=0
+        for entry in $_flags; do
+            short=${entry%%:*}
+            rest=${entry#*:}
+            long=${rest%%:*}
+            var=${rest#*:}
+
+            if [ "$key" = "$short" ] || [ "$key" = "$long" ]; then
+                eval "$var=1"
+                matched=1
+                break
+            fi
+        done
+        [ "$matched" -eq 1 ] && continue
+
+        # Match options
+        for entry in $_opts; do
+            short=${entry%%:*}
+            rest=${entry#*:}
+            long=${rest%%:*}
+            var=${rest#*:}
+
+            if [ "$key" = "$short" ] || [ "$key" = "$long" ]; then
+                if [ -z "$val" ]; then
+                    [ $# -eq 0 ] && {
+                        printf "Missing value for %s\n" "$key" >&2
+                        return 1
+                    }
+                    val=$1
+                    shift
+                fi
+                eval "$var=\$val"
+                matched=1
+                break
+            fi
+        done
+
+        if [ "$matched" -eq 0 ]; then
+            printf "Unknown argument: %s\n" "$arg" >&2
+            return 1
+        fi
+    done
+
+    # Export positional args back to caller
+    eval "set -- $_positional"
+}
+#; export -f parse_args()
+
 ### -------------------------
-# Only short options (e.g. -a -f) are supported.
-# Long options must be transformed into short ones before.
-# When an argument --name=Bob passes, transform into -n Bob:
-#
-#     set -- $(echo "$1" \
-#     | awk 'BEGIN{ FS="[ =]+" }{ print "-n " $2 }') "${@:2}"
-#     parse_and_export -n NAME "Set user name" "${@:2}"
-#
-# To continue arguments processing after a call to this function :
-#
-#     shift
+# parse_and_export -n NAME "--name" "$@"
 #
 parse_and_export() {
   [ $# -lt 4 ] && printf "%s\n" \
-  "Usage: ${FUNCNAME[0]} <arg-name> <export-var> <description> <-arg list> " \
+  "Usage: ${FUNCNAME[0]} <arg-name> <export-var> <long-arg-name> <-arg list> " \
   && exit 1
-  optstr=$1
+  flag=$1
   evar=$2
-  desc=$3
+  long=$3
   shift 3
-  unset OPTIND
-  while [ "$#" -gt 0 ]; do
-    OPTIND=$(("$(parse_arg_exists "$optstr" "$@")" +1))
-    if [ "$OPTIND" -gt 0 ]; then
-      shift $((OPTIND -1))
-      parse_arg_export "$evar" "${desc}" "-${optstr}" "${1:-}"
-      [ -n "${1:-}" ] && OPTIND=$((OPTIND +1))
-      break
-    fi
-    shift
-  done
-  export OPTIND
+  parse_args "$@" <<EOF
+option $evar $flag $long
+end
+EOF
+  eval "export $evar"
 }
 #; export -f parse_and_export()
-parse_arg() {
-  ret=$(parse_arg_exists "$@")
-  # shellcheck disable=SC2015
-  [ -n "$ret" ] && shift 1 && echo "${*:$ret:1}" || true
-}
-#; export -f parse_arg()
