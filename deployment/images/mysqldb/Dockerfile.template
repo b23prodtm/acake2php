@@ -53,7 +53,7 @@ RUN --mount=type=secret,id=mysql_user,env=MYSQL_USER \
     --mount=type=secret,id=mysql_root_password,env=MYSQL_ROOT_PASSWORD \
     --mount=type=secret,id=mysql_database,env=MYSQL_DATABASE \
     --mount=type=secret,id=master_password,env=MASTER_PASSWORD \
-    && chmod 1755 mysql_secure_shell \
+    chmod 1755 mysql_secure_shell \
     && ./mysql_secure_shell
 
 # This script runs ONCE at first container start, using runtime env vars
