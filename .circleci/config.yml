@@ -166,6 +166,7 @@ jobs:
             cp -vf "docker-compose.${BALENA_ARCH}" "docker-compose.yml"       
             docker buildx bake -f docker-bake.hcl \
               --set "*.platform=${PLATFORM}" \
+              --set "secret=id=master_password,env=MASTER_PASSWORD" \
               --push
 
       - run:
