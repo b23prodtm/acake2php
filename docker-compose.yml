@@ -1,20 +1,20 @@
 version: "2.4"
-secrets:
-  mysql_root_password:
-    environment: MYSQL_ROOT_PASSWORD
-  mysql_user:
-    environment: MYSQL_USER
-  mysql_password
-    environment: MYSQL_PASSWORD
-  mysql_database:
-    environment: MYSQL_DATABASE
-  master_password:
-    environment: MASTER_PASSWORD
+#secrets:
+#  mysql_root_password:
+#    environment: MYSQL_ROOT_PASSWORD
+#  mysql_user:
+#    environment: MYSQL_USER
+#  mysql_password
+#    environment: MYSQL_PASSWORD
+#  mysql_database:
+#    environment: MYSQL_DATABASE
+#  master_password:
+#    environment: MASTER_PASSWORD
 services:
   db:
     build:
       context: deployment/images/mysqldb
-      dockerfile: Dockerfile.x86_64
+      dockerfile: Dockerfile.armhf
       args:
         PUID: 1000
         PGID: 1000
@@ -23,12 +23,12 @@ services:
 # ignored if MYSQL_ROOT_PASSWORD is available on build time
       MYSQL_RANDOM_ROOT_PASSWORD: yes
       TZ: Europe/Paris
-    secrets:
-      - mysql_root_password
-      - mysql_user
-      - mysql_password
-      - mysql_database
-      - master_password
+#    secrets:
+#      - mysql_root_password
+#      - mysql_user
+#     - mysql_password
+#      - mysql_database
+#      - master_password
     volumes:
       - localtime:/etc/localtime:ro
       - db-data:/config
@@ -40,13 +40,13 @@ services:
       - cake
     env_file:
       - common.env
-      - x86_64.env
+      - armhf.env
     labels:
       io.balena.features.dbus: "1"
   php-fpm:
     build:
       context: .
-      dockerfile: Dockerfile.x86_64
+      dockerfile: Dockerfile.armhf
       args:
         PUID: 1000
         PGID: 1000
@@ -56,13 +56,13 @@ services:
     image: betothreeprod/php-fpm:latest
     env_file:
       - common.env
-      - x86_64.env
-    secrets:
-      - mysql_root_password
-      - mysql_user
-      - mysql_password
-      - mysql_database
-      - master_password
+      - armhf.env
+#    secrets:
+#      - mysql_root_password
+#      - mysql_user
+#     - mysql_password
+#      - mysql_database
+#      - master_password
     environment:
       CAKEPHP_DEBUG_LEVEL: "2"
       COLLECT_COVERAGE: false
@@ -79,7 +79,7 @@ services:
   httpd:
     build:
       context: deployment/images/httpd
-      dockerfile: Dockerfile.x86_64
+      dockerfile: Dockerfile.armhf
       args:
         PUID: 1000
         PGID: 1000
@@ -87,7 +87,7 @@ services:
     image: betothreeprod/httpd:latest
     env_file:
       - common.env
-      - x86_64.env
+      - armhf.env
     volumes:
       - localtime:/etc/localtime:ro
       - www:/var/www/html
@@ -100,12 +100,12 @@ services:
   balena-storage:
     build:
       context: balena-storage
-      dockerfile: Dockerfile.x86_64
+      dockerfile: Dockerfile.armhf
     image: betothreeprod/balena-storage:latest
     privileged: true
     env_file:
       - common.env
-      - x86_64.env
+      - armhf.env
     networks:
       - cake
 # Docker-Compose >=3.4 only
