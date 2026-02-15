@@ -5,7 +5,12 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=Scripts/lib/test/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
-command="--docker -c server -p 8000 -H 0.0.0.0"
+command="-c server -p 8000 -H 0.0.0.0"
+parse_args "$@" <<EOF
+flag docker -d --docker
+end
+EOF
+
 saved=( "$@" )
 export COLLECT_COVERAGE="false"
 usage=("" \
@@ -26,17 +31,16 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     command="${command} $1"
     echo "Passed params : $0 ${saved[*]}";;
   -[cC]*)
-    docker=$(parse_arg "--docker" "$command")
-    command="$docker ${*:2}"
+    command="${*:2}"
     parse_and_export "-p" "CAKE_TCP_PORT" "specify -p <port>" "$@"
     break;;
   --disable-docker )
     # shellcheck disable=SC2086
-    command=$(parse_arg_trim --docker $command)
-    ;;
-  --docker )
-    command="$command $1"
+    docker=""
     ;;
   *);;
 esac; shift; done
-bash -c "./Scripts/bootstrap.sh $command"
+if [ -n "$docker" ]; then
+  docker="--docker"
+fi
+bash -c "./Scripts/bootstrap.sh $docker $command"
