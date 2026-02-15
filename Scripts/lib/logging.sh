@@ -29,11 +29,6 @@ function debug() {
   log_debug "$*"
 }
 
-if [ -n "$runner" ]; then
-  export CAKEPHP_DEBUG_LEVEL=1
-else
-  export CAKEPHP_DEBUG_LEVEL=2
-fi
 # ---------------------------------------------------------------------------
 # LOG FILE SUPPORT (optional)
 # ---------------------------------------------------------------------------
