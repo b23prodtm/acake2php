@@ -127,16 +127,12 @@ RUN chmod +x Scripts/*.sh \
 
 # These are now expected at RUNTIME only — no ARG, no default values baked in
 # They must be provided via: docker buildx build --secret id=mytoken,src=.balena/secrets/secret_mytoken
-RUN --mount=type=secret,id=mysql_user \
-    --mount=type=secret,id=mysql_password \
-    --mount=type=secret,id=mysql_root_password \
-    --mount=type=secret,id=mysql_database \
-    export MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-$(cat /run/secrets/mysql_root_password)} \
+RUN export MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-$(cat /run/secrets/mysql_root_password)} \
     && export MYSQL_USER=${MYSQL_USER:-$(cat /run/secrets/mysql_user)} \
     && export MYSQL_PASSWORD=${MYSQL_PASSWORD:-$(cat /run/secrets/mysql_password)} \
     && export MYSQL_DATABASE=${MYSQL_DATABASE:-$(cat /run/secrets/mysql_database)}
 
-RUN --mount=type=secret,id=master_password ./configure.sh --runner -v -p $(cat /run/secrets/master_password) -s "$(openssl rand -hex 4)" --dev \
+RUN ./configure.sh --runner -v -p $(cat /run/secrets/master_password) -s "$(openssl rand -hex 4)" --dev \
     && ./migrate-database.sh --runner -i -u ${MIGRATE_OPTION} \
     && ./migrate-database.sh --runner -u ${MIGRATE_OPTION} --connection=test
 
