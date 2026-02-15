@@ -156,9 +156,9 @@ parse_and_export() {
 option $evar $flag $long
 end
 EOF
-  while [ -z "$(echo "\$$evar")" ]; do
-    case "$(echo "\$$evar")" in
-      "") read -r -p "$long: " "$evar";;
+  while [ -z "$("\$$evar")" ]; do
+    case "$("\$$evar")" in
+      "") read -r -p "$long: " "${evar?}";;
       *) echo -e "\n"; break;;
     esac
   done
