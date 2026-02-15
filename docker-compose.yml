@@ -14,7 +14,7 @@ services:
   db:
     build:
       context: deployment/images/mysqldb
-      dockerfile: Dockerfile.x86_64
+      dockerfile: Dockerfile.aarch64
       args:
         PUID: 1000
         PGID: 1000
@@ -40,13 +40,13 @@ services:
       - cake
     env_file:
       - common.env
-      - x86_64.env
+      - aarch64.env
     labels:
       io.balena.features.dbus: "1"
   php-fpm:
     build:
       context: .
-      dockerfile: Dockerfile.x86_64
+      dockerfile: Dockerfile.aarch64
       args:
         PUID: 1000
         PGID: 1000
@@ -56,7 +56,7 @@ services:
     image: betothreeprod/php-fpm:latest
     env_file:
       - common.env
-      - x86_64.env
+      - aarch64.env
 #    secrets:
 #      - mysql_root_password
 #      - mysql_user
@@ -79,7 +79,7 @@ services:
   httpd:
     build:
       context: deployment/images/httpd
-      dockerfile: Dockerfile.x86_64
+      dockerfile: Dockerfile.aarch64
       args:
         PUID: 1000
         PGID: 1000
@@ -87,7 +87,7 @@ services:
     image: betothreeprod/httpd:latest
     env_file:
       - common.env
-      - x86_64.env
+      - aarch64.env
     volumes:
       - localtime:/etc/localtime:ro
       - www:/var/www/html
@@ -100,12 +100,12 @@ services:
   balena-storage:
     build:
       context: balena-storage
-      dockerfile: Dockerfile.x86_64
+      dockerfile: Dockerfile.aarch64
     image: betothreeprod/balena-storage:latest
     privileged: true
     env_file:
       - common.env
-      - x86_64.env
+      - aarch64.env
     networks:
       - cake
 # Docker-Compose >=3.4 only
