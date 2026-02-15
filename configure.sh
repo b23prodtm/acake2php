@@ -7,15 +7,15 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 # shellcheck source=Scripts/lib/util.sh
 . "$TOPDIR/Scripts/lib/util.sh"
-parse_args "$@" <<EOF
+pargs=$(parse_arg_trim "-[rR]+|--runner|-[dD]+|--docker"  "$@")
+parse_args $pargs <<EOF
 flag runner -r --runner
 end
 EOF
-parse_args "$@" <<EOF
+parse_args $pargs <<EOF
 flag docker -d --docker
 end
 EOF
-pargs=$(parse_arg_trim "-[rR]+|--runner|-[dD]+|--docker"  "$@")
 log_debug ": $0 [$runner] [$docker] [$pargs]"
 composer_args="-d $TOPDIR update --no-interaction"
 composer_nodev="--no-dev"

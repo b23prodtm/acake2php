@@ -2,7 +2,8 @@
 incFOO_ARGS=${incFOO_ARGS:-0}; if [ "$incFOO_ARGS" -eq 0 ]; then
   export incFOO_ARGS=1
   set -eu
-parse_args "$@" <<EOF
+pargs=$(parse_arg_trim "-[dD]+|--docker" "$@")
+parse_args $pargs <<EOF
 flag docker -d --docker
 end
 EOF

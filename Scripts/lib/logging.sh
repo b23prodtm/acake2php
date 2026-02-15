@@ -3,7 +3,9 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 . init_functions .
 # shellcheck source=lib/parsing.sh
 . "${TOPDIR}/Scripts/lib/parsing.sh"
-parse_args "$@" <<EOF
+# filter only supported flags before parsing to avoid errors with other args
+pargs=$(parse_arg_trim "-[rR]+|--runner" "$@")
+parse_args $pargs <<EOF
 flag runner -r --runner
 end
 EOF
