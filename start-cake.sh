@@ -6,7 +6,7 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=Scripts/lib/test/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 command="-c server -p 8000 -H 0.0.0.0"
-parse_args "$@" <<EOF
+parse_args_lazy "$@" <<EOF
 flag docker -d --docker
 end
 EOF

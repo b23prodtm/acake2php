@@ -27,7 +27,7 @@ cx_args="--connection=default"
 # test_args="app AllTests --stderr"
 test_args="app Controller/PagesController --stderr"
 MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
-parse_args "$@" <<EOF
+parse_args_lazy "$@" <<EOF
 flag runner -r --runner
 flag docker -d --docker
 flag update -u --update

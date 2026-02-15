@@ -5,7 +5,7 @@ TOPDIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 . "${TOPDIR}/Scripts/lib/logging.sh"
 # shellcheck source=lib/shell_prompt.sh
 . "${TOPDIR}/Scripts/lib/shell_prompt.sh"
-parse_args "$@" <<EOF
+parse_args_lazy "$@" <<EOF
 flag runner -r --runner
 end
 EOF

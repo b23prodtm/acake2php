@@ -2,7 +2,7 @@
 incFOO_ARGS=${incFOO_ARGS:-0}; if [ "$incFOO_ARGS" -eq 0 ]; then
   export incFOO_ARGS=1
   set -eu
-parse_args "$@" <<EOF
+parse_args_lazy "$@" <<EOF
 flag docker -d --docker
 flag verbose -v --verbose
 end

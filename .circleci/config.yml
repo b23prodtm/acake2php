@@ -34,11 +34,11 @@ commands:
       - run:
           name: Store secrets
           command: |
-            echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > .balena/secrets/secret_mysql_root_password
-            echo "${{ secrets.MYSQL_USER }}" > .balena/secrets/secret_mysql_user
-            echo "${{ secrets.MYSQL_PASSWORD }}" > .balena/secrets/secret_mysql_password
-            echo "${{ secrets.MYSQL_DATABASE }}" > .balena/secrets/secret_mysql_database
-            echo "${{ secrets.MASTER_PASSWORD }}" > .balena/secrets/secret_master_password
+            echo "$MYSQL_ROOT_PASSWORD" > .balena/secrets/secret_mysql_root_password
+            echo "$MYSQL_USER" > .balena/secrets/secret_mysql_user
+            echo "$MYSQL_PASSWORD" > .balena/secrets/secret_mysql_password
+            echo "$MYSQL_DATABASE" > .balena/secrets/secret_mysql_database
+            echo "$MASTER_PASSWORD" > .balena/secrets/secret_master_password
             
   set-build-tag:
     description: "Set BUILD_TAG environment variable based on branch or tag"
