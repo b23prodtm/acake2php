@@ -16,11 +16,7 @@ ENV MYSQL_BIND_ADDRESS=${MYSQL_BIND_ADDRESS:-0.0.0.0}
 # These are now expected at RUNTIME only — no ARG, no default values baked in
 # They must be provided via: docker buildx build --secret id=mytoken,src=.balena/secrets/secret_mytoken
 
-RUN --mount=type=secret,id=mysql_user \
-    --mount=type=secret,id=mysql_password \
-    --mount=type=secret,id=mysql_root_password \
-    --mount=type=secret,id=mysql_database \
-    export MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-$(cat /run/secrets/mysql_root_password)} \
+RUN export MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-$(cat /run/secrets/mysql_root_password)} \
     && export MYSQL_USER=${MYSQL_USER:-$(cat /run/secrets/mysql_user)} \
     && export MYSQL_PASSWORD=${MYSQL_PASSWORD:-$(cat /run/secrets/mysql_password)} \
     && export MYSQL_DATABASE=${MYSQL_DATABASE:-$(cat /run/secrets/mysql_database)}
