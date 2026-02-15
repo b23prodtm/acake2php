@@ -40,7 +40,6 @@ usage=("" \
 "          --development  Install composer dependencies" \
 "")
 saved=( "$@" )
-show_password_status "root" "MYSQL_ROOT_PASSWORD" "is configuring ${runner} ${docker}..."
 #; if the full set of the arguments exists, there won't be any prompt in the shell
 while [[ "$#" -gt 0 ]]; do case $1 in
   -[pP]*|--password)
@@ -48,6 +47,12 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     show_password_status "admin" "MASTER_PASSWORD_HASH" "was set up."
     shift;;
   -[mM]*|--mig-database)
+    if [ -n "$docker" ]; then
+       docker="--docker"
+    fi
+    if [ -n "$runner" ]; then
+       runner="--runner"
+    fi
     shell_prompt "$TOPDIR/migrate-database.sh ${docker} ${runner} ${*:2}" "${cyan}Step 2. Migrate database\n${nc}" "-Y"
     break;;
   -[sS]*|-[fF]*)
@@ -63,10 +68,10 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     exit 0;;
   -[rR]*|--runner )
     # shellcheck disable=SC2154
-    echo -e "${green}--runner mode...${nc}"
+    log_debug "${green}--runner mode...${nc}"
     ;;
   -[dD]*|--docker )
-    slogger -st docker "check database container id"
+    log_daemon_msg "check database container id"
     docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
     ;;
   --dev* )
@@ -83,7 +88,7 @@ bash -c "$TOPDIR/Scripts/configure_path.sh"
 bash -c "$TOPDIR/Scripts/cp_bkp_old.sh Config/ app_local.template app_local.php"
 #; download plugins and dependencies
 bash -c "$TOPDIR/Scripts/composer.sh ${composer}"
-slogger -st sed "Cake patches"
+log_daemon_msg "Cake patches"
 #; patches
 patches "Config/core.php"
 patches "vendor/cakephp/cakephp/src/Console/ShellDispatcher.php"
