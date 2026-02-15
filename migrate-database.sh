@@ -85,7 +85,7 @@ if [ -n "$docker" ]; then
   set -- "--docker" "$@"
   # shellcheck source=Scripts/fooargs.sh
   . "$TOPDIR/Scripts/fooargs.sh" "$@"
-  bash -c "$TOPDIR/Scripts/start_daemon.sh $@"
+  bash -c "$TOPDIR/Scripts/start_daemon.sh $*"
 else
   # shellcheck source=Scripts/bootargs.sh
   . "$TOPDIR/Scripts/bootargs.sh" "$@"
@@ -93,4 +93,4 @@ fi
 [ -n "$runner" ] && set -- "--runner" "$@"
 [ -n "$test" ] && set -- "-t" "$test_args" "$@"
 [ -n "$update" ] && set -- "-u" "$cx_args" "$@"
-bash -c "$TOPDIR/Scripts/bootstrap.sh $@"
+bash -c "$TOPDIR/Scripts/bootstrap.sh $*"
