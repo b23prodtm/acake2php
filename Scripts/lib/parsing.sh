@@ -156,10 +156,12 @@ parse_and_export() {
 option $evar $flag $long
 end
 EOF
-  while [ -z "$(eval "\$$evar")" ]; do case "$(eval "\$$evar")" in :
-    "") read -r -p "$long: " "$evar";;
-    *) echo -e "\n"; break;;
-  esac; done
+  while [ -z "$(echo "\$$evar")" ]; do
+    case "$(echo "\$$evar")" in
+      "") read -r -p "$long: " "$evar";;
+      *) echo -e "\n"; break;;
+    esac
+  done
   eval "export $evar"
 }
 #; export -f parse_and_export()
