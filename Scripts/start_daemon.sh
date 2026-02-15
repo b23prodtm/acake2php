@@ -4,11 +4,16 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=lib/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
-runner=$(parse_arg "-[rR]+|--runner" "$@")
-docker=$(parse_arg "--docker" "$@")
-travis=$(parse_arg "--travis" "$@")
-ck_args=$(parse_arg_trim "-[rR]+|--runner|--docker|--travis" "$@")
-LOG=$(new_cake_log "$travis" "$docker" "$runner") && log_daemon_msg "$LOG"
+parse_args "$@" <<EOF
+flag runner -r --runner
+end
+EOF
+parse_args "$@" <<EOF
+flag docker -d --docker
+end
+EOF
+ck_args=$(parse_arg_trim "-[dDrR]+|--runner|--docker" "$@")
+LOG=$(new_cake_log "$docker" "$runner") && log_daemon_msg "$LOG"
 MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
 function wait_for_host() {
 	[ "$#" -lt 2 ] && printf "Usage: %s <host> <port>" "${FUNCNAME[0]}" && exit 1
