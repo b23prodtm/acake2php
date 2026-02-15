@@ -53,22 +53,22 @@ function test_arg_trim() {
 option DATA -d --data
 end
 EOF
-  T="${args[@]}"
+  T="${args[*]}"
   # shellcheck disable=SC2059
   [[ $(echo "$T" | wc -w) -eq $(echo "--open" | wc -w) ]] \
-  && printf "${Z[*]}" "OK" "1° trim" "$T" $DATA \
-  || printf "${Z[*]}" "FAILED" "1° trim" "$T" $DATA
+  && printf "${Z[*]}" "OK" "1° trim" "--data" "$DATA" \
+  || printf "${Z[*]}" "FAILED" "1° trim" "--data" "$DATA"
 
   args=(--open --data "0x500" -o)
   parse_args "${args[@]}" <<EOF
 flag OPEN -o --open
 end
 EOF
-  P="${args[@]}"
+  P="${args[*]}"
   # shellcheck disable=SC2059
   [[ $(echo "$P" | wc -w) -eq $(echo "-d me --data 0X500" | wc -w) ]] \
-  && printf "${Z[*]}" "OK" "2° trim" "$P" $OPEN \
-  || printf "${Z[*]}" "FAILED" "2° trim" "$P" $OPEN
+  && printf "${Z[*]}" "OK" "2° trim" "--open" "$OPEN" \
+  || printf "${Z[*]}" "FAILED" "2° trim" "--open" "$OPEN"
 }
 test=("test_args" "test_arg" "test_arg_trim" "test_parse_and_export")
 for t in "${test[@]}"; do

@@ -49,7 +49,7 @@ if [ -n "$verbose" ]; then
 fi
 if [ -n "$help" ]; then
   printf "%s\n" "${usage[@]}"
-  exit 0;;
+  exit 0
 fi
 if [ "$connection" = "test" ]; then
   # Transform long options to short ones

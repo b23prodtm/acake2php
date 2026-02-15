@@ -94,7 +94,7 @@ if [ -n "$server" ]; then
     fi
   fi
   # shellcheck disable=SC2086
-  run_ps cakephp $@ $clover
+  run_ps cakephp "$@" "$clover"
 elif [ -n "$create" ]; then
   #; cakephp shell
   log_daemon_msg "Migrating database 'cake migrations' ..."

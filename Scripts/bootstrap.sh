@@ -16,7 +16,8 @@ if [ -z "${MASTER_PASSWORD_HASH:-}" ] && [ -z "$runner" ]; then
   while [ ! -f "$hash" ]; do
     shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh -f $hash" "define a value for missing MASTER_PASSWORD_HASH" "${DEBIAN_FRONTEND:-}"
   done
-  export MASTER_PASSWORD_HASH="$(cat "$hash")"
+  MASTER_PASSWORD_HASH="$(cat "$hash")"
+  export MASTER_PASSWORD_HASH
 fi
 # shellcheck disable=SC2154
 echo -e "${nc}Password ${green}${MASTER_PASSWORD_HASH}${nc}"
@@ -33,4 +34,4 @@ if [ -n "$runner" ]; then
   printf "%s\n" "$($phpunit --version)"
   set -- "--runner" "$@"
 fi
-bash -c "$TOPDIR/Scripts/start_daemon.sh $@"
+bash -c "$TOPDIR/Scripts/start_daemon.sh $*"

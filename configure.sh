@@ -62,7 +62,7 @@ if [ -n "$docker" ]; then
   docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
 fi
 if [ -n "$migrate" ]; then
-  shell_prompt "$TOPDIR/migrate-database.sh $@" "${cyan}Step 2. Migrate database\n${nc}" "-Y"
+  shell_prompt "$TOPDIR/migrate-database.sh $*" "${cyan}Step 2. Migrate database\n${nc}" "-Y"
 fi
 #; Setup paths and file permissions 
 bash -c "$TOPDIR/Scripts/configure_path.sh"
