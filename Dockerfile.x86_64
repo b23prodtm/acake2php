@@ -61,8 +61,10 @@ RUN apk del build-base \
 #                        Values in default (no-arg) production mode
 #                        May be overriden in docker-compose.yml
 #-----------------------
+ARG DEBUG
+ENV DEBUG=${DEBUG:-0}
 ARG CAKEPHP_DEBUG_LEVEL
-ENV CAKEPHP_DEBUG_LEVEL=${CAKEPHP_DEBUG_LEVEL:-2}
+ENV CAKEPHP_DEBUG_LEVEL=${CAKEPHP_DEBUG_LEVEL:-1}
 ARG BALENA_MACHINE_NAME
 ENV BALENA_MACHINE_NAME=${BALENA_MACHINE_NAME:-intel-nuc}
 ARG SECONDARY_HUB
@@ -146,7 +148,8 @@ RUN chmod +x Scripts/*.sh \
     && git config --global user.email "b23prodtm@users.sourceforge.net" \
     && git config --global user.name "B R T" \
     && git config --global --add safe.directory $PWD
-RUN ./configure.sh --runner -p ${MASTER_PASSWORD} -s "$(openssl rand -hex 4)" --development \
+
+RUN ./configure.sh --runner -v -p ${MASTER_PASSWORD} -s "$(openssl rand -hex 4)" --dev \
     && ./migrate-database.sh --runner -i -u ${MIGRATE_OPTION} \
     && ./migrate-database.sh --runner -u ${MIGRATE_OPTION} --connection=test
 
