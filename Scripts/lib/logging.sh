@@ -34,7 +34,6 @@ function debug() {
 # ---------------------------------------------------------------------------
 
 #; Make logs folders available
-mkdir -p "${MYPHPCMS_LOG}"
 function new_cake_log() {
   a="$(new_log)"
   ln -sf "$a" "$(basename "$a")"

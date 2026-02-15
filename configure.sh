@@ -16,6 +16,7 @@ option salt -s --salt
 option file -f --file
 flag migrate -m --mig-data
 flag dev -x --dev
+flag help -h --help
 end
 EOF
 composer_args="-d $TOPDIR update --no-interaction"

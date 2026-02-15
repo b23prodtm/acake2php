@@ -21,7 +21,7 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 #   $OUT     = value or empty
 #   "$@"     = remaining positional args
 #
-parse_args() {
+parse_args_lazy() {
     # Read spec from stdin
     # Format:
     #   flag   VAR  -s  --long
@@ -33,8 +33,8 @@ parse_args() {
     #   Leaves positional args in "$@"
 
     # Temporary arrays
-    _flags=""
-    _opts=""
+    local _flags=""
+    local _opts=""
 
     # Read spec
     while read -r type var short long; do
@@ -65,7 +65,7 @@ parse_args() {
     done
 
     # Now parse actual arguments
-    _positional=""
+    _positional=""; local _s=""
     while [ $# -gt 0 ]; do
         arg=$1
         shift
@@ -80,7 +80,8 @@ parse_args() {
                 val=""
                 ;;
             *)
-                _positional="$_positional \"$arg\""
+                _positional="${_positional}${_s}${arg}"
+                _s=" "  
                 continue
                 ;;
         esac
@@ -124,15 +125,30 @@ parse_args() {
         done
 
         if [ "$matched" -eq 0 ]; then
-            printf "$0 [$_flags] [$_opts] [$_positional]: Unknown argument: %s\n" "$arg" >&2
-            return 1
+            _positional="${_positional}${_s}${arg}"
+            _s=" "
         fi
-    done
+    done     
+}
+#; export -f parse_args_lazy()
 
-    # Export positional args back to caller
-    eval "set -- $_positional"
+function parse_args() {
+  parse_args_lazy "$@"
+  if [ "${#_positional}" -gt 0 ]; then printf "%s\n" "Unkown argument(s): $*"; exit 1; fi
 }
 #; export -f parse_args()
+
+#   Trim arguments inside a function without touching globals and returns it
+#   Supports:
+#     - Flags:        -v  --verbose
+#     - Key/Value:    -o X  --output=X  --output X
+#     - Resting args:  stored in "$@"
+#
+function trim_args() {
+  parse_args_lazy "$@"
+  printf "%s\n" "$_positional"
+}
+#; export -f trim_args()
 
 # parse_and_export:
 # set and export variables from arg list or PROMPT if the value is not set
@@ -148,20 +164,14 @@ parse_and_export() {
   [ $# -lt 4 ] && printf "%s\n" \
   "Usage: ${FUNCNAME[0]} <export-var> <arg-name> <long-arg-name> <-arg list> " \
   && exit 1
-  local flag=$1
-  local evar=$2
+  local evar=$1
+  local flag=$2
   local long=$3
   shift 3
-  parse_args "$@" <<EOF
+  parse_args_lazy "$@" <<EOF
 option $evar $flag $long
 end
 EOF
-  while [ -z "$("\$$evar")" ]; do
-    case "$("\$$evar")" in
-      "") read -r -p "$long: " "${evar?}";;
-      *) echo -e "\n"; break;;
-    esac
-  done
   eval "export $evar"
 }
 #; export -f parse_and_export()
