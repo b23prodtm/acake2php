@@ -53,8 +53,8 @@ parse_args_lazy() {
         esac
     done
 
-    printf "Flags list: %s\n" "$_flags" >&2
-    printf "Options list: %s\n" "$_opts" >&2
+    # printf "Flags list: %s\n" "$_flags" >&2
+    # printf "Options list: %s\n" "$_opts" >&2
 
     # Initialize all variables to empty/0
     for entry in $_flags; do
