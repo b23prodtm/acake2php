@@ -5,8 +5,14 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 . "$TOPDIR/Scripts/lib/logging.sh"
 # shellcheck source=Scripts/lib/shell_prompt.sh
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
-runner=$(parse_arg "-[rR]+|--runner" "$@")
-docker=$(parse_arg "-[dD]+|--docker" "$@")
+parse_args "$@" <<EOF
+flag runner -r --runner
+end
+EOF
+parse_args "$@" <<EOF
+flag docker -d --docker
+end
+EOF
 pargs=$(parse_arg_trim "-[rR]+|--runner|-[dD]+|--docker"  "$@")
 if [ -n "$docker" ]; then
   # shellcheck source=Scripts/fooargs.sh
