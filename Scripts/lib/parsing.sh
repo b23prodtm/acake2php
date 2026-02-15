@@ -135,18 +135,18 @@ parse_args() {
 #; export -f parse_args()
 
 # parse_and_export:
-# set local variables from arg list
-#    Supports:
-#       short OPTION "--longOption" "arg-list"
+# set and export variables from arg list or PROMPT if the value is not set
+#    Supports short and long argument:
+#       OPTION -s "--longOption" "arg-list"
 #    Usage examples:
-#      parse_and_export -f FILENAME "--file" "-f afile.txt"
-#      parse_and_export -f FILENAME "--file" "-s --file out"
+#      parse_and_export FILENAME -f "--file" $* (args: "-f afile.txt")
+#      parse_and_export FILENAME -f "--file" $* (args: "-s --file=out")
 #    After parsing:
 #      FILENAME=afile.txt
 #      FILENAME=out
 parse_and_export() {
   [ $# -lt 4 ] && printf "%s\n" \
-  "Usage: ${FUNCNAME[0]} <arg-name> <export-var> <long-arg-name> <-arg list> " \
+  "Usage: ${FUNCNAME[0]} <export-var> <arg-name> <long-arg-name> <-arg list> " \
   && exit 1
   local flag=$1
   local evar=$2
@@ -156,6 +156,10 @@ parse_and_export() {
 option $evar $flag $long
 end
 EOF
+  while [ -z "$(eval "\$$evar")" ]; do case "$(eval "\$$evar")" in:
+    "") read -r -p "$long: " "$evar";;
+    *) echo -e "\n"; break;;
+  esac; done
   eval "export $evar"
 }
 #; export -f parse_and_export()

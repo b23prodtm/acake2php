@@ -8,19 +8,19 @@ Z=("[%s] %s %s(OPTIND=%s)\n")
 # It turns out that bash shells passes arguments array or "dollar-array" $@.
 # The difference's in layouts by printing list inline "$*" or column style "$@".
 function test_parse_and_export() {
-  args=(-t T "1st password" -t "pass_one")
-  parse_and_export "${args[@]}"
+  args=(-p "1st password" -t "pass_one")
+  parse_and_export T -t --test "${args[@]}"
   # shellcheck disable=SC2059
   [ "$T" = "pass_one" ] \
-  && printf "${Z[*]}"  "OK" "1° export" "$T" $OPTIND \
-  || printf "${Z[*]}" "FAILED" "1° export" "$T" $OPTIND
+  && printf "${Z[*]}"  "OK" "1° export" "-t" "$T" \
+  || printf "${Z[*]}" "FAILED" "1° export" "-t" "$T"
 
-  args=(-p P "2nd password" -t "-p" "pass_two")
-  parse_and_export "${args[@]}"
+  args=(-t "2nd password" "--pass" "pass_two")
+  parse_and_export P -p --pass "${args[@]}"
   # shellcheck disable=SC2059
   [ "$P" = "pass_two" ] \
-  && printf "${Z[*]}" "OK" "2° export" "$P" $OPTIND \
-  || printf "${Z[*]}" "FAILED" "2° export" "$P" $OPTIND
+  && printf "${Z[*]}" "OK" "2° export" "--pass" "$P" \
+  || printf "${Z[*]}" "FAILED" "2° export" "--pass" "$P"
   unset P T
 }
 

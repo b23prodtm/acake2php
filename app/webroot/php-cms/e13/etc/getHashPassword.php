@@ -24,7 +24,7 @@ $msg = "Password was encrypted with $salt : " . $encrypted . "\nYou can use it a
 if ($argc > 0) {
         /** command line ./configure.sh script */
         echo $msg;
-        file_put_contents($hash_file, "#!/usr/bin/env bash\nexport MASTER_PASSWORD_HASH=" . $encrypted);
+        file_put_contents($hash_file, $encrypted);
 }
 if ($argc == 0):
         /* no arg == HTTP REQUEST */

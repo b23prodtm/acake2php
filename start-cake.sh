@@ -32,7 +32,7 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     echo "Passed params : $0 ${saved[*]}";;
   -[cC]*)
     command="${*:2}"
-    parse_and_export "-p" "CAKE_TCP_PORT" "specify -p <port>" "$@"
+    parse_and_export CAKE_TCP_PORT -p --port "$@"
     break;;
   --disable-docker )
     # shellcheck disable=SC2086
