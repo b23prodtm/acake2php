@@ -49,6 +49,11 @@ Router::scope('/', function (RouteBuilder $routes) {
     // Register scoped middleware for in scopes.
     $routes->registerMiddleware('csrf', new CsrfProtectionMiddleware([
         'httpOnly' => true,
+        'whitelistCallback' => function ($request) {
+            $controller = $request->getParam('controller');
+            $action = $request->getParam('action');
+            return $controller === 'Pages' && $action === 'acceptCookies';
+        },
     ]));
 
     /*
