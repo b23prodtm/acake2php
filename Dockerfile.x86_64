@@ -92,30 +92,6 @@ ENV MYSQL_TCP_PORT=${MYSQL_TCP_PORT:-3306}
 ARG TEST_MYSQL_DATABASE
 ENV TEST_MYSQL_DATABASE=${TEST_MYSQL_DATABASE:-"test"}
 
-# These are now expected at RUNTIME only — no ARG, no default values baked in
-# They must be provided via: docker --run envfile
-# docker buildx build --secret id=mytoken,src=mytoken.txt
-# ENV MYSQL_USER           <-- intentionally absent
-# ENV MYSQL_PASSWORD       <-- intentionally absent
-# ENV MYSQL_ROOT_PASSWORD  <-- intentionally absent
-# ENV MYSQL_DATABASE       <-- intentionally absent
-# ENV MASTER_PASSWORD        <-- intentionally absent
-RUN --mount=type=secret,id=mysql_user \
-    export MYSQL_USER=$(cat /run/secrets/mysql_user) && \
-    echo "Using token of length: ${#MYSQL_USER}"
-RUN --mount=type=secret,id=mysql_password \
-    export MYSQL_PASSWORD=$(cat /run/secrets/mysql_password) && \
-    echo "Using token of length: ${#MYSQL_PASSWORD}"
-RUN --mount=type=secret,id=mysql_root_password \
-    export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/mysql_root_password) && \
-    echo "Using token of length: ${#MYSQL_ROOT_PASSWORD}"
-RUN --mount=type=secret,id=mysql_database \
-    export MYSQL_DATABASE=$(cat /run/secrets/mysql_database) && \
-    echo "Using token of length: ${#MYSQL_DATABASE}"
-RUN --mount=type=secret,id=master_password \
-    export MASTER_PASSWORD=$(cat /run/secrets/master_password) && \
-    echo "Using token of length: ${#MASTER_PASSWORD}"
-
 # Install necessary PHP extensions and dependencies
 COPY --from=ghcr.io/mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 RUN install-php-extensions ${PHP_EXTENSIONS} \
@@ -149,9 +125,14 @@ RUN chmod +x Scripts/*.sh \
     && git config --global user.name "B R T" \
     && git config --global --add safe.directory $PWD
 
-RUN --mount=type=secret,id=master_password \
-    MASTER_PASSWORD="$(cat /run/secrets/master_password || true)" \
-    ./configure.sh --runner -v ${MASTER_PASSWORD:+-p "$MASTER_PASSWORD"} -s "$(openssl rand -hex 4)" --dev \
+# These are now expected at RUNTIME only — no ARG, no default values baked in
+# They must be provided via: docker buildx build --secret id=mytoken,src=.balena/secrets/secret_mytoken
+RUN export MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-$(cat /run/secrets/mysql_root_password)} \
+    && export MYSQL_USER=${MYSQL_USER:-$(cat /run/secrets/mysql_user)} \
+    && export MYSQL_PASSWORD=${MYSQL_PASSWORD:-$(cat /run/secrets/mysql_password)} \
+    && export MYSQL_DATABASE=${MYSQL_DATABASE:-$(cat /run/secrets/mysql_database)}
+
+RUN ./configure.sh --runner -g acake2php -p $(cat /run/secrets/master_password) -s "$(openssl rand -hex 4)" --dev \
     && ./migrate-database.sh --runner -i -u ${MIGRATE_OPTION} \
     && ./migrate-database.sh --runner -u ${MIGRATE_OPTION} --connection=test
 
