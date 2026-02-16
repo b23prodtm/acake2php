@@ -130,13 +130,15 @@ parse_args_lazy() {
             _positional="${_positional}${_s}${arg}"
             _s=" "
         fi
-    done     
+    done
+    set -- $_positional
 }
 #; export -f parse_args_lazy()
 
 function parse_args() {
   parse_args_lazy "$@"
   if [ "${#_positional}" -gt 0 ]; then printf "%s\n" "Unkown argument(s): $_positional" >&2; exit 1; fi
+  unset _positional
 }
 #; export -f parse_args()
 
@@ -149,6 +151,7 @@ function parse_args() {
 function trim_args() {
   parse_args_lazy "$@"
   echo -e "$_positional"
+  unset _positional
 }
 #; export -f trim_args()
 
@@ -174,6 +177,7 @@ parse_and_export() {
 option $evar $flag $long
 end
 EOF
+  unset _positional
   eval "export $evar"
 }
 #; export -f parse_and_export()
