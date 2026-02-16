@@ -5,7 +5,7 @@ option group -g --group
 flag help -h --help
 end
 EOF
-if [ -n "$ĥelp" ]; then printf "%s\n" "Usage: ${BASH_SOURCE[0]} [-g|--group userGroup]"; exit 0; fi
+if [ -n "$help" ]; then printf "%s\n" "Usage: ${BASH_SOURCE[0]} [-g|--group userGroup]"; exit 0; fi
 if [ -n "$group" ]; then group="$1"; else group="acake2php"; fi
 
 function create_www_path() {

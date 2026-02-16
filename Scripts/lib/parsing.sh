@@ -131,7 +131,7 @@ parse_args_lazy() {
             _s=" "
         fi
     done
-    set -- $_positional
+    set -- "$_positional"
 }
 #; export -f parse_args_lazy()
 
