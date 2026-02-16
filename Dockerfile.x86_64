@@ -140,4 +140,4 @@ RUN ./configure.sh --runner -g acake2php -p $(cat /run/secrets/master_password) 
 EXPOSE 9001
 
 RUN php-fpm -t
-ENTRYPOINT ["php-fpm", "-F"] 
+ENTRYPOINT ["php-fpm", "-F"]
