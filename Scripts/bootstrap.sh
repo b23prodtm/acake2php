@@ -21,4 +21,4 @@ if [ ${#runner} -gt 0 ]; then
   printf "%s\n" "$($phpunit --version)"
   set -- "--runner" "$@"
 fi
-. "$TOPDIR/Scripts/start_daemon.sh" "$@"
+. "$TOPDIR/Scripts/entrypoint.sh" "$@"

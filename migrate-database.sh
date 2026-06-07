@@ -14,9 +14,7 @@ usage() {
   "Usage: ${BASH_SOURCE[0]} [-r] [-i] [-u] [-d]" \
   "          -------------" \
   "          -r, --runner" \
-  "                      Environment variables are provided by remote container orchestrator (Production Mode)" \
-  "          -d, --docker" \
-  "                      Environment variables are provided by a DockerMachine (Local Test Mode)" \
+  "                      Environment variables are provided by remote container orchestrator" \
   "          -i          Make the migration files from ${dbfile} and ${schemafile}" \
   "          -u          Migrate the database in Config/Migrations/" \
   "          -v, --verbose" \
@@ -33,7 +31,6 @@ test_args="app Controller/PagesController --stderr"
 parse_args_lazy "$@" <<EOF
 option connection -c --connection
 flag runner -r --runner
-flag docker -d --docker
 flag update -u --update
 flag initialize -i --init
 flag verbose -v --verbose
@@ -84,15 +81,8 @@ if [ "$initialize" -gt 0 ]; then
 	initialize "${dbfile}" "${schemafile}"
 	bash -c "$TOPDIR/Scripts/configure_database.sh $(echo "$schemafile" | cut -d . -f 1).php"
 fi
-if [ "$docker" -gt 0 ]; then
-  set -- "--docker" "$@"
-  # shellcheck source=Scripts/fooargs.sh
-  . "$TOPDIR/Scripts/fooargs.sh" "$@"
-  bash "$TOPDIR/Scripts/start_daemon.sh" "$@"
-else
-  # shellcheck source=Scripts/bootargs.sh
-  . "$TOPDIR/Scripts/bootargs.sh" "$@"
-fi
+# shellcheck source=Scripts/bootargs.sh
+. "$TOPDIR/Scripts/bootargs.sh" "$@"
 [ "$runner" -gt 0 ] && set -- "--runner" "$@"
 [ "$connection" = "test" ] && set -- "-t" "$test_args" "$@"
 [ "$update" -gt 0 ] && set -- "-u" "$cx_args" "$@"

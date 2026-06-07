@@ -11,7 +11,6 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 parse_args_lazy "$@" <<EOF
 flag verbose -v --verbose
 flag runner -r --runner
-flag docker -d --docker
 option password -p --password
 option salt -s --salt
 option file -f --file
@@ -29,7 +28,6 @@ usage() {
   "Usage: ${BASH_SOURCE[0]} [-r|-d] [-p password -s hash [-f filename]]" \
   "          [[-m|--mig-database] [options]]" \
   "          -r,--runner    Production Mode with container runner" \
-  "          -d,--docker    Test with Docker Machine" \
   "          -p,--password <password> -s <hash> [-f <save-filename>]" \
   "                         Setup administrator <password> with md5 <hash>. " \
   "                         (Optional) A filename to save secret to." \
@@ -67,16 +65,8 @@ if [ ${#password} -gt 0 ]; then
   show_password_status "admin" "MASTER_PASSWORD_HASH" "was set up."
 fi
 [ "$runner" -gt 0 ] && set -- "--runner" "$@"
-if [ "$docker" -gt 0 ]; then
-  set -- "--docker" "$@"
-  log_progress_msg "Check database container id"
-  docker ps -q -a -f "name=$(docker_name "$SECONDARY_HUB")"
-  # shellcheck source=Scripts/fooargs.sh
-  . "$TOPDIR/Scripts/fooargs.sh" "$@"
-else
-  # shellcheck source=Scripts/bootargs.sh
-  . "$TOPDIR/Scripts/bootargs.sh" "$@"
-fi
+# shellcheck source=Scripts/bootargs.sh
+. "$TOPDIR/Scripts/bootargs.sh" "$@"
 if [ "$migrate" -gt 0 ]; then
   log_progress_msg "MIGRATION"
   shell_prompt "$TOPDIR/migrate-database.sh" "Step 2. Migrate database\n" "-Y" "$@"

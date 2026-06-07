@@ -108,10 +108,6 @@ Use one or the other, and see which works for you:
 
     ./configure.sh --mig-database -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} -i
 
-  Don't miss the parameter to startup a local container database :
-
-    ./migrate-database.sh -u --docker -i or ./configure.sh --mig-database -u --docker -i
-
   + Note that localhost is a special value. Using 127.0.0.1 is not the same thing. The latter will connect to the mysqld server through tcpip.
 
   + Try the [secure_installation](#database-configuration).

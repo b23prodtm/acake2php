@@ -66,13 +66,6 @@ Very few variables are defined by default. It provides host-container-server com
   
 		# MariaDB Timezone
 		- TZ: Europe/Paris
-  
-## Validate the configuration, and eventually test it:
-Requirements: A Docker or any compatible must be installed and running.
-Argument value `--docker` set up a local docker test configuration.
-
-		./configure.sh --docker --mig-database -u -i
-                ./test-cake.sh --docker
 
 ## Circle CI
 Developer build continuous integration

@@ -4,24 +4,20 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=Scripts/lib/logging.sh
 . "$TOPDIR/Scripts/lib/logging.sh"
 migrate="--connection=test -v -u -i"
-# default arg --docker, is enabled
 saved=( "$@" )
 config_args="-p pass -s hash --development"
 db_data="db-data:/config/databases/"
 usage() {
   printf "%s\n" \
   "Notice:The test script." \
-  "Usage: $0 [--docker|--runner [--cov|--phpcs]] [-p <password>] [-t <password>] " \
+  "Usage: $0 [--runner [--cov|--phpcs]] [-p <password>] [-t <password>] " \
   "           -r, --runner        [path to a file with a list of variables], " \
   "                               also disables Docker Image" \
-  "           --docker            [enabled] Start a Docker daemon and DATABASE" \
   "           --cov               Coverage All Tests" \
   "           --phpcs             PHP Code Sniffer" \
   "" \
   "Notice:                        Use environment variables from open container/pod" \
   "                               and a file if it exists" \
-  "Default arguments:   " \
-  "           --docker" \
   ""
 }
 while [[ "$#" -gt 0 ]]; do case $1 in
@@ -46,11 +42,6 @@ while [[ "$#" -gt 0 ]]; do case $1 in
     set -x
     migrate="-v ${migrate}"
     echo "Passed params :  $0 ${saved[*]}"
-    ;;
-  --docker )
-    config_args="--docker ${config_args}"
-    migrate="--docker ${migrate}"
-    db_data="$(pwd)/mysqld$(echo "${db_data}" | cut -d : -f 2)"
     ;;
   *) echo "Unknown parameter, passed $0: $1"; exit 1;;
 esac; shift; done

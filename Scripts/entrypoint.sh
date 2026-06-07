@@ -6,7 +6,6 @@ TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 . "$TOPDIR/Scripts/lib/shell_prompt.sh"
 parse_args_lazy "$@" <<EOF
 flag runner -r --runner
-flag docker -d --docker
 flag server -s --server
 flag create -c --create
 flag test -t --test
@@ -33,42 +32,6 @@ function run_ps() {
 		log_failure_msg "FAILED"
 	fi
 }
-if [ ${#docker} -gt 0 ]; then
-  MARIADB_SHORT_NAME=$(docker_name "$SECONDARY_HUB")
-	log_daemon_msg "Docker list ${MARIADB_SHORT_NAME} containers ($SECONDARY_HUB)"
-	#docker shows only running cid (not -q -a -f)
-	maria=$(docker ps -q -f "name=${MARIADB_SHORT_NAME}")
-	if [ -z "$maria" ]; then
-		docker pull "${SECONDARY_HUB}"
-	fi
-	CID="$TOPDIR/deployment/images/mysqldb/mysqld/mysqld.cid"
-	if [ -f "$CID" ] && [ "$(cat "$CID")" = "$maria" ]; then
-		log_daemon_msg "Container $MARIADB_SHORT_NAME running."
-	else
-		log_daemon_msg "Container $MARIADB_SHORT_NAME already maybe running, was stopped."
-		maria_hub=$(docker ps -q -a -f "ancestor=${SECONDARY_HUB}")
-		docker stop "$maria" "$maria_hub" >> "$LOG" 2>&1 || true
-		docker rm -f "$maria" "$maria_hub" >> "$LOG" 2>&1 || true
-		log_daemon_msg "Container $MARIADB_SHORT_NAME 's started up..."
-		mysql_credentials=("-e MYSQL_DATABASE=${MYSQL_DATABASE} -e MYSQL_USER=${MYSQL_USER}" "-e MYSQL_PASSWORD=${MYSQL_PASSWORD}" \
-		"-e MYSQL_RANDOM_ROOT_PASSWORD=yes")
-		[ -z "$(docker network ls -q -f 'name=cake')" ] && docker network create cake
-		if docker run --name "$MARIADB_SHORT_NAME" -id \
-		--env-file .env -e PUID="$(id -u "$USER")" -e PGID="$(id -g "$USER")" \
-		--network cake -e MYSQL_HOST="${MYSQL_HOST}" -e MYSQL_BIND_ADDRESS="${MYSQL_BIND_ADDRESS:-'0.0.0.0'}" \
-		"${mysql_credentials[@]}" --publish "$MYSQL_TCP_PORT:$MYSQL_TCP_PORT" \
-		-v "$TOPDIR/deployment/images/mysqldb/conf.d:/etc/mysql/conf.d" -v "$TOPDIR/deployment/images/mysqldb/config:/config" \
-		-v "$TOPDIR/deployment/images/mysqldb/mysqld:/var/run/mysqld/" \
-		"${SECONDARY_HUB}" >> "$LOG" 2>&1; then
-			log_daemon_msg "Started docker --name=${MARIADB_SHORT_NAME} ref: $(docker ps -q -a -f "name=maria") host: $MYSQL_HOST}"
-		fi
-	fi
-	if ! wait_for_host "$MYSQL_HOST" "${MYSQL_TCP_PORT:-3306}"; then
-		log_daemon_msg "Failed waiting for Mysql"
-	fi
-	docker ps -q -f "name=${MARIADB_SHORT_NAME}" > "$CID"
-	check_log "$LOG"
-fi
 # shellcheck disable=SC2086
 if [ ${#server} -gt 0 ]; then
   show_password_status "${MYSQL_USER}" "${MYSQL_PASSWORD}" "is running development server"
