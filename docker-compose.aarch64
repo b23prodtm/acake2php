@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 #version: "2.4"
-=======
-version: "3.9"
-
->>>>>>> development
 services:
   db:
     build:
@@ -114,10 +109,7 @@ services:
       - aarch64.env
     networks:
       - cake
-<<<<<<< HEAD
 # Docker-Compose >=3.4 only
-=======
->>>>>>> development
 #    healthcheck:
 #      test: ["CMD", "/usr/src/scripts/backup-db.sh"]
 #      interval: 720h
@@ -139,4 +131,3 @@ volumes:
 networks:
   cake:
     external: false
-
