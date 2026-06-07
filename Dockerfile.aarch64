@@ -7,6 +7,7 @@ WORKDIR /usr/local/project
 
 # Copy Node.js dependency files, Fixing global modules issue
 COPY package.json yarn.lock .yarnrc.yml ./
+<<<<<<< HEAD
 COPY .yarn .yarn
 RUN apk add --no-cache nodejs npm \
  && npm install -g corepack \
@@ -15,6 +16,13 @@ RUN apk add --no-cache nodejs npm \
  && corepack install -g yarn \
  && yarn install --immutable \
  && yarn cache clean
+=======
+COPY .yarn .yarn 
+RUN apk update \
+    && apk add --no-cache yarn \
+    && yarn install --immutable \
+    && yarn cache clean
+>>>>>>> development
 
 # Stage 2: Build PHP-FPM environment
 FROM php:7.4.33-fpm-alpine3.16
@@ -117,7 +125,10 @@ RUN addgroup -g $GUID acake2php \
 
 # Copy application files
 COPY --chown=acake2php:acake2php . .
+<<<<<<< HEAD
 RUN printf "%s\n" "Ensure to remove secrets folder..." && rm -Rfv .balena
+=======
+>>>>>>> development
 
 # Run initialization scripts
 RUN chmod +x Scripts/*.sh *.sh \
@@ -125,6 +136,7 @@ RUN chmod +x Scripts/*.sh *.sh \
     && git init \
     && git config --global user.email "b23prodtm@users.sourceforge.net" \
     && git config --global user.name "B R T" \
+<<<<<<< HEAD
     && git config --global --add safe.directory $PWD
 
 # These are now expected at RUNTIME only — no ARG, no default values baked in
@@ -145,6 +157,13 @@ RUN \
     ./configure.sh --runner -g acake2php -p ${MASTER_PASSWORD} -s "$(openssl rand -hex 4)" --dev \
     && ./migrate-database.sh --runner -i -u ${MIGRATE_OPTION} \
     && ./migrate-database.sh --runner -u ${MIGRATE_OPTION} --connection=test
+=======
+    && git config --global --add safe.directory $PWD \
+    && ./deploy.sh ${BALENA_ARCH} --no-build \
+    && ./configure.sh --runner -p ${HASH_PASSWORD} -s "$(openssl rand -hex 4)" --development \
+    && ./migrate-database.sh -r -i -u ${MIGRATE_OPTION} \
+    && ./migrate-database.sh -r -u ${MIGRATE_OPTION} --connection=test
+>>>>>>> development
 
 # As set in /etc/php-fpm.d/
 EXPOSE 9001

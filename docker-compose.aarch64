@@ -1,7 +1,18 @@
+<<<<<<< HEAD
 #version: "2.4"
+=======
+version: "3.9"
+
+>>>>>>> development
 services:
   db:
     build:
+      x-bake:
+        platforms:
+          - linux/arm64
+        tags: 
+          - ${DOCKER_ORG}/mysqldb:latest
+          - ${DOCKER_ORG}/mysqldb:${BAKE_TAG}
       context: deployment/images/mysqldb
       dockerfile: Dockerfile.aarch64
       args:
@@ -28,6 +39,12 @@ services:
       io.balena.features.dbus: "1"
   php-fpm:
     build:
+      x-bake:
+        platforms:
+          - linux/arm64
+        tags:
+          - ${DOCKER_ORG}/php-fpm:latest
+          - ${DOCKER_ORG}/php-fpm:${BAKE_TAG}
       context: .
       dockerfile: Dockerfile.aarch64
       args:
@@ -55,6 +72,12 @@ services:
       - cake
   httpd:
     build:
+      x-bake:
+        platforms:
+          - linux/arm64
+        tags:
+          - ${DOCKER_ORG}/httpd:latest
+          - ${DOCKER_ORG}/httpd:${BAKE_TAG}
       context: deployment/images/httpd
       dockerfile: Dockerfile.aarch64
       args:
@@ -76,6 +99,12 @@ services:
       - cake
   balena-storage:
     build:
+      x-bake:
+        platforms:
+          - linux/arm64
+        tags:
+          - ${DOCKER_ORG}/balena-storage:latest
+          - ${DOCKER_ORG}/balena-storage:${BAKE_TAG}
       context: balena-storage
       dockerfile: Dockerfile.aarch64
     image: betothreeprod/balena-storage:latest
@@ -85,7 +114,10 @@ services:
       - aarch64.env
     networks:
       - cake
+<<<<<<< HEAD
 # Docker-Compose >=3.4 only
+=======
+>>>>>>> development
 #    healthcheck:
 #      test: ["CMD", "/usr/src/scripts/backup-db.sh"]
 #      interval: 720h
