@@ -1,11 +1,4 @@
-version: "2.4"
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> 2544df56 (armhf pushed ./deployment/images/httpd)
-=======
->>>>>>> 2c06e8b7 (armhf pushed ./deployment/images/httpd)
+#version: "2.4"
 services:
   db:
     build:
