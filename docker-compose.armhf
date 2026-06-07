@@ -1,11 +1,4 @@
-version: "2.4"
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> b6664df2 (x86_64 pushed ./deployment/images/httpd)
-=======
->>>>>>> f4be7f3b (x86_64 pushed ./deployment/images/httpd)
+#version: "2.4"
 services:
   db:
     build:
@@ -114,52 +107,4 @@ volumes:
 networks:
   cake:
     external: false
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> e1a9b02e (x86_64 pushed ./deployment/images/httpd)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> 55029b36 (armhf pushed ./deployment/images/httpd)
-# ---------------------------------------------------------------------------
-# Secrets — each file contains a single value, no trailing newline.
-# Create them before first run:
-#   echo -n "s3cr3t" > ./secrets/mysql_root_password.txt
-#   echo -n "maria" > ./secrets/mysql_user.txt
-#   ...
-# ---------------------------------------------------------------------------
-<<<<<<< HEAD
-secrets:
-  mysql_root_password:
-    file: ./secrets/mysql_root_password.txt
-  mysql_user:
-    file: ./secrets/mysql_user.txt
-  mysql_password:
-    file: ./secrets/mysql_password.txt
-  hash_password:
-    file: ./secrets/hash_password.txt
-<<<<<<< HEAD
-=======
->>>>>>> b6664df2 (x86_64 pushed ./deployment/images/httpd)
-=======
->>>>>>> e1a9b02e (x86_64 pushed ./deployment/images/httpd)
-=======
->>>>>>> 11580de1 (armhf pushed ./deployment/images/httpd)
-=======
-#secrets:
-#  mysql_root_password:
-#    file: ./secrets/mysql_root_password.txt
-#  mysql_user:
-#    file: ./secrets/mysql_user.txt
-#  mysql_password:
-#    file: ./secrets/mysql_password.txt
-#  hash_password:
-#    file: ./secrets/hash_password.txt
-
->>>>>>> 55029b36 (armhf pushed ./deployment/images/httpd)
-=======
->>>>>>> e760feaf (aarch64 pushed ./deployment/images/httpd)
