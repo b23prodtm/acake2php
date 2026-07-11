@@ -18,6 +18,9 @@ jobs:
     runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-latest' }}
     timeout-minutes: 120
     environment: AUTH
+    permissions:
+      contents: read
+      actions: write
 
     strategy:
       fail-fast: false
@@ -94,6 +97,8 @@ jobs:
     timeout-minutes: 120
     environment: AUTH
     if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
