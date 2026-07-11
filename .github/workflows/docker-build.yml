@@ -1,0 +1,142 @@
+name: Docker Build Multi-Platform with Manifest Merge
+
+on:
+  pull_request:
+    branches: [ main, development ]
+  push:
+    branches: [ main, development ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+env:
+  REGISTRY: docker.io
+  REGISTRY_IMAGE: ${{ secrets.DOCKER_USER }}
+
+jobs:
+  build-services:
+    runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 120
+    environment: AUTH
+    permissions:
+      contents: read
+      actions: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - balena_arch: armhf
+            platform: linux/arm/v7
+          - balena_arch: aarch64
+            platform: linux/arm64
+          - balena_arch: x86_64
+            platform: linux/amd64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sanitize ref name
+        id: ref
+        run: |
+          RAW_REF="${GITHUB_REF_NAME}"
+
+          # Docker-safe normalization:
+          SAFE_REF=$(echo "$RAW_REF" \
+            | tr '/' '-' \
+            | tr ':' '-' \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed 's/[^a-z0-9._-]//g')
+
+          echo "safe_ref=$SAFE_REF" >> $GITHUB_OUTPUT
+
+          SHORT_SHA=${GITHUB_SHA:0:7}
+          echo "short_sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Enable QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: ${{ matrix.platform }}
+
+      - name: Enable Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+
+      - name: Write buildkit secrets
+        run: |
+          mkdir -p .balena/secrets
+          echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > .balena/secrets/secret_mysql_root_password
+          echo "${{ secrets.MYSQL_USER }}" > .balena/secrets/secret_mysql_user
+          echo "${{ secrets.MYSQL_PASSWORD }}" > .balena/secrets/secret_mysql_password
+          echo "${{ secrets.MYSQL_DATABASE }}" > .balena/secrets/secret_mysql_database
+          echo "${{ secrets.MASTER_PASSWORD }}" > .balena/secrets/secret_master_password
+
+      - name: Build service image for ${{ matrix.balena_arch }}
+        uses: docker/bake-action@v5
+        env:
+          GITHUB_SHA: ${{ steps.ref.outputs.short_sha }}
+          BAKE_TAG: ${{ steps.ref.outputs.safe_ref }}
+        with:
+          files: ./docker-bake.hcl
+          targets: ${{ matrix.balena_arch }}
+          push: true
+          set: |
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max
+            *.args.BALENA_ARCH=${{ matrix.balena_arch }}
+            *.platform=${{ matrix.platform }}
+
+  deploy:
+    needs: build-services
+    runs-on: ${{ vars.DEFAULT_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 120
+    environment: AUTH
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sanitize ref name
+        id: ref
+        run: |
+          RAW_REF="${GITHUB_REF_NAME}"
+
+          # Docker-safe normalization:
+          SAFE_REF=$(echo "$RAW_REF" \
+            | tr '/' '-' \
+            | tr ':' '-' \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed 's/[^a-z0-9._-]//g')
+
+          echo "safe_ref=$SAFE_REF" >> $GITHUB_OUTPUT
+
+          SHORT_SHA=${GITHUB_SHA:0:7}
+          echo "short_sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Enable Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+
+      - name: Push multi-platform manifests
+        env:
+          GITHUB_SHA: ${{ steps.ref.outputs.short_sha }}
+          BAKE_TAG: ${{ steps.ref.outputs.safe_ref }}
+        run: |
+          if "./manifest-push.sh"; then
+              echo "✅ All manifests pushed successfully"
+          else
+              echo "❌ Manifest push failed"
+              exit 1
+          fi
