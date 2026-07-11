@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # BEGIN - Multi-stage Build
 # Stage 1: Install NodeJS dependencies
-FROM node:20-alpine3.16 AS node-build
+FROM node:20-alpine AS node-build
 
 WORKDIR /usr/local/project
 
@@ -17,7 +17,7 @@ RUN apk add --no-cache nodejs npm \
  && yarn cache clean
 
 # Stage 2: Build PHP-FPM environment
-FROM php:7.4.33-fpm-alpine3.16
+FROM php:8.3-fpm-alpine
 
 # Set up working directory and environment
 ARG HTDOCS
