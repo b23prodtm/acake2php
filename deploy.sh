@@ -13,7 +13,7 @@ if ! command -v balena_deploy > /dev/null; then
    printf "%s\n" "sudo npm link balena-cloud-apps"
    exit 0;
 fi
-rm -f deployment/images/mysqldb/conf.d/custom.cnf
+rm -f mysqldb/conf.d/custom.cnf
 # Fixes: unbound variables on ubuntu
 REV=$(git rev-parse HEAD 2>/dev/null)
 

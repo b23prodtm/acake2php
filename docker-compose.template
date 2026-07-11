@@ -8,7 +8,7 @@ services:
         tags: 
           - ${DOCKER_ORG}/mysqldb:latest
           - ${DOCKER_ORG}/mysqldb:${BAKE_TAG}
-      context: deployment/images/mysqldb
+      context: mysqldb
       dockerfile: Dockerfile.%%BALENA_ARCH%%
       args:
         PUID: 1000
@@ -47,7 +47,7 @@ services:
         PGID: 1000
         MYPHPCMS_DIR: app/webroot/php-cms
         MYPHPCMS_LOG: app/tmp/logs
-        HTDOCS: /var/www/html
+        HTDOCS: /var/www/cakephp
     image: betothreeprod/php-fpm:latest
     env_file:
       - common.env
@@ -59,7 +59,7 @@ services:
       CAKEPHP_SECURITY_CIPHER_SEED: 01234
     volumes:
       - localtime:/etc/localtime:ro
-      - www:/var/www/html
+      - www:/var/www/cakephp
       - php-fpm:/usr/local/etc
     ports:
       - "9001:9001"
@@ -73,19 +73,19 @@ services:
         tags:
           - ${DOCKER_ORG}/httpd:latest
           - ${DOCKER_ORG}/httpd:${BAKE_TAG}
-      context: deployment/images/httpd
+      context: httpd
       dockerfile: Dockerfile.%%BALENA_ARCH%%
       args:
         PUID: 1000
         PGID: 1000
-        HTDOCS: /var/www/html
+        HTDOCS: /var/www/cakephp
     image: betothreeprod/httpd:latest
     env_file:
       - common.env
       - %%BALENA_ARCH%%.env
     volumes:
       - localtime:/etc/localtime:ro
-      - www:/var/www/html
+      - www:/var/www/cakephp
       - apache2:/usr/local/apache2
     ports:
       - "80:80"

@@ -19,7 +19,7 @@ group "default" {
 }
 
 target "db" {
-  context    = "deployment/images/mysqldb"
+  context    = "mysqldb"
   dockerfile = "Dockerfile.${BALENA_ARCH}"
   platforms  = ["${PLATFORM}"]
   tags       = [
@@ -52,7 +52,7 @@ target "php-fpm" {
     PGID        = "1000"
     MYPHPCMS_DIR = "app/webroot/php-cms"
     MYPHPCMS_LOG = "app/tmp/logs"
-    HTDOCS      = "/var/www/html"
+    HTDOCS      = "/var/www/cakephp"
   }
   secret = [
     "id=mysql_root_password,src=.balena/secrets/secret_mysql_root_password",
@@ -64,7 +64,7 @@ target "php-fpm" {
 }
 
 target "httpd" {
-  context    = "deployment/images/httpd"
+  context    = "httpd"
   dockerfile = "Dockerfile.${BALENA_ARCH}"
   platforms  = ["${PLATFORM}"]
   tags       = [
@@ -74,7 +74,7 @@ target "httpd" {
   args = {
     PUID   = "1000"
     PGID   = "1000"
-    HTDOCS = "/var/www/html"
+    HTDOCS = "/var/www/cakephp"
   }
 }
 
