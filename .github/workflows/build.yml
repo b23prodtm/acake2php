@@ -17,6 +17,8 @@ jobs:
     name: Build (${{ matrix.arch }})
     runs-on: ubuntu-latest
     environment: AUTH
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -76,6 +78,8 @@ jobs:
     environment: AUTH
     needs: build
     if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 

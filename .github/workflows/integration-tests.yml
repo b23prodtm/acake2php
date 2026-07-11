@@ -26,6 +26,8 @@ jobs:
     name: Docker Compose Integration
     runs-on: ubuntu-latest
     environment: AUTH
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -196,6 +198,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: AUTH
     needs: docker-integration
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
