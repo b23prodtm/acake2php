@@ -7,9 +7,13 @@ BALENA_SECRETS_DIR=${BALENA_SECRETS_DIR:-/run/secrets}
 load_balena_secret() {
   [ "$#" -lt 1 ] && return 1
   env_name=$1
-  file_name=${2:-$(printf '%s' "$env_name" | tr '[:upper:]' '[:lower:]')}
+  legacy_file_name=${2:-$(printf '%s' "$env_name" | tr '[:upper:]' '[:lower:]')}
   current_value=$(printenv "$env_name" 2>/dev/null || true)
-  secret_file="${BALENA_SECRETS_DIR}/${file_name}"
+  secret_file="${BALENA_SECRETS_DIR}/${env_name}"
+
+  if [ ! -f "$secret_file" ]; then
+    secret_file="${BALENA_SECRETS_DIR}/${legacy_file_name}"
+  fi
 
   if [ -n "$current_value" ] || [ ! -f "$secret_file" ]; then
     return 0

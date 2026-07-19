@@ -18,19 +18,19 @@ services:
       TZ: Europe/Paris
     secrets:
       - source: mysql_root_password
-        target: mysql_root_password
+        target: MYSQL_ROOT_PASSWORD
       - source: mysql_password
-        target: mysql_password
+        target: MYSQL_PASSWORD
       - source: mysql_user
-        target: mysql_user
+        target: MYSQL_USER
       - source: mysql_database
-        target: mysql_database
+        target: MYSQL_DATABASE
       - source: security_salt
-        target: security_salt
+        target: CAKEPHP_SECURITY_SALT
       - source: get_hash_password
-        target: get_hash_password
+        target: MASTER_PASSWORD_HASH
       - source: master_password
-        target: master_password
+        target: MASTER_PASSWORD
     volumes:
       - php-fpm-config:/usr/local/etc
       - webroot:/var/www/html
@@ -63,13 +63,13 @@ services:
       TZ: Europe/Paris
     secrets:
       - source: mysql_root_password
-        target: mysql_root_password
+        target: MYSQL_ROOT_PASSWORD
       - source: mysql_password
-        target: mysql_password
+        target: MYSQL_PASSWORD
       - source: mysql_user
-        target: mysql_user
+        target: MYSQL_USER
       - source: mysql_database
-        target: mysql_database
+        target: MYSQL_DATABASE
     volumes:
       - db-data:/config
       - db-socket:/var/run/mysqld
