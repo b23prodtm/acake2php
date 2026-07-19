@@ -20,7 +20,7 @@ FROM httpd:2.4-alpine3.22
 
 # Set up working directory and environment
 ARG HTDOCS
-ENV HTDOCS=${HTDOCS:-"/usr/local/apache2/htdocs"}
+ENV HTDOCS=${HTDOCS:-"/var/www/cakephp"}
 WORKDIR ${HTDOCS}
 
 # Add mor NodeJS, CakePHP and Composer commands to system path
