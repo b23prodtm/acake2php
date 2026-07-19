@@ -1,0 +1,9 @@
+# Keep tracked sample files, but ignore any untracked local secret overrides.
+secrets/*
+!secrets/get_hash_password
+!secrets/master_password
+!secrets/mysql_database
+!secrets/mysql_password
+!secrets/mysql_root_password
+!secrets/mysql_user
+!secrets/security_salt

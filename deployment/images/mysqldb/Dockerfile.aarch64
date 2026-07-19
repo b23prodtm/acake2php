@@ -13,23 +13,12 @@ ARG TZ
 ENV TZ=${TZ:-'Europe/Paris'}
 ARG MYSQL_BIND_ADDRESS
 ENV MYSQL_BIND_ADDRESS=${MYSQL_BIND_ADDRESS:-0.0.0.0}
+ENV BALENA_SECRETS_DIR=/run/secrets
 
-# These are now expected at RUNTIME only — no ARG, no default values baked in
-# They must be provided via: docker buildx build --secret id=mytoken,src=.balena/secrets/secret_mytoken
 COPY . .
-RUN \
-# BEGIN DOCKER_BUILDKIT
-    --mount=type=secret,id=master_password \
-    --mount=type=secret,id=mysql_database \
-    --mount=type=secret,id=mysql_password \
-    --mount=type=secret,id=mysql_root_password \
-    --mount=type=secret,id=mysql_user \
-    # END DOCKER_BUILDKIT
-    export MASTER_PASSWORD=$(cat /run/secrets/master_password) && \
-    export MYSQL_DATABASE=$(cat /run/secrets/mysql_database) && \
-    export MYSQL_PASSWORD=$(cat /run/secrets/mysql_password) && \
-    export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/mysql_root_password) && \
-    export MYSQL_USER=$(cat /run/secrets/mysql_user)
+COPY load-balena-secrets.sh /usr/local/bin/load-balena-secrets
+COPY entrypoint.sh /usr/local/bin/mysqldb-entrypoint
+RUN install -d -m 0750 /run/secrets
 
 COPY conf.d/my.cnf /etc/my.cnf.d/my.cnf
 RUN sed -i.bind "/bind-address/s/=.*$/= ${MYSQL_BIND_ADDRESS}/" /etc/my.cnf.d/my.cnf
@@ -46,6 +35,7 @@ RUN apk update \
     && rm -rf /var/cache/apk/*
 
 RUN chmod 1755 mysql_secure_shell \
+    && chmod 0755 /usr/local/bin/load-balena-secrets /usr/local/bin/mysqldb-entrypoint \
     && ./mysql_secure_shell
 
 # This script runs ONCE at first container start, using runtime env vars
@@ -56,3 +46,4 @@ RUN chmod 755 /docker-entrypoint-initdb.d/init-db.sh
 RUN cat mariadb.ans
 
 VOLUME /var/run/mysqld
+ENTRYPOINT ["/usr/local/bin/mysqldb-entrypoint"]

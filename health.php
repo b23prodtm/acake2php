@@ -1,16 +1,4 @@
 <?php
 
-$servername = getenv(strtoupper(getenv("DB"))."_HOST");
-$username = getenv("MYSQL_USER");
-$password = getenv("MYSQL_PASSWORD");
-
-// Create connection
-$conn = new mysqli($servername, $username, $password);
-
-// Check connection
-if ($conn->connect_error) {
-    header("HTTP/1.1 503 Service Unavailable");
-    die("Health Check MariaDB - Connection failed: " . $conn->connect_error);
-}
-echo "Health Check MariaDB - OK";
-?>
+// Reuse the main health endpoint so Apache and CakePHP report the same status.
+require __DIR__ . '/app/webroot/health.php';

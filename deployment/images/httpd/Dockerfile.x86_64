@@ -76,9 +76,10 @@ RUN envsubst < etc/apache2/conf-available/servername.conf > ${SERVER_ROOT}/conf/
 # Expose Apache ports
 EXPOSE ${HTTP_PORT} ${SSL_PORT}
 
-# Enable Apache modules and start the server
+# Enable Apache modules before running the container healthcheck.
 RUN chmod +x Scripts/*.sh \
     && Scripts/a2enmod.sh
 
+HEALTHCHECK --interval=30s --timeout=5s --retries=5 --start-period=30s CMD curl -fsS http://localhost/health.php || exit 1
 CMD ["apachectl", "-D", "FOREGROUND"]
 

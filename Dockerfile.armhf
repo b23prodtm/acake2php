@@ -110,17 +110,26 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ 
 # php-fpm configuration install
 COPY php-ini-overrides.ini /usr/local/etc/php/99-overrides.ini
 COPY etc/php-fpm.d /usr/local/etc/php-fpm.d
+COPY Scripts/load-balena-secrets.sh /usr/local/bin/load-balena-secrets
+COPY Scripts/php-fpm-entrypoint.sh /usr/local/bin/php-fpm-entrypoint
 
 # add dedicated user
 RUN addgroup -g $GUID acake2php \
     && adduser -h $PWD -G acake2php -D -u $PUID acake2php
 
+# Balena secrets are mounted into /run/secrets at runtime; copy tracked samples there for local builds.
+RUN install -d -o acake2php -g acake2php -m 0750 /run/secrets
+
 # Copy application files
 COPY --chown=acake2php:acake2php . .
-RUN printf "%s\n" "Ensure to remove secrets folder..." && rm -Rfv .balena
+RUN cp -av .balena/secrets/. /run/secrets/ 2>/dev/null || true \
+    && chown -R acake2php:acake2php /run/secrets \
+    && chmod 0640 /run/secrets/* 2>/dev/null || true \
+    && printf "%s\n" "Ensure to remove secrets folder..." \
+    && rm -Rfv .balena
 
 # Run initialization scripts
-RUN chmod +x Scripts/*.sh *.sh \
+RUN chmod +x Scripts/*.sh *.sh /usr/local/bin/load-balena-secrets /usr/local/bin/php-fpm-entrypoint \
     && ./deploy.sh ${BALENA_ARCH} --no-build \
     && git init \
     && git config --global user.email "b23prodtm@users.sourceforge.net" \
@@ -128,14 +137,14 @@ RUN chmod +x Scripts/*.sh *.sh \
     && git config --global --add safe.directory $PWD
 
 # These are now expected at RUNTIME only — no ARG, no default values baked in
-# They must be provided via: docker buildx build --secret id=mytoken,src=.balena/secrets/secret_mytoken
+# They must be provided via: docker buildx build --secret id=mytoken,src=.balena/secrets/mytoken
 RUN \
 ### BEGIN DOCKER_BUILDKIT
-    --mount=type=secret,id=master_password \
-    --mount=type=secret,id=mysql_database \
-    --mount=type=secret,id=mysql_password \
-    --mount=type=secret,id=mysql_root_password \
-    --mount=type=secret,id=mysql_user \
+    --mount=type=secret,id=master_password,target=/run/secrets/master_password \
+    --mount=type=secret,id=mysql_database,target=/run/secrets/mysql_database \
+    --mount=type=secret,id=mysql_password,target=/run/secrets/mysql_password \
+    --mount=type=secret,id=mysql_root_password,target=/run/secrets/mysql_root_password \
+    --mount=type=secret,id=mysql_user,target=/run/secrets/mysql_user \
 ### END DOCKER_BUILDKIT
     MASTER_PASSWORD=$(cat /run/secrets/master_password) \
     MYSQL_DATABASE=$(cat /run/secrets/mysql_database) \
@@ -150,4 +159,5 @@ RUN \
 EXPOSE 9001
 
 RUN php-fpm -t
+ENTRYPOINT ["/usr/local/bin/php-fpm-entrypoint"]
 CMD ["php-fpm", "-F"] 

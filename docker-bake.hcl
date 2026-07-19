@@ -59,11 +59,11 @@ target "php-fpm" {
     GITHUB_SHA != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/php-fpm:${GITHUB_SHA}" : ""
   ]
   secret = [
-    "id=mysql_root_password,src=.balena/secrets/secret_mysql_root_password",
-    "id=mysql_user,src=.balena/secrets/secret_mysql_user",
-    "id=mysql_password,src=.balena/secrets/secret_mysql_password",
-    "id=mysql_database,src=.balena/secrets/secret_mysql_database",
-    "id=master_password,src=.balena/secrets/secret_master_password",
+    "id=mysql_root_password,src=.balena/secrets/mysql_root_password",
+    "id=mysql_user,src=.balena/secrets/mysql_user",
+    "id=mysql_password,src=.balena/secrets/mysql_password",
+    "id=mysql_database,src=.balena/secrets/mysql_database",
+    "id=master_password,src=.balena/secrets/master_password",
   ]
 }
 
@@ -101,13 +101,6 @@ target "db" {
     "${REGISTRY}/${REGISTRY_IMAGE}/mysqldb:latest",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/mysqldb:${replace(BAKE_TAG, "/", "-")}" : "",
     GITHUB_SHA != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/mysqldb:${GITHUB_SHA}" : ""
-  ]
-  secret = [
-    "id=mysql_root_password,src=.balena/secrets/secret_mysql_root_password",
-    "id=mysql_user,src=.balena/secrets/secret_mysql_user",
-    "id=mysql_password,src=.balena/secrets/secret_mysql_password",
-    "id=mysql_database,src=.balena/secrets/secret_mysql_database",
-    "id=master_password,src=.balena/secrets/secret_master_password",
   ]
 }
 

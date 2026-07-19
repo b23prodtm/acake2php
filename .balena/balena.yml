@@ -1,13 +1,108 @@
-## YAML Template.
-build-secrets:
-  global:
-    - source: secret_mysql_root_password
-      dest: mysql_root_password      
-    - source: secret_mysql_user
-      dest: mysql_user
-    - source: secret_mysql_password
-      dest: mysql_password
-    - source: secret_mysql_database
-      dest: mysql_database
-    - source: secret_master_password
-      dest: master_password
+version: "2.4"
+
+services:
+  php-fpm:
+    # Balena uses the service Dockerfile.template automatically; CI reuses the prebuilt test tag.
+    build: ..
+    image: acake2php/php-fpm:test
+    environment:
+      BALENA_STORAGE_PATH: /mnt/external-drives
+      CAKEPHP_DEBUG_LEVEL: "2"
+      COLLECT_COVERAGE: "false"
+      DB: Mysql
+      MIGRATE_OPTION: -v
+      MYSQL_DATABASE: Acake2php
+      MYSQL_HOST: mysqldb
+      MYSQL_TCP_PORT: 3306
+      MYSQL_USER: acake2php
+      SERVER_NAME: localhost
+      TEST_MYSQL_DATABASE: test
+      TZ: Europe/Paris
+    secrets:
+      - source: mysql_root_password
+        target: mysql_root_password
+      - source: mysql_password
+        target: mysql_password
+      - source: mysql_user
+        target: mysql_user
+      - source: mysql_database
+        target: mysql_database
+      - source: security_salt
+        target: security_salt
+      - source: get_hash_password
+        target: get_hash_password
+      - source: master_password
+        target: master_password
+    volumes:
+      - php-fpm-config:/usr/local/etc
+      - webroot:/var/www/html
+      - balena-storage-data:/mnt/external-drives
+
+  httpd:
+    build: ../deployment/images/httpd
+    image: acake2php/httpd:test
+    depends_on:
+      - php-fpm
+      - mysqldb
+      - balena-storage
+    environment:
+      SERVER_NAME: localhost
+    ports:
+      - "80:80"
+    volumes:
+      - apache2-config:/usr/local/apache2
+      - webroot:/var/www/html
+
+  mysqldb:
+    build: ../deployment/images/mysqldb
+    image: acake2php/mysqldb:test
+    environment:
+      MYSQL_DATABASE: Acake2php
+      MYSQL_HOST: mysqldb
+      MYSQL_RANDOM_ROOT_PASSWORD: "no"
+      MYSQL_TCP_PORT: 3306
+      MYSQL_USER: acake2php
+      TZ: Europe/Paris
+    secrets:
+      - source: mysql_root_password
+        target: mysql_root_password
+      - source: mysql_password
+        target: mysql_password
+      - source: mysql_user
+        target: mysql_user
+      - source: mysql_database
+        target: mysql_database
+    volumes:
+      - db-data:/config
+      - db-socket:/var/run/mysqld
+
+  balena-storage:
+    build: ../balena-storage
+    image: acake2php/balena-storage:test
+    privileged: true
+    volumes:
+      - balena-storage-data:/mnt/external-drives
+
+secrets:
+  mysql_root_password:
+    file: ./secrets/mysql_root_password
+  mysql_password:
+    file: ./secrets/mysql_password
+  mysql_user:
+    file: ./secrets/mysql_user
+  mysql_database:
+    file: ./secrets/mysql_database
+  security_salt:
+    file: ./secrets/security_salt
+  get_hash_password:
+    file: ./secrets/get_hash_password
+  master_password:
+    file: ./secrets/master_password
+
+volumes:
+  apache2-config:
+  balena-storage-data:
+  db-data:
+  db-socket:
+  php-fpm-config:
+  webroot:

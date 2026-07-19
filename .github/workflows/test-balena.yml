@@ -1,0 +1,133 @@
+name: Test Balena Secrets Stack
+
+on:
+  pull_request:
+  push:
+    branches: [ main, development ]
+  workflow_dispatch:
+
+jobs:
+  build-multi-arch:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - balena_arch: armhf
+            platform: linux/arm/v7
+          - balena_arch: aarch64
+            platform: linux/arm64
+          - balena_arch: x86_64
+            platform: linux/amd64
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Simulate Balena secrets
+        run: |
+          cat <<'SECRETS' > .balena/secrets/mysql_root_password
+          test-root-password
+          SECRETS
+          cat <<'SECRETS' > .balena/secrets/mysql_password
+          test-app-password
+          SECRETS
+          cat <<'SECRETS' > .balena/secrets/mysql_user
+          acake2php
+          SECRETS
+          cat <<'SECRETS' > .balena/secrets/mysql_database
+          Acake2php
+          SECRETS
+          cat <<'SECRETS' > .balena/secrets/master_password
+          test-master-password
+          SECRETS
+          cat <<'SECRETS' > .balena/secrets/security_salt
+          test-security-salt
+          SECRETS
+          cat <<'SECRETS' > .balena/secrets/get_hash_password
+          test-master-password-hash
+          SECRETS
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: ${{ matrix.platform }}
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build ${{ matrix.balena_arch }} images with bake
+        uses: docker/bake-action@v5
+        with:
+          files: ./docker-bake.hcl
+          targets: ${{ matrix.balena_arch }}
+          push: false
+          set: |
+            *.platform=${{ matrix.platform }}
+            *.args.BALENA_ARCH=${{ matrix.balena_arch }}
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max
+
+  integration:
+    runs-on: ubuntu-latest
+    needs: build-multi-arch
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Simulate Balena secrets
+        run: |
+          cat <<'SECRETS' > .balena/secrets/mysql_root_password
+          test-root-password
+          SECRETS
+          cat <<'SECRETS' > .balena/secrets/mysql_password
+          test-app-password
+          SECRETS
+          cat <<'SECRETS' > .balena/secrets/mysql_user
+          acake2php
+          SECRETS
+          cat <<'SECRETS' > .balena/secrets/mysql_database
+          Acake2php
+          SECRETS
+          cat <<'SECRETS' > .balena/secrets/master_password
+          test-master-password
+          SECRETS
+          cat <<'SECRETS' > .balena/secrets/security_salt
+          test-security-salt
+          SECRETS
+          cat <<'SECRETS' > .balena/secrets/get_hash_password
+          test-master-password-hash
+          SECRETS
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build amd64 images for compose
+        uses: docker/bake-action@v5
+        with:
+          files: ./docker-bake.hcl
+          targets: x86_64
+          load: true
+          set: |
+            *.platform=linux/amd64
+            *.args.BALENA_ARCH=x86_64
+            php-fpm-x86_64.tags=acake2php/php-fpm:test
+            httpd-x86_64.tags=acake2php/httpd:test
+            db-x86_64.tags=acake2php/mysqldb:test
+            balena-storage-x86_64.tags=acake2php/balena-storage:test
+
+      - name: Validate Balena compose config
+        run: docker compose -f .balena/balena.yml config
+
+      - name: Start Balena stack
+        run: docker compose -f .balena/balena.yml up -d --wait --no-build
+
+      - name: Verify health endpoint
+        run: |
+          curl --retry 10 --retry-delay 5 --retry-connrefused --fail --silent http://127.0.0.1/health.php | tee /tmp/health.txt
+          grep '"status":"ok"' /tmp/health.txt
+
+      - name: Dump service logs on failure
+        if: failure()
+        run: docker compose -f .balena/balena.yml logs --no-color
+
+      - name: Stop Balena stack
+        if: always()
+        run: docker compose -f .balena/balena.yml down -v

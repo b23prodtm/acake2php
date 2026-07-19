@@ -27,18 +27,19 @@ data:
     # $ CREATE DATABASE <write mysql database name>;
     - MYSQL_DATABASE: Acake2php
     # Persistent ROOT connection credentials
-    - MYSQL_HOST: db
-    # Database Root Password
+    - MYSQL_HOST: mysqldb
+    # Database Root Password (fallback for local runs; prefer .balena/secrets/mysql_root_password)
     - MYSQL_USER: Acake2php
     - MYSQL_PASSWORD: Ac4ke2php
     - MYSQL_ROOT_PASSWORD: a-strong-password
 
 # Some optional configuration. The following default variables may be setup as your server preferences, set in open source:
 
-    # CakePHP secrets
+    # CakePHP secrets are expected from .balena/secrets/* when running on Balena Cloud.
     #- CAKEPHP_SECRET_TOKEN: <secret-token>
     #- CAKEPHP_SECRET_SALT: <secret-salt>
     #- CAKEPHP_SECURITY_CIPHER_SEED: <cipher-seed>
+    - BALENA_STORAGE_PATH: /mnt/external-drives
 
     # Deployed Migration option
     - MIGRATE_OPTION: -v
