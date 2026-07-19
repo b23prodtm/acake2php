@@ -5,7 +5,7 @@ variable "REGISTRY" {
 }
 
 variable "DOCKER_ORG" {
-  default = "betothreeprod"
+  default = "bprtkop"
 }
 
 # Alias for compatibility with manifest-push.sh
