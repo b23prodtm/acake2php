@@ -1,6 +1,6 @@
 # Docker Bake Configuration
 
-The x-bake configuration has been extracted from `docker-compose.yml` to `docker-bake.hcl`.
+The per-architecture compose files still provide the concrete build inputs, while `docker-bake.hcl` layers tags, secrets, groups, and cache settings on top.
 
 ## Usage
 
@@ -9,15 +9,16 @@ The x-bake configuration has been extracted from `docker-compose.yml` to `docker
 To build all images, e.g. x86_64 (linux/amd64):
 ```bash
 balena_deploy . x86_64 3 0
-docker buildx bake -f docker-bake.hcl
+ln -sf docker-compose.x86_64 docker-compose.yml
+docker buildx bake -f docker-compose.yml -f docker-bake.hcl
 ```
 
 To build a specific service:
 ```bash
-docker buildx bake -f docker-bake.hcl db
-docker buildx bake -f docker-bake.hcl php-fpm
-docker buildx bake -f docker-bake.hcl httpd
-docker buildx bake -f docker-bake.hcl balena-storage
+docker buildx bake -f docker-compose.yml -f docker-bake.hcl db
+docker buildx bake -f docker-compose.yml -f docker-bake.hcl php-fpm
+docker buildx bake -f docker-compose.yml -f docker-bake.hcl httpd
+docker buildx bake -f docker-compose.yml -f docker-bake.hcl balena-storage
 ```
 
 ### Setting Variables
@@ -33,7 +34,8 @@ export BALENA_ARCH=x86_64
 
 # Using command-line
 balena_deploy . x86_64 3 0
-docker buildx bake -f docker-bake.hcl \
+ln -sf docker-compose.x86_64 docker-compose.yml
+docker buildx bake -f docker-compose.yml -f docker-bake.hcl \
   --set "*.platform=linux/amd64" \
   --set "db.tags=myorg/mysqldb:v1.0.0"
 ```
@@ -43,7 +45,8 @@ docker buildx bake -f docker-bake.hcl \
 To build for other architecture platforms, e.g aarch64 (linux/arm64):
 ```bash
 balena_deploy . aarch64 3 0
-docker buildx bake -f docker-bake.hcl \
+ln -sf docker-compose.aarch64 docker-compose.yml
+docker buildx bake -f docker-compose.yml -f docker-bake.hcl \
   --set "*.platform=linux/arm64"
 ```
 Multi-arch parallel builds aren't available. Only set 1 platform build at a time!
@@ -54,7 +57,8 @@ This is due to the project structure (*.env, multiple Dockerfiles, etc.)
 To build and push to a registry, e.g. x86_64 (linux/amd64):
 ```bash
 balena_deploy . x86_64 3 0
-docker buildx bake -f docker-bake.hcl --push
+ln -sf docker-compose.x86_64 docker-compose.yml
+docker buildx bake -f docker-compose.yml -f docker-bake.hcl --push
 ```
 
 ## Variables
@@ -66,10 +70,11 @@ docker buildx bake -f docker-bake.hcl --push
 
 ## Docker Compose
 
-The `docker-compose.yml` file has been cleaned up and no longer contains x-bake configuration. You can still use it for local development:
+Use `Scripts/update-templates.sh` (or `balena_deploy`) to refresh the arch-specific compose files, then point `docker-compose.yml` at the desired one before baking or running local compose commands:
 
 ```bash
+ln -sf docker-compose.x86_64 docker-compose.yml
 docker-compose up -d
 ```
 
-Note: You'll need to use update_templates command line to filter out %%PLATFORM%% and %%BALENA_ARCH%% tags in docker-compose.template to docker-compose.yml.
+Note: `docker buildx bake` depends on the filtered `docker-compose.*` files, so link the matching `docker-compose.<arch>` into `docker-compose.yml` first.

@@ -59,12 +59,13 @@ jobs:
       - name: Build ${{ matrix.balena_arch }} images with bake
         uses: docker/bake-action@v5
         with:
-          files: ./docker-bake.hcl
+          files: |
+            ./docker-compose.${{ matrix.balena_arch }}
+            ./docker-bake.hcl
           targets: ${{ matrix.balena_arch }}
           push: false
           set: |
             *.platform=${{ matrix.platform }}
-            *.args.BALENA_ARCH=${{ matrix.balena_arch }}
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
 
@@ -106,12 +107,13 @@ jobs:
       - name: Build amd64 images for compose
         uses: docker/bake-action@v5
         with:
-          files: ./docker-bake.hcl
+          files: |
+            ./docker-compose.x86_64
+            ./docker-bake.hcl
           targets: x86_64
           load: true
           set: |
             *.platform=linux/amd64
-            *.args.BALENA_ARCH=x86_64
             php-fpm-x86_64.tags=acake2php/php-fpm:test
             httpd-x86_64.tags=acake2php/httpd:test
             db-x86_64.tags=acake2php/mysqldb:test

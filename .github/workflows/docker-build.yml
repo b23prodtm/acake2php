@@ -82,13 +82,14 @@ jobs:
           GITHUB_SHA: ${{ steps.ref.outputs.short_sha }}
           BAKE_TAG: ${{ steps.ref.outputs.safe_ref }}
         with:
-          files: ./docker-bake.hcl
+          files: |
+            ./docker-compose.${{ matrix.balena_arch }}
+            ./docker-bake.hcl
           targets: ${{ matrix.balena_arch }}
           push: true
           set: |
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
-            *.args.BALENA_ARCH=${{ matrix.balena_arch }}
             *.platform=${{ matrix.platform }}
 
   deploy:

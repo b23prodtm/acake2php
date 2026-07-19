@@ -44,15 +44,6 @@ target "common" {
 # ============================================================================
 target "php-fpm" {
   inherits   = ["common"]
-  context    = "."
-  dockerfile = "Dockerfile.${BALENA_ARCH}"
-  args = {
-    PUID         = "1000"
-    PGID         = "1000"
-    MYPHPCMS_DIR = "app/webroot/php-cms"
-    MYPHPCMS_LOG = "app/tmp/logs"
-    HTDOCS       = "/var/www/html"
-  }
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/php-fpm:latest",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/php-fpm:${replace(BAKE_TAG, "/", "-")}" : "",
@@ -72,13 +63,6 @@ target "php-fpm" {
 # ============================================================================
 target "httpd" {
   inherits   = ["common"]
-  context    = "deployment/images/httpd"
-  dockerfile = "Dockerfile.${BALENA_ARCH}"
-  args = {
-    PUID   = "1000"
-    PGID   = "1000"
-    HTDOCS = "/var/www/html"
-  }
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/httpd:latest",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/httpd:${replace(BAKE_TAG, "/", "-")}" : "",
@@ -91,12 +75,6 @@ target "httpd" {
 # ============================================================================
 target "db" {
   inherits   = ["common"]
-  context    = "deployment/images/mysqldb"
-  dockerfile = "Dockerfile.${BALENA_ARCH}"
-  args = {
-    PUID = "1000"
-    PGID = "1000"
-  }
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/mysqldb:latest",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/mysqldb:${replace(BAKE_TAG, "/", "-")}" : "",
@@ -109,8 +87,6 @@ target "db" {
 # ============================================================================
 target "balena-storage" {
   inherits   = ["common"]
-  context    = "balena-storage"
-  dockerfile = "Dockerfile.${BALENA_ARCH}"
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/balena-storage:latest",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/balena-storage:${replace(BAKE_TAG, "/", "-")}" : "",
@@ -127,9 +103,7 @@ group "armhf" {
 }
 
 target "php-fpm-armhf" {
-  inherits   = ["php-fpm"]
-  platforms  = ["linux/arm/v7"]
-  dockerfile = "Dockerfile.armhf"
+  inherits = ["php-fpm"]
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/php-fpm:arm32v7",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/php-fpm:${replace(BAKE_TAG, "/", "-")}-arm32v7" : "",
@@ -138,9 +112,7 @@ target "php-fpm-armhf" {
 }
 
 target "httpd-armhf" {
-  inherits   = ["httpd"]
-  platforms  = ["linux/arm/v7"]
-  dockerfile = "Dockerfile.armhf"
+  inherits = ["httpd"]
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/httpd:arm32v7",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/httpd:${replace(BAKE_TAG, "/", "-")}-arm32v7" : "",
@@ -149,9 +121,7 @@ target "httpd-armhf" {
 }
 
 target "db-armhf" {
-  inherits   = ["db"]
-  platforms  = ["linux/arm/v7"]
-  dockerfile = "Dockerfile.armhf"
+  inherits = ["db"]
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/mysqldb:arm32v7",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/mysqldb:${replace(BAKE_TAG, "/", "-")}-arm32v7" : "",
@@ -160,9 +130,7 @@ target "db-armhf" {
 }
 
 target "balena-storage-armhf" {
-  inherits   = ["balena-storage"]
-  platforms  = ["linux/arm/v7"]
-  dockerfile = "Dockerfile.armhf"
+  inherits = ["balena-storage"]
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/balena-storage:arm32v7",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/balena-storage:${replace(BAKE_TAG, "/", "-")}-arm32v7" : "",
@@ -175,9 +143,7 @@ group "aarch64" {
 }
 
 target "php-fpm-aarch64" {
-  inherits   = ["php-fpm"]
-  platforms  = ["linux/arm64"]
-  dockerfile = "Dockerfile.aarch64"
+  inherits = ["php-fpm"]
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/php-fpm:arm64v8",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/php-fpm:${replace(BAKE_TAG, "/", "-")}-arm64v8" : "",
@@ -186,9 +152,7 @@ target "php-fpm-aarch64" {
 }
 
 target "httpd-aarch64" {
-  inherits   = ["httpd"]
-  platforms  = ["linux/arm64"]
-  dockerfile = "Dockerfile.aarch64"
+  inherits = ["httpd"]
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/httpd:arm64v8",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/httpd:${replace(BAKE_TAG, "/", "-")}-arm64v8" : "",
@@ -197,9 +161,7 @@ target "httpd-aarch64" {
 }
 
 target "db-aarch64" {
-  inherits   = ["db"]
-  platforms  = ["linux/arm64"]
-  dockerfile = "Dockerfile.aarch64"
+  inherits = ["db"]
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/mysqldb:arm64v8",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/mysqldb:${replace(BAKE_TAG, "/", "-")}-arm64v8" : "",
@@ -208,9 +170,7 @@ target "db-aarch64" {
 }
 
 target "balena-storage-aarch64" {
-  inherits   = ["balena-storage"]
-  platforms  = ["linux/arm64"]
-  dockerfile = "Dockerfile.aarch64"
+  inherits = ["balena-storage"]
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/balena-storage:arm64v8",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/balena-storage:${replace(BAKE_TAG, "/", "-")}-arm64v8" : "",
@@ -223,9 +183,7 @@ group "x86_64" {
 }
 
 target "php-fpm-x86_64" {
-  inherits   = ["php-fpm"]
-  platforms  = ["linux/amd64"]
-  dockerfile = "Dockerfile.x86_64"
+  inherits = ["php-fpm"]
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/php-fpm:amd64",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/php-fpm:${replace(BAKE_TAG, "/", "-")}-amd64" : "",
@@ -234,9 +192,7 @@ target "php-fpm-x86_64" {
 }
 
 target "httpd-x86_64" {
-  inherits   = ["httpd"]
-  platforms  = ["linux/amd64"]
-  dockerfile = "Dockerfile.x86_64"
+  inherits = ["httpd"]
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/httpd:amd64",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/httpd:${replace(BAKE_TAG, "/", "-")}-amd64" : "",
@@ -245,9 +201,7 @@ target "httpd-x86_64" {
 }
 
 target "db-x86_64" {
-  inherits   = ["db"]
-  platforms  = ["linux/amd64"]
-  dockerfile = "Dockerfile.x86_64"
+  inherits = ["db"]
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/mysqldb:amd64",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/mysqldb:${replace(BAKE_TAG, "/", "-")}-amd64" : "",
@@ -256,9 +210,7 @@ target "db-x86_64" {
 }
 
 target "balena-storage-x86_64" {
-  inherits   = ["balena-storage"]
-  platforms  = ["linux/amd64"]
-  dockerfile = "Dockerfile.x86_64"
+  inherits = ["balena-storage"]
   tags = [
     "${REGISTRY}/${REGISTRY_IMAGE}/balena-storage:amd64",
     BAKE_TAG != "" ? "${REGISTRY}/${REGISTRY_IMAGE}/balena-storage:${replace(BAKE_TAG, "/", "-")}-amd64" : "",

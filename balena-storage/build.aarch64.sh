@@ -2,7 +2,8 @@
 set -eu
 TOPDIR="$(cd "$(dirname \
 "$(dirname "${BASH_SOURCE[0]}")")" && pwd)"
-ln -s "${TOPDIR}/aarch64.env" aarch64.env
+ln -sf "${TOPDIR}/aarch64.env" "${TOPDIR}/.env"
 balena_deploy "${TOPDIR}" aarch64 3 0
-docker buildx bake -f "${TOPDIR}/docker-bake.hcl" balena-storage \
+ln -sf "${TOPDIR}/docker-compose.aarch64" "${TOPDIR}/docker-compose.yml"
+docker buildx bake -f "${TOPDIR}/docker-compose.yml" -f "${TOPDIR}/docker-bake.hcl" balena-storage \
   --set "*.platform=linux/arm64" --push
