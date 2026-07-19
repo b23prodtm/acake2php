@@ -28,13 +28,14 @@ Very few variables are defined by default. It provides host-container-server com
   
   		# Open https://${SERVER_NAME}/etc/getHashPassword.php or type $ ./configure.sh -p password -s hash
   		# Get new staff credentials (url=/admin/index.php)
-                - GET_HASH_PASSWORD: (let's encrypt it from above)
+                - MASTER_PASSWORD_HASH: (let's encrypt it from above)
   
 		# Database name
   		- MYSQL_DATABASE: aria_db
 		# Persistent ROOT connection credentials
-		- MYSQL_HOST: localhost
-		- MYSQL_ROOT_PASSWORD: mariadb
+		- MYSQL_USER: maria
+                - MYSQL_USER_PASSWORD: Some-robust-Password
+		- MYSQL_ROOT_PASSWORD: SoMe-MorE-Robust-PAssWOrd!
 
 ## Some configuration. All variables may be changed to your needs:
       
@@ -65,13 +66,6 @@ Very few variables are defined by default. It provides host-container-server com
   
 		# MariaDB Timezone
 		- TZ: Europe/Paris
-  
-## Validate the configuration, and eventually test it:
-Requirements: A Docker or any compatible must be installed and running.
-Argument value `--docker` set up a local docker test configuration.
-
-		./configure.sh --docker --mig-database -u -i
-                ./test-cake.sh --docker
 
 ## Circle CI
 Developer build continuous integration
@@ -81,6 +75,15 @@ The current project is a full PHP (CakePHP) with MySQL (MariaDB) container for D
 A. Fork the master repository (development branch).
     
     yarn
+
+Run the tools directly from .bin:
+
+    ./node_modules/.bin/balena_deploy --help
+
+Or add the local bin to your PATH temporarily:
+
+    export PATH="./node_modules/.bin:$PATH"
+
 
 B. Rebuild image registry from deployment folder if you make change to the primary. E.g. change of Linux distribution. Edit the file deployment/images/primary/Dockerfile.template to your needs and perform a build from the a Docker client machine.
 If you make use of [Balena OS base image list](https://www.balena.io/docs/reference/base-images/base-images-ref/) repository you can use blocks to cross build for ARM ```# [ "cross-build-start" ] # [ "cross-build-end" ]``` command lines in the Dockerfile.template files:

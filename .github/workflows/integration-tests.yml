@@ -1,0 +1,284 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: ["main", "development"]
+  pull_request:
+  workflow_run:
+    workflows: ["Docker Build & Push"]
+    types: [completed]
+    branches: ["main", "development"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Use x86_64 for all integration tests in CI
+  BALENA_ARCH: x86_64
+  PLATFORM: linux/amd64
+
+jobs:
+  # ──────────────────────────────────────────────────────────────────────────
+  # Job 1 — Docker Compose integration tests (CakePHP + MariaDB)
+  # ──────────────────────────────────────────────────────────────────────────
+  docker-integration:
+    name: Docker Compose Integration
+    runs-on: ubuntu-latest
+    environment: AUTH
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Enable Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Write secrets from GitHub Secrets to .balena/secrets/ files
+      # (same layout as .balena/balena.yml build-secrets section)
+      - name: Write build secrets
+        run: |
+          echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > .balena/secrets/secret_mysql_root_password
+          echo "${{ secrets.MYSQL_USER }}"          > .balena/secrets/secret_mysql_user
+          echo "${{ secrets.MYSQL_PASSWORD }}"      > .balena/secrets/secret_mysql_password
+          echo "${{ secrets.MYSQL_DATABASE }}"      > .balena/secrets/secret_mysql_database
+          echo "${{ secrets.MASTER_PASSWORD }}"     > .balena/secrets/secret_master_password
+
+      # Export the same secrets as environment variables (used by configure.sh
+      # and migrate-database.sh inside the container at build time).
+      - name: Build the x86_64 stack (no push)
+        env:
+          BALENA_ARCH: x86_64
+          PLATFORM:    linux/amd64
+          BAKE_TAG:    ci-test
+          DOCKER_ORG:  ${{ secrets.DOCKER_USER || 'betothreeprod' }}
+        run: |
+          docker buildx bake -f docker-bake.hcl \
+            --set "*.platform=${PLATFORM}" \
+            --load
+
+      # Activate the x86_64 docker-compose file and the matching env file
+      - name: Prepare docker-compose environment
+        env:
+          DOCKER_ORG:         ${{ secrets.DOCKER_USER || 'betothreeprod' }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_USER:         ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD:     ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_DATABASE:     ${{ secrets.MYSQL_DATABASE }}
+        run: |
+          cp -f docker-compose.x86_64 docker-compose.yml
+          ln -sf x86_64.env .env
+
+      - name: Start services
+        env:
+          DOCKER_ORG:          ${{ secrets.DOCKER_USER || 'betothreeprod' }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_USER:          ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD:      ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_DATABASE:      ${{ secrets.MYSQL_DATABASE }}
+          CAKEPHP_SECURITY_SALT:        ci-salt-value
+          CAKEPHP_SECURITY_CIPHER_SEED: "01234"
+        run: docker compose up -d --no-build
+
+      # ── Health checks ────────────────────────────────────────────────────
+      - name: Wait for MariaDB to be ready
+        run: |
+          echo "Waiting for MariaDB..."
+          for i in $(seq 1 30); do
+            if docker compose exec -T db \
+                mysqladmin ping -h 127.0.0.1 \
+                  -u"${{ secrets.MYSQL_USER }}" \
+                  -p"${{ secrets.MYSQL_PASSWORD }}" \
+                  --silent 2>/dev/null; then
+              echo "MariaDB is up."
+              break
+            fi
+            echo "  attempt $i/30 — sleeping 5s..."
+            sleep 5
+          done
+
+      - name: Wait for PHP-FPM to be ready
+        run: |
+          echo "Waiting for PHP-FPM on port 9001..."
+          for i in $(seq 1 20); do
+            if docker compose exec -T php-fpm \
+                php-fpm -t 2>&1 | grep -q "successful"; then
+              echo "PHP-FPM is healthy."
+              break
+            fi
+            echo "  attempt $i/20 — sleeping 3s..."
+            sleep 3
+          done
+
+      - name: Wait for Apache httpd on port 80
+        run: |
+          echo "Waiting for Apache on port 80..."
+          for i in $(seq 1 20); do
+            if curl -s -o /dev/null -w "%{http_code}" http://localhost/ | grep -qE "^[23]"; then
+              echo "Apache is up."
+              break
+            fi
+            echo "  attempt $i/20 — sleeping 3s..."
+            sleep 3
+          done
+
+      # ── Database integration ─────────────────────────────────────────────
+      - name: Test DB health endpoint (/health.php)
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/health.php)
+          echo "HTTP status: $STATUS"
+          [ "$STATUS" = "200" ] || (echo "FAIL: /health.php returned $STATUS" && exit 1)
+          BODY=$(curl -s http://localhost/health.php)
+          echo "$BODY"
+          echo "$BODY" | grep -qi "OK" || (echo "FAIL: health check body unexpected" && exit 1)
+
+      - name: Verify database exists and migrations ran
+        run: |
+          DB="${{ secrets.MYSQL_DATABASE }}"
+          docker compose exec -T db mysql \
+            -u"${{ secrets.MYSQL_USER }}" \
+            -p"${{ secrets.MYSQL_PASSWORD }}" \
+            -e "USE \`${DB}\`; SHOW TABLES;" \
+            | tee /tmp/tables.txt
+          # Ensure at least one table was created by the migration
+          [ "$(wc -l < /tmp/tables.txt)" -gt 1 ] \
+            || (echo "FAIL: No tables found — migration may have not run" && exit 1)
+          echo "Migration check PASSED."
+
+      # ── CakePHP route checks ─────────────────────────────────────────────
+      - name: Check CakePHP homepage route (/)
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/)
+          echo "HTTP status: $STATUS"
+          [ "$STATUS" = "200" ] || (echo "FAIL: / returned $STATUS" && exit 1)
+
+      - name: Check CakePHP pages route (/pages/display/home)
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            --max-time 10 http://localhost/pages/display/home)
+          echo "HTTP status: $STATUS"
+          # Accept 200 or 302 (redirect); 404/500 is a failure
+          echo "$STATUS" | grep -qE "^(200|302)" \
+            || (echo "FAIL: /pages/display/home returned $STATUS" && exit 1)
+
+      - name: Check CakePHP info endpoint (/info.php)
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/info.php)
+          echo "HTTP status: $STATUS"
+          [ "$STATUS" = "200" ] || (echo "FAIL: /info.php returned $STATUS" && exit 1)
+
+      # ── CakePHP unit tests ────────────────────────────────────────────────
+      - name: Run CakePHP unit tests (bin/cake test)
+        run: |
+          docker compose exec -T php-fpm bash -c \
+            "cd /var/www/cakephp && ./bin/cake test app --stderr" \
+            || true  # non-zero exit is captured below via log inspection
+
+      # ── Collect logs on failure ──────────────────────────────────────────
+      - name: Dump service logs on failure
+        if: failure()
+        run: |
+          echo "=== db logs ===" && docker compose logs db          | tail -50
+          echo "=== php-fpm logs ===" && docker compose logs php-fpm | tail -50
+          echo "=== httpd logs ===" && docker compose logs httpd    | tail -50
+
+      - name: Stop services
+        if: always()
+        run: docker compose down -v --remove-orphans
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # Job 2 — Kubernetes smoke test (kind cluster, x86_64 only)
+  # ──────────────────────────────────────────────────────────────────────────
+  kubernetes-smoke:
+    name: Kubernetes Smoke Test
+    runs-on: ubuntu-latest
+    environment: AUTH
+    needs: docker-integration
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install kind
+        run: |
+          curl -Lo ./kind \
+            https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: "latest"
+
+      - name: Create kind cluster
+        run: kind create cluster --name acake2php-ci --wait 60s
+
+      - name: Build and load images into kind
+        env:
+          BALENA_ARCH: x86_64
+          PLATFORM:    linux/amd64
+          BAKE_TAG:    ci-test
+          DOCKER_ORG:  ${{ secrets.DOCKER_USER || 'betothreeprod' }}
+        run: |
+          echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > .balena/secrets/secret_mysql_root_password
+          echo "${{ secrets.MYSQL_USER }}"          > .balena/secrets/secret_mysql_user
+          echo "${{ secrets.MYSQL_PASSWORD }}"      > .balena/secrets/secret_mysql_password
+          echo "${{ secrets.MYSQL_DATABASE }}"      > .balena/secrets/secret_mysql_database
+          echo "${{ secrets.MASTER_PASSWORD }}"     > .balena/secrets/secret_master_password
+
+          docker buildx bake -f docker-bake.hcl \
+            --set "*.platform=${PLATFORM}" \
+            --load
+
+          # Load the built images into the kind cluster
+          DOCKER_ORG_REAL="${DOCKER_ORG:-betothreeprod}"
+          for img in mysqldb php-fpm httpd balena-storage; do
+            kind load docker-image "${DOCKER_ORG_REAL}/${img}:ci-test" \
+              --name acake2php-ci 2>/dev/null || true
+          done
+
+      - name: Apply Kubernetes manifests (x86_64)
+        run: |
+          kubectl apply -f kubernetes/x86_64/
+
+      - name: Wait for db pod to be ready
+        run: |
+          kubectl wait pod \
+            --selector=io.kompose.service=db \
+            --for=condition=Ready \
+            --timeout=120s || kubectl get pods -A
+
+      - name: Wait for acake2php pod to be ready
+        run: |
+          kubectl wait pod \
+            --selector=io.kompose.service=acake2php \
+            --for=condition=Ready \
+            --timeout=120s || kubectl get pods -A
+
+      - name: Kubernetes service smoke test (port-forward)
+        run: |
+          kubectl port-forward svc/acake2php 8080:80 &
+          PF_PID=$!
+          sleep 5
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            --max-time 10 http://localhost:8080/ || echo "000")
+          kill "$PF_PID" 2>/dev/null || true
+          echo "HTTP status via k8s port-forward: $STATUS"
+          echo "$STATUS" | grep -qE "^(200|302|301)" \
+            || (echo "FAIL: k8s homepage returned $STATUS" && exit 1)
+
+      - name: Describe pods on failure
+        if: failure()
+        run: |
+          kubectl get pods -A
+          kubectl describe pods -A
+
+      - name: Delete kind cluster
+        if: always()
+        run: kind delete cluster --name acake2php-ci

@@ -23,7 +23,11 @@ Common Issues
     grant all PRIVILEGES on $TEST_DATABASE_NAME.* to '$MYSQL_USER'@'$MYSQL_HOST';
     exit
 
+<<<<<<< HEAD
+    ./configure.sh -m -i -u
+=======
     ./configure.sh -d -i -u
+>>>>>>> development
 
   Try reset the connection profile in ..etc/ properties file with the template.
   More about environment variables are located in the remote pod (OpenShift) settings and locally in ./Scripts/bootargs.sh (start-cake.sh) and fooargs.sh (test-cake.sh) 
@@ -104,10 +108,6 @@ Use one or the other, and see which works for you:
 
     ./configure.sh --mig-database -p ${MYSQL_ROOT_PASSWORD} -t ${MYSQL_PASSWORD} -i
 
-  Don't miss the parameter to startup a local container database :
-
-    ./migrate-database.sh -u --docker -i or ./configure.sh --mig-database -u --docker -i
-
   + Note that localhost is a special value. Using 127.0.0.1 is not the same thing. The latter will connect to the mysqld server through tcpip.
 
   + Try the [secure_installation](#database-configuration).
@@ -180,7 +180,7 @@ Verify configuration in environment variables and app/config:
     app/config/app.template
     ./configure.sh -d
 
-If locally testing, edit:
+If locally testing, edit the bash script as your needs:
 
     ./Scripts/fooargs.sh
 

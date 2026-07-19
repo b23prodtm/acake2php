@@ -1,34 +1,24 @@
 #!/usr/bin/env bash
 set -e
-TOPDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+TOPDIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 # shellcheck source=lib/logging.sh
 . "${TOPDIR}/Scripts/lib/logging.sh"
-# shellcheck source=lib/shell_prompt.sh
-. "${TOPDIR}/Scripts/lib/shell_prompt.sh"
-runner=$(parse_arg "-[rR]+|--runner"  "$@")
-pargs=$(parse_arg_trim "-[rR]+|--runner"  "$@")
-slogger -st "$0" "Auto configuration..."
-#; hash file that is stored in webroot to allow administrator privileges
-if [ -z "${GET_HASH_PASSWORD:-}" ] && [ -z "$runner" ]; then
-  hash="$TOPDIR/${MYPHPCMS_DIR}/e13/etc/export_hash_password.sh"
-  while [ ! -f "$hash" ]; do
-    shell_prompt "$TOPDIR/Scripts/config_etc_pass.sh" "define a value for missing GET_HASH_PASSWORD" "${DEBIAN_FRONTEND:-}"
-  done
-  # shellcheck source=app/webroot/php-cms/e13/etc/export_hash_password.sh
-  . "$hash"
-fi
-# shellcheck disable=SC2154
-echo -e "${nc}Password ${green}${GET_HASH_PASSWORD}${nc}"
+parse_args_lazy "$@" <<EOF
+flag runner -r --runner
+end
+EOF
+log_progress_msg "Boot..."
 #; Install PHPUnit, performs unit tests
 #; The website must pass health checks in order to be deployed
-if [ -n "$runner" ]; then
+if [ ${#runner} -gt 0 ]; then
   phpunit="$TOPDIR/app/Vendor/bin/phpunit"
   if [ ! -f "$phpunit" ]; then
     # shellcheck source=composer.sh
-    "${TOPDIR}/Scripts/composer.sh" install --dev --no-interaction --ignore-platform-reqs
+    . "${TOPDIR}/Scripts/composer.sh" install --dev --no-interaction --ignore-platform-reqs
   else
-   slogger -st "$0" "PHPUnit ${green}[OK]${nc}"
+   log_success_msg "PHPUnit [OK]"
   fi
   printf "%s\n" "$($phpunit --version)"
+  set -- "--runner" "$@"
 fi
-bash -c "$TOPDIR/Scripts/start_daemon.sh ${pargs} ${runner}"
+. "$TOPDIR/Scripts/entrypoint.sh" "$@"

@@ -1,58 +1,106 @@
-name: Multi-Arch Build
+name: Docker Build & Push
 
 on:
   push:
-    branches: [ "main", "development" ]
+    branches: ["main", "development"]
   pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   DOCKER_ORG: ${{ secrets.DOCKER_USER }}
 
 jobs:
-  compose:
-    #runs-on: self-hosted
+  build:
+    name: Build (${{ matrix.arch }})
     runs-on: ubuntu-latest
     environment: AUTH
-
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
-        arch: [ x86_64, aarch64, armhf ]
-
+        arch: [x86_64, aarch64, armhf]
+        include:
+          - arch: x86_64
+            platform: linux/amd64
+          - arch: aarch64
+            platform: linux/arm64
+          - arch: armhf
+            platform: linux/arm/v7
     steps:
       - uses: actions/checkout@v4
 
-      - name: Enable QEMU
+      - name: Enable QEMU (cross-arch emulation)
         uses: docker/setup-qemu-action@v3
 
       - name: Enable Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
+
       - name: Sanitize ref name for Docker tag
         id: sanitize
         run: |
           RAW="${{ github.ref_name }}"
-          # lowercase
-          TAG=$(echo "$RAW" | tr '[:upper:]' '[:lower:]')
-          # replace invalid chars with '-'
-          TAG=$(echo "$TAG" | sed 's/[^a-z0-9._-]/-/g')
+          TAG=$(echo "$RAW" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9._-]/-/g')
+          echo "tag=${TAG}-${{ matrix.arch }}" >> $GITHUB_OUTPUT
+
+      - name: Write build secrets
+        run: |
+          echo "${{ secrets.MYSQL_ROOT_PASSWORD }}" > .balena/secrets/secret_mysql_root_password
+          echo "${{ secrets.MYSQL_USER }}"          > .balena/secrets/secret_mysql_user
+          echo "${{ secrets.MYSQL_PASSWORD }}"      > .balena/secrets/secret_mysql_password
+          echo "${{ secrets.MYSQL_DATABASE }}"      > .balena/secrets/secret_mysql_database
+          echo "${{ secrets.MASTER_PASSWORD }}"     > .balena/secrets/secret_master_password
+
+      - name: Build and push ${{ matrix.arch }} images
+        uses: docker/bake-action@v5
+        env:
+          BALENA_ARCH: ${{ matrix.arch }}
+          PLATFORM:    ${{ matrix.platform }}
+          BAKE_TAG:    ${{ steps.sanitize.outputs.tag }}
+          DOCKER_ORG:  ${{ secrets.DOCKER_USER }}
+        with:
+          files: docker-bake.hcl
+          push:  ${{ github.event_name != 'pull_request' }}
+
+  manifest:
+    name: Push multi-platform manifests
+    runs-on: ubuntu-latest
+    environment: AUTH
+    needs: build
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+
+      - name: Sanitize ref name for Docker tag
+        id: sanitize
+        run: |
+          RAW="${{ github.ref_name }}"
+          TAG=$(echo "$RAW" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9._-]/-/g')
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
-      # Install Docker Compose v2 plugin
-      - name: Set up Docker Compose
-        uses: docker/setup-compose-action@v1
-        with:
-          version: latest   # or a specific version like v2.27.0
-
-      - name: Build docker-compose stack
+      - name: Create and push multi-platform manifests
         env:
-          ARCH: ${{ matrix.arch }}
-          BAKE_TAG: ${{ steps.sanitize.outputs.tag }}
+          DOCKER_ORG: ${{ secrets.DOCKER_USER }}
+          BAKE_TAG:   ${{ steps.sanitize.outputs.tag }}
         run: |
-          docker buildx bake --push -f "docker-compose.${ARCH}"
-          docker compose up -d
+          chmod +x manifest-push.sh
+          ./manifest-push.sh
+

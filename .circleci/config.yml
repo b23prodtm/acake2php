@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  shellcheck: circleci/shellcheck@1.3.16
-
 executors:
   docker-executor:
     docker:
@@ -10,156 +7,267 @@ executors:
     resource_class: medium
 
 commands:
-  build-multiarch:
-    parameters:
-      image:
-        type: string
-      workdir:
-        type: string
+  setup-buildx:
     steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.18
-          docker_layer_caching: true
+      - run:
+          name: Install Docker Buildx
+          command: |
+            mkdir -p ~/.docker/cli-plugins
+            BUILDX_VERSION=v0.12.1
+            wget -q "https://github.com/docker/buildx/releases/download/${BUILDX_VERSION}/buildx-${BUILDX_VERSION}.linux-amd64" \
+              -O ~/.docker/cli-plugins/docker-buildx
+            chmod +x ~/.docker/cli-plugins/docker-buildx
+            docker buildx version
 
       - run:
-          name: Enable QEMU for multi-arch
+          name: Create buildx builder
           command: |
-            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+            docker buildx create --name multiarch --driver docker-container --use --bootstrap
+            docker buildx inspect multiarch
 
+  write-secrets:
+    description: "Store secrets in secret file on build-time"
+    steps:
       - run:
-          name: Login to Docker Hub
+          name: Store secrets
           command: |
-            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-
+            echo "$MYSQL_ROOT_PASSWORD" > .balena/secrets/secret_mysql_root_password
+            echo "$MYSQL_USER" > .balena/secrets/secret_mysql_user
+            echo "$MYSQL_PASSWORD" > .balena/secrets/secret_mysql_password
+            echo "$MYSQL_DATABASE" > .balena/secrets/secret_mysql_database
+            echo "$MASTER_PASSWORD" > .balena/secrets/secret_master_password
+            
+  set-build-tag:
+    description: "Set BUILD_TAG environment variable based on branch or tag"
+    steps:
       - run:
-          name: Build amd64
+          name: Set build tag
           command: |
-            cd << parameters.workdir >>
-            docker build \
-              --platform linux/amd64 \
-              -t "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-x86_64" \
-              -f Dockerfile.x86_64 .
-            docker push "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-x86_64"
-
-      - run:
-          name: Build arm64
-          command: |
-            cd << parameters.workdir >>
-            docker build \
-              --platform linux/arm64 \
-              -t "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-aarch64" \
-              -f Dockerfile.aarch64 .
-            docker push "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-aarch64"
-
-      - run:
-          name: Build armhf
-          command: |
-            cd << parameters.workdir >>
-            docker build \
-              --platform linux/arm/v7 \
-              -t "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-armhf" \
-              -f Dockerfile.armhf .
-            docker push "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-armhf"
-
-      - run:
-          name: Create multi-arch manifest
-          command: |
-            docker manifest create "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}" \
-              "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-x86_64" \
-              "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-aarch64" \
-              "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}-armhf"
-
-            docker manifest push "$DOCKER_USER/<< parameters.image >>:${CIRCLE_TAG}"
-
-
+            if [ -n "${CIRCLE_TAG}" ]; then
+              TAG="${CIRCLE_TAG}"
+            else
+              TAG="${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}"
+            fi
+            # lowercase
+            TAG=$(echo "$TAG" | tr '[:upper:]' '[:lower:]')
+            # replace invalid chars with '-'
+            echo "export BUILD_TAG=$(echo "$TAG" | sed 's/[^a-z0-9._-]/-/g')" >> $BASH_ENV
+            source $BASH_ENV
+            echo "Build tag: ${BUILD_TAG}"
+            
 jobs:
-  httpd:
-    executor: docker-executor
+  shellcheck:
+    docker:
+      - image: koalaman/shellcheck-alpine:stable
     steps:
-      - build-multiarch:
-          image: httpd
-          workdir: deployment/images/httpd
+      - checkout
+      - run:
+          name: Run shellcheck
+          command: |
+            find . -type f -name "*.sh" -exec shellcheck --exclude=SC2154,SC1091,SC2034,SC2096,SC2038 {} +
 
-  mysql:
-    executor: docker-executor
-    steps:
-      - build-multiarch:
-          image: mysql
-          workdir: deployment/images/mysql
-
-  php-fpm:
-    executor: docker-executor
-    steps:
-      - build-multiarch:
-          image: php-fpm
-          workdir: deployment/images/php-fpm
-
-  build-and-compose:
+  build-x86_64:
     executor: docker-executor
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.18
+          version: docker24
           docker_layer_caching: true
+
+      - setup-buildx
+      - set-build-tag
+      - write-secrets
+
       - run:
           name: Login to Docker Hub
           command: |
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+      
       - run:
-          name: Deploy with docker compose
+          name: Build and push x86_64
           command: |
-            cd deployment
-            docker compose pull
-            docker compose up -d
+            export DOCKER_ORG=${DOCKER_USER}
+            export BAKE_TAG=${BUILD_TAG}
+            export BALENA_ARCH=x86_64
+            export PLATFORM=linux/amd64
+            
+            echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
+            ln -sf "${BALENA_ARCH}.env" ".env"
+            cp -vf "docker-compose.${BALENA_ARCH}" "docker-compose.yml"
+            docker buildx bake -f docker-bake.hcl \
+              --set "*.platform=${PLATFORM}" \
+              --push
 
+      - run:
+          name: Tag images with architecture suffix
+          command: |
+            for service in mysqldb php-fpm httpd balena-storage; do
+              docker buildx imagetools create \
+                --tag ${DOCKER_USER}/${service}:${BUILD_TAG}-x86_64 \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}
+            done
+
+  build-aarch64:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: docker24
+          docker_layer_caching: true
+
+      - setup-buildx
+      - set-build-tag
+      - write-secrets
+
+      - run:
+          name: Login to Docker Hub
+          command: |
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - run:
+          name: Build and push aarch64
+          command: |
+            export DOCKER_ORG=${DOCKER_USER}
+            export BAKE_TAG=${BUILD_TAG}
+            export BALENA_ARCH=aarch64
+            export PLATFORM=linux/arm64
+            
+            echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
+            ln -sf "${BALENA_ARCH}.env" ".env"
+            cp -vf "docker-compose.${BALENA_ARCH}" "docker-compose.yml"            
+            docker buildx bake -f docker-bake.hcl \
+              --set "*.platform=${PLATFORM}" \
+              --push
+
+      - run:
+          name: Tag images with architecture suffix
+          command: |
+            for service in mysqldb php-fpm httpd balena-storage; do
+              docker buildx imagetools create \
+                --tag ${DOCKER_USER}/${service}:${BUILD_TAG}-aarch64 \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}
+            done
+
+  build-armhf:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: docker24
+          docker_layer_caching: true
+
+      - setup-buildx
+      - set-build-tag
+      - write-secrets
+
+      - run:
+          name: Login to Docker Hub
+          command: |
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - run:
+          name: Build and push armhf
+          command: |
+            export DOCKER_ORG=${DOCKER_USER}
+            export BAKE_TAG=${BUILD_TAG}
+            export BALENA_ARCH=armhf
+            export PLATFORM=linux/arm/v7
+            
+            echo "Building ${DOCKER_ORG}/*:${BAKE_TAG} for ${PLATFORM}"
+            ln -sf "${BALENA_ARCH}.env" ".env"
+            cp -vf "docker-compose.${BALENA_ARCH}" "docker-compose.yml"       
+            docker buildx bake -f docker-bake.hcl \
+              --set "*.platform=${PLATFORM}" \
+              --push
+
+      - run:
+          name: Tag images with architecture suffix
+          command: |
+            for service in mysqldb php-fpm httpd balena-storage; do
+              docker buildx imagetools create \
+                --tag ${DOCKER_USER}/${service}:${BUILD_TAG}-armhf \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}
+            done
+
+  create-manifests:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: docker24
+
+      - set-build-tag
+
+      - run:
+          name: Login to Docker Hub
+          command: |
+            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - run:
+          name: Create and push multi-arch manifests
+          command: |
+            for service in mysqldb php-fpm httpd balena-storage; do
+              echo "Creating manifest for ${service}:${BUILD_TAG}"
+              
+              # Create multi-arch manifest
+              docker manifest create ${DOCKER_USER}/${service}:${BUILD_TAG} \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}-x86_64 \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}-aarch64 \
+                ${DOCKER_USER}/${service}:${BUILD_TAG}-armhf
+              
+              docker manifest push ${DOCKER_USER}/${service}:${BUILD_TAG}
+              
+              # Also create/update latest tag for main branch
+              if [ "${CIRCLE_BRANCH}" = "main" ] || [ "${CIRCLE_BRANCH}" = "master" ]; then
+                echo "Updating latest tag for ${service}"
+                docker manifest create ${DOCKER_USER}/${service}:latest \
+                  ${DOCKER_USER}/${service}:${BUILD_TAG}-x86_64 \
+                  ${DOCKER_USER}/${service}:${BUILD_TAG}-aarch64 \
+                  ${DOCKER_USER}/${service}:${BUILD_TAG}-armhf
+                
+                docker manifest push ${DOCKER_USER}/${service}:latest
+              fi
+            done
+
+      - run:
+          name: Verify manifests
+          command: |
+            for service in mysqldb php-fpm httpd balena-storage; do
+              echo "Verifying ${service}:${BUILD_TAG}"
+              docker manifest inspect ${DOCKER_USER}/${service}:${BUILD_TAG}
+            done
 
 workflows:
-  version: 2
-  build:
+  build-all-branches:
     jobs:
-      - shellcheck/check:
-          ignore: 'SC2154,SC1091,SC2034,SC2096,SC2038'
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+      - shellcheck
 
-      - httpd:
+      - build-x86_64:
+          context:
+            - Info-b23prodtm
           requires:
-            - shellcheck/check
+            - shellcheck
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
+              only: development
 
-      - mysql:
+      - build-aarch64:
+          context:
+            - Info-b23prodtm
           requires:
-            - shellcheck/check
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+            - shellcheck
 
-      - php-fpm:
+      - build-armhf:
+          context:
+            - Info-b23prodtm
           requires:
-            - shellcheck/check
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+            - shellcheck
 
-      - build-and-compose:
+      - create-manifests:
           requires:
-            - httpd
-            - mysql
-            - php-fpm
+            - build-x86_64
+            - build-aarch64
+            - build-armhf
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
+              only: development

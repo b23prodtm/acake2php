@@ -34,8 +34,8 @@ spec:
         - name: BALENA_MACHINE_NAME
           value: raspberrypi3
         - name: BALENA_PROJECTS
-          value: '(. ./deployment/images/mysqldb ./deployment/images/node-php7 ./deployment/images/apache-php7)
-            #(submodule deployment/images/primary'
+          value: '(. ./mysqldb ./php-fpm ./httpd)
+            #(submodule primary'
         - name: BALENA_PROJECTS_FLAGS
           value: (IMG_TAG PRIMARY_HUB SECONDARY_HUB)
         - name: CAKEPHP_DEBUG_LEVEL
