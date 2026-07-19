@@ -1,5 +1,3 @@
-version: "2.4"
-
 services:
   php-fpm:
     # Balena uses the service Dockerfile.template automatically; CI reuses the prebuilt test tag.
